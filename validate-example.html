@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Checking Your Network &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Checking Your Network &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -624,7 +624,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">]</span>
+<span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">]</span>
 <span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -677,7 +677,7 @@ validation: missing C12 + C12 ⟶ n + Mg23 as alternative to C12 + C12 ⟶ He4 +
 <p>To address these issues, we need to include the additional nuclei.  In particular, the branch that makes <span class="math notranslate nohighlight">\({}^{23}\mathrm{Na}\)</span> is likely important (the rate making <span class="math notranslate nohighlight">\({}^{23}\mathrm{Mg}\)</span> is endothermic, so less likely).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">]</span>
 <span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">cburn_library</span><span class="p">])</span>
 <span class="n">rc</span>
@@ -724,7 +724,7 @@ validation: missing Na23 + p ⟶ Mg24 + 𝛾 as alternative to Na23 + p ⟶ He4 
 <p>Now, looking at what is missing, we probably want to include <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> as an endpoint for carbon burning.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;mg24&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">"mg24"</span><span class="p">]</span>
 <span class="n">cburn_library</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">cburn_library</span><span class="p">])</span>
 <span class="n">rc</span>

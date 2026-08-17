@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.modified_rate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for describing rates where one or more</span>
+<span></span><span class="sd">"""Classes and methods for describing rates where one or more</span>
 <span class="sd">properties have been modified from the original source.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
@@ -531,7 +531,7 @@
 <div class="viewcode-block" id="ModifiedRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModifiedRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A modified rate takes an original rate and changes some</span>
+<span class="w">    </span><span class="sd">"""A modified rate takes an original rate and changes some</span>
 <span class="sd">    properties of it.  The evaluation of the original rate will still</span>
 <span class="sd">    be used for the actual rate, but the modified rate can have a</span>
 <span class="sd">    different products (and therefore Q value) or stoichiometric</span>
@@ -558,7 +558,7 @@
 <span class="sd">        new products or stoichiometry? or do we still screen based on</span>
 <span class="sd">        the underlying rate?</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_rate</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -587,7 +587,7 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
                          <span class="n">weak_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">weak_type</span><span class="p">,</span>
-                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;modified&quot;</span><span class="p">,</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">"modified"</span><span class="p">,</span>
                          <span class="n">stoichiometry</span><span class="o">=</span><span class="n">stoichiometry</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
@@ -595,11 +595,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a copy of the rate via copy.copy().  This is mostly</span>
+<span class="w">        </span><span class="sd">"""Make a copy of the rate via copy.copy().  This is mostly</span>
 <span class="sd">        shallow except for a few attributes to address some mutability</span>
 <span class="sd">        issues</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">new</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
@@ -619,12 +619,12 @@
         <span class="k">return</span> <span class="n">new</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine if this rate is eligible for screening and the</span>
+<span class="w">        </span><span class="sd">"""Determine if this rate is eligible for screening and the</span>
 <span class="sd">        nuclei to use.  In this case, we either use the original rate</span>
 <span class="sd">        or the modified rate, depending on the value of</span>
 <span class="sd">        update_screening.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># ion_screen holds the list of reactants eligible for screening</span>
         <span class="c1"># empty list if there is only one eligible reactant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
@@ -645,7 +645,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.log_eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate natural log of reaction rates for the modified rate.</span>
+<span class="w">        </span><span class="sd">"""Evaluate natural log of reaction rates for the modified rate.</span>
 <span class="sd">        This simply calls the evaluation of the underlying original rate.</span>
 
 <span class="sd">        Parameters</span>
@@ -666,7 +666,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        numpy.ndarray</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Evaluate original rate without screening</span>
         <span class="c1"># The modified rate can have a different set of reactants for screening</span>
@@ -676,7 +676,7 @@
         <span class="n">log_scor</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when applying electron screening.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rho (density) and comp (Composition) needs to be defined when applying electron screening."</span><span class="p">)</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
             <span class="n">log_scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
@@ -692,7 +692,7 @@
 <div class="viewcode-block" id="ModifiedRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the python function that</span>
+<span class="w">        </span><span class="sd">"""Return a string containing the python function that</span>
 <span class="sd">        computes the rate -- in this case it is the underlying</span>
 <span class="sd">        original rate.</span>
 
@@ -700,22 +700,22 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=log_scor)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=log_scor)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 
 <div class="viewcode-block" id="ModifiedRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">"inline"</span><span class="p">,</span>
                             <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">()):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the C++ function that computes</span>
+<span class="w">        </span><span class="sd">"""Return a string containing the C++ function that computes</span>
 <span class="sd">        the rate.  For a ModifiedRate, this simply calls the</span>
 <span class="sd">        corresponding function for the underlying original rate.</span>
 
@@ -725,9 +725,9 @@
 <span class="sd">            The C++ datatype to use for all declarations</span>
 <span class="sd">        specifiers : str</span>
 <span class="sd">            C++ specifiers to add before each function declaration</span>
-<span class="sd">            (i.e. &quot;inline&quot;)</span>
+<span class="sd">            (i.e. "inline")</span>
 <span class="sd">        leave_open : bool</span>
-<span class="sd">            If ``true``, then we leave the function unclosed (no &quot;}&quot;</span>
+<span class="sd">            If ``true``, then we leave the function unclosed (no "}"</span>
 <span class="sd">            at the end).  This can allow additional functions to add</span>
 <span class="sd">            to this output.</span>
 <span class="sd">        extra_args : list, tuple</span>
@@ -739,22 +739,22 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"const tf_t&amp; tfactors"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT"</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">"template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">"</span>
 
         <span class="c1"># first we need to get all of the rates that make this up</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s2"> (calls the underlying rate)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&lt;do_T_derivatives&gt;(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="s2"> (calls the underlying rate)</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">&lt;do_T_derivatives&gt;(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"}</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.screening.screen &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.screening.screen &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.screening.screen</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Python implementations of common electron screening routines.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Python implementations of common electron screening routines."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -524,29 +524,29 @@
 
 <span class="c1"># jit-decorated functions should be listed here so they</span>
 <span class="c1"># get documented by sphinx</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NseState&quot;</span><span class="p">,</span> <span class="s2">&quot;PlasmaState&quot;</span><span class="p">,</span> <span class="s2">&quot;ScreenFactors&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">,</span> <span class="s2">&quot;f0&quot;</span><span class="p">,</span> <span class="s2">&quot;debye_huckel&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;make_plasma_state&quot;</span><span class="p">,</span> <span class="s2">&quot;make_screen_factors&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">,</span> <span class="s2">&quot;screen5&quot;</span><span class="p">,</span> <span class="s2">&quot;smooth_clip&quot;</span><span class="p">,</span> <span class="s2">&quot;screening_check&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;get_screening_func&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NseState"</span><span class="p">,</span> <span class="s2">"PlasmaState"</span><span class="p">,</span> <span class="s2">"ScreenFactors"</span><span class="p">,</span>
+           <span class="s2">"chugunov_2007"</span><span class="p">,</span> <span class="s2">"chugunov_2009"</span><span class="p">,</span> <span class="s2">"f0"</span><span class="p">,</span> <span class="s2">"debye_huckel"</span><span class="p">,</span>
+           <span class="s2">"make_plasma_state"</span><span class="p">,</span> <span class="s2">"make_screen_factors"</span><span class="p">,</span>
+           <span class="s2">"potekhin_1998"</span><span class="p">,</span> <span class="s2">"screen5"</span><span class="p">,</span> <span class="s2">"smooth_clip"</span><span class="p">,</span> <span class="s2">"screening_check"</span><span class="p">,</span>
+           <span class="s2">"get_screening_func"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PlasmaState">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.PlasmaState">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">([</span>
-    <span class="p">(</span><span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;dens&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;qlam0z&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;taufac&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;aa&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;abar&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;zbar&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;z2bar&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;n_e&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;gamma_e_fac&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="p">(</span><span class="s2">"temp"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"dens"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"qlam0z"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"taufac"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"aa"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"abar"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zbar"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"z2bar"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"n_e"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"gamma_e_fac"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlasmaState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused for all screening</span>
+<span class="w">    </span><span class="sd">"""Store precomputed values that are reused for all screening</span>
 <span class="sd">    correction factor calculations.</span>
 
 <span class="sd">    Parameters</span>
@@ -579,7 +579,7 @@
 <span class="sd">    gamma_e_fac : float</span>
 <span class="sd">         temperature-independent part of Gamma_e</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="n">temp</span>
@@ -627,13 +627,13 @@
 <div class="viewcode-block" id="NseState">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.NseState">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">([</span>
-    <span class="p">(</span><span class="s2">&quot;temp&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;dens&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;ye&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;gamma_e_fac&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="p">(</span><span class="s2">"temp"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"dens"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ye"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"gamma_e_fac"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">NseState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store precomputed values that are reused in the NSE state</span>
+<span class="w">    </span><span class="sd">"""Store precomputed values that are reused in the NSE state</span>
 <span class="sd">    screening calculations</span>
 
 <span class="sd">    Parameters</span>
@@ -650,7 +650,7 @@
 <span class="sd">    gamma_e_fac : float</span>
 <span class="sd">        Temperature-independent part of Gamma_e.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">ye</span><span class="p">):</span>
 
@@ -664,7 +664,7 @@
 <div class="viewcode-block" id="make_plasma_state">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_plasma_state</span><span class="p">(</span><span class="n">temp</span><span class="p">,</span> <span class="n">dens</span><span class="p">,</span> <span class="n">molar_fractions</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a PlasmaState object from simulation data.</span>
+<span class="w">    </span><span class="sd">"""Construct a PlasmaState object from simulation data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -680,7 +680,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    PlasmaState</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">molar_fractions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">Ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">molar_fractions</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
     <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">Z</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">])</span>
@@ -691,19 +691,19 @@
 <div class="viewcode-block" id="ScreenFactors">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">([</span>
-    <span class="p">(</span><span class="s2">&quot;z1&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;z2&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;a1&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;a2&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;zs13&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;zhat&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;zhat2&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;lzav&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;aznut&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
-    <span class="p">(</span><span class="s2">&quot;ztilde&quot;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="p">(</span><span class="s2">"z1"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"z2"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"a1"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"a2"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zs13"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zhat"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"zhat2"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"lzav"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"aznut"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ztilde"</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ScreenFactors</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store values that will be used to calculate the screening</span>
+<span class="w">    </span><span class="sd">"""Store values that will be used to calculate the screening</span>
 <span class="sd">    correction factor for a specific pair of nuclei.</span>
 
 <span class="sd">    Parameters</span>
@@ -732,7 +732,7 @@
 <span class="sd">    ztilde : float</span>
 <span class="sd">        effective ion radius factor for a MCP</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">a2</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">z1</span> <span class="o">=</span> <span class="n">z1</span>
@@ -751,7 +751,7 @@
 <div class="viewcode-block" id="make_screen_factors">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.make_screen_factors">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">make_screen_factors</span><span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a ScreenFactors object from a pair of nuclei.</span>
+<span class="w">    </span><span class="sd">"""Construct a ScreenFactors object from a pair of nuclei.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -764,7 +764,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    ScreenFactors</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">n1</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n1</span><span class="p">)</span>
     <span class="n">n2</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n2</span><span class="p">)</span>
@@ -776,7 +776,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.debye_huckel">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">debye_huckel</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the Debye-Huckel enhancement factor for weak Coloumb</span>
+<span class="w">    </span><span class="sd">"""Calculate the Debye-Huckel enhancement factor for weak Coloumb</span>
 <span class="sd">    coupling, following the appendix of :cite:t:`chugunov:2009`.</span>
 
 <span class="sd">    Parameters</span>
@@ -790,7 +790,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
 
     <span class="c1"># Gamma_e from eq. 6</span>
@@ -807,7 +807,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.screen5">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">screen5</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">PlasmaState</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors following the appendix of</span>
+<span class="w">    </span><span class="sd">"""Calculate screening factors following the appendix of</span>
 <span class="sd">    :cite:t:`Wallace:1982`.</span>
 
 <span class="sd">    Based on :cite:t:`graboske:1973` for weak screening. Based on</span>
@@ -825,7 +825,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cbrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
     <span class="n">gamefx</span> <span class="o">=</span> <span class="mf">0.3e0</span>  <span class="c1"># lower gamma limit for intermediate screening</span>
     <span class="n">gamefs</span> <span class="o">=</span> <span class="mf">0.8e0</span>  <span class="c1"># upper gamma limit for intermediate screening</span>
@@ -953,7 +953,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.smooth_clip">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">smooth_clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a smooth transition between y=limit and y=x with a</span>
+<span class="w">    </span><span class="sd">"""Create a smooth transition between y=limit and y=x with a</span>
 <span class="sd">    half-cosine.</span>
 
 <span class="sd">    Clips smaller values if limit &lt; start and larger values if start &lt;</span>
@@ -972,7 +972,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">limit</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
         <span class="n">lower</span> <span class="o">=</span> <span class="n">limit</span>
         <span class="n">upper</span> <span class="o">=</span> <span class="n">x</span>
@@ -996,7 +996,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">chugunov_2007</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on :cite:t:`chugunov:2007`.</span>
+<span class="w">    </span><span class="sd">"""Calculate screening factors based on :cite:t:`chugunov:2007`.</span>
 
 <span class="sd">    Follows the approach in :cite:t:`yakovlev:2006` to extend to a</span>
 <span class="sd">    multi-component plasma.</span>
@@ -1012,7 +1012,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Plasma temperature T_p</span>
     <span class="c1"># This formula comes from working backwards from zeta_ij (Chugunov 2009 eq. 12)</span>
     <span class="c1"># through Chugunov 2007 eq. 3 to Chugunov 2007 eq. 2.</span>
@@ -1029,7 +1029,7 @@
     <span class="c1">#   n_i -&gt; n_e / zbar (=ntot)</span>
     <span class="c1">#   m_i -&gt; m_u * abar</span>
     <span class="c1">#</span>
-    <span class="c1"># Sam Jones&#39; Fortran implementation does:</span>
+    <span class="c1"># Sam Jones' Fortran implementation does:</span>
     <span class="c1">#   Z^2 -&gt; zbar^2</span>
     <span class="c1">#   n_i -&gt; ntot</span>
     <span class="c1">#   m_i -&gt; m_u * abar</span>
@@ -1103,7 +1103,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.f0">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">f0</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the free energy per ion in a OCP from</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Calculate the free energy per ion in a OCP from</span>
 <span class="sd">    :cite:t:`chugunov:2009` eq. 24</span>
 
 <span class="sd">    Parameters</span>
@@ -1115,7 +1115,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">A1</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.907</span>
     <span class="n">A2</span> <span class="o">=</span> <span class="mf">0.62954</span>
     <span class="n">A3</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">A1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
@@ -1144,7 +1144,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">chugunov_2009</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on :cite:t:`chugunov:2009`.</span>
+<span class="w">    </span><span class="sd">"""Calculate screening factors based on :cite:t:`chugunov:2009`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1157,7 +1157,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">z1z2</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">*</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
     <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
 
@@ -1218,7 +1218,7 @@
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.potekhin_1998">[docs]</a>
 <span class="nd">@njit</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">potekhin_1998</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate screening factors based on</span>
+<span class="w">    </span><span class="sd">"""Calculate screening factors based on</span>
 <span class="sd">    :cite:t:`chabrier_potekhin:1998`.</span>
 
 <span class="sd">    Parameters</span>
@@ -1232,7 +1232,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">Gamma_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">gamma_e_fac</span> <span class="o">/</span> <span class="n">state</span><span class="o">.</span><span class="n">temp</span>
     <span class="n">zcomp</span> <span class="o">=</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z1</span> <span class="o">+</span> <span class="n">scn_fac</span><span class="o">.</span><span class="n">z2</span>
@@ -1266,7 +1266,7 @@
 <div class="viewcode-block" id="screening_check">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.screening_check">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">screening_check</span><span class="p">(</span><span class="n">check_func</span><span class="o">=</span><span class="n">debye_huckel</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a decorator factory that wraps a screening function with</span>
+<span class="w">    </span><span class="sd">"""Create a decorator factory that wraps a screening function with</span>
 <span class="sd">    a check that determines whether that function can be skipped for a</span>
 <span class="sd">    given plasma state and screening pair.</span>
 
@@ -1275,15 +1275,15 @@
 <span class="sd">                      is less than the threshold, skip screen_func</span>
 <span class="sd">    :returns: a decorator for wrapping screening functions</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">screening_decorator</span><span class="p">(</span><span class="n">screen_func</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorate a screening function with a computation</span>
+<span class="w">        </span><span class="sd">"""Decorate a screening function with a computation</span>
 <span class="sd">        that determines whether the check is skippable.</span>
 
 <span class="sd">        :param screen_func: the screening function being wrapped</span>
 <span class="sd">        :returns: a wrapped screening function that performs this check</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="nd">@njit</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">screening_wrapper</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">):</span>
@@ -1298,18 +1298,18 @@
 
 <span class="c1"># A list of all different screening functions</span>
 <span class="n">SCREEN_METHODS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;screen5&quot;</span><span class="p">:</span> <span class="n">screen5</span><span class="p">,</span>
-    <span class="s2">&quot;chugunov_2007&quot;</span><span class="p">:</span> <span class="n">chugunov_2007</span><span class="p">,</span>
-    <span class="s2">&quot;chugunov_2009&quot;</span><span class="p">:</span> <span class="n">chugunov_2009</span><span class="p">,</span>
-    <span class="s2">&quot;potekhin_1998&quot;</span><span class="p">:</span> <span class="n">potekhin_1998</span><span class="p">,</span>
-    <span class="s2">&quot;debye_huckel&quot;</span><span class="p">:</span> <span class="n">debye_huckel</span>
+    <span class="s2">"screen5"</span><span class="p">:</span> <span class="n">screen5</span><span class="p">,</span>
+    <span class="s2">"chugunov_2007"</span><span class="p">:</span> <span class="n">chugunov_2007</span><span class="p">,</span>
+    <span class="s2">"chugunov_2009"</span><span class="p">:</span> <span class="n">chugunov_2009</span><span class="p">,</span>
+    <span class="s2">"potekhin_1998"</span><span class="p">:</span> <span class="n">potekhin_1998</span><span class="p">,</span>
+    <span class="s2">"debye_huckel"</span><span class="p">:</span> <span class="n">debye_huckel</span>
 <span class="p">}</span>
 
 
 <div class="viewcode-block" id="get_screening_func">
 <a class="viewcode-back" href="../../../pynucastro.screening.screen.html#pynucastro.screening.screen.get_screening_func">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_screening_func</span><span class="p">(</span><span class="n">screen_method</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the screening function by its name</span>
+<span class="w">    </span><span class="sd">"""Return the screening function by its name</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1319,7 +1319,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    Callable</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">screen_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -1328,8 +1328,8 @@
         <span class="k">return</span> <span class="n">SCREEN_METHODS</span><span class="p">[</span><span class="n">screen_method</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">screen_method</span><span class="si">}</span><span class="s2"> is not a valid screening method. &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;Choose from </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SCREEN_METHODS</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">screen_method</span><span class="si">}</span><span class="s2"> is not a valid screening method. "</span>
+            <span class="sa">f</span><span class="s2">"Choose from </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">SCREEN_METHODS</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
 
 </pre></div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BranchedRate &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>BranchedRate &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -669,9 +669,9 @@ nuclei, by breaking it into 2 sequences:</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
-                           <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;o17&quot;</span><span class="p">,</span> <span class="s2">&quot;f17&quot;</span><span class="p">],</span>
-                          <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;oda&quot;</span><span class="p">],</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
+                           <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"f17"</span><span class="p">],</span>
+                          <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">],</span>
                           <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -734,11 +734,11 @@ nuclei, by breaking it into 2 sequences:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
 </pre></div>
 </div>
 </div>
@@ -784,11 +784,11 @@ nuclei, by breaking it into 2 sequences:</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc12pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">)</span>
-<span class="n">rn14pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">)</span>
-<span class="n">rn15pa</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">)</span>
-<span class="n">rn15pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n15(p,g)o16&quot;</span><span class="p">)</span>
-<span class="n">ro16pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;o16(p,g)f17&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc12pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(p,g)n13"</span><span class="p">)</span>
+<span class="n">rn14pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n14(p,g)o15"</span><span class="p">)</span>
+<span class="n">rn15pa</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n15(p,a)c12"</span><span class="p">)</span>
+<span class="n">rn15pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n15(p,g)o16"</span><span class="p">)</span>
+<span class="n">ro16pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"o16(p,g)f17"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -799,8 +799,8 @@ nuclei, by breaking it into 2 sequences:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc12_2p_n14</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rc12pg</span><span class="p">,</span>
-                                <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)],</span>
-                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">):</span> <span class="mi">2</span><span class="p">})</span>
+                                <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)],</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -830,8 +830,8 @@ first rate, then we need to specify the stoichiometry.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14_2p_c12</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg</span><span class="p">,</span>
                                 <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
                                 <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
-                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
-                                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;N14(p,g)O15(,e+nu)N15(p,a)C12&quot;</span><span class="p">)</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,a)C12"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -891,8 +891,8 @@ def p_N14_to_He4_C12_branched(rate_eval, tf, log_scor=0.0):
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14_2p_o16</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg</span><span class="p">,</span>
                                 <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
                                 <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
-                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
-                                <span class="n">description</span><span class="o">=</span><span class="s2">&quot;N14(p,g)O15(,e+nu)N15(p,g)O16&quot;</span><span class="p">)</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,g)O16"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -915,9 +915,9 @@ def p_N14_to_He4_C12_branched(rate_eval, tf, log_scor=0.0):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ro16_2p_n14_a</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">ro16pg</span><span class="p">,</span>
-                                  <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">),</span>
-                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)],</span>
-                                  <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">):</span> <span class="mi">2</span><span class="p">})</span>
+                                  <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">),</span>
+                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
+                                  <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -1007,11 +1007,11 @@ def p_N14_to_He4_C12_branched(rate_eval, tf, log_scor=0.0):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp_reduced</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
-<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
-<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
-<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
-<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
 </pre></div>
 </div>
 </div>
@@ -1040,7 +1040,7 @@ def p_N14_to_He4_C12_branched(rate_eval, tf, log_scor=0.0):
 <p>We can see what the righthand side function looks like by writing it out and importing it</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_reduced</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;reduced.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_reduced</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"reduced.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1089,16 +1089,16 @@ def rhs_eq(t, Y, rho, T, screen_func):
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>    
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    
     <span class="n">idx</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$&quot;</span><span class="p">,</span>              
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">"X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 </pre></div>

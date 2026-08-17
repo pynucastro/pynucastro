@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.neutrino_cooling.neutrino_cooling &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.neutrino_cooling.neutrino_cooling &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.neutrino_cooling.neutrino_cooling</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for exploring thermal neutrinos.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Classes and methods for exploring thermal neutrinos."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -524,12 +524,12 @@
 <div class="viewcode-block" id="NeutrinoCooling">
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NeutrinoCooling</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to provide an interface to explore neutrino cooling.</span>
+<span class="w">    </span><span class="sd">"""A class to provide an interface to explore neutrino cooling.</span>
 <span class="sd">    This calls a specific implementation of the cooling that includes</span>
 <span class="sd">    contributions from pairs, plasma, recombination, bremsstrahlung,</span>
 <span class="sd">    and photoneutrinos.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neutrino_function</span><span class="o">=</span><span class="n">sneut5</span><span class="p">):</span>
 
@@ -539,7 +539,7 @@
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html#pynucastro.neutrino_cooling.neutrino_cooling.NeutrinoCooling.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span> <span class="n">rhomin</span><span class="o">=</span><span class="mf">1.e3</span><span class="p">,</span> <span class="n">rhomax</span><span class="o">=</span><span class="mf">1.e10</span><span class="p">,</span>
              <span class="n">abar</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">npts_temp</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">npts_rho</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the cooling term in as a function of density and</span>
+<span class="w">        </span><span class="sd">"""Plot the cooling term in as a function of density and</span>
 <span class="sd">        temperature given a fixed abar/zbar.</span>
 
 <span class="sd">        Parameters</span>
@@ -565,7 +565,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">),</span> <span class="n">npts_temp</span><span class="p">)</span>
         <span class="n">rhos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomax</span><span class="p">),</span> <span class="n">npts_rho</span><span class="p">)</span>
@@ -584,15 +584,15 @@
         <span class="n">extent</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomax</span><span class="p">),</span>
                   <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">))</span>
 
-        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span>
-                       <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">)</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">,</span>
+                       <span class="n">extent</span><span class="o">=</span><span class="n">extent</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">)</span>
         <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
         <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;$\log(\epsilon_{\nu, \mathrm</span><span class="si">{therm}</span><span class="s2">})$ [erg g$^{-1}$ s$^{-1}$]&quot;</span>
+            <span class="sa">r</span><span class="s2">"$\log(\epsilon_{\nu, \mathrm</span><span class="si">{therm}</span><span class="s2">})$ [erg g$^{-1}$ s$^{-1}$]"</span>
         <span class="p">)</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(T)$ [K]&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(\rho)$ [g/cm$^3$]&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log(T)$ [K]"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log(\rho)$ [g/cm$^3$]"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>

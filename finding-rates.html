@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finding Available Rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Finding Available Rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -657,7 +657,7 @@ can be used on any <code class="docutils literal notranslate"><span class="pre">
 <p>Here we get <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha, \gamma){}^{16}\mathrm{O}\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(a,g)o16&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(a,g)o16"</span><span class="p">)</span>
 <span class="n">c12ag</span>
 </pre></div>
 </div>
@@ -672,7 +672,7 @@ can be used on any <code class="docutils literal notranslate"><span class="pre">
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">c12ag</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">'Label'</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -693,7 +693,7 @@ provided by the <a class="reference internal" href="pynucastro.rates.alternate_r
 <p>For example, to find all the rates that involve <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni}\)</span> as a reactant, we can do:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ni56&quot;</span><span class="p">],</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">"ni56"</span><span class="p">],</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">new_lib</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rf</span><span class="p">)</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">new_lib</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()</span>
 </pre></div>
@@ -703,7 +703,7 @@ provided by the <a class="reference internal" href="pynucastro.rates.alternate_r
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rates</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">&#39;Label&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="si">:</span><span class="s2">24</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">source</span><span class="p">[</span><span class="s1">'Label'</span><span class="p">]</span><span class="si">:</span><span class="s2">10</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -771,7 +771,7 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 <span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:314,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">    </span><span class="mi">312</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
 <span class="g g-Whitespace">    </span><span class="mi">313</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">"Duplicate rates found"</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>
@@ -790,7 +790,7 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 <p>We can specify these nuclei by their abbreviations in the form, e.g. “he4”:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -852,7 +852,7 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12_exact_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;c12&#39;</span><span class="p">,</span> <span class="s1">&#39;c12&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12_exact_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s1">'c12'</span><span class="p">,</span> <span class="s1">'c12'</span><span class="p">])</span>
 <span class="n">c12_exact_library</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">c12_exact_filter</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">c12_exact_library</span><span class="p">)</span>
 </pre></div>
@@ -905,8 +905,8 @@ C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">()</span>
 
-<span class="n">capture</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;he4&#39;</span><span class="p">)</span>
-<span class="n">seed</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;c12&#39;</span><span class="p">)</span>
+<span class="n">capture</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">'he4'</span><span class="p">)</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">'c12'</span><span class="p">)</span>
 
 <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
     <span class="n">ac_filter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">capture</span><span class="p">,</span> <span class="n">seed</span><span class="p">],</span> <span class="n">max_products</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

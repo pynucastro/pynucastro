@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -620,9 +620,9 @@ source or tabulated vs. ReacLib).</p>
 <p>Let’s create a set of nuclei that can describe basic C burning</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span>
+          <span class="s2">"na23"</span><span class="p">,</span> <span class="s2">"mg23"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">,</span>
+          <span class="s2">"p"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -668,7 +668,7 @@ warning: Mg24 was not able to be linked in TabularWeakLibrary
 <span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:314,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">    </span><span class="mi">312</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
 <span class="g g-Whitespace">    </span><span class="mi">313</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">&quot;Duplicate rates found&quot;</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">"Duplicate rates found"</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>
@@ -694,19 +694,19 @@ warning: Mg24 was not able to be linked in TabularWeakLibrary
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">()):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dupe </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   rate 1: </span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   rate 2: </span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dupe </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   rate 1: </span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"   rate 2: </span><span class="si">{</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dupe 0:
-   rate 1: n ⟶ p + e⁻ + 𝜈 (&lt;class &#39;pynucastro.rates.reaclib_rate.ReacLibRate&#39;&gt;)
-   rate 2: n ⟶ p + e⁻ + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularWeakRate&#39;&gt;)
+   rate 1: n ⟶ p + e⁻ + 𝜈 (&lt;class 'pynucastro.rates.reaclib_rate.ReacLibRate'&gt;)
+   rate 2: n ⟶ p + e⁻ + 𝜈 (&lt;class 'pynucastro.rates.tabular_rate.TabularWeakRate'&gt;)
 dupe 1:
-   rate 1: Mg23 ⟶ Na23 + e⁺ + 𝜈 (&lt;class &#39;pynucastro.rates.reaclib_rate.ReacLibRate&#39;&gt;)
-   rate 2: Mg23 + e⁻ ⟶ Na23 + 𝜈 (&lt;class &#39;pynucastro.rates.tabular_rate.TabularWeakRate&#39;&gt;)
+   rate 1: Mg23 ⟶ Na23 + e⁺ + 𝜈 (&lt;class 'pynucastro.rates.reaclib_rate.ReacLibRate'&gt;)
+   rate 2: Mg23 + e⁻ ⟶ Na23 + 𝜈 (&lt;class 'pynucastro.rates.tabular_rate.TabularWeakRate'&gt;)
 </pre></div>
 </div>
 </div>

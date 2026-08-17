@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>hot-CNO and breakout &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>hot-CNO and breakout &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,12 +632,12 @@
 <p>We’ll get all the rates linking the core nuclei in CNO and the various hot-CNO cycles, but we’ll explicitly remove <span class="math notranslate nohighlight">\(3\)</span>-<span class="math notranslate nohighlight">\(\alpha\)</span>, since it is not strong at the temperatures where CNO operates.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">linking_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">linking_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+                  <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span>
+                  <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
+                  <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,]</span>
 <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">linking_nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">r3a</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;he4(aa,g)c12&quot;</span><span class="p">)</span>
+<span class="n">r3a</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he4(aa,g)c12"</span><span class="p">)</span>
 <span class="n">lib</span><span class="o">.</span><span class="n">remove_rate</span><span class="p">(</span><span class="n">r3a</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -728,8 +728,8 @@ across the other nuclei.</p>
 <p>We can look at the temperature where we cross from CNO to hot-CNO by looking at the rates involving <span class="math notranslate nohighlight">\({}^{13}\mathrm{N}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r1</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">)</span>
-<span class="n">r2</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n13(,)c13&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r1</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n13(p,g)o14"</span><span class="p">)</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n13(,)c13"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -756,16 +756,16 @@ across the other nuclei.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rate_p_capture</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r1</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rate_beta_decay</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r2</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rate_p_capture</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r1</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rate_beta_decay</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r2</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A \langle\sigma v\rangle$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$N_A \langle\sigma v\rangle$"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;$N_A \\langle\\sigma v\\rangle$&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, '$N_A \\langle\\sigma v\\rangle$')
 </pre></div>
 </div>
 <img alt="../_images/85d895177f74bbd6ccc228e22973d240cfcddc5795f0582b3d504230948f9977.png" src="../_images/85d895177f74bbd6ccc228e22973d240cfcddc5795f0582b3d504230948f9977.png" />

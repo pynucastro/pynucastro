@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE Examples &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>NSE Examples &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -620,7 +620,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">'ignore'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -630,16 +630,16 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 
-<span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;f17&quot;</span><span class="p">,</span> 
-              <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;cl35&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;ar36&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;ca40&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;ti44&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;cr48&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;fe52&quot;</span><span class="p">,</span><span class="s2">&quot;co55&quot;</span><span class="p">,</span><span class="s2">&quot;ni56&quot;</span><span class="p">]</span>
+<span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+              <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span>
+              <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"f17"</span><span class="p">,</span> 
+              <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span>
+              <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"al27"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span>
+              <span class="s2">"p31"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">,</span> <span class="s2">"cl35"</span><span class="p">,</span>
+              <span class="s2">"ar36"</span><span class="p">,</span> <span class="s2">"k39"</span><span class="p">,</span> <span class="s2">"ca40"</span><span class="p">,</span>
+              <span class="s2">"sc43"</span><span class="p">,</span> <span class="s2">"ti44"</span><span class="p">,</span> <span class="s2">"v47"</span><span class="p">,</span>
+              <span class="s2">"cr48"</span><span class="p">,</span> <span class="s2">"mn51"</span><span class="p">,</span>
+              <span class="s2">"fe52"</span><span class="p">,</span><span class="s2">"co55"</span><span class="p">,</span><span class="s2">"ni56"</span><span class="p">]</span>
 
 <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">)</span>
 </pre></div>
@@ -667,7 +667,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/88ff5d74d87f0d7220f2fde02308a6a5217aaa0985a4f6f4ec3426583de00370.png" src="_images/88ff5d74d87f0d7220f2fde02308a6a5217aaa0985a4f6f4ec3426583de00370.png" />
+<img alt="_images/9d0f2acc2a685f09f041374998334026112e31e68441898f6bf67ec405af310d.png" src="_images/9d0f2acc2a685f09f041374998334026112e31e68441898f6bf67ec405af310d.png" />
 </div>
 </div>
 <div class="admonition tip">
@@ -679,7 +679,7 @@ To pass in the initial guess, set <code class="docutils literal notranslate"><sp
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -715,7 +715,7 @@ Ni56   :     0.018915105
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"The chemical potential for proton and neutron are </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">sol</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.7f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -762,13 +762,13 @@ Ni56   :     0.018915105
     <span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X_s</span><span class="p">[:,</span> <span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.1</span> <span class="k">else</span> <span class="mi">1</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">X_s</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Temp $[\times 10^9 K]$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mass Fraction&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'Temp $[\times 10^9 K]$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Mass Fraction'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="n">low_limit</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$Y_e = </span><span class="si">{</span><span class="n">ye</span><span class="si">}</span><span class="s2">$, $\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"$Y_e = </span><span class="si">{</span><span class="n">ye</span><span class="si">}</span><span class="s2">$, $\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -819,13 +819,13 @@ Ni56   :     0.018915105
     <span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X_s_1</span><span class="p">[:,</span> <span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">0.2</span> <span class="k">else</span> <span class="mi">1</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ye_s</span><span class="p">,</span> <span class="n">X_s_1</span><span class="p">[:,</span> <span class="n">k</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc_names</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$Y_e$&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Mass Fraction&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"best"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">'$Y_e$'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Mass Fraction'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;$\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$ and $T=</span><span class="si">{</span><span class="n">temp</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"$\rho = </span><span class="si">{</span><span class="n">rho</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$ and $T=</span><span class="si">{</span><span class="n">temp</span><span class="si">:</span><span class="s2">6.3g</span><span class="si">}</span><span class="s2">$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

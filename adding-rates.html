@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Adding Rates from the Literature &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Adding Rates from the Literature &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -629,10 +629,10 @@ process <span class="math notranslate nohighlight">\(A(B,\gamma)C\)</span> would
 
    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-       <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
-       <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>
+       <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">]</span>
+       <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"C"</span><span class="p">]</span>
 
-       <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;newrate&quot;</span>
+       <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">"newrate"</span>
 
        <span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
        <span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">([</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">,</span> <span class="n">a5</span><span class="p">,</span> <span class="n">a6</span><span class="p">],</span>
@@ -641,7 +641,7 @@ process <span class="math notranslate nohighlight">\(A(B,\gamma)C\)</span> would
        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span>
                         <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
                         <span class="n">sets</span><span class="o">=</span><span class="n">sets</span><span class="p">,</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;newrate&quot;</span><span class="p">)</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"newrate"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Where <code class="docutils literal notranslate"><span class="pre">sets</span></code> can contain as many <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> objects as needed to
@@ -661,10 +661,10 @@ subclass <a class="reference internal" href="pynucastro.rates.temperature_tabula
 
    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-       <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]</span>
-       <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>
+       <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">]</span>
+       <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"C"</span><span class="p">]</span>
 
-       <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;newrate&quot;</span>
+       <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">"newrate"</span>
 
        <span class="n">T9</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
        <span class="n">rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.e-20</span><span class="p">,</span> <span class="mf">1.e-15</span><span class="p">,</span> <span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-5</span><span class="p">])</span>
@@ -672,7 +672,7 @@ subclass <a class="reference internal" href="pynucastro.rates.temperature_tabula
        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate</span><span class="p">),</span>
                         <span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span>
                         <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;newrate&quot;</span><span class="p">)</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">"newrate"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where the rate data is provided in the NumPy arrays <code class="docutils literal notranslate"><span class="pre">T9</span></code> and <code class="docutils literal notranslate"><span class="pre">rate</span></code>.</p>

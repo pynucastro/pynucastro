@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.spin_table &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.nucdata.spin_table &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.nucdata.spin_table</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for dealing with nuclear spin data.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Classes and methods for dealing with nuclear spin data."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
@@ -521,7 +521,7 @@
 <div class="viewcode-block" id="SpinTable">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SpinTable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage the nuclear spin data in a dictionary data structure</span>
+<span class="w">    </span><span class="sd">"""Manage the nuclear spin data in a dictionary data structure</span>
 <span class="sd">    that maps nuclides to their number of nuclear spin states.</span>
 <span class="sd">    Therefore, after setting an SpinTable class in rates.py, we can</span>
 <span class="sd">    retrieve the spin states for a designated Nucleus class.</span>
@@ -530,7 +530,7 @@
 <span class="sd">    tables, excluding the nuclei where only intervals are given and</span>
 <span class="sd">    the values measured by strong experimental arguments.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datafile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
@@ -541,14 +541,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">&#39;spins2020.txt&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">&#39;AtomicMassEvaluation&#39;</span><span class="o">/</span><span class="n">datafile_name</span>
+            <span class="n">datafile_name</span> <span class="o">=</span> <span class="s1">'spins2020.txt'</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">'AtomicMassEvaluation'</span><span class="o">/</span><span class="n">datafile_name</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_table</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">datafile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">4</span><span class="p">:]:</span>
 
@@ -556,12 +556,12 @@
                 <span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">spin_states</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">A</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">spin_states</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_states</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">A</span><span class="p">,</span> <span class="n">Z</span><span class="p">]</span> <span class="o">=</span> <span class="n">experimental</span> <span class="o">==</span> <span class="s1">'s'</span>
 
 <div class="viewcode-block" id="SpinTable.get_spin_reliability">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_reliability">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_spin_reliability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the spin for a nucleus is reliable.</span>
+<span class="w">        </span><span class="sd">"""Return whether the spin for a nucleus is reliable.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -574,18 +574,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reliability_table</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
 
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
 
 
 <div class="viewcode-block" id="SpinTable.get_spin_states">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable.get_spin_states">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_spin_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the spin for a nucleus.</span>
+<span class="w">        </span><span class="sd">"""Return the spin for a nucleus.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -598,11 +598,11 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spin_states</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nuclear spin data for A=</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2"> and Z=</span><span class="si">{</span><span class="n">z</span><span class="si">}</span><span class="s2"> not available"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
 </div>
 
 </pre></div>

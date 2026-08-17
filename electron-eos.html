@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>The Electron-Positron EOS &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>The Electron-Positron EOS &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -663,7 +663,7 @@
 of electrons (assuming full ionization) via <span class="math notranslate nohighlight">\(Y_e\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">([</span><span class="s2">"he4"</span><span class="p">])</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -699,21 +699,21 @@ some interpolation to smooth it.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">eta</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">eta</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
                <span class="n">norm</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="n">linthresh</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">eta</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">eta</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
                <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
                        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">max</span><span class="p">())],</span>
-               <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span>
-               <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdBu&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\rho)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(T)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\eta$&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+               <span class="n">interpolation</span><span class="o">=</span><span class="s2">"bilinear"</span><span class="p">,</span>
+               <span class="n">cmap</span><span class="o">=</span><span class="s2">"RdBu"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(\rho)$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(T)$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\eta$"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7faf8cb652b0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fd81c1a1400&gt;
 </pre></div>
 </div>
 <img alt="_images/51acef696ef69c0a0a54196aa27a415b43f54b9a201a53f822c1a06acd65e934.png" src="_images/51acef696ef69c0a0a54196aa27a415b43f54b9a201a53f822c1a06acd65e934.png" />
@@ -742,20 +742,20 @@ while at high densities and low temperatures, we are very degenerate (<span clas
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
                <span class="n">norm</span><span class="o">=</span><span class="n">colors</span><span class="o">.</span><span class="n">SymLogNorm</span><span class="p">(</span><span class="n">linthresh</span><span class="o">=</span><span class="mf">1.e-5</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mf">1.e-50</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
                <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhos</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
                        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Ts</span><span class="o">.</span><span class="n">max</span><span class="p">())],</span>
-               <span class="n">interpolation</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(\rho)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(T)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$n^+ / (n^- + n^+)$&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;horizontal&quot;</span><span class="p">)</span>
+               <span class="n">interpolation</span><span class="o">=</span><span class="s2">"bilinear"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(\rho)$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(T)$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$n^+ / (n^- + n^+)$"</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s2">"horizontal"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7faf8c8ca120&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.colorbar.Colorbar at 0x7fd819f32270&gt;
 </pre></div>
 </div>
 <img alt="_images/5d88061d3e5305b4dc2fcd38f5d96d1bcb11d1d090460d279381d46504a2f3f5.png" src="_images/5d88061d3e5305b4dc2fcd38f5d96d1bcb11d1d090460d279381d46504a2f3f5.png" />

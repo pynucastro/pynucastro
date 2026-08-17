@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Nuclear Properties &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Nuclear Properties &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,7 +632,7 @@ mass are provided in <code class="docutils literal notranslate"><span class="pre
 <p>The <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> class manages all of the properties of a nucleus.  We create a <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> simply by giving the name of the isotope</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">he4</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -641,9 +641,9 @@ mass are provided in <code class="docutils literal notranslate"><span class="pre
 <p class="admonition-title">Tip</p>
 <p>Nuclei names are case-insensitive and the atomic weight can come before or after the element name.
 All of these are equivalent:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">)</span>
-<span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Ni56&quot;</span><span class="p">)</span>
-<span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;56ni&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ni56"</span><span class="p">)</span>
+<span class="n">Nucleus</span><span class="p">(</span><span class="s2">"Ni56"</span><span class="p">)</span>
+<span class="n">Nucleus</span><span class="p">(</span><span class="s2">"56ni"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -682,7 +682,7 @@ All of these are equivalent:</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ni56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ni56&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ni56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ni56"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -752,8 +752,8 @@ be used to get a list of nuclei in a range based on <span class="math notranslat
 <p>We can also create a <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> via addition and subtraction operations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c12</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
 <span class="n">n13</span> <span class="o">=</span> <span class="n">c12</span> <span class="o">+</span> <span class="n">p</span>
 <span class="n">n13</span>
 </pre></div>
@@ -795,12 +795,12 @@ be used to get a list of nuclei in a range based on <span class="math notranslat
 <p>Let’s look at some nuclei and look at their mass excess, mass, and binding energies</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span>
-<span class="n">n</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
-<span class="n">c12</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)</span>
-<span class="n">ne22</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne22&quot;</span><span class="p">)</span>
-<span class="n">ti43</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ti43&quot;</span><span class="p">)</span>
-<span class="n">fe56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)</span>
+<span class="n">c12</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)</span>
+<span class="n">ne22</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ne22"</span><span class="p">)</span>
+<span class="n">ti43</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ti43"</span><span class="p">)</span>
+<span class="n">fe56</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe56"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -808,7 +808,7 @@ be used to get a list of nuclei in a range based on <span class="math notranslat
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="p">[</span><span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c12</span><span class="p">,</span> <span class="n">ne22</span><span class="p">,</span> <span class="n">ti43</span><span class="p">,</span> <span class="n">fe56</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">dm</span><span class="si">:</span><span class="s2">15.8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">mass</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span><span class="si">:</span><span class="s2">6</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">dm</span><span class="si">:</span><span class="s2">15.8</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">mass</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">nucbind</span><span class="si">:</span><span class="s2">15.8f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -854,11 +854,11 @@ Fe56         -60.60716  52103.06257552      8.79035626
 <p>Let’s look at a less common nucleus. From Nubase 2020 data, the spin for <span class="math notranslate nohighlight">\({}^{61}\mathrm{Fe}\)</span> is determined experimentally but the argument to determine it was judged to be weak. We are able to choose whether to use these unreliable spin data or omit them.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe61</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe61&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe61</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe61"</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">fe61</span><span class="o">.</span><span class="n">spin_reliable</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states"</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states (not strongly experimentally substantiated. Consider dropping </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2"> from your network.)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fe61</span><span class="o">.</span><span class="n">spin_states</span><span class="si">}</span><span class="s2"> spin states (not strongly experimentally substantiated. Consider dropping </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">fe61</span><span class="p">)</span><span class="si">}</span><span class="s2"> from your network.)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -879,7 +879,7 @@ Fe56         -60.60716  52103.06257552      8.79035626
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ne20</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ne20</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ne20"</span><span class="p">)</span>
 <span class="n">exp</span><span class="p">(</span><span class="n">ne20</span><span class="o">.</span><span class="n">partition_function</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="mf">4.e9</span><span class="p">))</span>
 </pre></div>
 </div>

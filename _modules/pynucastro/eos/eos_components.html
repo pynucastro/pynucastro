@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.eos_components &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.eos.eos_components &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.eos.eos_components</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for a full stellar equation of state (ions +</span>
+<span></span><span class="sd">"""Classes and methods for a full stellar equation of state (ions +</span>
 <span class="sd">electrons + radiation)</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -528,11 +528,11 @@
 <div class="viewcode-block" id="EOSComponentState">
 <a class="viewcode-back" href="../../../pynucastro.eos.eos_components.html#pynucastro.eos.eos_components.EOSComponentState">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EOSComponentState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A container to hold a thermodynamic state for a single</span>
+<span class="w">    </span><span class="sd">"""A container to hold a thermodynamic state for a single</span>
 <span class="sd">    component of a full stellar plasma (i.e., ions, electrons, or</span>
 <span class="sd">    radiation) that depends on density, temperature, and composition</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">eta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -561,7 +561,7 @@
 <div class="viewcode-block" id="IdealGasEOS">
 <a class="viewcode-back" href="../../../pynucastro.eos.eos_components.html#pynucastro.eos.eos_components.IdealGasEOS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IdealGasEOS</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An ideal gas equation of state for ions (and optionally</span>
+<span class="w">    </span><span class="sd">"""An ideal gas equation of state for ions (and optionally</span>
 <span class="sd">    electrons).</span>
 
 <span class="sd">    Parameters</span>
@@ -570,7 +570,7 @@
 <span class="sd">        do we include electrons together with the ions, assuming</span>
 <span class="sd">        full ionization?</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_electrons</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_electrons</span> <span class="o">=</span> <span class="n">include_electrons</span>
@@ -578,7 +578,7 @@
 <div class="viewcode-block" id="IdealGasEOS.pe_state">
 <a class="viewcode-back" href="../../../pynucastro.eos.eos_components.html#pynucastro.eos.eos_components.IdealGasEOS.pe_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="w">        </span><span class="sd">"""Find the pressure and energy given density, temperature,</span>
 <span class="sd">        and composition</span>
 
 <span class="sd">        Parameters</span>
@@ -594,7 +594,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        EOSComponentState</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">abar</span>
@@ -629,7 +629,7 @@
 <div class="viewcode-block" id="RadiationEOS">
 <a class="viewcode-back" href="../../../pynucastro.eos.eos_components.html#pynucastro.eos.eos_components.RadiationEOS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RadiationEOS</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A blackbody radiation equation of state&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A blackbody radiation equation of state"""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -637,7 +637,7 @@
 <div class="viewcode-block" id="RadiationEOS.pe_state">
 <a class="viewcode-back" href="../../../pynucastro.eos.eos_components.html#pynucastro.eos.eos_components.RadiationEOS.pe_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="w">        </span><span class="sd">"""Find the pressure and energy given density, temperature,</span>
 <span class="sd">        and composition</span>
 
 <span class="sd">        Parameters</span>
@@ -653,7 +653,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        EOSComponentState</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># composition is not used</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">comp</span>

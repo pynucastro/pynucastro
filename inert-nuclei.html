@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Inert Nuclei &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Inert Nuclei &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -613,7 +613,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">three_alpha</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;a(aa,g)c12&quot;</span><span class="p">)</span>
+<span class="n">three_alpha</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"a(aa,g)c12"</span><span class="p">)</span>
 <span class="n">lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">three_alpha</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -623,7 +623,7 @@
 We’ll use <span class="math notranslate nohighlight">\({}^{56}\mathrm{Fe}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">,</span> <span class="n">inert_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fe56&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">lib</span><span class="p">,</span> <span class="n">inert_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">"fe56"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -664,7 +664,7 @@ We’ll use <span class="math notranslate nohighlight">\({}^{56}\mathrm{Fe}\)</s
 <p>We can look at the evolution equation for iron</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ydot</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe56&quot;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ydot</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe56"</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">ydot</span><span class="p">)</span>
 </pre></div>
 </div>

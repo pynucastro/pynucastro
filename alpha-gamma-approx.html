@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -630,7 +630,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">mylib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">])</span>
+<span class="n">mylib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"al27"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"p31"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">])</span>
 <span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mylib</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -648,7 +648,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;full_net.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"full_net.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -680,7 +680,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -692,7 +692,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">full_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
@@ -703,7 +703,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/5d8483a09930359e97c4192a18d3dc139fb1f91e09f206d67d6f4f2ef43dd5ba.png" src="_images/5d8483a09930359e97c4192a18d3dc139fb1f91e09f206d67d6f4f2ef43dd5ba.png" />
+<img alt="_images/8d14e2337f3239651a73752f185d0905ae0cce8107fc1d7b7ded58b77ea3638d.png" src="_images/8d14e2337f3239651a73752f185d0905ae0cce8107fc1d7b7ded58b77ea3638d.png" />
 </div>
 </div>
 </section>
@@ -761,7 +761,7 @@ S32 ⟶ Si28 + He4
 won’t explicitly appear as one of the nuclei in the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">"al27"</span><span class="p">,</span> <span class="s2">"p31"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -829,7 +829,7 @@ S32
 <p>As we see above, the nuclei <span class="math notranslate nohighlight">\({}^{27}\mathrm{Al}\)</span> and <span class="math notranslate nohighlight">\({}^{31}\mathrm{P}\)</span> no longer appear in the network, but  the links to them are still understood to the network.  This reduces the size of the network, while still preserving those flows.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;approx_net.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"approx_net.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -844,7 +844,7 @@ S32
 <p>The <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> knows how to write out the code needed to evaluate the rate approximation.  For instance, the evolution of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> is determined as:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -860,7 +860,7 @@ S32
 <p>And the rate approximations are computed as:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s2">&quot;mg24_he4_to_si28_approx&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">get_rate</span><span class="p">(</span><span class="s2">"mg24_he4_to_si28_approx"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
 </pre></div>
 </div>
@@ -901,7 +901,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
-<span class="n">approx_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+<span class="n">approx_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -913,7 +913,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">approx_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">approx_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">approx_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">approx_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">)</span>
@@ -937,12 +937,12 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">approx_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">approx_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>              
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -953,7 +953,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d290ec3aeb57ed2be1a2ee71501ec25733b5932822c4873e33ed42e67e558434.png" src="_images/d290ec3aeb57ed2be1a2ee71501ec25733b5932822c4873e33ed42e67e558434.png" />
+<img alt="_images/8d357510784f699d402ab7ccad059ad24f9a70e471397ae7f66ba8ac2e93ff21.png" src="_images/8d357510784f699d402ab7ccad059ad24f9a70e471397ae7f66ba8ac2e93ff21.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -963,7 +963,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <p>What if we just create a 4 nuclei network without the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> links?  How does this compare?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newlib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newlib</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">])</span>
 <span class="n">newpynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">newlib</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">newpynet</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -975,7 +975,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;simple_net.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"simple_net.py"</span><span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">simple_net</span>
 </pre></div>
 </div>
@@ -1010,7 +1010,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e-3</span>
-<span class="n">simple_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">simple_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+<span class="n">simple_sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">simple_net</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                        <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1023,16 +1023,16 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">approx_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">approx_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">approx_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">full_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>              
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">full_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">idx</span> <span class="o">=</span> <span class="n">simple_net</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">approx_net</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">simple_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">simple_sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">simple_net</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -1043,7 +1043,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/123d884b90c23bac6e3cf05bcb628f25660f8fa5159035f264493b2e16303379.png" src="_images/123d884b90c23bac6e3cf05bcb628f25660f8fa5159035f264493b2e16303379.png" />
+<img alt="_images/de185ff12644ea6e585080076bd525148fc687be84a19b24403527d878558673.png" src="_images/de185ff12644ea6e585080076bd525148fc687be84a19b24403527d878558673.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>

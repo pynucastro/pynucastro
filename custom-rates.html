@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -634,7 +634,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n14(p,g)o15"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -672,7 +672,7 @@
                  <span class="n">r0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
         <span class="c1"># we set the chapter to custom so the network knows how to deal with it</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="s2">"custom"</span>
     
         <span class="c1"># call the Rate init to do the remaining initialization</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">)</span>
@@ -682,24 +682,24 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">nu</span> <span class="o">=</span> <span class="n">nu</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;return a string containing a python function that computes</span>
-<span class="sd">        the rate&quot;&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.e9 / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="si">}</span><span class="s2"> )**(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="sd">"""return a string containing a python function that computes</span>
+<span class="sd">        the rate"""</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.e9 / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="si">}</span><span class="s2"> )**(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstring</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
              <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rate along with screening correction.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Evaluate the rate along with screening correction."""</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r0</span> <span class="o">*</span> <span class="p">(</span><span class="n">T</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="p">)</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span>
         
         <span class="n">scor</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when applying electron screening.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rho (density) and comp (Composition) needs to be defined when applying electron screening."</span><span class="p">)</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
             <span class="n">scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">*=</span> <span class="n">scor</span>
@@ -711,8 +711,8 @@
 <p>Now we can create our custom rate</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_custom</span> <span class="o">=</span> <span class="n">MyRate</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)],</span>
-                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o15&quot;</span><span class="p">)],</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_custom</span> <span class="o">=</span> <span class="n">MyRate</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
+                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o15"</span><span class="p">)],</span>
                   <span class="n">r0</span><span class="o">=</span><span class="n">r0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="n">T0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -725,7 +725,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;N14_p_to_O15_generic&#39;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>'N14_p_to_O15_generic'
 </pre></div>
 </div>
 </div>
@@ -750,13 +750,13 @@ def N14_p_to_O15_generic(rate_eval, tf):
 <p>Now let’s create a network that includes this rate.  We’ll base it off of the CNO net, but we’ll leave out the rate that we are approximating.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12(p,g)n13"</span><span class="p">,</span>
+              <span class="s2">"c13(p,g)n14"</span><span class="p">,</span>
+              <span class="s2">"n13(,)c13"</span><span class="p">,</span>
+              <span class="s2">"n13(p,g)o14"</span><span class="p">,</span>
+              <span class="s2">"n15(p,a)c12"</span><span class="p">,</span>
+              <span class="s2">"o14(,)n14"</span><span class="p">,</span>
+              <span class="s2">"o15(,)n15"</span><span class="p">]</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -837,7 +837,7 @@ when writing out the network (via <a class="reference internal" href="pynucastro
 is included.  For example, for the protons:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pynet</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>

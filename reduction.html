@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Network Reduction &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Network Reduction &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -614,7 +614,7 @@
 <p>Let’s combine the entire ReacLib library with the tabulated rates, and eliminate any duplicates (by keeping the tabulated weak rate over the ReacLib version).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span> <span class="o">+</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;oda&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span> <span class="o">+</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"langanke"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">])</span>
 <span class="n">all_lib</span><span class="o">.</span><span class="n">eliminate_duplicates</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -623,7 +623,7 @@
 <p>Now we can create our <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.RateFilter" title="pynucastro.rates.library.RateFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateFilter</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;zn60&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"zn60"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -690,8 +690,8 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o15&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o15"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -715,14 +715,14 @@
 <p>Next we create a list of target nuclei that we care about.  This can be a list of names or <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects.  If you definitely want a nucleus in your network, then you should include it here.  We’ll add (hot-)CNO, some rp-breakout, and a basic alpha chain.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;o17&quot;</span><span class="p">,</span> <span class="s2">&quot;o18&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;f18&quot;</span><span class="p">,</span> <span class="s2">&quot;f19&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;ne18&quot;</span><span class="p">,</span> <span class="s2">&quot;ne19&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;na22&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span> <span class="s2">&quot;ar36&quot;</span><span class="p">,</span> <span class="s2">&quot;ca40&quot;</span><span class="p">,</span> <span class="s2">&quot;ti44&quot;</span><span class="p">,</span> <span class="s2">&quot;cr48&quot;</span><span class="p">,</span> <span class="s2">&quot;fe52&quot;</span><span class="p">,</span> <span class="s2">&quot;ni56&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+           <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
+           <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span>
+           <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"o18"</span><span class="p">,</span>
+           <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"f19"</span><span class="p">,</span>
+           <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"ne19"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span>
+           <span class="s2">"na22"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span>
+           <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">,</span> <span class="s2">"ar36"</span><span class="p">,</span> <span class="s2">"ca40"</span><span class="p">,</span> <span class="s2">"ti44"</span><span class="p">,</span> <span class="s2">"cr48"</span><span class="p">,</span> <span class="s2">"fe52"</span><span class="p">,</span> <span class="s2">"ni56"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -780,7 +780,7 @@ It will return a new network (of the same class) by default.</p>
 <p>We see that we reduced the size of the network from &gt; 600 to &lt; 60 nuclei.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">reduced_net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">node_size</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="s2">&quot;9&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">reduced_net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">node_size</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="s2">"9"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
                        <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.electron_eos &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.eos.electron_eos &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.eos.electron_eos</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for managing an electron / positron equation of</span>
+<span></span><span class="sd">"""Classes and methods for managing an electron / positron equation of</span>
 <span class="sd">state.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -532,7 +532,7 @@
 <div class="viewcode-block" id="ElectronEOS">
 <a class="viewcode-back" href="../../../pynucastro.eos.electron_eos.html#pynucastro.eos.electron_eos.ElectronEOS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ElectronEOS</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An electron/positron EOS that works for arbitrary degeneracy or</span>
+<span class="w">    </span><span class="sd">"""An electron/positron EOS that works for arbitrary degeneracy or</span>
 <span class="sd">    relativity.  This works by performing the Fermi-Dirac integrals</span>
 <span class="sd">    directly.  This assumes complete ionization.</span>
 
@@ -541,7 +541,7 @@
 <span class="sd">    include_positrons : bool</span>
 <span class="sd">        consider both positrons and electrons.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_positrons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span> <span class="o">=</span> <span class="n">include_positrons</span>
@@ -551,7 +551,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">compute_derivs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">eta_guess_min</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">eta_guess_max</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="w">        </span><span class="sd">"""Find the pressure and energy given density, temperature,</span>
 <span class="sd">        and composition</span>
 
 <span class="sd">        Parameters</span>
@@ -576,7 +576,7 @@
 <span class="sd">        positron_state : EOSComponentState</span>
 <span class="sd">            The thermodynamics of the positrons</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># compute the number density of electrons</span>
         <span class="n">zbar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">zbar</span>
@@ -747,7 +747,7 @@
             <span class="n">dEe_dT</span> <span class="o">=</span> <span class="n">dEe_deta</span> <span class="o">*</span> <span class="n">deta_dT</span> <span class="o">+</span> <span class="n">dEe_dbeta</span> <span class="o">*</span> <span class="n">dbeta_dT</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
-                <span class="c1"># these don&#39;t include the 2 m_e c**2 n_p part</span>
+                <span class="c1"># these don't include the 2 m_e c**2 n_p part</span>
                 <span class="n">dEp_deta</span> <span class="o">=</span> <span class="o">-</span><span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta52</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_deta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_deta</span><span class="p">)</span>
                 <span class="n">dEp_dbeta</span> <span class="o">=</span> <span class="n">ecoeff</span> <span class="o">*</span> <span class="n">beta12</span> <span class="o">*</span> <span class="p">(</span><span class="n">beta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">f32_pos</span><span class="o">.</span><span class="n">F</span> <span class="o">+</span> <span class="mf">3.5</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">F</span><span class="p">)</span> <span class="o">+</span>
                                                <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">f32_pos</span><span class="o">.</span><span class="n">dF_dbeta</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">f52_pos</span><span class="o">.</span><span class="n">dF_dbeta</span><span class="p">)</span> <span class="o">+</span>

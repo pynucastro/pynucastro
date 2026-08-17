@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.reduction.drgep_module &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.reduction.drgep_module</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for implementing DRGEP reduction.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Classes and methods for implementing DRGEP reduction."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -527,7 +527,7 @@
 <div class="viewcode-block" id="to_list">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.to_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">to_list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a sequence or non-iterable to a list. In the</span>
+<span class="w">    </span><span class="sd">"""Convert a sequence or non-iterable to a list. In the</span>
 <span class="sd">    non-iterable case, the supplied object will be repeated *n* times</span>
 <span class="sd">    (default 1).</span>
 
@@ -542,7 +542,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -554,7 +554,7 @@
 <div class="viewcode-block" id="calc_interaction_matrix">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.calc_interaction_matrix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_interaction_matrix</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">rvals</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate direct interaction coefficients.  This returns an N x N</span>
+<span class="w">    </span><span class="sd">"""Calculate direct interaction coefficients.  This returns an N x N</span>
 <span class="sd">    matrix, where N is the number of nuclei in ``net``.</span>
 
 <span class="sd">    Parameters</span>
@@ -571,7 +571,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">N_species</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
 
@@ -622,7 +622,7 @@
 <div class="viewcode-block" id="get_adj_nuc">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.get_adj_nuc">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_adj_nuc</span><span class="p">(</span><span class="n">net</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get set of adjacent nuclei for each nucleus in the net.</span>
+<span class="w">    </span><span class="sd">"""Get set of adjacent nuclei for each nucleus in the net.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -633,7 +633,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    dict(Nucleus)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">adj_nuc</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -655,7 +655,7 @@
 <div class="viewcode-block" id="drgep_dijkstras">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep_dijkstras">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">drgep_dijkstras</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">r_AB</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">adj_nuc</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement modified Dijkstra&#39;s algorithm to find paths that</span>
+<span class="w">    </span><span class="sd">"""Implement modified Dijkstra's algorithm to find paths that</span>
 <span class="sd">    maximize the overall interaction coefficient between the target</span>
 <span class="sd">    and each other nucleus in the net.</span>
 
@@ -675,7 +675,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    numpy.ndarray</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Number of species</span>
     <span class="n">nspec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
@@ -683,7 +683,7 @@
     <span class="c1"># Create data structures</span>
     <span class="n">j_map</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">'inf'</span><span class="p">)</span>
 
     <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nspec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">R_TB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nspec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -780,8 +780,8 @@
 <div class="viewcode-block" id="drgep">
 <a class="viewcode-back" href="../../../pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">drgep</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply the Directed Relation Graph with Error Propagation</span>
+          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">returnobj</span><span class="o">=</span><span class="s1">'net'</span><span class="p">,</span> <span class="n">use_mpi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Apply the Directed Relation Graph with Error Propagation</span>
 <span class="sd">    (DRGEP) reduction method to a network.  This implementation is</span>
 <span class="sd">    based on the description in :cite:t:`pepiot-desjardins:2008` and</span>
 <span class="sd">    :cite:t:`niemeyer:2011`.</span>
@@ -809,12 +809,12 @@
 <span class="sd">    returnobj : str</span>
 <span class="sd">        The type of object to return.  Valid options are:</span>
 
-<span class="sd">        * &#39;net&#39; : a reduced network (default)</span>
+<span class="sd">        * 'net' : a reduced network (default)</span>
 
-<span class="sd">        * &#39;nuclei&#39; : unique nuclei with nonzero interaction coefficients,</span>
+<span class="sd">        * 'nuclei' : unique nuclei with nonzero interaction coefficients,</span>
 <span class="sd">          ordered so the interaction coefficients are descending</span>
 
-<span class="sd">        * &#39;coeff&#39; : the interaction coefficients as a numpy.ndarray,</span>
+<span class="sd">        * 'coeff' : the interaction coefficients as a numpy.ndarray,</span>
 <span class="sd">          with entries corresponding to nuclei in ``net.unique_nuclei``).</span>
 <span class="sd">    use_mpi : bool</span>
 <span class="sd">        Do we divide up the set of conditions across MPI processes?</span>
@@ -824,14 +824,14 @@
 <span class="sd">    result : RateCollection or List(Nucleus) or numpy.ndarray</span>
 <span class="sd">        The return type depends on the value of ``returnobj``</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1">#------------------</span>
     <span class="c1"># Process arguments</span>
     <span class="c1">#------------------</span>
 
-    <span class="k">if</span> <span class="n">returnobj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;net&#39;</span><span class="p">,</span> <span class="s1">&#39;nuclei&#39;</span><span class="p">,</span> <span class="s1">&#39;coeff&#39;</span><span class="p">}:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid &#39;returnobj&#39; argument: &#39;</span><span class="si">{</span><span class="n">returnobj</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">'net'</span><span class="p">,</span> <span class="s1">'nuclei'</span><span class="p">,</span> <span class="s1">'coeff'</span><span class="p">}:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid 'returnobj' argument: '</span><span class="si">{</span><span class="n">returnobj</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
     <span class="n">targets</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
     <span class="n">tols</span> <span class="o">=</span> <span class="n">to_list</span><span class="p">(</span><span class="n">tols</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
 
@@ -848,14 +848,14 @@
     <span class="c1"># Return requested object</span>
     <span class="c1">#------------------------</span>
 
-    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;net&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">'net'</span><span class="p">:</span>
         <span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">))</span>
                   <span class="k">if</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">net</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;nuclei&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">'nuclei'</span><span class="p">:</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">R_TB</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idx</span> <span class="k">if</span> <span class="n">R_TB</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">&#39;coeff&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">returnobj</span> <span class="o">==</span> <span class="s1">'coeff'</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">R_TB</span>
     <span class="c1"># returnobj was checked at the start of the function</span>
     <span class="k">assert</span> <span class="kc">False</span></div>

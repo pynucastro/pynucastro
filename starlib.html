@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Networks with StarLib rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Networks with StarLib rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -631,8 +631,8 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span> <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span> <span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span>
+           <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span> <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span> <span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -655,9 +655,9 @@
 <span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
 
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.28</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.28</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
 
 <span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
@@ -747,18 +747,18 @@
 <p>Given that we are comparing network integration across three kinds of rates: sampled StarLib rates, median StarLib rates and ReacLib rates, we can setup color maps to best visualize mass fractions over time.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col_map_light</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;lightsalmon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;lightsteelblue&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span> <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;thistle&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;paleturquoise&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;palegreen&#39;</span><span class="p">,</span>
-                 <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;peachpuff&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;khaki&#39;</span><span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col_map_light</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'lightsalmon'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'lightsteelblue'</span><span class="p">,</span>
+                 <span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'lightgray'</span><span class="p">,</span> <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'thistle'</span><span class="p">,</span>
+                 <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'paleturquoise'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'palegreen'</span><span class="p">,</span>
+                 <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'pink'</span><span class="p">,</span> <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'peachpuff'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'khaki'</span><span class="p">}</span>
 
-<span class="n">col_map_med</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;dimgray&#39;</span><span class="p">,</span> 
-               <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;mediumorchid&#39;</span><span class="p">,</span> <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;darkturquoise&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;deeppink&#39;</span><span class="p">,</span> <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;peru&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;gold&#39;</span><span class="p">}</span>
+<span class="n">col_map_med</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'red'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'royalblue'</span><span class="p">,</span><span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'dimgray'</span><span class="p">,</span> 
+               <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'mediumorchid'</span><span class="p">,</span> <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'darkturquoise'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'green'</span><span class="p">,</span>
+               <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'deeppink'</span><span class="p">,</span> <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'peru'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'gold'</span><span class="p">}</span>
 
-<span class="n">col_map_dark</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span><span class="s1">&#39;maroon&#39;</span><span class="p">,</span> <span class="s1">&#39;He4&#39;</span><span class="p">:</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span><span class="s1">&#39;C12&#39;</span><span class="p">:</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;C13&#39;</span><span class="p">:</span> <span class="s1">&#39;darkorchid&#39;</span><span class="p">,</span> 
-               <span class="s1">&#39;N13&#39;</span><span class="p">:</span> <span class="s1">&#39;teal&#39;</span><span class="p">,</span> <span class="s1">&#39;N14&#39;</span><span class="p">:</span> <span class="s1">&#39;darkgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;N15&#39;</span><span class="p">:</span> <span class="s1">&#39;mediumvioletred&#39;</span><span class="p">,</span>
-               <span class="s1">&#39;O14&#39;</span><span class="p">:</span> <span class="s1">&#39;saddlebrown&#39;</span><span class="p">,</span> <span class="s1">&#39;O15&#39;</span><span class="p">:</span> <span class="s1">&#39;goldenrod&#39;</span><span class="p">}</span>
+<span class="n">col_map_dark</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'maroon'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'navy'</span><span class="p">,</span><span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'black'</span><span class="p">,</span> <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'darkorchid'</span><span class="p">,</span> 
+               <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'teal'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'darkgreen'</span><span class="p">,</span> <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'mediumvioletred'</span><span class="p">,</span>
+               <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'saddlebrown'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'goldenrod'</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -771,30 +771,30 @@
 <span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-                  <span class="n">color</span><span class="o">=</span><span class="n">col_map_light</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
+                  <span class="n">color</span><span class="o">=</span><span class="n">col_map_light</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">])</span>
 
 <span class="c1"># median StarLib rates</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">color</span><span class="o">=</span><span class="n">col_map_med</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">col_map_med</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">],</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)"</span><span class="p">)</span>
 
 <span class="c1"># Reaclib rates</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">rl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">color</span><span class="o">=</span><span class="n">col_map_dark</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">col_map_dark</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"t (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ee5c7cffafe77e1af41e5c8839e54180632ab40fb7a016fb1c3de98581cef1ca.png" src="_images/ee5c7cffafe77e1af41e5c8839e54180632ab40fb7a016fb1c3de98581cef1ca.png" />
+<img alt="_images/7af85828f7eec9e5798202d5cba43bb3da3afc1505dc318deb5828c2c3eb8349.png" src="_images/7af85828f7eec9e5798202d5cba43bb3da3afc1505dc318deb5828c2c3eb8349.png" />
 </div>
 </div>
 <p>Here the dotted lines depict the evolution of mass fractions over time given ReacLib rates, the solid lines depict that for median StarLib rates and the faint lines depict that for each sampled StarLib rates.</p>

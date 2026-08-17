@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.utils &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.utils &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Various utilities for working with pynucastro.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Various utilities for working with pynucastro."""</span>
 
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
@@ -529,7 +529,7 @@
 <div class="viewcode-block" id="pynucastro_version">
 <a class="viewcode-back" href="../../pynucastro.utils.html#pynucastro.utils.pynucastro_version">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">pynucastro_version</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get as descriptive of a version as possible.  If this was</span>
+<span class="w">    </span><span class="sd">"""Get as descriptive of a version as possible.  If this was</span>
 <span class="sd">    installed via pip directly, then it will be the version assigned</span>
 <span class="sd">    to that release.  However, if we are installed in editable mode,</span>
 <span class="sd">    then the version from __version__ might not be updated, since that</span>
@@ -540,29 +540,29 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">direct_url</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">&quot;pynucastro&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="s2">&quot;direct_url.json&quot;</span><span class="p">)</span>
+    <span class="n">direct_url</span> <span class="o">=</span> <span class="n">Distribution</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s2">"pynucastro"</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="s2">"direct_url.json"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">direct_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># in pytest, things are run in a new environment without a</span>
         <span class="c1"># distribution</span>
         <span class="k">return</span> <span class="n">version</span>
 
-    <span class="n">is_editable</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">direct_url</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dir_info&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;editable&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">is_editable</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">direct_url</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dir_info"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"editable"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">is_editable</span><span class="p">:</span>
         <span class="c1"># we need to use git to find the full version</span>
-        <span class="n">git_dir</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">direct_url</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">git_dir</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">direct_url</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">git_dir</span><span class="p">:</span>
             <span class="n">git_dir</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">git_dir</span><span class="p">)</span><span class="o">.</span><span class="n">path</span>
 
             <span class="c1"># Handle drive letter convention on windows</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;nt&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">&quot;^/[A-Z]:&quot;</span><span class="p">,</span> <span class="n">git_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"nt"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s2">"^/[A-Z]:"</span><span class="p">,</span> <span class="n">git_dir</span><span class="p">):</span>
                     <span class="n">git_dir</span> <span class="o">=</span> <span class="n">git_dir</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">sp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;git describe&quot;</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">sp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"git describe"</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                     <span class="n">cwd</span><span class="o">=</span><span class="n">git_dir</span><span class="p">)</span>
                 <span class="n">git_version</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>

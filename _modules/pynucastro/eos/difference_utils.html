@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.difference_utils &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.eos.difference_utils &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.eos.difference_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Some high-order finite-difference approximations for the EOS.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Some high-order finite-difference approximations for the EOS."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -524,7 +524,7 @@
 <div class="viewcode-block" id="fourth_order_diff">
 <a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.fourth_order_diff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fourth_order_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a 4th order accurate centered difference approximation</span>
+<span class="w">    </span><span class="sd">"""Compute a 4th order accurate centered difference approximation</span>
 <span class="sd">    of a function, and allow us to specify the component of the object</span>
 <span class="sd">    that is returned (if applicable)</span>
 
@@ -543,7 +543,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">fvals</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
@@ -564,7 +564,7 @@
 <div class="viewcode-block" id="sixth_order_diff">
 <a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.sixth_order_diff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sixth_order_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute a 6th order accurate centered difference approximation</span>
+<span class="w">    </span><span class="sd">"""Compute a 6th order accurate centered difference approximation</span>
 <span class="sd">    of a function, and allow us to specify the component of the object</span>
 <span class="sd">    that is returned (if applicable)</span>
 
@@ -583,7 +583,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">fvals</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
@@ -604,7 +604,7 @@
 <div class="viewcode-block" id="eighth_order_diff">
 <a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.eighth_order_diff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">eighth_order_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute an 8th order accurate centered difference approximation</span>
+<span class="w">    </span><span class="sd">"""Compute an 8th order accurate centered difference approximation</span>
 <span class="sd">    of a function, and allow us to specify the component of the object</span>
 <span class="sd">    that is returned (if applicable)</span>
 
@@ -623,7 +623,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">fvals</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]:</span>
@@ -647,8 +647,8 @@
 <div class="viewcode-block" id="adaptive_diff">
 <a class="viewcode-back" href="../../../pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.adaptive_diff">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">adaptive_diff</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_levels</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform an adaptive centered-difference estimate to the first</span>
-<span class="sd">    derivative using Richardson-extrapolation / Ridders&#39; method.</span>
+<span class="w">    </span><span class="sd">"""Perform an adaptive centered-difference estimate to the first</span>
+<span class="sd">    derivative using Richardson-extrapolation / Ridders' method.</span>
 
 
 <span class="sd">    Parameters</span>
@@ -672,12 +672,12 @@
 <span class="sd">    err : float</span>
 <span class="sd">        the estimated error in the difference approximation</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="c1"># see C.J.F. Ridders, &quot;Accurate computation of F&#39;x(x) and F&#39;&#39;(x)</span>
+    <span class="c1"># see C.J.F. Ridders, "Accurate computation of F'x(x) and F''(x)</span>
     <span class="c1"># Advances in Engineering Software, 4, 2, 1978</span>
 
-    <span class="c1"># we&#39;ll use a second-order centered difference, starting with the</span>
+    <span class="c1"># we'll use a second-order centered difference, starting with the</span>
     <span class="c1"># initial h.  this has the form:</span>
     <span class="c1">#</span>
     <span class="c1">#  D_h(f) = 0.5 * (f(x0 + h) - f(x0 - h)) / h + c (h**2) + O(h**4)</span>
@@ -686,9 +686,9 @@
     <span class="c1"># derivatives) at point x0.  That means we can compute D_{h/2}(f)</span>
     <span class="c1"># and then combine the 2 for a better estimate of the derivative:</span>
     <span class="c1">#</span>
-    <span class="c1"># D&#39; = (4 D_{h/2}(f) - D_h(f)) / 3 + O(h**4)</span>
+    <span class="c1"># D' = (4 D_{h/2}(f) - D_h(f)) / 3 + O(h**4)</span>
 
-    <span class="c1"># In Ridders&#39; method, we build a tableau of the form:</span>
+    <span class="c1"># In Ridders' method, we build a tableau of the form:</span>
     <span class="c1">#</span>
     <span class="c1">#</span>
     <span class="c1">#   A(1, 1)  A(1, 2)  A(1, 3)  A(1, 4) ...</span>
@@ -701,7 +701,7 @@
     <span class="c1">#</span>
     <span class="c1"># In this notation, A(1, 1) = D_h(f),</span>
     <span class="c1">#                   A(1, 2) = D_{h/2}(f)</span>
-    <span class="c1">#                   A(2, 2) = D&#39;</span>
+    <span class="c1">#                   A(2, 2) = D'</span>
     <span class="c1">#</span>
     <span class="c1"># we then have:</span>
     <span class="c1">#</span>
@@ -713,7 +713,7 @@
 
     <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">max_levels</span><span class="p">,</span> <span class="n">max_levels</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;step size, h, must be positive&quot;</span>
+    <span class="k">assert</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"step size, h, must be positive"</span>
 
     <span class="n">_h</span> <span class="o">=</span> <span class="n">h</span>
 
@@ -754,8 +754,8 @@
                 <span class="n">deriv</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span>
 
         <span class="c1"># at this point, A(n, n) should be the most accurate estimate</span>
-        <span class="c1"># for the derivative, but it&#39;s possible that things have</span>
-        <span class="c1"># become worse -- let&#39;s check</span>
+        <span class="c1"># for the derivative, but it's possible that things have</span>
+        <span class="c1"># become worse -- let's check</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">break</span>
 

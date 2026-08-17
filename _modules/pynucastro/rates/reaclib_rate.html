@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.reaclib_rate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for working with rates from the ReacLib</span>
+<span></span><span class="sd">"""Classes and methods for working with rates from the ReacLib</span>
 <span class="sd">library.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -532,7 +532,7 @@
 <div class="viewcode-block" id="SingleSet">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SingleSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single ReacLib set for a reaction in the form:</span>
+<span class="w">    </span><span class="sd">"""A single ReacLib set for a reaction in the form:</span>
 
 <span class="sd">    λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]</span>
 
@@ -556,7 +556,7 @@
 <span class="sd">    derived_from_inverse : bool</span>
 <span class="sd">        has this set be recomputed via detailed balance?</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
@@ -569,17 +569,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_label_properties</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_update_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set label and flags indicating Set is resonant, weak, or</span>
+<span class="w">        </span><span class="sd">"""Set label and flags indicating Set is resonant, weak, or</span>
 <span class="sd">        reverse.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'r'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'w'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'v'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
@@ -596,14 +596,14 @@
 <div class="viewcode-block" id="SingleSet.log_f">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.log_f">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a function for ``log_rate(tf)`` where ``tf`` is a</span>
+<span class="w">        </span><span class="sd">"""Return a function for ``log_rate(tf)`` where ``tf`` is a</span>
 <span class="sd">        :py:class:`Tfactors &lt;pynucastro.rates.rate.Tfactors&gt;` object</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Callable</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">tf</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
                            <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T9i</span> <span class="o">+</span>
                            <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">tf</span><span class="o">.</span><span class="n">T913i</span> <span class="o">+</span>
@@ -616,25 +616,25 @@
 <div class="viewcode-block" id="SingleSet.f">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.f">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a function for ``rate(tf)`` where ``tf`` is a</span>
+<span class="w">        </span><span class="sd">"""Return a function for ``rate(tf)`` where ``tf`` is a</span>
 <span class="sd">        :py:class:`Tfactors &lt;pynucastro.rates.rate.Tfactors&gt;` object</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Callable</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">tf</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_f</span><span class="p">()(</span><span class="n">tf</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="SingleSet.dfdT">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.dfdT">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dfdT</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a function for the temperature derivative of the</span>
+<span class="w">        </span><span class="sd">"""Return a function for the temperature derivative of the</span>
 <span class="sd">        set, ``dratedT(tf)``, where ``tf`` is a :py:class:`Tfactors</span>
 <span class="sd">        &lt;pynucastro.rates.rate.Tfactors&gt;` object</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># we have lambda = exp(f(T_9))</span>
         <span class="c1"># so dlambda/dT9 = lambda * df/dT9</span>
@@ -650,9 +650,9 @@
 
 <div class="viewcode-block" id="SingleSet.set_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.set_string_py">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"set"</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                       <span class="n">with_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the python code needed to evaluate the set.</span>
+<span class="w">        </span><span class="sd">"""Generate the python code needed to evaluate the set.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -670,41 +670,41 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += "</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = "</span>
         <span class="k">if</span> <span class="n">with_exp</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;np.exp( &quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"np.exp( "</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T9i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T9i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T913i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T913i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T913&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T913"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">with_exp</span><span class="p">:</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot; </span><span class="se">\\</span><span class="s2">&quot;</span>
-            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">&quot; &quot;</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         &quot;</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="s2">" </span><span class="se">\\</span><span class="s2">"</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">" "</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         "</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T9&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T9"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T953&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.T953"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.lnT9&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">*tf.lnT9"</span>
         <span class="k">if</span> <span class="n">with_exp</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">")"</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
 
 <div class="viewcode-block" id="SingleSet.set_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.set_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;set&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"set"</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">with_exp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generate the C++ code needed to evaluate the set.</span>
 
 <span class="sd">        Parameters</span>
@@ -723,43 +723,43 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += "</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = "</span>
         <span class="k">if</span> <span class="n">with_exp</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;std::exp( &quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"std::exp( "</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T913i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T913i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T913&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T913"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
-            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">&quot; &quot;</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         &quot;</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">" "</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         "</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T953&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T953"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.lnT9&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.lnT9"</span>
         <span class="k">if</span> <span class="n">with_exp</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;);&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">");"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;;&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">";"</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">amrex::ignore_unused(tfactors);&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">amrex::ignore_unused(tfactors);"</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
 
 <div class="viewcode-block" id="SingleSet.dln_set_string_dT9_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.dln_set_string_dT9_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dset_dT&quot;</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"dset_dT"</span><span class="p">,</span>
                                <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the C++ code to evaluate d/dT9 ln(set).</span>
+<span class="w">        </span><span class="sd">"""Generate the C++ code to evaluate d/dT9 ln(set).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -773,32 +773,32 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">plus_equal</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> += "</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = &quot;</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> = "</span>
 
         <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;0.0;&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"0.0;"</span>
             <span class="k">return</span> <span class="n">string</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i * tfactors.T9i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i * tfactors.T9i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + -(1.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T943i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + -(1.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T943i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + (1.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T923i&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + (1.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T923i"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
-            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">&quot; &quot;</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         &quot;</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="o">*</span><span class="s2">" "</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">         "</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + (5.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T923&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + (5.0/3.0) * </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T923"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i&quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;;&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2"> * tfactors.T9i"</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">";"</span>
         <span class="k">return</span> <span class="n">string</span></div>
 </div>
 
@@ -807,7 +807,7 @@
 <div class="viewcode-block" id="ReacLibRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReacLibRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single reaction rate from the ReacLib library, which</span>
+<span class="w">    </span><span class="sd">"""A single reaction rate from the ReacLib library, which</span>
 <span class="sd">    can be composed of multiple sets.</span>
 
 <span class="sd">    Parameters</span>
@@ -822,8 +822,8 @@
 <span class="sd">        the energy release (in MeV)</span>
 <span class="sd">    weak_type : str</span>
 <span class="sd">        the type of weak reaction the rate represents.</span>
-<span class="sd">        Possible values include &quot;electron_capture&quot;, &quot;beta_pos&quot;, or</span>
-<span class="sd">        &quot;beta_neg&quot;.  Note for electron-capture rates, we will</span>
+<span class="sd">        Possible values include "electron_capture", "beta_pos", or</span>
+<span class="sd">        "beta_neg".  Note for electron-capture rates, we will</span>
 <span class="sd">        include an explicit ρYₑ weighting in the evaluation</span>
 <span class="sd">    label : str</span>
 <span class="sd">        a descriptive label for the rate (usually representative</span>
@@ -832,11 +832,11 @@
 <span class="sd">        the key to get the source information for the rate</span>
 <span class="sd">        from rate_sources.csv</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-                 <span class="n">label</span><span class="o">=</span><span class="s2">&quot;reaclib&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">sets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                 <span class="n">label</span><span class="o">=</span><span class="s2">"reaclib"</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="c1"># Metadata for rate data files</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -851,7 +851,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">use_ye_weighting</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">weak_type</span> <span class="o">==</span> <span class="s2">&quot;electron_capture&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">weak_type</span> <span class="o">==</span> <span class="s2">"electron_capture"</span><span class="p">:</span>
             <span class="n">use_ye_weighting</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
@@ -864,12 +864,12 @@
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether two Rate objects are equal.  They are</span>
+<span class="w">        </span><span class="sd">"""Determine whether two Rate objects are equal.  They are</span>
 <span class="sd">        equal if they contain identical reactants and products and if</span>
 <span class="sd">        they contain the same SingleSet sets and if their chapters are</span>
 <span class="sd">        equal.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -895,10 +895,10 @@
         <span class="k">return</span> <span class="n">x</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combine the sets of two Rate objects if they describe the</span>
+<span class="w">        </span><span class="sd">"""Combine the sets of two Rate objects if they describe the</span>
 <span class="sd">        same reaction. Must be Reaclib rates.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">chapter</span>
@@ -909,7 +909,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">weak_type</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">derived_from_inverse</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">resonant</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'c'</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
 
         <span class="n">new_rate</span> <span class="o">=</span> <span class="n">ReacLibRate</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span>
                                <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
@@ -922,7 +922,7 @@
         <span class="n">new_rate</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_name</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">rfile_name</span>
         <span class="n">new_rate</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">rfile_path</span>
         <span class="n">new_rate</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapter</span>
-        <span class="n">new_rate</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data</span><span class="p">,</span>
+        <span class="n">new_rate</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data</span><span class="p">,</span>
                                             <span class="n">other</span><span class="o">.</span><span class="n">original_data</span><span class="p">])</span>
         <span class="n">new_rate</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span>
 
@@ -932,29 +932,29 @@
         <span class="k">return</span> <span class="n">new_rate</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_label_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update labelprops based on the Sets in this Rate</span>
+<span class="w">        </span><span class="sd">"""Update labelprops based on the Sets in this Rate</span>
 <span class="sd">        to set the resonance_combined flag properly.</span>
 <span class="sd">        And update different rate properties based on labelprops.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span>
 
-            <span class="c1"># Update labelprops with &#39;c&#39; to indicate resonance_combined</span>
+            <span class="c1"># Update labelprops with 'c' to indicate resonance_combined</span>
             <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">]</span>
             <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'c'</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
 
             <span class="c1"># Update other flags</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;r&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resonant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'r'</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'w'</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">derived_from_inverse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'v'</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, read rate data from the file.</span>
+<span class="w">        </span><span class="sd">"""Given a file object, read rate data from the file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -964,11 +964,11 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict(str)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rfile must be a str or pathlib.Path or io.StringIO, &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rfile must be a str or pathlib.Path or io.StringIO, "</span>
+                            <span class="sa">f</span><span class="s2">"got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">rfile_name</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">rfile_path</span> <span class="o">=</span> <span class="kc">None</span>
@@ -988,13 +988,13 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="c1"># Get the original rate data content</span>
-        <span class="n">original_data</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="n">original_data</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
         <span class="c1"># first line is the chapter</span>
         <span class="n">chapter</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
         <span class="c1"># remove any blank lines</span>
-        <span class="n">set_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">set_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span><span class="p">]</span>
 
         <span class="c1"># Initialize in case of potential using variable before assignment</span>
         <span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1012,7 +1012,7 @@
                 <span class="c1"># check that the chapter number is the same as the first</span>
                 <span class="c1"># set in this rate file</span>
                 <span class="k">if</span> <span class="n">check_chapter</span> <span class="o">!=</span> <span class="n">chapter</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'read chapter </span><span class="si">{</span><span class="n">check_chapter</span><span class="si">}</span><span class="s1">, expected chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> for this rate set.'</span><span class="p">)</span>
                 <span class="c1"># get rid of chapter number so we can read a rate set</span>
                 <span class="n">set_lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
@@ -1054,7 +1054,7 @@
             <span class="n">Q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
-                <span class="c1"># what&#39;s left are the nuclei -- their interpretation</span>
+                <span class="c1"># what's left are the nuclei -- their interpretation</span>
                 <span class="c1"># depends on the chapter</span>
 
                 <span class="n">chapter_dict</span> <span class="o">=</span> <span class="p">{</span>
@@ -1082,41 +1082,41 @@
                         <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
 
                 <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> could not be identified in </span><span class="si">{</span><span class="n">original_data</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+                    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Chapter </span><span class="si">{</span><span class="n">chapter</span><span class="si">}</span><span class="s1"> could not be identified in </span><span class="si">{</span><span class="n">original_data</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
                 <span class="n">first</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="c1"># the second line contains the first 4 coefficients</span>
             <span class="c1"># the third lines contains the final 3</span>
-            <span class="c1"># we can&#39;t just use split() here, since the fields run into one another</span>
+            <span class="c1"># we can't just use split() here, since the fields run into one another</span>
             <span class="n">n</span> <span class="o">=</span> <span class="mi">13</span>  <span class="c1"># length of the field</span>
             <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">s2</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
             <span class="n">a</span> <span class="o">+=</span> <span class="p">[</span><span class="n">s3</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s3</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
 
-            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">a</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span><span class="p">]</span>
             <span class="n">sets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleSet</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">labelprops</span><span class="o">=</span><span class="n">labelprops</span><span class="p">))</span>
 
-            <span class="c1"># Update labelprops to have &quot;c&quot; -- combined</span>
+            <span class="c1"># Update labelprops to have "c" -- combined</span>
             <span class="c1"># when we a mix of resonant and non-resonant sets</span>
             <span class="n">sres</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">resonant</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sets</span><span class="p">]</span>
             <span class="k">if</span> <span class="kc">True</span> <span class="ow">in</span> <span class="n">sres</span> <span class="ow">and</span> <span class="kc">False</span> <span class="ow">in</span> <span class="n">sres</span><span class="p">:</span>
-                <span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;c&#39;</span> <span class="o">+</span> <span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
+                <span class="n">labelprops</span> <span class="o">=</span> <span class="n">labelprops</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'c'</span> <span class="o">+</span> <span class="n">labelprops</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;rfile_name&quot;</span><span class="p">:</span> <span class="n">rfile_name</span><span class="p">,</span>
-                <span class="s2">&quot;rfile_path&quot;</span><span class="p">:</span> <span class="n">rfile_path</span><span class="p">,</span>
-                <span class="s2">&quot;original_data&quot;</span><span class="p">:</span> <span class="n">original_data</span><span class="p">,</span>
-                <span class="s2">&quot;chapter&quot;</span><span class="p">:</span> <span class="n">chapter</span><span class="p">,</span>
-                <span class="s2">&quot;reactants&quot;</span><span class="p">:</span> <span class="n">reactants</span><span class="p">,</span>
-                <span class="s2">&quot;products&quot;</span><span class="p">:</span> <span class="n">products</span><span class="p">,</span>
-                <span class="s2">&quot;sets&quot;</span><span class="p">:</span> <span class="n">sets</span><span class="p">,</span>
-                <span class="s2">&quot;labelprops&quot;</span><span class="p">:</span> <span class="n">labelprops</span><span class="p">,</span>
-                <span class="s2">&quot;Q&quot;</span><span class="p">:</span> <span class="n">Q</span><span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"rfile_name"</span><span class="p">:</span> <span class="n">rfile_name</span><span class="p">,</span>
+                <span class="s2">"rfile_path"</span><span class="p">:</span> <span class="n">rfile_path</span><span class="p">,</span>
+                <span class="s2">"original_data"</span><span class="p">:</span> <span class="n">original_data</span><span class="p">,</span>
+                <span class="s2">"chapter"</span><span class="p">:</span> <span class="n">chapter</span><span class="p">,</span>
+                <span class="s2">"reactants"</span><span class="p">:</span> <span class="n">reactants</span><span class="p">,</span>
+                <span class="s2">"products"</span><span class="p">:</span> <span class="n">products</span><span class="p">,</span>
+                <span class="s2">"sets"</span><span class="p">:</span> <span class="n">sets</span><span class="p">,</span>
+                <span class="s2">"labelprops"</span><span class="p">:</span> <span class="n">labelprops</span><span class="p">,</span>
+                <span class="s2">"Q"</span><span class="p">:</span> <span class="n">Q</span><span class="p">}</span>
 
 <div class="viewcode-block" id="ReacLibRate.from_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rfile</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the ReacLibRate object given the rfile.</span>
+<span class="w">        </span><span class="sd">"""Construct the ReacLibRate object given the rfile.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1126,30 +1126,30 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ReacLibRate</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Parse the data and create the Rate</span>
         <span class="n">rate_data</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_read_from_file</span><span class="p">(</span><span class="n">rfile</span><span class="p">)</span>
-        <span class="n">rate_source</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">rate_source</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"labelprops"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
 
         <span class="c1"># Explicitly handle electron-capture weak type.</span>
         <span class="c1"># Otherwise the constructor automatically determines beta-decay type.</span>
-        <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">rate_source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ec&quot;</span><span class="p">,</span> <span class="s2">&quot;bec&quot;</span><span class="p">):</span>
-            <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;electron_capture&quot;</span>
+        <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">rate_source</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"ec"</span><span class="p">,</span> <span class="s2">"bec"</span><span class="p">):</span>
+            <span class="n">weak_type</span> <span class="o">=</span> <span class="s2">"electron_capture"</span>
 
-        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;reactants&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;products&quot;</span><span class="p">],</span>
-                  <span class="n">sets</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;sets&quot;</span><span class="p">],</span> <span class="n">Q</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;Q&quot;</span><span class="p">],</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">"reactants"</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">"products"</span><span class="p">],</span>
+                  <span class="n">sets</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">"sets"</span><span class="p">],</span> <span class="n">Q</span><span class="o">=</span><span class="n">rate_data</span><span class="p">[</span><span class="s2">"Q"</span><span class="p">],</span>
                   <span class="n">weak_type</span><span class="o">=</span><span class="n">weak_type</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">)</span>
 
         <span class="c1"># Store file-specific metadata</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_name</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;rfile_name&quot;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_name</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"rfile_name"</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">rfile_name</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rfile_name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_path</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;rfile_path&quot;</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rfile_path</span> <span class="o">:=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"rfile_path"</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rfile_path</span><span class="p">)</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;original_data&quot;</span><span class="p">]</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;chapter&quot;</span><span class="p">]</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">&quot;labelprops&quot;</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"original_data"</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">chapter</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"chapter"</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">labelprops</span> <span class="o">=</span> <span class="n">rate_data</span><span class="p">[</span><span class="s2">"labelprops"</span><span class="p">]</span>
 
         <span class="c1"># Update properties based on labelprops</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">_set_label_properties</span><span class="p">()</span>
@@ -1160,19 +1160,19 @@
 <div class="viewcode-block" id="ReacLibRate.write_to_file">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.write_to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a file object, write rate data to the file.</span>
+<span class="w">        </span><span class="sd">"""Given a file object, write rate data to the file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        f : io.TextIOWrapper, io.StringIO</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Original rate data is not stored for this rate (</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">).&quot;</span>
-                <span class="s2">&quot; At present, we cannot reconstruct the rate representation without&quot;</span>
-                <span class="s2">&quot; storing the original rate data&quot;</span>
+                <span class="sa">f</span><span class="s2">"Original rate data is not stored for this rate (</span><span class="si">{</span><span class="bp">self</span><span class="si">}</span><span class="s2">)."</span>
+                <span class="s2">" At present, we cannot reconstruct the rate representation without"</span>
+                <span class="s2">" storing the original rate data"</span>
             <span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span></div>
@@ -1181,40 +1181,40 @@
 <div class="viewcode-block" id="ReacLibRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the python function that</span>
+<span class="w">        </span><span class="sd">"""Return a string containing the python function that</span>
 <span class="sd">        computes the rate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = 0.0</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ln_set_rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += log_scor</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    set_rate = np.exp(ln_set_rate)</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate += set_rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_py</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"ln_set_rate"</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    "</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate += log_scor</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    set_rate = np.exp(ln_set_rate)</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate += set_rate</span><span class="se">\n\n</span><span class="s2">"</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 
 <div class="viewcode-block" id="ReacLibRate.function_string_cxx">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.function_string_cxx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">&quot;inline&quot;</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">"inline"</span><span class="p">,</span>
                             <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string containing the C++ function that computes</span>
+<span class="w">        </span><span class="sd">"""Return a string containing the C++ function that computes</span>
 <span class="sd">        the rate</span>
 
 <span class="sd">        Parameters</span>
@@ -1223,9 +1223,9 @@
 <span class="sd">            The C++ datatype to use for all declarations</span>
 <span class="sd">        specifiers : str</span>
 <span class="sd">            C++ specifiers to add before each function declaration</span>
-<span class="sd">            (i.e. &quot;inline&quot;)</span>
+<span class="sd">            (i.e. "inline")</span>
 <span class="sd">        leave_open : bool</span>
-<span class="sd">            If ``true``, then we leave the function unclosed (no &quot;}&quot;</span>
+<span class="sd">            If ``true``, then we leave the function unclosed (no "}"</span>
 <span class="sd">            at the end).  This can allow additional functions to add</span>
 <span class="sd">            to this output.</span>
 <span class="sd">        extra_args : list, tuple</span>
@@ -1237,58 +1237,58 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># pylint: disable=duplicate-code</span>
         <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;const tf_t&amp; tfactors&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"const tf_t&amp; tfactors"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT"</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="c1"># pylint: enable=duplicate-code</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate = 0.0;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    drate_dT = 0.0;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ln_set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dln_set_rate_dT9</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = 0.0;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    drate_dT = 0.0;</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> ln_set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dln_set_rate_dT9</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> set_rate</span><span class="se">{{</span><span class="s2">0.0</span><span class="se">}}</span><span class="s2">;</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sets</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    // </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ln_set_rate&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate += log_scor;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="n">s</span><span class="o">.</span><span class="n">labelprops</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">set_string</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">set_string_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"ln_set_rate"</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">with_exp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    "</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate += log_scor;</span><span class="se">\n\n</span><span class="s2">"</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">dln_set_string_dT9</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;dln_set_rate_dT9&quot;</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dln_set_string_dT9</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        &quot;</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">dln_set_string_dT9</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">dln_set_string_dT9_cxx</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"dln_set_rate_dT9"</span><span class="p">,</span> <span class="n">plus_equal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">dln_set_string_dT9</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        "</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;</span><span class="se">\n</span><span class="s2">"</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    // avoid underflows by zeroing rates in [0.0, 1.e-100]</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    ln_set_rate = std::max(ln_set_rate, -230.0);</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    set_rate = std::exp(ln_set_rate);</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    // avoid underflows by zeroing rates in [0.0, 1.e-100]</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate = std::max(ln_set_rate, -230.0);</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    set_rate = std::exp(ln_set_rate);</span><span class="se">\n</span><span class="s2">"</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rate += set_rate;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate += set_rate;</span><span class="se">\n</span><span class="s2">"</span>
 
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    }</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"}</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 
@@ -1297,7 +1297,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.log_eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the natural log of reaction rate for all the ReacLib sets</span>
+<span class="w">        </span><span class="sd">"""Evaluate the natural log of reaction rate for all the ReacLib sets</span>
 <span class="sd">        for temperature T.</span>
 
 <span class="sd">        Parameters</span>
@@ -1320,7 +1320,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list(float)</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">tf</span> <span class="o">=</span> <span class="n">Tfactors</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
         <span class="n">log_rate</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1328,7 +1328,7 @@
         <span class="n">log_scor</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when applying electron screening.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rho (density) and comp (Composition) needs to be defined when applying electron screening."</span><span class="p">)</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
             <span class="n">log_scor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_screening</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
@@ -1342,7 +1342,7 @@
 <div class="viewcode-block" id="ReacLibRate.eval_deriv">
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.eval_deriv">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the derivative of reaction rate with respect to T.</span>
+<span class="w">        </span><span class="sd">"""Evaluate the derivative of reaction rate with respect to T.</span>
 <span class="sd">        This currently does NOT consider electron screening effects.</span>
 
 <span class="sd">        Parameters</span>
@@ -1361,7 +1361,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">_</span> <span class="o">=</span> <span class="n">rho</span>  <span class="c1"># unused by this subclass</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">comp</span>  <span class="c1"># unused by this subclass</span>
@@ -1379,7 +1379,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_exponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;For a rate written as a power law, r = r_0 (T/T0)**nu,</span>
+<span class="w">        </span><span class="sd">"""For a rate written as a power law, r = r_0 (T/T0)**nu,</span>
 <span class="sd">        return nu corresponding to T0. This also considers electron</span>
 <span class="sd">        screening effect if screen_func is passed in.</span>
 
@@ -1403,7 +1403,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># nu = dln r /dln T, so we need dr/dT</span>
         <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
@@ -1418,7 +1418,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="mf">1.e8</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="mf">1.6e9</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="mf">3.9e8</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="mf">2.e9</span><span class="p">,</span>
              <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the rate&#39;s temperature sensitivity vs temperature</span>
+<span class="w">        </span><span class="sd">"""Plot the rate's temperature sensitivity vs temperature</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1446,7 +1446,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">_</span> <span class="o">=</span> <span class="p">(</span><span class="n">rhoYmin</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="p">)</span>  <span class="c1"># unused by this subclass</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
@@ -1458,16 +1458,16 @@
             <span class="n">r</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
 
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">temps</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$T$&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$T$"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\tau$&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\tau$"</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A \langle\sigma v\rangle$&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$N_A \langle\sigma v\rangle$"</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A^2 \langle n_a n_b n_c v\rangle$&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$N_A^2 \langle n_a n_b n_c v\rangle$"</span><span class="p">)</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>

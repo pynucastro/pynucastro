@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Assessing the Stiffness of a Network &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Assessing the Stiffness of a Network &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -640,19 +640,19 @@ step.</p>
 <p>We’ll create a network with the nuclei needed for various p-p and CNO burning sequences, as well as breakout.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;h2&quot;</span><span class="p">,</span> <span class="s2">&quot;he3&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;li6&quot;</span><span class="p">,</span> <span class="s2">&quot;li7&quot;</span><span class="p">,</span> <span class="s2">&quot;be7&quot;</span><span class="p">,</span> <span class="s2">&quot;be8&quot;</span><span class="p">,</span> <span class="s2">&quot;b8&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;o17&quot;</span><span class="p">,</span> <span class="s2">&quot;o18&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;f17&quot;</span><span class="p">,</span> <span class="s2">&quot;f18&quot;</span><span class="p">,</span> <span class="s2">&quot;f19&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;ne18&quot;</span><span class="p">,</span> <span class="s2">&quot;ne19&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne21&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"h2"</span><span class="p">,</span> <span class="s2">"he3"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+              <span class="s2">"li6"</span><span class="p">,</span> <span class="s2">"li7"</span><span class="p">,</span> <span class="s2">"be7"</span><span class="p">,</span> <span class="s2">"be8"</span><span class="p">,</span> <span class="s2">"b8"</span><span class="p">,</span>
+              <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
+              <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"o18"</span><span class="p">,</span>
+              <span class="s2">"f17"</span><span class="p">,</span> <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"f19"</span><span class="p">,</span>
+              <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"ne19"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"ne21"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span> <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;oda&quot;</span><span class="p">],</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">(</span><span class="n">all_nuclei</span><span class="p">,</span> <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">],</span>
                           <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -682,9 +682,9 @@ step.</p>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">7.e7</span>
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">)</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 <span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
 </pre></div>
@@ -755,27 +755,27 @@ step.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: He3 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: d partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: Li6 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: Be7 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: B8 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N14 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N15 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: Li7 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
 </div>
@@ -783,7 +783,7 @@ step.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;li6&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"li6"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">rates</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -807,7 +807,7 @@ Li7 + p ⟶ H2 + Li6 0.0
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"d"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">rates</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
 </pre></div>
 </div>

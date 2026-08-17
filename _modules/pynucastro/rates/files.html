@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.files &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.files &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,18 +513,18 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.files</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Functions for finding and working with the rate data directories.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Functions for finding and working with the rate data directories."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">_pynucastro_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">_pynucastro_dir</span><span class="o">/</span><span class="s2">&quot;data&quot;</span>
-<span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">_pynucastro_rates_dir</span><span class="o">/</span><span class="s2">&quot;tabular&quot;</span>
-<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;suzuki&quot;</span>
-<span class="n">_pynucastro_langanke_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;langanke&quot;</span>
-<span class="n">_pynucastro_ffn_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;ffn&quot;</span>
-<span class="n">_pynucastro_oda_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;oda&quot;</span>
-<span class="n">_pynucastro_pruetfuller_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">&quot;pruet_fuller&quot;</span>
+<span class="n">_pynucastro_rates_dir</span> <span class="o">=</span> <span class="n">_pynucastro_dir</span><span class="o">/</span><span class="s2">"data"</span>
+<span class="n">_pynucastro_tabular_dir</span> <span class="o">=</span> <span class="n">_pynucastro_rates_dir</span><span class="o">/</span><span class="s2">"tabular"</span>
+<span class="n">_pynucastro_suzuki_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">"suzuki"</span>
+<span class="n">_pynucastro_langanke_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">"langanke"</span>
+<span class="n">_pynucastro_ffn_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">"ffn"</span>
+<span class="n">_pynucastro_oda_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">"oda"</span>
+<span class="n">_pynucastro_pruetfuller_dir</span> <span class="o">=</span> <span class="n">_pynucastro_tabular_dir</span><span class="o">/</span><span class="s2">"pruet_fuller"</span>
 <span class="n">_dirs</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">_pynucastro_dir</span><span class="p">,</span> <span class="n">_pynucastro_rates_dir</span><span class="p">,</span> <span class="n">_pynucastro_tabular_dir</span><span class="p">,</span>
     <span class="n">_pynucastro_suzuki_dir</span><span class="p">,</span> <span class="n">_pynucastro_langanke_dir</span><span class="p">,</span> <span class="n">_pynucastro_ffn_dir</span><span class="p">,</span>
@@ -535,13 +535,13 @@
 <div class="viewcode-block" id="get_rates_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.files.html#pynucastro.rates.files.get_rates_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_rates_dir</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the top-level directory containing rate files</span>
+<span class="w">    </span><span class="sd">"""Return the top-level directory containing rate files</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pathlib.Path</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">_pynucastro_rates_dir</span></div>
 
@@ -550,13 +550,13 @@
 <div class="viewcode-block" id="get_tabular_dir">
 <a class="viewcode-back" href="../../../pynucastro.rates.files.html#pynucastro.rates.files.get_tabular_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_tabular_dir</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the top-level directory containing the tabulated rates</span>
+<span class="w">    </span><span class="sd">"""Return the top-level directory containing the tabulated rates</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pathlib.Path</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">return</span> <span class="n">_pynucastro_tabular_dir</span></div>
 
@@ -565,27 +565,27 @@
 <div class="viewcode-block" id="RateFileError">
 <a class="viewcode-back" href="../../../pynucastro.rates.files.html#pynucastro.rates.files.RateFileError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RateFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An error occurred while trying to read a Rate from a file.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">"""An error occurred while trying to read a Rate from a file."""</span></div>
 
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_rate_file</span><span class="p">(</span><span class="n">ratename</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Locate the Reaclib or tabular rate or library file given its</span>
+<span class="w">    </span><span class="sd">"""Locate the Reaclib or tabular rate or library file given its</span>
 <span class="sd">    name.  Return None if the file cannot be located, otherwise return</span>
 <span class="sd">    its path.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># check to see if the rate file is in the working dir,</span>
     <span class="c1"># is already the full path, or is in _dirs</span>
 
-    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">_dirs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="o">*</span><span class="n">_dirs</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ratename</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">x</span>
 
-    <span class="c1"># notify user we can&#39;t find the file</span>
-    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ratename</span><span class="si">!r}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># notify user we can't find the file</span>
+    <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'File </span><span class="si">{</span><span class="n">ratename</span><span class="si">!r}</span><span class="s1"> not found in the working directory, </span><span class="si">{</span><span class="n">_pynucastro_rates_dir</span><span class="si">}</span><span class="s1">, or </span><span class="si">{</span><span class="n">_pynucastro_tabular_dir</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
 
                 </article>

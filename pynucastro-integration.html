@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -634,14 +634,14 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12(p,g)n13"</span><span class="p">,</span>
+              <span class="s2">"c13(p,g)n14"</span><span class="p">,</span>
+              <span class="s2">"n13(,)c13"</span><span class="p">,</span>
+              <span class="s2">"n13(p,g)o14"</span><span class="p">,</span>
+              <span class="s2">"n14(p,g)o15"</span><span class="p">,</span>
+              <span class="s2">"n15(p,a)c12"</span><span class="p">,</span>
+              <span class="s2">"o14(,)n14"</span><span class="p">,</span>
+              <span class="s2">"o15(,)n15"</span><span class="p">]</span>
 
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
 <span class="n">rates</span>
@@ -765,7 +765,7 @@ or <a class="reference internal" href="pynucastro.rates.approximate_rates.html#p
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cno_test_integrate.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"cno_test_integrate.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -838,18 +838,18 @@ mass[jo14] = 0.020906683078094165
 mass[jo15] = 0.02239084645968795
 
 names = []
-names.append(&quot;H1&quot;)
-names.append(&quot;He4&quot;)
-names.append(&quot;C12&quot;)
-names.append(&quot;C13&quot;)
-names.append(&quot;N13&quot;)
-names.append(&quot;N14&quot;)
-names.append(&quot;N15&quot;)
-names.append(&quot;O14&quot;)
-names.append(&quot;O15&quot;)
+names.append("H1")
+names.append("He4")
+names.append("C12")
+names.append("C13")
+names.append("N13")
+names.append("N14")
+names.append("N15")
+names.append("O14")
+names.append("O15")
 
 def to_composition(Y):
-    &quot;&quot;&quot;Convert an array of molar fractions to a Composition object.&quot;&quot;&quot;
+    """Convert an array of molar fractions to a Composition object."""
     from pynucastro import Composition, Nucleus
     nuclei = [Nucleus.from_cache(name) for name in names]
     comp = Composition(nuclei)
@@ -859,7 +859,7 @@ def to_composition(Y):
 
 
 def energy_release(dY):
-    &quot;&quot;&quot;return the energy release in erg/g (/s if dY is actually dY/dt)&quot;&quot;&quot;
+    """return the energy release in erg/g (/s if dY is actually dY/dt)"""
     enuc = 0.0
     for i, y in enumerate(dY):
         enuc += y * mass[i]
@@ -867,15 +867,15 @@ def energy_release(dY):
     return enuc
 
 @jitclass([
-    (&quot;enuc_weak&quot;, numba.float64),
-    (&quot;p_C12_to_N13_reaclib&quot;, numba.float64),
-    (&quot;p_C13_to_N14_reaclib&quot;, numba.float64),
-    (&quot;N13_to_C13_reaclib&quot;, numba.float64),
-    (&quot;p_N13_to_O14_reaclib&quot;, numba.float64),
-    (&quot;p_N14_to_O15_reaclib&quot;, numba.float64),
-    (&quot;p_N15_to_He4_C12_reaclib&quot;, numba.float64),
-    (&quot;O14_to_N14_reaclib&quot;, numba.float64),
-    (&quot;O15_to_N15_reaclib&quot;, numba.float64),
+    ("enuc_weak", numba.float64),
+    ("p_C12_to_N13_reaclib", numba.float64),
+    ("p_C13_to_N14_reaclib", numba.float64),
+    ("N13_to_C13_reaclib", numba.float64),
+    ("p_N13_to_O14_reaclib", numba.float64),
+    ("p_N14_to_O15_reaclib", numba.float64),
+    ("p_N15_to_He4_C12_reaclib", numba.float64),
+    ("O14_to_N14_reaclib", numba.float64),
+    ("O15_to_N15_reaclib", numba.float64),
 ])
 class RateEval:
     def __init__(self):
@@ -1376,7 +1376,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
 
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cno</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cno</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1434,7 +1434,7 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">E</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Y0</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;E = </span><span class="si">{</span><span class="n">E</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"E = </span><span class="si">{</span><span class="n">E</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1456,21 +1456,21 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">initial_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">initial_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">fr</span><span class="s2">"epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">initial_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">t</span> <span class="o">=</span> <span class="mf">2.55e14</span>
 <span class="n">mid_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">mid_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"epsilon(t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">mid_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">final_epsilon</span> <span class="o">=</span> <span class="n">network_sol</span><span class="o">.</span><span class="n">energy_release_at</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">final_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"epsilon(t=</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">10.10g</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="n">final_epsilon</span><span class="si">:</span><span class="s2">20.10g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon(t=         0) =          117.7738358
 epsilon(t=  2.55e+14) =          2.990307739
-epsilon(t=     1e+20) =      4.503996655e-10
+epsilon(t=     1e+20) =      4.503996597e-10
 </pre></div>
 </div>
 </div>
@@ -1492,7 +1492,7 @@ We can also specify a screening method to use, and we will use the <code class="
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3.e7</span>
 <span class="n">tmax</span> <span class="o">=</span> <span class="mf">1e20</span>
-<span class="n">network_sol2</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_method</span><span class="o">=</span><span class="s2">&quot;chugunov_2007&quot;</span><span class="p">,</span> <span class="n">initial_comp</span><span class="o">=</span><span class="s2">&quot;solar&quot;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<span class="n">network_sol2</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_method</span><span class="o">=</span><span class="s2">"chugunov_2007"</span><span class="p">,</span> <span class="n">initial_comp</span><span class="o">=</span><span class="s2">"solar"</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.eos.stellar_eos</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes a methods for a full stellar equation of state (ions +</span>
+<span></span><span class="sd">"""Classes a methods for a full stellar equation of state (ions +</span>
 <span class="sd">electrons + radiation)</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.electron_eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElectronEOS</span>
@@ -526,10 +526,10 @@
 <div class="viewcode-block" id="EOSState">
 <a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.EOSState">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EOSState</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The full thermodynamic state of a multi-component plasma (ions,</span>
+<span class="w">    </span><span class="sd">"""The full thermodynamic state of a multi-component plasma (ions,</span>
 <span class="sd">    electrons, and radiation)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">eta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
@@ -561,14 +561,14 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">fstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;η     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;n_ele = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ele</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; n_pos = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_pos</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;p     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; e     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;∂p/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂p/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;∂e/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂e/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;cᵥ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_v</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; cₚ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Γ₁    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma1</span><span class="si">:</span><span class="s2">7.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstr</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"η     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eta</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"n_ele = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_ele</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; n_pos = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_pos</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"p     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; e     = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"∂p/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂p/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"∂e/∂ρ = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_drho</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; ∂e/∂T = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de_dT</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"cᵥ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_v</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="s2"> ; cₚ    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">c_p</span><span class="si">:</span><span class="s2">12.6g</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"Γ₁    = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma1</span><span class="si">:</span><span class="s2">7.4f</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstr</span></div>
 
 
@@ -576,7 +576,7 @@
 <div class="viewcode-block" id="StellarEOS">
 <a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.StellarEOS">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StellarEOS</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A full stellar equation of state with contributions from ions,</span>
+<span class="w">    </span><span class="sd">"""A full stellar equation of state with contributions from ions,</span>
 <span class="sd">    electrons, and radiation.</span>
 
 <span class="sd">    Parameters</span>
@@ -588,7 +588,7 @@
 <span class="sd">        If electrons are Fermi gas, do we consider both positrons and</span>
 <span class="sd">        electrons?</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">electrons_are_degenerate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">include_positrons</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -598,7 +598,7 @@
 <div class="viewcode-block" id="StellarEOS.pe_state">
 <a class="viewcode-back" href="../../../pynucastro.eos.stellar_eos.html#pynucastro.eos.stellar_eos.StellarEOS.pe_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pe_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the pressure and energy given density, temperature,</span>
+<span class="w">        </span><span class="sd">"""Find the pressure and energy given density, temperature,</span>
 <span class="sd">        and composition</span>
 
 <span class="sd">        Parameters</span>
@@ -614,7 +614,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        EOSState</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">ion_eos</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrons_are_degenerate</span><span class="p">:</span>

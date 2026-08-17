@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -635,7 +635,7 @@
 <p>We use a small He-burning network and initialize the zone with pure <span class="math notranslate nohighlight">\(^4\mathrm{He}\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">])</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -650,7 +650,7 @@
 <span class="n">T</span> <span class="o">=</span> <span class="mf">2.e8</span>
 
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 <span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 
@@ -670,9 +670,9 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
 </div>
@@ -689,9 +689,9 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
 </div>
@@ -712,7 +712,7 @@
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/85738dc714f8a3852b2f14ca65f5a6963b745502b74eb21295916f04e836845c.png" src="_images/85738dc714f8a3852b2f14ca65f5a6963b745502b74eb21295916f04e836845c.png" />
+<img alt="_images/e8228ebcb660490a134c781a432ee04db78a84845593926f669e4372e0fb385c.png" src="_images/e8228ebcb660490a134c781a432ee04db78a84845593926f669e4372e0fb385c.png" />
 </div>
 </div>
 <p>During the runaway, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is much larger than <span class="math notranslate nohighlight">\(\epsilon_{\nu, \mathrm{therm}}\)</span>.  After the peak, the nuclear energy generation rate falls while the neutrino loss rate remains large for longer.</p>
@@ -729,21 +729,21 @@
 
 <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_no_cooling</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">mask_no_cooling</span><span class="p">],</span>
           <span class="n">sol_no_cooling</span><span class="o">.</span><span class="n">Temp</span><span class="p">[</span><span class="n">mask_no_cooling</span><span class="p">],</span>
-          <span class="n">label</span><span class="o">=</span><span class="s2">&quot;without neutrino cooling&quot;</span><span class="p">)</span>
+          <span class="n">label</span><span class="o">=</span><span class="s2">"without neutrino cooling"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_cooling</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">mask_cooling</span><span class="p">],</span>
           <span class="n">sol_cooling</span><span class="o">.</span><span class="n">Temp</span><span class="p">[</span><span class="n">mask_cooling</span><span class="p">],</span>
-          <span class="n">label</span><span class="o">=</span><span class="s2">&quot;with neutrino cooling&quot;</span><span class="p">)</span>
+          <span class="n">label</span><span class="o">=</span><span class="s2">"with neutrino cooling"</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time [s]&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;T [K]&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time [s]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"T [K]"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/03d27c736eb063ac6e3b09d47206ecb5a845ed31542bc8af1704f44dfb5d3497.png" src="_images/03d27c736eb063ac6e3b09d47206ecb5a845ed31542bc8af1704f44dfb5d3497.png" />
+<img alt="_images/1497123f40324ff3fc7c9c7bd68b9d247f9fa52fde0dc26d97b8e6977cb852bf.png" src="_images/1497123f40324ff3fc7c9c7bd68b9d247f9fa52fde0dc26d97b8e6977cb852bf.png" />
 </div>
 </div>
 <p>The integration with thermal neutrino cooling cools after the runaway, while the integration without this loss term remains hot.  The difference arises because the cooling term changes the temperature history, and the reaction rates depend on temperature.</p>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.mpi_utils &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.mpi_utils &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,28 +513,28 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.mpi_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;MPI utilities used in the reduction algorithm.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""MPI utilities used in the reduction algorithm."""</span>
 
 
 <div class="viewcode-block" id="MPIImportError">
 <a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.MPIImportError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MPIImportError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exception for MPI errors&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">"""Exception for MPI errors"""</span></div>
 
 
 
 <div class="viewcode-block" id="FailedMPIImport">
 <a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.FailedMPIImport">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FailedMPIImport</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Replacement for mpi4py.MPI import that will throw an error if used.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Replacement for mpi4py.MPI import that will throw an error if used."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">error_obj</span> <span class="o">=</span> <span class="n">error</span>
 
         <span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Failed to import MPI from mpi4py. Check your mpi4py installation if you&quot;</span>
-                   <span class="s2">&quot; want to run with MPI.&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"Failed to import MPI from mpi4py. Check your mpi4py installation if you"</span>
+                   <span class="s2">" want to run with MPI."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
@@ -548,10 +548,10 @@
 <div class="viewcode-block" id="mpi_importer">
 <a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_importer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mpi_importer</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Import MPI (lazily), where we only throw an error if the import</span>
+<span class="w">    </span><span class="sd">"""Import MPI (lazily), where we only throw an error if the import</span>
 <span class="sd">    failed and then we attempt to use the object.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
@@ -565,13 +565,13 @@
 <div class="viewcode-block" id="mpi_numpy_decomp">
 <a class="viewcode-back" href="../../pynucastro.mpi_utils.html#pynucastro.mpi_utils.mpi_numpy_decomp">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mpi_numpy_decomp</span><span class="p">(</span><span class="n">MPI_N</span><span class="p">,</span> <span class="n">MPI_rank</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decompose a set of conditions for *MPI_N* MPI processes, where</span>
+<span class="w">    </span><span class="sd">"""Decompose a set of conditions for *MPI_N* MPI processes, where</span>
 <span class="sd">    the conditions are a sequence of 3 sequences with ordering</span>
 <span class="sd">    (composition_sequence, density_sequence,</span>
 <span class="sd">    temperature_sequence). This structure for the dataset is necessary</span>
 <span class="sd">    for the vectorized reduction algorithms.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">MPI_N</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
 

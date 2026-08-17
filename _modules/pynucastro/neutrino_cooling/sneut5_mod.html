@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.neutrino_cooling.sneut5_mod &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.neutrino_cooling.sneut5_mod &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.neutrino_cooling.sneut5_mod</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods that implement the Itoh et al. 1996 thermal</span>
+<span></span><span class="sd">"""Classes and methods that implement the Itoh et al. 1996 thermal</span>
 <span class="sd">neutron loss terms.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -524,7 +524,7 @@
 <div class="viewcode-block" id="NeutrinoComponents">
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NeutrinoComponents</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple container that holds the individual components to the</span>
+<span class="w">    </span><span class="sd">"""A simple container that holds the individual components to the</span>
 <span class="sd">    neutrino cooling.</span>
 
 <span class="sd">    Attributes</span>
@@ -540,7 +540,7 @@
 <span class="sd">    sreco : float</span>
 <span class="sd">        Recombination neutrino cooling rate</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">splas</span> <span class="o">=</span> <span class="kc">None</span>
@@ -550,14 +550,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sreco</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;splas: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">splas</span><span class="si">}</span><span class="s2">; spair: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spair</span><span class="si">}</span><span class="s2">; sphot: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sphot</span><span class="si">}</span><span class="s2">; sbrem: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sbrem</span><span class="si">}</span><span class="s2">; sreco: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sreco</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"splas: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">splas</span><span class="si">}</span><span class="s2">; spair: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spair</span><span class="si">}</span><span class="s2">; sphot: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sphot</span><span class="si">}</span><span class="s2">; sbrem: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sbrem</span><span class="si">}</span><span class="s2">; sreco: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sreco</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="ifermi12">
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.ifermi12">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">ifermi12</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply a rational function expansion to get the inverse</span>
+<span class="w">    </span><span class="sd">"""Apply a rational function expansion to get the inverse</span>
 <span class="sd">    fermi-dirac integral of order 1/2 when it is equal to f.</span>
 
 <span class="sd">    The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)</span>
@@ -571,7 +571,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    float</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># coefficients of the expansion from Table 8 of Antia</span>
 
@@ -665,7 +665,7 @@
 <a class="viewcode-back" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.sneut5">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">sneut5</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">abar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zbar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
            <span class="n">full_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute thermal neutrino losses (in erg/g/s) from the analytic</span>
+<span class="w">    </span><span class="sd">"""Compute thermal neutrino losses (in erg/g/s) from the analytic</span>
 <span class="sd">    fits of Itoh et al. ApJS 102, 411, 1996.  Note that either a</span>
 <span class="sd">    Composition object of abar/zbar need to be provided.</span>
 
@@ -693,7 +693,7 @@
 <span class="sd">    tuple of (float, NeutrinoComponents)</span>
 <span class="sd">        The cooling rate and components if `full_output` is True</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="n">abar</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">zbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">abar</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">abar</span>
@@ -1131,7 +1131,7 @@
 
     <span class="n">tfermi</span> <span class="o">=</span> <span class="mf">5.9302e9</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1.018</span> <span class="o">*</span> <span class="p">(</span><span class="n">den6</span> <span class="o">*</span> <span class="n">ye</span><span class="p">)</span><span class="o">**</span><span class="n">twoth</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
 
-    <span class="c1"># &quot;weak&quot; degenerate electrons only</span>
+    <span class="c1"># "weak" degenerate electrons only</span>
 
     <span class="k">if</span> <span class="n">T</span> <span class="o">&gt;</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">tfermi</span><span class="p">:</span>
 

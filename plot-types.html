@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -648,9 +648,9 @@
 </div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
-                              <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;ne21&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;al27&quot;</span><span class="p">,</span>
-                              <span class="s2">&quot;si27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sub</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span>
+                              <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"ne21"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span> <span class="s2">"mg23"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"al27"</span><span class="p">,</span>
+                              <span class="s2">"si27"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">])</span>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">sub</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -686,16 +686,16 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mf">1.e-10</span><span class="p">)</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.1</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.075</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n13&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.05</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.15</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;na23&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-4</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;mg23&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;mg24&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.005</span>
-<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;si28&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.075</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n13"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ne20"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"na23"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-4</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg23"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg24"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.005</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"si28"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1.e-5</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -822,8 +822,8 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 <p>Any edge can be labelled by passing a dictionary keyed by a tuple of the nodes in the network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edge_labels</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">)):</span>
-               <span class="sa">r</span><span class="s2">&quot;$\alpha(\alpha\alpha,\gamma)</span><span class="si">{}</span><span class="s2">^</span><span class="si">{12}</span><span class="s2">\mathrm</span><span class="si">{C}</span><span class="s2">$&quot;</span><span class="p">}</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edge_labels</span> <span class="o">=</span> <span class="p">{(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)):</span>
+               <span class="sa">r</span><span class="s2">"$\alpha(\alpha\alpha,\gamma)</span><span class="si">{}</span><span class="s2">^</span><span class="si">{12}</span><span class="s2">\mathrm</span><span class="si">{C}</span><span class="s2">$"</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
@@ -848,7 +848,7 @@ and composition (as a <a class="reference internal" href="pynucastro.nucdata.com
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
               <span class="n">node_size</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-              <span class="n">rate_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+              <span class="n">rate_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -897,7 +897,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3616/521355089.py:4: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3657/521355089.py:4: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_jacobian(rho, T, comp, rate_scaling=1.e10)
 </pre></div>
 </div>
@@ -915,14 +915,14 @@ where</p>
 <p>Calling <code class="docutils literal notranslate"><span class="pre">gridplot</span></code> without any arguments will just plot the grid—to see anything interesting we need to supply some conditions. Here is a plot of nuclide mass fraction on a log scale, with a 36 square inch figure:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span> 
-              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12(p,g)n13"</span><span class="p">,</span> 
+              <span class="s2">"c13(p,g)n14"</span><span class="p">,</span>
+              <span class="s2">"n13(,)c13"</span><span class="p">,</span>
+              <span class="s2">"n13(p,g)o14"</span><span class="p">,</span>
+              <span class="s2">"n14(p,g)o15"</span><span class="p">,</span>
+              <span class="s2">"n15(p,a)c12"</span><span class="p">,</span>
+              <span class="s2">"o14(,)n14"</span><span class="p">,</span>
+              <span class="s2">"o15(,)n15"</span><span class="p">]</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">rates</span><span class="p">)</span>
 </pre></div>
@@ -941,7 +941,7 @@ where</p>
 </div>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -952,8 +952,8 @@ where</p>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;ydot&quot;</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
-                  <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;RdGy&quot;</span><span class="p">,</span> <span class="n">cbar_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">"ydot"</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">36</span><span class="p">,</span>
+                  <span class="n">cmap</span><span class="o">=</span><span class="s2">"RdGy"</span><span class="p">,</span> <span class="n">cbar_bounds</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -966,8 +966,8 @@ where</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ff</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">nuc</span><span class="p">:</span> <span class="n">nuc</span><span class="o">.</span><span class="n">Z</span> <span class="o">&gt;</span> <span class="mi">2</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">&quot;activity&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span>
-                  <span class="n">filter_function</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">gridplot</span><span class="p">(</span><span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">color_field</span><span class="o">=</span><span class="s2">"activity"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"log"</span><span class="p">,</span>
+                  <span class="n">filter_function</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"Blues"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -986,7 +986,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3616/1870448911.py:1: DeprecationWarning: plot_network_chart(rho, T, comp, ...) is deprecated, use plot_network_chart(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3657/1870448911.py:1: DeprecationWarning: plot_network_chart(rho, T, comp, ...) is deprecated, use plot_network_chart(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_network_chart(rho, T, comp)
 </pre></div>
 </div>

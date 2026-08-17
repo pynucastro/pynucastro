@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A He-burning Network &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>A He-burning Network &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -645,11 +645,11 @@ as well as a few more nuclei, including those identified by <a class="reference 
 be very important for the ignition of a detonation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;ar36&quot;</span><span class="p">,</span> <span class="s2">&quot;ca40&quot;</span><span class="p">,</span> <span class="s2">&quot;ti44&quot;</span><span class="p">,</span> <span class="s2">&quot;cr48&quot;</span><span class="p">,</span> <span class="s2">&quot;fe52&quot;</span><span class="p">,</span> <span class="s2">&quot;ni56&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;al27&quot;</span><span class="p">,</span> <span class="s2">&quot;p31&quot;</span><span class="p">,</span> <span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">,</span> <span class="s2">&quot;mn51&quot;</span><span class="p">,</span> <span class="s2">&quot;co55&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;f18&quot;</span><span class="p">,</span> <span class="s2">&quot;ne21&quot;</span><span class="p">,</span> <span class="s2">&quot;na22&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span>
+          <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">,</span>
+          <span class="s2">"ar36"</span><span class="p">,</span> <span class="s2">"ca40"</span><span class="p">,</span> <span class="s2">"ti44"</span><span class="p">,</span> <span class="s2">"cr48"</span><span class="p">,</span> <span class="s2">"fe52"</span><span class="p">,</span> <span class="s2">"ni56"</span><span class="p">,</span>
+          <span class="s2">"al27"</span><span class="p">,</span> <span class="s2">"p31"</span><span class="p">,</span> <span class="s2">"cl35"</span><span class="p">,</span> <span class="s2">"k39"</span><span class="p">,</span> <span class="s2">"sc43"</span><span class="p">,</span> <span class="s2">"v47"</span><span class="p">,</span> <span class="s2">"mn51"</span><span class="p">,</span> <span class="s2">"co55"</span><span class="p">,</span>
+          <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"ne21"</span><span class="p">,</span> <span class="s2">"na22"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -667,9 +667,9 @@ be very important for the ignition of a detonation.</p>
 that the original <span class="math notranslate nohighlight">\((X, n)\)</span> reaction is immediately followed by a neutron capture.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">other_rates</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;c12(c12,n)mg23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">),</span>
-               <span class="p">(</span><span class="s2">&quot;o16(o16,n)s31&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">),</span>
-               <span class="p">(</span><span class="s2">&quot;o16(c12,n)si27&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">)]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">other_rates</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"c12(c12,n)mg23"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">"o16(o16,n)s31"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">"o16(c12,n)si27"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">)]</span>
 
 <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">other_rates</span><span class="p">:</span>
     <span class="n">_r</span> <span class="o">=</span> <span class="n">reaclib_lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -685,11 +685,11 @@ that the original <span class="math notranslate nohighlight">\((X, n)\)</span> r
 <p>Next we’ll add some more nuclei in the iron group.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_peak</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;mn51&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;fe52&quot;</span><span class="p">,</span> <span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe54&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;fe56&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;co55&quot;</span><span class="p">,</span> <span class="s2">&quot;co56&quot;</span><span class="p">,</span> <span class="s2">&quot;co57&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;ni56&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">,</span> <span class="s2">&quot;ni58&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">iron_peak</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"n"</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+             <span class="s2">"mn51"</span><span class="p">,</span>
+             <span class="s2">"fe52"</span><span class="p">,</span> <span class="s2">"fe53"</span><span class="p">,</span> <span class="s2">"fe54"</span><span class="p">,</span> <span class="s2">"fe55"</span><span class="p">,</span> <span class="s2">"fe56"</span><span class="p">,</span>
+             <span class="s2">"co55"</span><span class="p">,</span> <span class="s2">"co56"</span><span class="p">,</span> <span class="s2">"co57"</span><span class="p">,</span>
+             <span class="s2">"ni56"</span><span class="p">,</span> <span class="s2">"ni57"</span><span class="p">,</span> <span class="s2">"ni58"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -775,8 +775,8 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <p>Next, we will do the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> approximation and eliminate the intermediate nuclei</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">])</span>
-<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;cl35&quot;</span><span class="p">,</span> <span class="s2">&quot;k39&quot;</span><span class="p">,</span> <span class="s2">&quot;sc43&quot;</span><span class="p">,</span> <span class="s2">&quot;v47&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">"cl35"</span><span class="p">,</span> <span class="s2">"k39"</span><span class="p">,</span> <span class="s2">"sc43"</span><span class="p">,</span> <span class="s2">"v47"</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">"cl35"</span><span class="p">,</span> <span class="s2">"k39"</span><span class="p">,</span> <span class="s2">"sc43"</span><span class="p">,</span> <span class="s2">"v47"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -784,8 +784,8 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <p>We will also approximate some of the neutron captures:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nn_g_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">])</span>
-<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe55&quot;</span><span class="p">,</span> <span class="s2">&quot;ni57&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">make_nn_g_approx</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="o">=</span><span class="p">[</span><span class="s2">"fe53"</span><span class="p">,</span> <span class="s2">"fe55"</span><span class="p">,</span> <span class="s2">"ni57"</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_nuclei</span><span class="p">([</span><span class="s2">"fe53"</span><span class="p">,</span> <span class="s2">"fe55"</span><span class="p">,</span> <span class="s2">"ni57"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -860,17 +860,17 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <p>We’ll write out the network to a python module and do a test integration with it.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;he_burn.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"he_burn.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N14 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
 </div>
@@ -918,7 +918,7 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.0</span>
 
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">he_burn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">chugunov_2007</span><span class="p">),</span>
                 <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
 </pre></div>
@@ -956,22 +956,22 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">he_burn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
     <span class="n">max_X</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="s2">"--"</span>
     <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
         <span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="s2">"-"</span>
     <span class="k">elif</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">0.01</span><span class="p">:</span>
         <span class="n">lw</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">ls</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="s2">"-"</span>
     <span class="k">if</span> <span class="n">max_X</span> <span class="o">&gt;</span> <span class="mf">5.e-3</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">he_burn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span>
-                  <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">he_burn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+                  <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">he_burn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"t (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">margins</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1010,14 +1010,14 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N14 partition function is not supported by tables: set log_pf = 0.0 by default
-  warnings.warn(UserWarning(f&#39;{nuc} partition function is not supported by tables: set log_pf = 0.0 by default&#39;))
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
-<img alt="_images/96c4b58f5127204b1ee9cf240c4b751f668091942af2666032e8fc678544b4e8.png" src="_images/96c4b58f5127204b1ee9cf240c4b751f668091942af2666032e8fc678544b4e8.png" />
+<img alt="_images/f2d5287d57ee1b702370ad0878f1b91a4021824800c9df640a2841802fc2f1d0.png" src="_images/f2d5287d57ee1b702370ad0878f1b91a4021824800c9df640a2841802fc2f1d0.png" />
 </div>
 </div>
 <p>At this point we see that we are really in the iron-group, with some lingering He.</p>
@@ -1027,7 +1027,7 @@ warning: Fe54 was not able to be linked in TabularWeakLibrary
 <p>We also see that the electron captures have decreased our <span class="math notranslate nohighlight">\(Y_e\)</span> a bit:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ye = </span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">ye</span><span class="si">:</span><span class="s2">6.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ye = </span><span class="si">{</span><span class="n">comp</span><span class="o">.</span><span class="n">ye</span><span class="si">:</span><span class="s2">6.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

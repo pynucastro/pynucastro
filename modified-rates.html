@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modified Rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Modified Rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -616,7 +616,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">],</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">],</span>
                         <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -627,7 +627,7 @@
 products:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n14rate</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n14(a,g)f18&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n14rate</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n14(a,g)f18"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -635,8 +635,8 @@ products:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_n14</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">n14rate</span><span class="p">,</span>
-                            <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ne20&quot;</span><span class="p">)],</span>
-                            <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">):</span> <span class="mf">1.5</span><span class="p">})</span>
+                            <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ne20"</span><span class="p">)],</span>
+                            <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">):</span> <span class="mf">1.5</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -703,7 +703,7 @@ def He4_N14_to_Ne20_modified(rate_eval, tf, log_scor=0.0):
 <p>The evolution for <span class="math notranslate nohighlight">\(dY({}^{4}\mathrm{He})/dt\)</span> also uses the correct coefficient:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">full_ydot_string</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -723,7 +723,7 @@ def He4_N14_to_Ne20_modified(rate_eval, tf, log_scor=0.0):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">curved_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-               <span class="n">highlight_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
+               <span class="n">highlight_filter_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

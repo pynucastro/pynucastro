@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.networks.network_compare</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Helper functions for comparing the output of different backends</span>
+<span></span><span class="sd">"""Helper functions for comparing the output of different backends</span>
 <span class="sd">(python, C++) for the same network.  This will build and run each net</span>
 <span class="sd">and return the ydots.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
@@ -536,7 +536,7 @@
 <div class="viewcode-block" id="NetworkCompare">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NetworkCompare</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple class to manage building a network with different</span>
+<span class="w">    </span><span class="sd">"""A simple class to manage building a network with different</span>
 <span class="sd">    backends to facilitate comparisons.</span>
 
 <span class="sd">    Parameters</span>
@@ -592,13 +592,13 @@
 <span class="sd">    rho_eval : float</span>
 <span class="sd">        The density used in the evaluation.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lib</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">use_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">include_amrex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">include_simple_cxx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">python_module_name</span><span class="o">=</span><span class="s2">&quot;compare_net.py&quot;</span><span class="p">,</span>
+                 <span class="n">python_module_name</span><span class="o">=</span><span class="s2">"compare_net.py"</span><span class="p">,</span>
                  <span class="n">amrex_test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">cxx_test_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
@@ -612,13 +612,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">include_amrex</span> <span class="o">=</span> <span class="n">include_amrex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span> <span class="o">=</span> <span class="n">include_simple_cxx</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">python_module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid python_module_name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">python_module_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".py"</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"invalid python_module_name"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span> <span class="o">=</span> <span class="n">python_module_name</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_amrex</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">amrex_test_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">amrex_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;_test_amrex_compare/&quot;</span><span class="p">)</span>
+                <span class="n">amrex_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"_test_amrex_compare/"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span> <span class="o">=</span> <span class="n">amrex_test_path</span>
 
@@ -627,7 +627,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_simple_cxx</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">cxx_test_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">cxx_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;_test_compare/&quot;</span><span class="p">)</span>
+                <span class="n">cxx_test_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"_test_compare/"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span> <span class="o">=</span> <span class="n">cxx_test_path</span>
 
@@ -658,10 +658,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rho_eval</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_inline_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the rates using the methods built into</span>
+<span class="w">        </span><span class="sd">"""Evaluate the rates using the methods built into</span>
 <span class="sd">        RateCollection</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
@@ -671,14 +671,14 @@
                                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_module_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the python network to a module and import it, and</span>
+<span class="w">        </span><span class="sd">"""Write the python network to a module and import it, and</span>
 <span class="sd">        then evaluate the rates from the rate functions in the module.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span><span class="p">)</span>
 
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s2">&quot;cn&quot;</span><span class="p">,</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span><span class="s2">"cn"</span><span class="p">,</span>
                                                       <span class="bp">self</span><span class="o">.</span><span class="n">python_module_name</span><span class="p">)</span>
         <span class="n">cn</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
         <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
@@ -694,27 +694,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rate_eval</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_amrex_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the AMReX C++ network code, build it, run, and</span>
+<span class="w">        </span><span class="sd">"""Output the AMReX C++ network code, build it, run, and</span>
 <span class="sd">        parse the output to get the rates.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">cxx_net</span> <span class="o">=</span> <span class="n">AmrexAstroCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">])</span>
         <span class="n">cxx_net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">,</span> <span class="n">standalone_build</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># build an run the simple C++ network</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;SCREEN_METHOD=chugunov2007&quot;</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">"SCREEN_METHOD=chugunov2007"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;SCREEN_METHOD=null&quot;</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">"SCREEN_METHOD=null"</span>
 
-        <span class="c1"># to reduce compilation time, we&#39;ll build in debug mode</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make DEBUG=TRUE -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="c1"># to reduce compilation time, we'll build in debug mode</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"make DEBUG=TRUE -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
 
-        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./main3d.gnu.DEBUG.ex testing.density=</span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> testing.temperature=</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"./main3d.gnu.DEBUG.ex testing.density=</span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> testing.temperature=</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                             <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
@@ -725,46 +725,46 @@
         <span class="c1"># for each nucleus X.  Note: there can be 0-2 spaces before X.</span>
         <span class="c1"># This regex will capture the nucleus and the ydot value for</span>
         <span class="c1"># each of these</span>
-        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
-        <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">rate_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
                 <span class="n">rate_fname</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">rr</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rate_fname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_simple_cxx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Output the simple C++ network code, build it, run, and</span>
+<span class="w">        </span><span class="sd">"""Output the simple C++ network code, build it, run, and</span>
 <span class="sd">        parse the output to get the rates.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">cxx_net</span> <span class="o">=</span> <span class="n">SimpleCxxNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">lib</span><span class="p">])</span>
         <span class="n">cxx_net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">odir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
 
         <span class="c1"># build an run the simple C++ network</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;USE_SCREENING=TRUE&quot;</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">"USE_SCREENING=TRUE"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="s2">&quot;USE_SCREENING=FALSE&quot;</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="s2">"USE_SCREENING=FALSE"</span>
 
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;make -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"make -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                        <span class="n">capture_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                        <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                        <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
 
-        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;./main </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"./main </span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                             <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cxx_test_path</span><span class="p">)</span>
@@ -775,22 +775,22 @@
         <span class="c1"># for each nucleus X.  Note: there can be 0-2 spaces before X.</span>
         <span class="c1"># This regex will capture the nucleus and the ydot value for</span>
         <span class="c1"># each of these</span>
-        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="n">ydot_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(Ydot)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
-        <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)&quot;</span><span class="p">,</span>
+        <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">rate_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
                 <span class="n">rate_fname</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">rr</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rate_fname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -799,7 +799,7 @@
 <div class="viewcode-block" id="NetworkCompare.evaluate">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the ydots from all the backends we are</span>
+<span class="w">        </span><span class="sd">"""Evaluate the ydots from all the backends we are</span>
 <span class="sd">        considering</span>
 
 <span class="sd">        Parameters</span>
@@ -809,7 +809,7 @@
 <span class="sd">        T : float</span>
 <span class="sd">            temperature to evaluate rates at (K)</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_inline_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_python_module_version</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
@@ -827,86 +827,86 @@
 <div class="viewcode-block" id="NetworkCompare.print_summary">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a summary of the dY/dt comparison and errors for each</span>
+<span class="w">        </span><span class="sd">"""Print a summary of the dY/dt comparison and errors for each</span>
 <span class="sd">        network type run.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># we need to have run previously</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;no ydots stored.  evaluate() must be run first&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"no ydots stored.  evaluate() must be run first"</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dYdt&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"dYdt"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"===="</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
 
-        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">,</span>
-                        <span class="s2">&quot;py (module)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">}</span>
+        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"py (inline)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">,</span>
+                        <span class="s2">"py (module)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">:</span>
-            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;AMReX C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"AMReX C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">:</span>
-            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;simple C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"simple C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span>
 
-        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="s1">&#39;nuc&#39;</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="s1">'nuc'</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> "</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
-                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> "</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;error&#39;</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'error'</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> "</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">nuc</span><span class="si">!s:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">nuc</span><span class="si">!s:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> "</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">ydots</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
                 <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
-                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
-                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">()</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rates&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=====&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"rates"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"====="</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
 
-        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span><span class="p">,</span>
-                        <span class="s2">&quot;py (module)&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span><span class="p">}</span>
+        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"py (inline)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span><span class="p">,</span>
+                        <span class="s2">"py (module)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">:</span>
-            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;AMReX C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"AMReX C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span><span class="p">:</span>
-            <span class="n">data_headers</span><span class="p">[</span><span class="s2">&quot;simple C++&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"simple C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span>
 
-        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="s1">&#39;rate&#39;</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> &quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="s1">'rate'</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> "</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
-                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> "</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;error&#39;</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'error'</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> "</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">rate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">rate</span><span class="si">!s:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">rate</span><span class="si">!s:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> "</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">val</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">rate</span><span class="p">]</span>
                 <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span><span class="p">[</span><span class="n">rate</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;py (inline)&quot;</span><span class="p">:</span>
-                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
-                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> &quot;</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 </div>
 

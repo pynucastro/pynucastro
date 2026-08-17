@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>alternate_rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>alternate_rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -646,7 +646,7 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">c12_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;c12(a,g)o16&quot;</span><span class="p">)</span>
+<span class="n">c12_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(a,g)o16"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -659,12 +659,12 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;Label&#39;: &#39;nac2&#39;,
- &#39;Author&#39;: &#39;Xu, Y. et al.&#39;,
- &#39;Title&#39;: &#39;NACRE2&#39;,
- &#39;Publisher&#39;: &#39;Nucl. Phys. A 918, P. 61&#39;,
- &#39;Year&#39;: &#39;2013&#39;,
- &#39;URL&#39;: &#39;https://doi.org/10.1016/j.nuclphysa.2013.09.007&#39;}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'Label': 'nac2',
+ 'Author': 'Xu, Y. et al.',
+ 'Title': 'NACRE2',
+ 'Publisher': 'Nucl. Phys. A 918, P. 61',
+ 'Year': '2013',
+ 'URL': 'https://doi.org/10.1016/j.nuclphysa.2013.09.007'}
 </pre></div>
 </div>
 </div>
@@ -717,16 +717,16 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_rl</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ReacLib&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_deboer</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;deBoer&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A\langle \sigma v\rangle$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_rl</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"ReacLib"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">r_deboer</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"deBoer"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$N_A\langle \sigma v\rangle$"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f171627aba0&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f800eccecf0&gt;
 </pre></div>
 </div>
 <img alt="_images/9f0af4c45612170de97a79f8bb919704ac06747b782f5cb811a9f3889b3cd5ee.png" src="_images/9f0af4c45612170de97a79f8bb919704ac06747b782f5cb811a9f3889b3cd5ee.png" />
@@ -737,9 +737,9 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">r_rl</span> <span class="o">-</span> <span class="n">r_deboer</span><span class="p">)</span> <span class="o">/</span> <span class="n">r_rl</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;relative difference&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"relative difference"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -754,7 +754,7 @@ subclassing the <a class="reference internal" href="pynucastro.rates.temperature
 Here’s a simple He-burning network.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">]</span>
 
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_equal</span><span class="p">()</span>
@@ -780,7 +780,7 @@ Here’s a simple He-burning network.</p>
 <span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">rr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -816,7 +816,7 @@ Na23 + p ⟶ He4 + Ne20     : 8.9374939e+06
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc2</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rc2</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">rr</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">rates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">12.7e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -846,18 +846,18 @@ use the median value of the rate.</p>
 <p>First we’ll get the ReacLib version</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">o16_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;o16(p,g)f17&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">o16_rl</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"o16(p,g)f17"</span><span class="p">)</span>
 <span class="n">o16_rl</span><span class="o">.</span><span class="n">source</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;Label&#39;: &#39;ia08&#39;,
- &#39;Author&#39;: &#39;Iliadis, C.&#39;,
- &#39;Title&#39;: &#39;New reaction rate for 16O( p,&amp;gamma;)17F and its influence on the oxygen isotopic ratios in massive AGB stars&#39;,
- &#39;Publisher&#39;: &#39;PRC77, 045802&#39;,
- &#39;Year&#39;: &#39;2008&#39;,
- &#39;URL&#39;: &#39;https://doi.org/10.1103/PhysRevC.77.045802&#39;}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{'Label': 'ia08',
+ 'Author': 'Iliadis, C.',
+ 'Title': 'New reaction rate for 16O( p,&amp;gamma;)17F and its influence on the oxygen isotopic ratios in massive AGB stars',
+ 'Publisher': 'PRC77, 045802',
+ 'Year': '2008',
+ 'URL': 'https://doi.org/10.1103/PhysRevC.77.045802'}
 </pre></div>
 </div>
 </div>
@@ -889,7 +889,7 @@ use the median value of the rate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">lT9</span><span class="p">,</span> <span class="n">lr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">o16_iliadis</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">,</span> <span class="n">o16_iliadis</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lT9</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">lT9</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">lr</span><span class="si">:</span><span class="s2">11.8f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -977,9 +977,9 @@ use the median value of the rate.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;relative difference&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"relative difference"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

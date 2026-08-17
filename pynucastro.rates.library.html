@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.library module &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.library module &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1031,12 +1031,12 @@ otherwise</p></li>
 <p class="rubric">Examples</p>
 <p>Create a filter that finds all proton capture and proton-burning reactions
 in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> instance <code class="docutils literal notranslate"><span class="pre">my_library</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="s1">'p'</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_library</span> <span class="o">=</span> <span class="n">my_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pcap_filter</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or you can use <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">&#39;p&#39;</span><span class="p">),</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">Nucleus</span><span class="p">(</span><span class="s1">'p'</span><span class="p">),</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pcap_library</span> <span class="o">=</span> <span class="n">my_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pcap_filter</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1047,7 +1047,7 @@ a reactant or product</p></li>
 <li><p>this rate is in the ReacLib library used here as
 O16 –&gt; He4 + C12 — you need to know how your library treats rates</p></li>
 </ul>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cago_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="s1">&#39;o16&#39;</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;c12&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cago_filter</span> <span class="o">=</span> <span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="s1">'o16'</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s1">'c12'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cago_library</span> <span class="o">=</span> <span class="n">my_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">cago_filter</span><span class="p">)</span>
 </pre></div>
 </div>

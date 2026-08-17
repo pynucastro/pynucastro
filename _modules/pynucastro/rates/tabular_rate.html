@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.tabular_rate</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for describing a reaction rate that is</span>
+<span></span><span class="sd">"""Classes and methods for describing a reaction rate that is</span>
 <span class="sd">tabulated in terms of electron density and temperature.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
@@ -536,10 +536,10 @@
 <div class="viewcode-block" id="TableIndex">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableIndex">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableIndex</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An enum-like container for indexing the electron-capture</span>
+<span class="w">    </span><span class="sd">"""An enum-like container for indexing the electron-capture</span>
 <span class="sd">    tables.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">RHOY</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">T</span> <span class="o">=</span> <span class="mi">1</span>
@@ -555,14 +555,14 @@
 <div class="viewcode-block" id="TableInterpolator">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TableInterpolator">[docs]</a>
 <span class="nd">@jitclass</span><span class="p">([</span>
-    <span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:,</span> <span class="p">:]),</span>
-    <span class="p">(</span><span class="s1">&#39;table_rhoy_lines&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;table_temp_lines&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;rhoy&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
-    <span class="p">(</span><span class="s1">&#39;temp&#39;</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:])</span>
+    <span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:,</span> <span class="p">:]),</span>
+    <span class="p">(</span><span class="s1">'table_rhoy_lines'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'table_temp_lines'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'rhoy'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:]),</span>
+    <span class="p">(</span><span class="s1">'temp'</span><span class="p">,</span> <span class="n">numba</span><span class="o">.</span><span class="n">float64</span><span class="p">[:])</span>
 <span class="p">])</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableInterpolator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that holds a pointer to the table data and</span>
+<span class="w">    </span><span class="sd">"""A class that holds a pointer to the table data and</span>
 <span class="sd">    methods that allow us to interpolate a variable</span>
 
 <span class="sd">    Parameters</span>
@@ -576,7 +576,7 @@
 <span class="sd">        component) where index is a 1D flattened representation of</span>
 <span class="sd">        (rhoY, T).</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_rhoy_lines</span><span class="p">,</span> <span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">table_data</span><span class="p">):</span>
 
@@ -589,7 +589,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span><span class="p">,</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logT_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logt0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the index into the temperatures such that T[i-1] &lt; t0 &lt;= T[i].</span>
+<span class="w">        </span><span class="sd">"""Find the index into the temperatures such that T[i-1] &lt; t0 &lt;= T[i].</span>
 <span class="sd">        We return i-1 here, corresponding to the lower value.</span>
 
 <span class="sd">        Note: we work in terms of log10()</span>
@@ -603,13 +603,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">,</span> <span class="n">logt0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_logrhoy_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the index into rhoY such that rhoY[i-1] &lt; rhoy0 &lt;= rhoY[i].</span>
+<span class="w">        </span><span class="sd">"""Return the index into rhoY such that rhoY[i-1] &lt; rhoy0 &lt;= rhoY[i].</span>
 <span class="sd">        We return i-1 here, corresponding to the lower value.</span>
 
 <span class="sd">        Note: we work in terms of log10()</span>
@@ -623,13 +623,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">max_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_idx</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">,</span> <span class="n">logrhoy0</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rhoy_T_to_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irhoy</span><span class="p">,</span> <span class="n">jtemp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a pair (irhoy, jtemp) into the table, return the 1D</span>
+<span class="w">        </span><span class="sd">"""Given a pair (irhoy, jtemp) into the table, return the 1D</span>
 <span class="sd">        index into the underlying data array assuming row-major</span>
 <span class="sd">        ordering</span>
 
@@ -644,12 +644,12 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="n">irhoy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">+</span> <span class="n">jtemp</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy</span><span class="p">,</span> <span class="n">logT</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given logrhoy and logT, do bilinear interpolation to</span>
+<span class="w">        </span><span class="sd">"""Given logrhoy and logT, do bilinear interpolation to</span>
 <span class="sd">        find the value of the data component in the table</span>
 
 <span class="sd">        Parameters</span>
@@ -666,7 +666,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># We are going to do bilinear interpolation.  We create a</span>
         <span class="c1"># polynomial of the form:</span>
@@ -684,10 +684,10 @@
         <span class="c1"># lower left</span>
 
         <span class="k">if</span> <span class="n">logT</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logT</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;temperature out of table bounds&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"temperature out of table bounds"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logrhoy</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logrhoy</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rhoy out of table bounds&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rhoy out of table bounds"</span><span class="p">)</span>
 
         <span class="n">irhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_idx</span><span class="p">(</span><span class="n">logrhoy</span><span class="p">)</span>
         <span class="n">jT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_idx</span><span class="p">(</span><span class="n">logT</span><span class="p">)</span>
@@ -726,14 +726,14 @@
 <div class="viewcode-block" id="TabularWeakRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularWeakRate</span><span class="p">(</span><span class="n">Rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
+<span class="w">    </span><span class="sd">"""A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
 <span class="sd">        the file containing the data table</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
@@ -747,7 +747,7 @@
 
         <span class="c1"># Some initialization</span>
         <span class="c1"># weak_type, reactants and products will be updated in _read_from_file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -756,7 +756,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">,</span>
                          <span class="n">weak_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="p">,</span>
                          <span class="n">rate_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;weaktab&quot;</span><span class="p">)</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">"weaktab"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
@@ -779,10 +779,10 @@
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determine whether two Rate objects are equal.  They are</span>
+<span class="w">        </span><span class="sd">"""Determine whether two Rate objects are equal.  They are</span>
 <span class="sd">        equal if they contain identical reactants and products.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -790,30 +790,30 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">products</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;addition not defined for tabular rates&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"addition not defined for tabular rates"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_file</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a filename, read rate data from the file.</span>
+<span class="w">        </span><span class="sd">"""Given a filename, read rate data from the file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        table_file : str, pathlib.Path</span>
 <span class="sd">            The file object that contains the table data</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table_file</span> <span class="o">=</span> <span class="n">table_file</span>
 
         <span class="c1"># set weak type</span>
-        <span class="k">if</span> <span class="s2">&quot;electroncapture&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">table_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;electron_capture&quot;</span>
+        <span class="k">if</span> <span class="s2">"electroncapture"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">table_file</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">"electron_capture"</span>
 
-        <span class="k">elif</span> <span class="s2">&quot;betadecay&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">table_file</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="s2">"betadecay"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">table_file</span><span class="p">):</span>
             <span class="c1"># Assume beta-decay is beta_minus decay</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">&quot;beta_neg&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">=</span> <span class="s2">"beta_neg"</span>
 
         <span class="c1"># read in the table data</span>
-        <span class="c1"># there are a few header lines that start with &quot;!&quot;, which we skip,</span>
+        <span class="c1"># there are a few header lines that start with "!", which we skip,</span>
         <span class="c1"># expect for the very first, which defines the nuclei in the form</span>
         <span class="c1"># reactant -&gt; product</span>
 
@@ -828,7 +828,7 @@
                         <span class="c1"># we have a line of the form:</span>
                         <span class="c1"># !65ni -&gt; 65co, e- capture</span>
                         <span class="c1"># split it</span>
-                        <span class="n">g</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;!([\da-zA-Z]*) \-\&gt; ([\da-zA-Z]*)[\w,\-]*&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">g</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"!([\da-zA-Z]*) \-\&gt; ([\da-zA-Z]*)[\w,\-]*"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
                         <span class="n">reactant</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="n">product</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -837,12 +837,12 @@
                         <span class="c1"># this is mainly Suzuki rates.  The stuff in the (...) giving</span>
                         <span class="c1"># the spins can be complicated, but the key is that it is in</span>
                         <span class="c1"># parentheses.</span>
-                        <span class="n">g</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\&gt; ([\da-zA-Z]*)[\w,\-]*&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">g</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"!([\da-zA-Z]*)\s*\([\w\:\=\d/\+,\.\s\_\{\}]*\)\s+\-\&gt; ([\da-zA-Z]*)[\w,\-]*"</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
                         <span class="n">reactant</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="n">product</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
                     <span class="n">header_lines</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"!"</span><span class="p">):</span>
                     <span class="n">header_lines</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">continue</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -856,7 +856,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">reactant</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="o">.</span><span class="n">from_cache</span><span class="p">(</span><span class="n">product</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
         <span class="k">except</span> <span class="n">UnsupportedNucleus</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nucleus objects could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
+            <span class="k">raise</span> <span class="n">RateFileError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Nucleus objects could not be identified in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_file</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
 
         <span class="c1"># convert the nested list of string values into a numpy float array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t_data2d</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
@@ -866,46 +866,46 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table_rhoy_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_data_table</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table_num_vars</span> <span class="o">=</span> <span class="mi">6</span>  <span class="c1"># Hard-coded number of variables in tables for now.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;j_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'j_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_screening</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tabular rates are not currently screened (they are</span>
+<span class="w">        </span><span class="sd">"""Tabular rates are not currently screened (they are</span>
 <span class="sd">        e-capture or beta-decay)</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ion_screen</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="TabularWeakRate.function_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct the python function that computes the rate.</span>
+<span class="w">        </span><span class="sd">"""Construct the python function that computes the rate.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;@numba.njit()</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, rho, Y):</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    rhoY = rho * ye(Y)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, rho, Y):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rhoY = rho * ye(Y)</span><span class="se">\n</span><span class="s2">"</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">"</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    log_rhoY = np.log10(rhoY)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    log_T = np.log10(T)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    log_rhoY = np.log10(rhoY)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    log_T = np.log10(T)</span><span class="se">\n\n</span><span class="s2">"</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    enu = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    egamma = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    enu = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    egamma = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)</span><span class="se">\n\n</span><span class="s2">"</span>
 
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = 10.0**r</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    edot_nu = -10.0**enu</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">&quot;    edot_gamma = 10.0**egamma</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;    rate_eval.enuc_weak += N_A * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * (edot_nu + edot_gamma)</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = 10.0**r</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_nu = -10.0**enu</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_gamma = 10.0**egamma</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.enuc_weak += N_A * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * (edot_nu + edot_gamma)</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 
@@ -914,7 +914,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the natural log of the reaction rate.</span>
+<span class="w">        </span><span class="sd">"""Evaluate the natural log of the reaction rate.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -935,10 +935,10 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">rho</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">comp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;rho (density) and comp (Composition) needs to be defined when evaluating Tabular Rate&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rho (density) and comp (Composition) needs to be defined when evaluating Tabular Rate"</span><span class="p">)</span>
 
         <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">log10_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
@@ -950,7 +950,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss">[docs]</a>
     <span class="nd">@need_state</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nu_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the neutrino loss for the rate.</span>
+<span class="w">        </span><span class="sd">"""Evaluate the neutrino loss for the rate.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -962,7 +962,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">rhoY</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
@@ -973,8 +973,8 @@
 <div class="viewcode-block" id="TabularWeakRate.plot">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">Tmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rhoYmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">color_field</span><span class="o">=</span><span class="s1">&#39;rate&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the rate or neutrino loss in the log10(ρ Y_e) and</span>
+             <span class="n">color_field</span><span class="o">=</span><span class="s1">'rate'</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
+<span class="w">        </span><span class="sd">"""Plot the rate or neutrino loss in the log10(ρ Y_e) and</span>
 <span class="sd">        log10(T) plane.</span>
 
 <span class="sd">        Parameters</span>
@@ -988,7 +988,7 @@
 <span class="sd">        rhoYmax : float</span>
 <span class="sd">            maximum (ρ Y_e) for the plto</span>
 <span class="sd">        color_field : str</span>
-<span class="sd">            the field to plot.  Possible values are &quot;rate&quot; or &quot;nu_loss&quot;</span>
+<span class="sd">            the field to plot.  Possible values are "rate" or "nu_loss"</span>
 <span class="sd">        figsize : tuple</span>
 <span class="sd">            the horizontal, vertical size (in inches) for the plot</span>
 
@@ -996,7 +996,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
 
@@ -1021,31 +1021,31 @@
         <span class="n">cols</span><span class="p">,</span> <span class="n">col_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">data_heatmap</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">pivot_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data_heatmap</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">&#39;rate&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">'rate'</span><span class="p">:</span>
             <span class="n">icol</span> <span class="o">=</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="si">}</span><span class="s2"> rate in log10(1/s)&quot;</span>
-            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;magma&#39;</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">weak_type</span><span class="si">}</span><span class="s2"> rate in log10(1/s)"</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'magma'</span>
 
-        <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">&#39;nu_loss&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">color_field</span> <span class="o">==</span> <span class="s1">'nu_loss'</span><span class="p">:</span>
             <span class="n">icol</span> <span class="o">=</span> <span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;neutrino energy loss rate in log10(erg/s)&quot;</span>
-            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">&#39;viridis&#39;</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">"neutrino energy loss rate in log10(erg/s)"</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="s1">'viridis'</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;color_field must be either &#39;rate&#39; or &#39;nu_loss&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"color_field must be either 'rate' or 'nu_loss'."</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">pivot_table</span><span class="p">[</span><span class="n">row_pos</span><span class="p">,</span> <span class="n">col_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_heatmap</span><span class="p">[:,</span> <span class="n">icol</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Divide by zero encountered in log10</span><span class="se">\n</span><span class="s2">Change the scale of T or rhoY&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Divide by zero encountered in log10</span><span class="se">\n</span><span class="s2">Change the scale of T or rhoY"</span><span class="p">)</span>
 
-        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivot_table</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">pivot_table</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
                        <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoYmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoYmax</span><span class="p">)])</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(T)$ [K]&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log(\rho Y_e)$ [g/cm$^3$]&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log(T)$ [K]"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$\log(\rho Y_e)$ [g/cm$^3$]"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">fr</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pretty_string</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">title</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>
@@ -1055,7 +1055,7 @@
 <div class="viewcode-block" id="TabularRate">
 <a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularRate">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularRate</span><span class="p">(</span><span class="n">TabularWeakRate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
+<span class="w">    </span><span class="sd">"""A rate tabulated in terms of log10(ρ Y_e) and log10(T).</span>
 
 <span class="sd">    .. deprecated:: 3.0</span>
 <span class="sd">       ``TabularRate`` has been deprecated.  Use ``TabularWeakRate``</span>
@@ -1066,11 +1066,11 @@
 <span class="sd">    rfile : str, pathlib.Path, io.StringIO</span>
 <span class="sd">        the file containing the data table</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;TabularRate is deprecated; use TabularWeakRate instead.&quot;</span><span class="p">,</span>
+            <span class="s2">"TabularRate is deprecated; use TabularWeakRate instead."</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
             <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1078,7 +1078,7 @@
 
     <span class="c1"># needed because __add__ is abstract in TabularWeakRate</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;addition not defined for tabular rates&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"addition not defined for tabular rates"</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>A Supernova Lightcurve &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>A Supernova Lightcurve &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -614,7 +614,7 @@
 <p>We’ll look at <span class="math notranslate nohighlight">\({}^{56}\mathrm{Ni} \rightarrow {}^{56}\mathrm{Co} \rightarrow {}^{56}\mathrm{Fe}\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ni56&quot;</span><span class="p">,</span> <span class="s2">&quot;co56&quot;</span><span class="p">,</span> <span class="s2">&quot;fe56&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ni56"</span><span class="p">,</span> <span class="s2">"co56"</span><span class="p">,</span> <span class="s2">"fe56"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -651,7 +651,7 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;rea
 <p>We can write out the network to solve.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;decay.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"decay.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -712,16 +712,16 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;rea
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span> <span class="o">/</span> <span class="n">seconds_per_day</span><span class="p">,</span> <span class="n">decay</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="p">:],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">decay</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span> <span class="o">/</span> <span class="n">seconds_per_day</span><span class="p">,</span> <span class="n">decay</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="p">:],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">decay</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time (days)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (days)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;X&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, 'X')
 </pre></div>
 </div>
 <img alt="../_images/7ba04d54978b609c02f1a1ba3ae0bd29c3f49e0375e55c214232b4933070dbff.png" src="../_images/7ba04d54978b609c02f1a1ba3ae0bd29c3f49e0375e55c214232b4933070dbff.png" />
@@ -763,16 +763,16 @@ Ni56 ⟶ Co56 + e⁺ + 𝜈           [Q =   2.13 MeV] (Ni56 --&gt; Co56 &lt;rea
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span> <span class="o">/</span> <span class="n">seconds_per_day</span><span class="p">,</span> <span class="n">L</span> <span class="o">/</span> <span class="n">L_sun</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time (days)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;luminosity (solar)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (days)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"luminosity (solar)"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;luminosity (solar)&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, 'luminosity (solar)')
 </pre></div>
 </div>
-<img alt="../_images/fc8e463e3b8ac616af74ca40162d629750100b9cbb4c3843b27d6266d00771e8.png" src="../_images/fc8e463e3b8ac616af74ca40162d629750100b9cbb4c3843b27d6266d00771e8.png" />
+<img alt="../_images/e43aa538a20df97e5f33327cc729f3053ef0126017b92dd541ec16053710ee46.png" src="../_images/e43aa538a20df97e5f33327cc729f3053ef0126017b92dd541ec16053710ee46.png" />
 </div>
 </div>
 </section>

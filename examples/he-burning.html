@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Ratio of C/O from He burning &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Ratio of C/O from He burning &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -618,10 +618,10 @@ If the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is fa
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">],</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">],</span> <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
-<span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;heburn.py&quot;</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"heburn.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -681,7 +681,7 @@ and then return <span class="math notranslate nohighlight">\(X({}^{12}\mathrm{C}
     <span class="c1"># because of the event trigger</span>
     <span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e35</span>
 
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">heburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">heburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+    <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">heburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">heburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                     <span class="n">events</span><span class="o">=</span><span class="n">he_exhaustion</span><span class="p">,</span>
                     <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen5</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
     <span class="n">XC</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">heburn</span><span class="o">.</span><span class="n">jc12</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -738,20 +738,20 @@ and then return <span class="math notranslate nohighlight">\(X({}^{12}\mathrm{C}
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
-<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ratio</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ratio</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">,</span>
                <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Tmax</span><span class="p">),</span>
                        <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomin</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhomax</span><span class="p">)])</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;log T (K)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;log $\rho$ (g/cc)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;X(C)/(X(C) + X(O))&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"log T (K)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"log $\rho$ (g/cc)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"X(C)/(X(C) + X(O))"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;X(C)/(X(C) + X(O))&#39;)
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, 'X(C)/(X(C) + X(O))')
 </pre></div>
 </div>
 <img alt="../_images/b4e2c063e3c7fc1a84d599e3ff1873a34dba03d418be8a341c70d9e8d3280ba5.png" src="../_images/b4e2c063e3c7fc1a84d599e3ff1873a34dba03d418be8a341c70d9e8d3280ba5.png" />

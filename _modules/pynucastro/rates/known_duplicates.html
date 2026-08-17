@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,24 +513,24 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.known_duplicates</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Tools for detecting if a list of rates contains duplicates.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Tools for detecting if a list of rates contains duplicates."""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 
 <span class="c1"># there are some exceptions to the no-duplicate rates restriction.  We</span>
 <span class="c1"># list them here by class name and then rate id</span>
 <span class="n">ALLOWED_DUPLICATES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">&quot;ReacLibRate: p + p --&gt; d &lt;reaclib_bet+&gt;&quot;</span><span class="p">,</span>
-     <span class="s2">&quot;ReacLibRate: p + p --&gt; d &lt;reaclib_ec&gt;&quot;</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">&quot;StarLibRate: p + p --&gt; d &lt;starlib_nacr&gt;&quot;</span><span class="p">,</span>
-     <span class="s2">&quot;StarLibRate: p + p --&gt; d &lt;starlib_ec&gt;&quot;</span><span class="p">}</span>
+    <span class="p">{</span><span class="s2">"ReacLibRate: p + p --&gt; d &lt;reaclib_bet+&gt;"</span><span class="p">,</span>
+     <span class="s2">"ReacLibRate: p + p --&gt; d &lt;reaclib_ec&gt;"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"StarLibRate: p + p --&gt; d &lt;starlib_nacr&gt;"</span><span class="p">,</span>
+     <span class="s2">"StarLibRate: p + p --&gt; d &lt;starlib_ec&gt;"</span><span class="p">}</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="find_duplicate_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.known_duplicates.html#pynucastro.rates.known_duplicates.find_duplicate_rates">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_duplicate_rates</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a list of rates, return a list of groups of duplicate</span>
+<span class="w">    </span><span class="sd">"""Given a list of rates, return a list of groups of duplicate</span>
 <span class="sd">    rates</span>
 
 <span class="sd">    Parameters</span>
@@ -542,7 +542,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    list(Rate)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Group the rates into lists of potential duplicates, keyed by their</span>
     <span class="c1"># reactants and products.</span>
@@ -561,7 +561,7 @@
 <div class="viewcode-block" id="is_allowed_dupe">
 <a class="viewcode-back" href="../../../pynucastro.rates.known_duplicates.html#pynucastro.rates.known_duplicates.is_allowed_dupe">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_allowed_dupe</span><span class="p">(</span><span class="n">rate_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if any of the duplicates are allowed.  Some duplicates</span>
+<span class="w">    </span><span class="sd">"""Check if any of the duplicates are allowed.  Some duplicates</span>
 <span class="sd">    may be allowed since they represent distinct processes between the</span>
 <span class="sd">    same endpoints (those rates are listed in ``ALLOWED_DUPLICATES``).</span>
 <span class="sd">    Return `True` is the input set of rates is an allowed duplicate.</span>
@@ -576,11 +576,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    bool</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># make rate_list into a set of strings in the same format as</span>
     <span class="c1"># ALLOWED_DUPLICATES, then check if it matches any of the allowed sets</span>
-    <span class="n">key_set</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">}</span>
+    <span class="n">key_set</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">key_set</span> <span class="ow">in</span> <span class="n">ALLOWED_DUPLICATES</span></div>
 
 </pre></div>

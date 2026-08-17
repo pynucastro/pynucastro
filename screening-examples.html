@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Screening Rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Screening Rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -669,7 +669,7 @@ A simple demonstration with the triple alpha rate is the following</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">triple_alpha</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;a(aa,g)c12&quot;</span><span class="p">)</span>
+<span class="n">triple_alpha</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"a(aa,g)c12"</span><span class="p">)</span>
 <span class="n">triple_alpha</span><span class="o">.</span><span class="n">screening_pairs</span>
 </pre></div>
 </div>
@@ -697,12 +697,12 @@ i.e.</p>
 <a class="reference internal" href="pynucastro.screening.screen.html#pynucastro.screening.screen.make_plasma_state" title="pynucastro.screening.screen.make_plasma_state"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_plasma_state</span></code></a> can create the <code class="docutils literal notranslate"><span class="pre">PlasmaState</span></code> object</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;h1&quot;</span><span class="p">),</span>
-          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">),</span>
-          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span>
-          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span>
-          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n14&quot;</span><span class="p">),</span>
-          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;ca40&quot;</span><span class="p">)]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">),</span>
+          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
+          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">),</span>
+          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">),</span>
+          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">),</span>
+          <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"ca40"</span><span class="p">)]</span>
 
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
@@ -718,7 +718,7 @@ i.e.</p>
 <p>Now let’s get the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate and compute the screening factor</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rfilter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;o16&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rfilter</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="p">[</span><span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">],</span> <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="s2">"o16"</span><span class="p">])</span>
 <span class="n">r</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rfilter</span><span class="p">)</span><span class="o">.</span><span class="n">get_rates</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">r</span>
 </pre></div>
@@ -755,7 +755,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">log_scn</span> <span class="o">=</span> <span class="n">chugunov_2009</span><span class="p">(</span><span class="n">plasma</span><span class="p">,</span> <span class="n">scn_fac</span><span class="p">)</span>
 <span class="n">scn</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_scn</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">scn</span><span class="si">:</span><span class="s2">12.8f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">scn</span><span class="si">:</span><span class="s2">12.8f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -774,8 +774,8 @@ reaction rate information is contained in the <code class="docutils literal notr
 <p>Here’s an example: let’s build a helium and carbon burning network.</p>
 <div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mynet</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span> <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span>
-                                        <span class="s2">&quot;na23&quot;</span><span class="p">,</span> <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mynet</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span>
+                                        <span class="s2">"na23"</span><span class="p">,</span> <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">])</span>
 <span class="n">pynet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">mynet</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -827,7 +827,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cburn.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"cburn.py"</span><span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">cburn</span>
 </pre></div>
 </div>
@@ -848,7 +848,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 
 <span class="n">tmax</span> <span class="o">=</span> <span class="mf">1000.0</span>
 
-<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">chugunov_2009</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -857,7 +857,7 @@ reaction rate information is contained in the <code class="docutils literal notr
 <p>Now we run without screening:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_noscreen</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_noscreen</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">cburn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">,</span>
                          <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -875,23 +875,23 @@ reaction rate information is contained in the <code class="docutils literal notr
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cburn</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cburn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                  <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">cburn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-                  <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">icolor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                  <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">cburn</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+                  <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">icolor</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_noscreen</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_noscreen</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">cburn</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                  <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">icolor</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                  <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">icolor</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">icolor</span> <span class="o">+=</span> <span class="mi">1</span>
         
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"t (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6e0b56b854a4a1559fa839b920883bc7062185b44f76ad52a217837742141cc9.png" src="_images/6e0b56b854a4a1559fa839b920883bc7062185b44f76ad52a217837742141cc9.png" />
+<img alt="_images/0c0fe6f4846e6a9ff85e3bfa58ca9886773815eb5eb831fc73ea925787005d86.png" src="_images/0c0fe6f4846e6a9ff85e3bfa58ca9886773815eb5eb831fc73ea925787005d86.png" />
 </div>
 </div>
 <p>As expected, using screening makes the carbon burn much more quickly.</p>

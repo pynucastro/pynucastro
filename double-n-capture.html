@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating double n-capture &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Approximating double n-capture &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -627,7 +627,7 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">&quot;fe52&quot;</span><span class="p">,</span> <span class="s2">&quot;fe53&quot;</span><span class="p">,</span> <span class="s2">&quot;fe54&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">])</span>
+<span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"fe52"</span><span class="p">,</span> <span class="s2">"fe53"</span><span class="p">,</span> <span class="s2">"fe54"</span><span class="p">,</span> <span class="s2">"n"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -655,8 +655,8 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e9</span>
 <span class="n">T</span> <span class="o">=</span> <span class="mf">3.e9</span>
 <span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Fe52&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"Fe52"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -697,7 +697,7 @@
 <p>We can use the helper function <code class="docutils literal notranslate"><span class="pre">create_double_neutron_capture()</span></code> to create a pair (forward and reverse) of <code class="docutils literal notranslate"><span class="pre">ApproximateRates</span></code> that approximate out the intermediate nucleus:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span><span class="p">,</span> <span class="n">rr</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">create_double_neutron_capture</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe52&quot;</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;fe54&quot;</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rf</span><span class="p">,</span> <span class="n">rr</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">create_double_neutron_capture</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe52"</span><span class="p">),</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"fe54"</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -752,8 +752,8 @@
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net_approx</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;Fe52&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"Fe52"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.5</span>
 <span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -797,18 +797,18 @@
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol_approx</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_approx</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_approx</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>    
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    
     <span class="n">idx</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">&quot;X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$&quot;</span><span class="p">,</span>              
-              <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">"X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e-19</span><span class="p">,</span> <span class="mf">1.e-11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;time (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

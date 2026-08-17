@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>p-p chain vs. CNO &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>p-p chain vs. CNO &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,9 +632,9 @@
 <p>We’ll focus on the main <a class="reference external" href="https://en.wikipedia.org/wiki/Proton%E2%80%93proton_chain">p-p chain</a>  and get the 3 rates involved in that.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p(p,)d&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;d(p,g)he3&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;he3(he3,pp)he4&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pp_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p(p,)d"</span><span class="p">,</span>
+            <span class="s2">"d(p,g)he3"</span><span class="p">,</span>
+            <span class="s2">"he3(he3,pp)he4"</span><span class="p">]</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">pp_rates</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -723,7 +723,7 @@ He3 + He3 ⟶ p + p + He4
 <p>then we can find the exponent <span class="math notranslate nohighlight">\(\nu\)</span> about some temperature <span class="math notranslate nohighlight">\(T_0\)</span></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_pp</span> <span class="o">=</span> <span class="n">net_pp</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;p(p,)d&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_pp</span> <span class="o">=</span> <span class="n">net_pp</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"p(p,)d"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">T0</span> <span class="o">=</span> <span class="mf">1.5e7</span>
 <span class="n">r_pp</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="n">T0</span><span class="p">)</span>
 </pre></div>
@@ -742,12 +742,12 @@ He3 + He3 ⟶ p + p + He4
 <p>Now we consider the main CNO cycle.  This involves 6 rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cno_rates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12(p,g)n13"</span><span class="p">,</span>
+             <span class="s2">"c13(p,g)n14"</span><span class="p">,</span>
+             <span class="s2">"n13(,)c13"</span><span class="p">,</span>
+             <span class="s2">"n14(p,g)o15"</span><span class="p">,</span>
+             <span class="s2">"n15(p,a)c12"</span><span class="p">,</span>
+             <span class="s2">"o15(,)n15"</span><span class="p">]</span>
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">cno_rates</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -808,7 +808,7 @@ O15 ⟶ N15 + e⁺ + 𝜈
 <p>Now we see that the <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> rate is the slowest.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_cno</span> <span class="o">=</span> <span class="n">net_cno</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">&quot;n14(p,g)o15&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">r_cno</span> <span class="o">=</span> <span class="n">net_cno</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n14(p,g)o15"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -817,7 +817,7 @@ O15 ⟶ N15 + e⁺ + 𝜈
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1.e7</span><span class="p">,</span> <span class="mf">2.e7</span><span class="p">,</span> <span class="mf">3.e7</span><span class="p">,</span> <span class="mf">4.e7</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;T = </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">, nu = </span><span class="si">{</span><span class="n">r_cno</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="si">:</span><span class="s2">8.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"T = </span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">, nu = </span><span class="si">{</span><span class="n">r_cno</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="si">:</span><span class="s2">8.5f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -865,11 +865,11 @@ T = 40000000.0, nu = 14.11535
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="p">[</span><span class="n">r_pp</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;p-p&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="p">[</span><span class="n">r_cno</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;CNO&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$N_A\langle \sigma v \rangle$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="p">[</span><span class="n">r_pp</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"p-p"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="p">[</span><span class="n">r_cno</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">"CNO"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$N_A\langle \sigma v \rangle$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"both"</span><span class="p">)</span>
 <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 </div>

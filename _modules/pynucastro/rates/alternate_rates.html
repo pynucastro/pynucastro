@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.rates.alternate_rates &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,10 +513,10 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.rates.alternate_rates</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of alternate rates that are not contained in the other</span>
+<span></span><span class="sd">"""A collection of alternate rates that are not contained in the other</span>
 <span class="sd">sources.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -528,21 +528,21 @@
 <div class="viewcode-block" id="DeBoerC12agO16">
 <a class="viewcode-back" href="../../../pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.DeBoerC12agO16">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DeBoerC12agO16</span><span class="p">(</span><span class="n">ReacLibRate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A drop-in replacement for &quot;C12(a,g)O16&quot; from ReacLib that uses</span>
+<span class="w">    </span><span class="sd">"""A drop-in replacement for "C12(a,g)O16" from ReacLib that uses</span>
 <span class="sd">    the formulation from DeBoer et al. 2017</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;c12&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;he4&quot;</span><span class="p">)]</span>
-        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">)]</span>
+        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span>
 
         <span class="c1"># from DeBoer et al. 2017</span>
         <span class="c1"># https://arxiv.org/pdf/1709.03144</span>
         <span class="c1"># table XXVI</span>
 
-        <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">&quot;deboer&quot;</span>
+        <span class="n">labelprops</span> <span class="o">=</span> <span class="s2">"deboer"</span>
         <span class="n">sets</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># non-resonant</span>
@@ -555,17 +555,17 @@
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
                          <span class="n">sets</span><span class="o">=</span><span class="n">sets</span><span class="p">,</span>
-                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;deboer&quot;</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="s2">&quot;deboer2017&quot;</span><span class="p">)</span></div>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">"deboer"</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="s2">"deboer2017"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="IliadisO16pgF17">
 <a class="viewcode-back" href="../../../pynucastro.rates.alternate_rates.html#pynucastro.rates.alternate_rates.IliadisO16pgF17">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IliadisO16pgF17</span><span class="p">(</span><span class="n">TemperatureTabularRate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The O16(p,g)F17 rate from Iliadis et al. 2022.  This uses</span>
+<span class="w">    </span><span class="sd">"""The O16(p,g)F17 rate from Iliadis et al. 2022.  This uses</span>
 <span class="sd">    the median value for the rate from the table at the end of the</span>
 <span class="sd">    paper.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -589,13 +589,13 @@
                          <span class="mf">2.699e+00</span><span class="p">,</span> <span class="mf">4.482e+00</span><span class="p">,</span> <span class="mf">1.229e+01</span><span class="p">,</span> <span class="mf">2.632e+01</span><span class="p">,</span> <span class="mf">4.806e+01</span><span class="p">,</span> <span class="mf">7.863e+01</span><span class="p">,</span>
                          <span class="mf">1.686e+02</span><span class="p">,</span> <span class="mf">2.971e+02</span><span class="p">,</span> <span class="mf">4.591e+02</span><span class="p">])</span>
 
-        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o16&quot;</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">)]</span>
-        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;f17&quot;</span><span class="p">)]</span>
+        <span class="n">reactants</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"f17"</span><span class="p">)]</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T9</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">rate</span><span class="p">),</span>
-                         <span class="n">rate_source</span><span class="o">=</span><span class="s2">&quot;iliadis2022&quot;</span><span class="p">,</span>
+                         <span class="n">rate_source</span><span class="o">=</span><span class="s2">"iliadis2022"</span><span class="p">,</span>
                          <span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
-                         <span class="n">label</span><span class="o">=</span><span class="s2">&quot;iliadis&quot;</span><span class="p">)</span>
+                         <span class="n">label</span><span class="o">=</span><span class="s2">"iliadis"</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q</span> <span class="o">!=</span> <span class="mf">0.0</span></div>
 

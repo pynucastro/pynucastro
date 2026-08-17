@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>pynucastro.nucdata.partition_function &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bc20d973"></script>
+    <script src="../../../_static/documentation_options.js?v=696fc4a0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -513,7 +513,7 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.nucdata.partition_function</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Classes and methods for dealing with nuclear partition functions.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Classes and methods for dealing with nuclear partition functions."""</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
@@ -526,7 +526,7 @@
 <div class="viewcode-block" id="PartitionFunction">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PartitionFunction</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store the tabulated data for the partition function for a</span>
+<span class="w">    </span><span class="sd">"""Store the tabulated data for the partition function for a</span>
 <span class="sd">    specific nucleus, which can be combined with other</span>
 <span class="sd">    (non-overlapping) partition functions by addition and evaluated</span>
 <span class="sd">    for different temperature values.</span>
@@ -544,7 +544,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    nucleus : str</span>
-<span class="sd">        The nucleus (e.g. ``&quot;ni56&quot;``)</span>
+<span class="sd">        The nucleus (e.g. ``"ni56"``)</span>
 <span class="sd">    name : str</span>
 <span class="sd">        The name of the table on which the nucleus is read</span>
 <span class="sd">    T9_points : numpy.ndarray</span>
@@ -555,7 +555,7 @@
 <span class="sd">    interpolant_order : int</span>
 <span class="sd">        The interpolation spline order, must be between 1 and 5, inclusive</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">T9_points</span><span class="p">,</span>
                  <span class="n">log_pf_data</span><span class="p">,</span> <span class="n">interpolant_order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
@@ -565,7 +565,7 @@
         <span class="n">log_pf_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_pf_data</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">T9_points</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">log_pf_data</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">T9_points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">T9_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="s2">&quot;temperature array must be sorted&quot;</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">T9_points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">T9_points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="s2">"temperature array must be sorted"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span> <span class="o">=</span> <span class="n">nucleus</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -577,13 +577,13 @@
 <div class="viewcode-block" id="PartitionFunction.lower_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.lower_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lower_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the lowest temperature [K] this object supports.</span>
+<span class="w">        </span><span class="sd">"""Return the lowest temperature [K] this object supports.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.e9</span></div>
 
@@ -591,12 +591,12 @@
 <div class="viewcode-block" id="PartitionFunction.upper_temperature">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.upper_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">upper_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the highest temperature [K] this object supports.</span>
+<span class="w">        </span><span class="sd">"""Return the highest temperature [K] this object supports.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.e9</span></div>
 
@@ -611,13 +611,13 @@
             <span class="n">lower</span> <span class="o">=</span> <span class="n">other</span>
             <span class="n">upper</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">if</span> <span class="n">lower</span><span class="o">.</span><span class="n">upper_temperature</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">upper</span><span class="o">.</span><span class="n">lower_temperature</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;temperature ranges cannot overlap&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"temperature ranges cannot overlap"</span><span class="p">)</span>
 
         <span class="n">T9_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span> <span class="n">upper</span><span class="o">.</span><span class="n">T9_points</span><span class="p">])</span>
         <span class="n">log_pf_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">lower</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">,</span>
                                       <span class="n">upper</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">])</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">+</span><span class="si">{</span><span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">lower</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">+</span><span class="si">{</span><span class="n">upper</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">'</span>
 
         <span class="n">order</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">interpolant_order</span><span class="p">)</span>
         <span class="n">newpf</span> <span class="o">=</span> <span class="n">PartitionFunction</span><span class="p">(</span><span class="n">nucleus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nucleus</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
@@ -634,7 +634,7 @@
 <div class="viewcode-block" id="PartitionFunction.eval">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.eval">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the interpolated partition function value for the</span>
+<span class="w">        </span><span class="sd">"""Compute the interpolated partition function value for the</span>
 <span class="sd">        temperature T. Note this returns log(pf)</span>
 
 <span class="sd">        Parameters</span>
@@ -646,9 +646,9 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="c1"># lazily construct the interpolant object, since it&#39;s pretty expensive</span>
+        <span class="c1"># lazily construct the interpolant object, since it's pretty expensive</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span> <span class="o">=</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">T9_points</span><span class="p">,</span>
@@ -658,16 +658,16 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">T</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0e-9</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;invalid temperature&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"invalid temperature"</span><span class="p">)</span>
             <span class="k">raise</span>
         <span class="c1"># extrapolates keeping the boundaries fixed.</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolant</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s1">'const'</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunction.plot">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunction.plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T_min</span><span class="o">=</span><span class="mf">1.e7</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="mf">1.e11</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the partition function as a function of T</span>
+<span class="w">        </span><span class="sd">"""Plot the partition function as a function of T</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -680,7 +680,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib.figure.Figure</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
@@ -688,14 +688,14 @@
 
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">T_points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">))</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">T_points</span> <span class="o">&gt;=</span> <span class="n">T_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">T_points</span> <span class="o">&lt;=</span> <span class="n">T_max</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">T_min</span><span class="p">,</span> <span class="n">T_max</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())),</span>
                     <span class="nb">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_pf_data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())))</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;T (K)&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;G(T)&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"T (K)"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"G(T)"</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">fig</span></div>
 </div>
@@ -705,16 +705,16 @@
 <div class="viewcode-block" id="PartitionFunctionTable">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PartitionFunctionTable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage a partition function table file. A</span>
+<span class="w">    </span><span class="sd">"""Manage a partition function table file. A</span>
 <span class="sd">    :class:`PartitionFunction` object is constructed for each nucleus</span>
 <span class="sd">    and stored in a dictionary keyed by the lowercase nucleus name in</span>
-<span class="sd">    the form e.g.  &quot;ni56&quot;. The table files are stored in the</span>
+<span class="sd">    the form e.g.  "ni56". The table files are stored in the</span>
 <span class="sd">    ``PartitionFunction`` subdirectory.</span>
 
 <span class="sd">    :var name:         the name of the table (as defined in the data file)</span>
 <span class="sd">    :var T9_points: an array of temperature values in [GK]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span> <span class="o">=</span> <span class="p">{}</span>
@@ -730,14 +730,14 @@
 <div class="viewcode-block" id="PartitionFunctionTable.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a set of the nuclei this table supports.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a set of the nuclei this table supports."""</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PartitionFunctionTable.get_partition_function">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionTable.get_partition_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the :class:`PartitionFunction` object for a specific nucleus.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the :class:`PartitionFunction` object for a specific nucleus."""</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
@@ -745,12 +745,12 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
 
             <span class="c1"># get headers name</span>
             <span class="n">fhead</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-            <span class="n">hsplit</span> <span class="o">=</span> <span class="n">fhead</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;name: &#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">hsplit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">hsplit</span> <span class="o">=</span> <span class="n">fhead</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'name: '</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">hsplit</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
             <span class="c1"># throw away the six subsequent lines</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
@@ -786,51 +786,51 @@
 <div class="viewcode-block" id="PartitionFunctionCollection">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PartitionFunctionCollection</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A collection of :class:`PartitionFunctionTable` objects in a</span>
+<span class="w">    </span><span class="sd">"""A collection of :class:`PartitionFunctionTable` objects in a</span>
 <span class="sd">    dictionary keyed by the name of the tables.</span>
 
 <span class="sd">    In our discussion we have two different sets of tables: FRDM and ETFSI-Q.</span>
 
 <span class="sd">    :var use_high_temperatures: whether to incorporate the high-temperature data</span>
 <span class="sd">                                tables</span>
-<span class="sd">    :var use_set: selects between the FRDM (``&#39;frdm&#39;``) and ETFSI-Q</span>
-<span class="sd">                  (``&#39;etfsiq&#39;``) data sets.</span>
+<span class="sd">    :var use_set: selects between the FRDM (``'frdm'``) and ETFSI-Q</span>
+<span class="sd">                  (``'etfsiq'``) data sets.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_set</span><span class="o">=</span><span class="s1">&#39;frdm&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_high_temperatures</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_set</span><span class="o">=</span><span class="s1">'frdm'</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_high_temperatures</span> <span class="o">=</span> <span class="n">use_high_temperatures</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">=</span> <span class="n">use_set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_read_collection</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a PartitionFunctionTable to this collection.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Add a PartitionFunctionTable to this collection."""</span>
         <span class="k">assert</span> <span class="n">table</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read and construct all the tables from the data files.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Read and construct all the tables from the data files."""</span>
 
         <span class="n">nucdata_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
-        <span class="n">partition_function_dir</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">&#39;PartitionFunction&#39;</span>
+        <span class="n">partition_function_dir</span> <span class="o">=</span> <span class="n">nucdata_dir</span><span class="o">/</span><span class="s1">'PartitionFunction'</span>
 
-        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">&#39;etfsiq_low.txt&#39;</span><span class="p">)</span>
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">'etfsiq_low.txt'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
 
-        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">&#39;frdm_low.txt&#39;</span><span class="p">)</span>
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">'frdm_low.txt'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
 
-        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">&#39;etfsiq_high.txt&#39;</span><span class="p">)</span>
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">'etfsiq_high.txt'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
 
-        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">&#39;frdm_high.txt&#39;</span><span class="p">)</span>
+        <span class="n">pft</span> <span class="o">=</span> <span class="n">PartitionFunctionTable</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">partition_function_dir</span><span class="o">/</span><span class="s1">'frdm_high.txt'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_table</span><span class="p">(</span><span class="n">pft</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PartitionFunctionCollection.get_nuclei">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_nuclei">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_nuclei</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a set of all the nuclei this collection supports.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a set of all the nuclei this collection supports."""</span>
         <span class="n">nuclei</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">nuclei</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
@@ -844,24 +844,24 @@
 <div class="viewcode-block" id="PartitionFunctionCollection.get_partition_function">
 <a class="viewcode-back" href="../../../pynucastro.nucdata.partition_function.html#pynucastro.nucdata.partition_function.PartitionFunctionCollection.get_partition_function">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_partition_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the :class:`PartitionFunction` object for a specific nucleus.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the :class:`PartitionFunction` object for a specific nucleus."""</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">&#39;frdm&#39;</span><span class="p">:</span>
-            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;frdm_low&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">'frdm'</span><span class="p">:</span>
+            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">'frdm_low'</span><span class="p">]</span>
             <span class="n">pf_lo</span> <span class="o">=</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
 
-            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;frdm_high&#39;</span><span class="p">]</span>
+            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">'frdm_high'</span><span class="p">]</span>
             <span class="n">pf_hi</span> <span class="o">=</span> <span class="n">pf_hi_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
 
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">&#39;etfsiq&#39;</span><span class="p">:</span>
-            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;etfsiq_low&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_set</span> <span class="o">==</span> <span class="s1">'etfsiq'</span><span class="p">:</span>
+            <span class="n">pf_lo_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">'etfsiq_low'</span><span class="p">]</span>
             <span class="n">pf_lo</span> <span class="o">=</span> <span class="n">pf_lo_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
 
-            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">&#39;etfsiq_high&#39;</span><span class="p">]</span>
+            <span class="n">pf_hi_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partition_function_tables</span><span class="p">[</span><span class="s1">'etfsiq_high'</span><span class="p">]</span>
             <span class="n">pf_hi</span> <span class="o">=</span> <span class="n">pf_hi_table</span><span class="o">.</span><span class="n">get_partition_function</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid partition function type&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"invalid partition function type"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_high_temperatures</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pf_lo</span> <span class="ow">and</span> <span class="n">pf_hi</span><span class="p">:</span>
@@ -871,23 +871,23 @@
             <span class="k">elif</span> <span class="n">pf_hi</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_hi</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1">#name = &#39;default&#39;</span>
+                <span class="c1">#name = 'default'</span>
                 <span class="c1">#pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))</span>
                 <span class="c1">#pf = pf_default</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span>
-                <span class="c1">#if str(nuc) != &#39;h1&#39; and str(nuc) != &#39;n&#39; and str(nuc) != &#39;he4&#39;:</span>
-                <span class="c1">#    print(f&#39;WARNING: {nuc} partition function is not supported: set pf = 1.0 by default&#39;)</span>
+                <span class="c1">#if str(nuc) != 'h1' and str(nuc) != 'n' and str(nuc) != 'he4':</span>
+                <span class="c1">#    print(f'WARNING: {nuc} partition function is not supported: set pf = 1.0 by default')</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pf_lo</span><span class="p">:</span>
                 <span class="n">pf</span> <span class="o">=</span> <span class="n">pf_lo</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span>
-                <span class="c1">#name = &#39;default&#39;</span>
+                <span class="c1">#name = 'default'</span>
                 <span class="c1">#pf_default = PartitionFunction(nuc, name, pf_lo_table.temperatures, np.ones_like(pf_lo_table.temperatures))</span>
                 <span class="c1">#pf = pf_default</span>
-                <span class="c1">#if str(nuc) != &#39;p&#39; and str(nuc) != &#39;n&#39; and str(nuc) != &#39;he4&#39;:</span>
-                <span class="c1">#    print(f&#39;WARNING: {nuc} partition function is not supported: set pf = 1.0 by default&#39;)</span>
+                <span class="c1">#if str(nuc) != 'p' and str(nuc) != 'n' and str(nuc) != 'he4':</span>
+                <span class="c1">#    print(f'WARNING: {nuc} partition function is not supported: set pf = 1.0 by default')</span>
 
         <span class="k">return</span> <span class="n">pf</span></div>
 </div>

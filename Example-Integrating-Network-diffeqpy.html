@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Example of Integrating a Network &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Example of Integrating a Network &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -620,13 +620,13 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
 <span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-<span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;c12(p,g)n13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;c13(p,g)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(,)c13&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n13(p,g)o14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;n15(p,a)c12&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o14(,)n14&quot;</span><span class="p">,</span>
-              <span class="s2">&quot;o15(,)n15&quot;</span><span class="p">]</span>
+<span class="n">rate_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"c12(p,g)n13"</span><span class="p">,</span>
+              <span class="s2">"c13(p,g)n14"</span><span class="p">,</span>
+              <span class="s2">"n13(,)c13"</span><span class="p">,</span>
+              <span class="s2">"n13(p,g)o14"</span><span class="p">,</span>
+              <span class="s2">"n15(p,a)c12"</span><span class="p">,</span>
+              <span class="s2">"o14(,)n14"</span><span class="p">,</span>
+              <span class="s2">"o15(,)n15"</span><span class="p">]</span>
 
 <span class="n">rates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">rate_names</span><span class="p">)</span>
 <span class="n">rates</span>
@@ -656,7 +656,7 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> method outputs the Python code that is used to define the RHS for integration to a file you choose.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">&quot;cno_test_integrate.py&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="s2">"cno_test_integrate.py"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -683,7 +683,7 @@
 <span class="ne">----&gt; </span><span class="mi">3</span> <span class="kn">from</span><span class="w"> </span><span class="nn">diffeqpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">de</span>
 <span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="kn">import</span><span class="w"> </span><span class="nn">cno_test_integrate</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cno</span> <span class="c1">#importing network created</span>
 
-<span class="ne">ModuleNotFoundError</span>: No module named &#39;diffeqpy&#39;
+<span class="ne">ModuleNotFoundError</span>: No module named 'diffeqpy'
 </pre></div>
 </div>
 </div>
@@ -722,7 +722,7 @@
 <span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jp</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1">#Solar mix of mass fractions</span>
 <span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">Y0</span><span class="p">[</span><span class="n">cno</span><span class="o">.</span><span class="n">jhe4</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.28</span>
 
-<span class="ne">NameError</span>: name &#39;cno&#39; is not defined
+<span class="ne">NameError</span>: name 'cno' is not defined
 </pre></div>
 </div>
 </div>
@@ -757,7 +757,7 @@
 <span class="g g-Whitespace">     </span><span class="mi">13</span> 
 <span class="ne">---&gt; </span><span class="mi">14</span> <span class="n">ff</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">ODEFunction</span><span class="p">(</span><span class="n">numba_f</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">numba_jac</span><span class="p">)</span>
 
-<span class="ne">NameError</span>: name &#39;de&#39; is not defined
+<span class="ne">NameError</span>: name 'de' is not defined
 </pre></div>
 </div>
 </div>
@@ -777,7 +777,7 @@
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">prob</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">ODEProblem</span><span class="p">(</span><span class="n">ff</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">tspan</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">sol</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">alg</span><span class="p">,</span> <span class="n">abstol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">,</span> <span class="n">reltol</span><span class="o">=</span><span class="mf">1.e-9</span><span class="p">)</span>
 
-<span class="ne">NameError</span>: name &#39;de&#39; is not defined
+<span class="ne">NameError</span>: name 'de' is not defined
 </pre></div>
 </div>
 </div>
@@ -800,7 +800,7 @@
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">retcode</span><span class="p">)</span> <span class="c1">#Tells you if it successfully solved</span>
 
-<span class="ne">NameError</span>: name &#39;sol&#39; is not defined
+<span class="ne">NameError</span>: name 'sol' is not defined
 </pre></div>
 </div>
 </div>
@@ -817,14 +817,14 @@
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span> <span class="c1">#Gives statistics on what the solver did</span>
 
-<span class="ne">NameError</span>: name &#39;sol&#39; is not defined
+<span class="ne">NameError</span>: name 'sol' is not defined
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Y =&quot;</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#prints out final molar fractions</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"Final Y ="</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#prints out final molar fractions</span>
 </pre></div>
 </div>
 </div>
@@ -832,9 +832,9 @@
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Y =&quot;</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#prints out final molar fractions</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"Final Y ="</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">u</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#prints out final molar fractions</span>
 
-<span class="ne">NameError</span>: name &#39;sol&#39; is not defined
+<span class="ne">NameError</span>: name 'sol' is not defined
 </pre></div>
 </div>
 </div>
@@ -849,13 +849,13 @@
 <span class="n">species</span> <span class="o">=</span> <span class="n">sol</span><span class="p">(</span><span class="n">t_dense</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_dense</span><span class="p">,</span> <span class="n">species</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;X(</span><span class="si">{</span><span class="n">cno</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_dense</span><span class="p">,</span> <span class="n">species</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">cno</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 
 <span class="c1">#ax.set_xlim(1.e1, 1.e6)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-15</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">&quot;small&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;t (s)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"t (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </pre></div>
@@ -874,7 +874,7 @@
 <span class="g g-Whitespace">      </span><span class="mi">7</span> 
 <span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cno</span><span class="o">.</span><span class="n">nnuc</span><span class="p">):</span>
 
-<span class="ne">NameError</span>: name &#39;tspan&#39; is not defined
+<span class="ne">NameError</span>: name 'tspan' is not defined
 </pre></div>
 </div>
 <img alt="_images/a95043f0360fbeba50fc0ddf0fcc3f1730c465bf435e2ecc6f37fe8be5c34fdb.png" src="_images/a95043f0360fbeba50fc0ddf0fcc3f1730c465bf435e2ecc6f37fe8be5c34fdb.png" />

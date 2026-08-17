@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sensitivity Analysis &#8212; pynucastro 3.0.0.post2+g66fffa4c0 documentation</title>
+    <title>Sensitivity Analysis &#8212; pynucastro 3.0.0.post3+g048c1150f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bc20d973"></script>
+    <script src="_static/documentation_options.js?v=696fc4a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -625,7 +625,7 @@ operation, where <span class="math notranslate nohighlight">\(N\)</span> is the 
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span> <span class="o">+</span>
-           <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ffn&quot;</span><span class="p">,</span> <span class="s2">&quot;langanke&quot;</span><span class="p">,</span> <span class="s2">&quot;oda&quot;</span><span class="p">]))</span>
+           <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"langanke"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
@@ -634,7 +634,7 @@ operation, where <span class="math notranslate nohighlight">\(N\)</span> is the 
 and setup a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.RateFilter" title="pynucastro.rates.library.RateFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateFilter</span></code></a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;s32&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"s32"</span><span class="p">)</span>
 <span class="n">lib</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -730,8 +730,8 @@ to create the energy release.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">(</span><span class="n">half_life_thresh</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o14&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">&quot;o15&quot;</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o15"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -754,14 +754,14 @@ to create the energy release.</p>
 <p>For DRGEP, we need to supply targets</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;he4&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;n13&quot;</span><span class="p">,</span> <span class="s2">&quot;n14&quot;</span><span class="p">,</span> <span class="s2">&quot;n15&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;c12&quot;</span><span class="p">,</span> <span class="s2">&quot;c13&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;o14&quot;</span><span class="p">,</span> <span class="s2">&quot;o15&quot;</span><span class="p">,</span> <span class="s2">&quot;o16&quot;</span><span class="p">,</span> <span class="s2">&quot;o17&quot;</span><span class="p">,</span> <span class="s2">&quot;o18&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;f18&quot;</span><span class="p">,</span> <span class="s2">&quot;f19&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;ne18&quot;</span><span class="p">,</span> <span class="s2">&quot;ne19&quot;</span><span class="p">,</span> <span class="s2">&quot;ne20&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;na22&quot;</span><span class="p">,</span> <span class="s2">&quot;na23&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;mg24&quot;</span><span class="p">,</span> <span class="s2">&quot;si28&quot;</span><span class="p">,</span> <span class="s2">&quot;s32&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+           <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
+           <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span>
+           <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"o18"</span><span class="p">,</span>
+           <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"f19"</span><span class="p">,</span>
+           <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"ne19"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span>
+           <span class="s2">"na22"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span>
+           <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
