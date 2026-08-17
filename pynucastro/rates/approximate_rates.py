@@ -13,6 +13,10 @@ from pynucastro.rates.rate import Rate
 def _assert_rate_prop(rate, *,
                       reactants=None, products=None,
                       num_reactants=None, num_products=None):
+    """Given a rate, check to make sure it has the desired reactants
+    and products.
+
+    """
 
     if reactants:
         for nuc in reactants:
@@ -25,47 +29,6 @@ def _assert_rate_prop(rate, *,
             assert nuc in rate.products
     if num_products:
         assert len(rate.products) == num_products
-
-
-def create_double_neutron_capture(lib, reactant, product):
-    """Return a pair of :py:class:`ApproximateRate` objects for the
-    A(n,g)X(n,g)B -> A(nn,g)B approximation
-
-    Parameters
-    ----------
-    lib : Library
-         A Library object containing the neutron-capture rates
-    reactant : Nucleus, str
-         The reactant, A, in the sequence A(n,g)X(n,g)B
-    product: Nucleus, str
-         The product, B, in the sequence A(n,g)X(n,g)B
-
-    Returns
-    -------
-    ApproximateRate, ApproximateRate
-
-    """
-
-    if isinstance(reactant, str):
-        reactant = Nucleus(reactant)
-
-    if isinstance(product, str):
-        product = Nucleus(product)
-
-    intermediate = reactant + Nucleus("n")
-
-    rates = {}
-    rates["A(n,g)X"] = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
-    rates["X(n,g)B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
-
-    rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
-    rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
-
-    forward = ApproximateRate(rates, approx_type="nn_g")
-
-    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True)
-
-    return forward, reverse
 
 
 class ApproximateRate(Rate):
