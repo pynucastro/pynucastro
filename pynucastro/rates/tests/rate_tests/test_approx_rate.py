@@ -4,7 +4,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.rates import create_double_neutron_capture
+from pynucastro.rates import make_double_neutron_rates
 
 
 class TestAlphaGammaTfactors:
@@ -67,7 +67,7 @@ class TestDoubleN:
     @pytest.fixture(scope="class")
     @classmethod
     def nn(cls, reaclib_library):
-        return create_double_neutron_capture(reaclib_library, "Fe52", "Fe54")
+        return make_double_neutron_rates(reaclib_library, "Fe52", "Fe54")
 
     def test_nn_name(self, nn):
         """ this is run before each test """
