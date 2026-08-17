@@ -70,6 +70,26 @@ class NetworkCompare:
         The raw rates (e.g. N_A <σv>) parsed from a build of a
         :py:class:`SimpleCxxNetwork
         <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    enuc_py_inline : float
+        The total energy generation rate from the mass changes (just
+        strong reactions) in erg/g/s computed via
+        :py:meth:`evaluate_energy_generation
+        <pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation>`.
+    enuc_py_module : float
+        The total energy generation rate from the mass changes (just
+        strong reactions) in erg/g/s evaluated from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    enuc_amrex : float
+        The total energy generation rate from the mass changes (just
+        strong reactions) in erg/g/s parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    enuc_cxx : float
+        The total energy generation rate from the mass changes (just
+        strong reactions) in erg/g/s parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+
     T_eval : float
         The temperature used in the evaluation.
     rho_eval : float
@@ -137,6 +157,18 @@ class NetworkCompare:
         self.rates_amrex = None
         self.rates_cxx = None
 
+        # storage for the nuclear energy (strong rates)
+        self.enuc_py_inline = None
+        self.enuc_py_module = None
+        self.enuc_amrex = None
+        self.enuc_cxx = None
+
+        # storage for the nuclear energy (strong rates)
+        self.enu_weak_py_inline = None
+        self.enu_weak_py_module = None
+        self.enu_weak_amrex = None
+        self.enu_weak_cxx = None
+
         self.T_eval = None
         self.rho_eval = None
 
@@ -152,6 +184,13 @@ class NetworkCompare:
         self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
                                           screen_func=self.screen_func)
                                 for r in self.pynet.all_rates}
+        self.enuc_py_inline, self.enu_weak_py_inline = \
+            self.pynet.evaluate_energy_generation(state,
+                                                  screen_func=self.screen_func,
+                                                  return_enu=True)
+        # we adopt the convention that enu_weak is negative, since it
+        # is an energy loss
+        self.enu_weak_py_inline *= -1
 
     def _run_python_module_version(self, rho=2.e8, T=1.e9):
         """Write the python network to a module and import it, and
@@ -175,6 +214,8 @@ class NetworkCompare:
 
         rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
         self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
+        self.enuc_py_module = cn.energy_release(_tmp)
+        self.enu_weak_py_module = rate_eval.enuc_weak
 
     def _run_amrex_version(self, rho=2.e8, T=1.e9):
         """Output the AMReX C++ network code, build it, run, and
@@ -380,6 +421,46 @@ class NetworkCompare:
             for key, source in data_headers.items():
                 val = source[rate]
                 ref = self.rates_py_inline[rate]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
+
+        print()
+        print()
+
+        print("energy")
+        print("======")
+        print()
+
+        data_headers = {"py (inline)": (self.enuc_py_inline, self.enu_weak_py_inline),
+                        "py (module)": (self.enuc_py_module, self.enu_weak_py_module)}
+
+        if self.rates_amrex:
+            data_headers["AMReX C++"] = (self.enuc_amrex, self.enu_weak_amrex)
+
+        if self.rates_cxx:
+            data_headers["simple C++"] = (self.enuc_cxx, self.enu_weak_cxx)
+
+        header = f" {'rate':25} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for n, name in enumerate(["ε_nuc", "ε_{ν,weak}"]):
+            line = f" {name:25} "
+            for key, source in data_headers.items():
+                val = source[n]
+                if val is None:
+                    val = 0.0
+                ref = data_headers["py (inline)"][n]
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
                 else:
