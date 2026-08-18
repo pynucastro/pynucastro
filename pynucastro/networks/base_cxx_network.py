@@ -23,6 +23,13 @@ from pynucastro.rates.tabular_rate import TableIndex
 from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
+# dict to convert rate type to the C++ namespace
+namespaces = {"ModifiedRate": "modified_rates",
+              "ReacLibRate": "reaclib_rates",
+              "StarLibRate": "temp_tabular",
+              "TemperatureTabularRate": "temp_tabular",
+              "DerivedRate": "derived_rates"}
+
 
 def _rate_dtype(nrxn):
     """Given the number of reactions (nrxn), return the smallest C++
@@ -377,13 +384,13 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             idnt = self.indent*n_indent
 
-            of.write(f'{idnt}{self.dtype} log_temp = std::log10(state.T);\n')
-            of.write(f'{idnt}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
+            of.write(f'{idnt}const {self.dtype} log_temp = std::log10(temp);\n')
+            of.write(f'{idnt}const {self.dtype} log_rhoy = std::log10(rhoy);\n\n')
 
             for r in self.tabular_rates:
 
                 of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);\n')
+                of.write(f'{idnt}                 log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
@@ -528,8 +535,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         weak_branched_rates = [r for r in self.branched_rates
                                if r.weak]
 
-        weak_branched_rates_children = [cr for br in self.branched_rates
-                                        for cr in br.get_child_rates()]
+        weak_branched_rates_children = {cr for br in weak_branched_rates
+                                        for cr in br.get_child_rates()}
 
         weak_rates += weak_branched_rates_children
 
@@ -553,8 +560,14 @@ class BaseCxxNetwork(ABC, RateCollection):
             args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             template_args = ["do_T_derivatives"]
             of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
-            self._fill_rates(n_indent, of, weak_rates,
-                             args, template_args, do_T_derivatives=False)
+
+            # there can be many different types and each type is in a
+            # different namespace, so fill them by namespace
+            names = {type(r).__name__ for r in weak_rates}
+            for nm in names:
+                self._fill_rates(n_indent, of, [r for r in weak_rates if type(r).__name__ == nm],
+                                 args, template_args, do_T_derivatives=False,
+                                 namespace=namespaces[nm])
 
         if len(weak_branched_rates) > 0:
             args = ["rate_eval", "rate", "drate_dT"]
@@ -564,17 +577,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        # And get neutrino loss terms from tabular weak rates
-        if len(self.tabular_rates) > 0:
-            of.write(f'{self.indent*n_indent}{self.dtype} log_temp = std::log10(state.T);\n')
-            of.write(f'{self.indent*n_indent}{self.dtype} log_rhoy = std::log10(rhoy);\n\n')
-
-            for r in self.tabular_rates:
-                of.write(f'{self.indent*n_indent}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{self.indent*n_indent}                 log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);\n')
-                of.write(f'{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-                of.write(f'{self.indent*n_indent}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-                of.write('\n')
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -625,9 +628,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
 
     def _reaclib_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.reaclib_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def _modified_rate_functions(self, n_indent, of):
         for r in self.modified_rates:
@@ -644,9 +648,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(indented_fstr)
 
     def _derived_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.derived_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -669,9 +674,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("};\n\n")
 
     def _approx_rate_functions(self, n_indent, of):
-        assert n_indent == 0, "function definitions must be at top level"
         for r in self.approx_rates:
-            of.write(r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier))
+            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
+            of.write(indented_fstr)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""

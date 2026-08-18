@@ -8,21 +8,24 @@
 #include <actual_network.H>
 #include <rate_type.H>
 
-using namespace Rates;
-using namespace Species;
+
+namespace reaclib_rates {
+
+    using namespace Rates;
+    using namespace Species;
 
 
-template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void
-fill_reaclib_rates([[maybe_unused]] const tf_t& tfactors,
-                   [[maybe_unused]] T& rate_eval)
-{
+    template <int do_T_derivatives, typename T>
+    AMREX_GPU_DEVICE AMREX_INLINE
+    void
+    fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] T& rate_eval)
+    {
 
-    [[maybe_unused]] amrex::Real rate;
-    [[maybe_unused]] amrex::Real drate_dT;
+        [[maybe_unused]] amrex::Real rate;
+        [[maybe_unused]] amrex::Real drate_dT;
 
 
+    }
 }
-
 #endif
