@@ -62,8 +62,8 @@ class TestPythonDerivedNetwork:
 
         ostr = \
 """dYdt[jcr48] = (
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_Fe52_reaclib +Y[jfe52]*rate_eval.Fe52_to_He4_Cr48_derived ) +
-      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.He4_Cr48_to_p_Mn51_reaclib +rho*Y[jp]*Y[jmn51]*rate_eval.p_Mn51_to_He4_Cr48_derived )
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.Cr48_He4_to_Fe52_reaclib +Y[jfe52]*rate_eval.Fe52_to_He4_Cr48_derived ) +
+      ( -rho*Y[jhe4]*Y[jcr48]*rate_eval.Cr48_He4_to_p_Mn51_reaclib +rho*Y[jp]*Y[jmn51]*rate_eval.Mn51_p_to_He4_Cr48_derived )
    )
 
 """
@@ -109,19 +109,19 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf, log_scor=0.0):
     def test_derived_modified_ydot_string(self, pynet2):
         ostr1 = \
 """dYdt[jhe4] = (
-      ( + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified + 1.5*Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
+      ( + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.N14_1_5He4_to_Ne20_modified + 1.5*Y[jne20]*rate_eval.Ne20_to_1_5He4_N14_derived )
    )
 
 """
         ostr2 = \
 """dYdt[jn14] = (
-      ( -rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified +Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
+      ( -rho*Y[jhe4]*Y[jn14]*rate_eval.N14_1_5He4_to_Ne20_modified +Y[jne20]*rate_eval.Ne20_to_1_5He4_N14_derived )
    )
 
 """
         ostr3 = \
 """dYdt[jne20] = (
-      ( +rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified -Y[jne20]*rate_eval.Ne20_to_He4_N14_derived )
+      ( +rho*Y[jhe4]*Y[jn14]*rate_eval.N14_1_5He4_to_Ne20_modified -Y[jne20]*rate_eval.Ne20_to_1_5He4_N14_derived )
    )
 
 """
@@ -133,7 +133,7 @@ def Fe52_to_p_Mn51_derived(rate_eval, tf, log_scor=0.0):
 
         ostr = \
 """@numba.njit()
-def Ne20_to_He4_N14_derived(rate_eval, tf, log_scor=0.0):
+def Ne20_to_1_5He4_N14_derived(rate_eval, tf, log_scor=0.0):
     # Ne20 --> 1.5 He4 + N14
 
     # Evaluate partition function terms
@@ -172,7 +172,7 @@ def Ne20_to_He4_N14_derived(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.Ne20_to_He4_N14_derived = rate
+    rate_eval.Ne20_to_1_5He4_N14_derived = rate
 
 """
 

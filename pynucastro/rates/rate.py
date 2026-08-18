@@ -417,11 +417,14 @@ class Rate:
 
         # put p, n, and alpha second
         treactants = []
+        treactants_light = []
         for n in self.reactants:
             if n.raw not in ["p", "he4", "n"]:
                 treactants.insert(0, n)
             else:
-                treactants.append(n)
+                treactants_light.append(n)
+
+        treactants += list(sorted(treactants_light, reverse=True))
 
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
@@ -567,10 +570,20 @@ class Rate:
 
         # fname is used in exported networks for the function names of
         # the rates
+
+        # we cannot begin with a digit, so expand the first reactant if
+        # it is a multiple (probably 3-alpha)
+        if fname_reactants[0][0].isdigit():
+            cnuc = fname_reactants.pop(0)
+            assert cnuc.find(".") == -1, "cannot have fractional multiplicity at the start"
+            multiplicity = int(cnuc[0])
+            nuc = cnuc[1:]
+            fname_reactants = multiplicity * [nuc] + fname_reactants
+
         self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
         # for fractional stoichiometry, we cannot have "." in the
         # name, since it won't compile
-        self.fname.replace(".", "_")
+        self.fname = self.fname.replace(".", "_")
 
         # Treat special duplicate rate cases
         # These are likely weak rates with beta plus decay and electron captures
