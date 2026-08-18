@@ -1,5 +1,5 @@
-#ifndef actual_rhs_H
-#define actual_rhs_H
+#ifndef ACTUAL_RHS_H
+#define ACTUAL_RHS_H
 
 #include <amrex_bridge.H>
 
@@ -94,6 +94,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     assert(state.y_e != 0.0);
 
     [[maybe_unused]] Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] Real temp = state.T;
 
     // Precompute screening terms
 

@@ -20,17 +20,11 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
-#include <table_rates.H>
 #include <temperature_table_rates.H>
+#include <tabular_weak_rates.H>
 #include <derived_rates.H>
 
 using namespace amrex::literals;
-using namespace ArrayUtil;
-
-using namespace Species;
-using namespace Rates;
-
-using namespace rate_tables;
 
 template<class T>
 AMREX_GPU_DEVICE AMREX_INLINE
@@ -105,7 +99,7 @@ void evaluate_rates(const burn_t& state,
 
     // here Y is consistent with state.xn
 
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 
@@ -117,7 +111,7 @@ void evaluate_rates(const burn_t& state,
 
     // Fill in different rates
 
-    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -130,7 +124,7 @@ void evaluate_rates(const burn_t& state,
     // TemperatureTabularRate / StarLibRate, or DerivedRate as the
     // underlying rate.
 
-    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
@@ -143,33 +137,9 @@ void evaluate_rates(const burn_t& state,
 
     // Fill approximate rates
 
-    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+    approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
-    // Calculate tabular weak rates
-
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
-    amrex::Real log_temp = std::log10(state.T);
-    amrex::Real log_rhoy = std::log10(rhoy);
-
-    tabular_evaluate(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Na23_to_Ne23_weaktab) = rate;
-    if constexpr (std::is_same_v<T, rate_derivs_t>) {
-        rate_eval.dscreened_rates_dT(k_Na23_to_Ne23_weaktab) = drate_dt;
-    }
-    rate_eval.enuc_weak += C::n_A * Y(Na23) * (edot_nu + edot_gamma);
-
-    tabular_evaluate(j_Ne23_Na23_meta, j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dt, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Ne23_to_Na23_weaktab) = rate;
-    if constexpr (std::is_same_v<T, rate_derivs_t>) {
-        rate_eval.dscreened_rates_dT(k_Ne23_to_Na23_weaktab) = drate_dt;
-    }
-    rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
-
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
 }
 
@@ -228,23 +198,11 @@ void get_ydot_weak(const burn_t& state,
 
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
-        rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+        reaclib_rates::rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
         rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
     }
 
-    amrex::Real log_temp = std::log10(state.T);
-    amrex::Real log_rhoy = std::log10(rhoy);
-
-    tabular_evaluate(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Na23_to_Ne23_weaktab) = rate;
-    rate_eval.enuc_weak += C::n_A * Y(Na23) * (edot_nu + edot_gamma);
-
-    tabular_evaluate(j_Ne23_Na23_meta, j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data,
-                     log_rhoy, log_temp, state.T, rate, drate_dT, edot_nu, edot_gamma);
-    rate_eval.screened_rates(k_Ne23_to_Na23_weaktab) = rate;
-    rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
-
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     const auto& screened_rates = rate_eval.screened_rates;
 
