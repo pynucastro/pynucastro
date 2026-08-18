@@ -20,17 +20,11 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
-#include <table_rates.H>
 #include <temperature_table_rates.H>
+#include <tabular_weak_rates.H>
 #include <derived_rates.H>
 
 using namespace amrex::literals;
-using namespace ArrayUtil;
-
-using namespace Species;
-using namespace Rates;
-
-using namespace rate_tables;
 
 template<class T>
 AMREX_GPU_DEVICE AMREX_INLINE
@@ -95,7 +89,7 @@ void evaluate_rates(const burn_t& state,
 
     // here Y is consistent with state.xn
 
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 
@@ -107,7 +101,7 @@ void evaluate_rates(const burn_t& state,
 
     // Fill in different rates
 
-    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -120,7 +114,7 @@ void evaluate_rates(const burn_t& state,
     // TemperatureTabularRate / StarLibRate, or DerivedRate as the
     // underlying rate.
 
-    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
@@ -133,14 +127,9 @@ void evaluate_rates(const burn_t& state,
 
     // Fill approximate rates
 
-    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+    approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
-    // Calculate tabular weak rates
-
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
 }
 
@@ -192,6 +181,7 @@ void get_ydot_weak(const burn_t& state,
 
     // Compute all weak rates and get ydot_weak
 
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     ydot_nuc(H1) = 0.0_rt;
 
