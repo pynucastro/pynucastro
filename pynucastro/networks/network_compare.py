@@ -268,6 +268,13 @@ class NetworkCompare:
                 rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
                 self.rates_amrex[rr] = float(match.group(6))
 
+        # now get the energy generation rates
+        for line in stdout.split("\n"):
+            if line.startswith("ε_nuc ="):
+                self.enuc_amrex = float(line.split("=")[-1])
+            elif line.startswith("ε_{ν,weak} ="):
+                self.enu_weak_amrex = float(line.split("=")[-1])
+
     def _run_simple_cxx_version(self, rho=2.e8, T=1.e9):
         """Output the simple C++ network code, build it, run, and
         parse the output to get the rates.
@@ -319,6 +326,13 @@ class NetworkCompare:
                 rate_fname = match.group(2).strip()
                 rr = [r for r in self.pynet.all_rates if r.fname == rate_fname][0]
                 self.rates_cxx[rr] = float(match.group(6))
+
+        # now get the energy generation rates
+        for line in stdout.split("\n"):
+            if line.startswith("ε_nuc ="):
+                self.enuc_cxx = float(line.split("=")[-1])
+            elif line.startswith("ε_{ν,weak} ="):
+                self.enu_weak_cxx = float(line.split("=")[-1])
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
@@ -458,12 +472,13 @@ class NetworkCompare:
             line = f" {name:25} "
             for key, source in data_headers.items():
                 val = source[n]
-                if val is None:
-                    val = 0.0
                 ref = data_headers["py (inline)"][n]
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
                 else:
-                    err = abs((val - ref) / ref)
+                    if ref == 0.0:
+                        err = abs(val - ref)
+                    else:
+                        err = abs((val - ref) / ref)
                     line += f"| {val:13.6g} {err:11.5g} "
             print(line)
