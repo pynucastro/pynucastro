@@ -141,7 +141,7 @@ class TestNetworkCompare:
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
-    def test_compare_energy(self, eval_cond2):
+    def test_compare_energy2(self, eval_cond2):
 
         # we use a relaxed tolerance here because of differences
         # in constants in simple C++ nets (N_A)
