@@ -7,21 +7,25 @@
 #include <temperature_table_rates.H>
 #include <interp_tools.H>
 
-using namespace Rates;
+namespace derived_rates {
+
+    using namespace Rates;
 
 
-template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void
-fill_derived_rates(const tf_t& tfactors, T& rate_eval)
-{
+    template <int do_T_derivatives, typename T>
+    AMREX_GPU_DEVICE AMREX_INLINE
+    void
+    fill_rates(const tf_t& tfactors, T& rate_eval)
+    {
 
-    amrex::ignore_unused(tfactors);
-    amrex::ignore_unused(rate_eval);
+        amrex::ignore_unused(tfactors);
+        amrex::ignore_unused(rate_eval);
 
-    [[maybe_unused]] amrex::Real rate;
-    [[maybe_unused]] amrex::Real drate_dT;
+        [[maybe_unused]] amrex::Real rate;
+        [[maybe_unused]] amrex::Real drate_dT;
 
+
+    }
 
 }
 #endif

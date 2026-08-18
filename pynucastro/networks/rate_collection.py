@@ -238,8 +238,8 @@ class RateCollection:
 
         for n in self.unique_nuclei:
             self.nuclei_rate_pairs[n] = \
-                [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
-                 rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
+                [rp for rp in _rp if (rp.forward is not None and n in rp.forward.reactants + rp.forward.products) or
+                 (rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products)]
 
         # Re-order self.rates so Reaclib rates come first, followed by
         # Tabular rates. This is needed if reaclib coefficients are
@@ -708,9 +708,8 @@ class RateCollection:
         """
 
         if seed is None:
-            #arbitrarily chosen upper limit for np.random
-            #since it requires one.
-            seed = np.random.randint(10e5)
+            # arbitrarily chosen
+            seed = np.random.default_rng().integers(1.e6)
         rng = np.random.default_rng(seed=seed)
         for rate in self.starlib_rates:
             rate.sample_rates(rng=rng)
