@@ -243,7 +243,7 @@ class ModifiedRate(Rate):
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         # first we need to get all of the rates that make this up
-        fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
+        fstring += f"    // {self.rid} (calls the underlying rate)\n"
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
