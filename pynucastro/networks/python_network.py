@@ -698,10 +698,12 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
+
             # if a nucleus appears both as a reactant and product in a
             # rate then it's contribution might be 0.  So ignore this
             # pair if that is true for both the forward and reverse
             # for this nucleus
+
             def net_coefficient(rate):
                 if rate is None:
                     return 0
