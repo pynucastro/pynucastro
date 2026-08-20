@@ -30,4 +30,3 @@ class TestRateNetZero:
 
         net.compose_ydot()
         assert net.ydot_out_result[pyna.Nucleus("p")] == [(None, None)]
-
