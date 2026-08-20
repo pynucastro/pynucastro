@@ -3,7 +3,9 @@ import io
 import shutil
 
 import pytest
+import sympy
 
+import pynucastro as pyna
 from pynucastro import networks
 
 
@@ -96,3 +98,23 @@ class TestAmrexAstroCxxNetwork:
 
         # clean up generated files if the test passed
         shutil.rmtree(test_path)
+
+    def test_jacobian_rate_with_shared_reactant_and_product(self, reaclib_library):
+        """A rate shared by both lists contributes only its net coefficient."""
+
+        source_rate = reaclib_library.get_rate_by_name("he4(he3,g)be7")
+        rate = pyna.ModifiedRate(source_rate,
+                                 new_reactants=[pyna.Nucleus("he4"), pyna.Nucleus("he3"), pyna.Nucleus("p")],
+                                 new_products=[pyna.Nucleus("he4"), pyna.Nucleus("he4")])
+        net = networks.AmrexAstroCxxNetwork(rates=[rate])
+        net.compose_jacobian()
+
+        he4 = pyna.Nucleus("he4")
+        n_nuclei = len(net.unique_nuclei)
+        he4_index = net.unique_nuclei.index(he4)
+        jacobian_index = n_nuclei * he4_index + he4_index
+
+        expected, is_null = net.symbol_rates.jacobian_term_symbol(rate, he4, he4)
+
+        assert not is_null
+        assert sympy.simplify(net.jac_out_result[jacobian_index] - expected) == 0

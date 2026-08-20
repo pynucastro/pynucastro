@@ -698,7 +698,22 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for ipair, rp in enumerate(self.nuclei_rate_pairs[nucleus]):
+
+            # if a nucleus appears both as a reactant and product in a
+            # rate then it's contribution might be 0.  So ignore this
+            # pair if that is true for both the forward and reverse
+            # for this nucleus
+
+            def net_coefficient(rate):
+                if rate is None:
+                    return 0
+                return rate.product_count(nucleus) - rate.reactant_count(nucleus)
+
+            valid_pairs = [q for q in self.nuclei_rate_pairs[nucleus] if
+                           not (net_coefficient(q.forward) == 0 and
+                                net_coefficient(q.reverse) == 0)]
+
+            for ipair, rp in enumerate(valid_pairs):
                 # when we are working with rate pairs, one or more of the
                 # rates may be missing.  We also have not clearly separated
                 # them into creation / destruction, so we'll figure that out
@@ -720,9 +735,13 @@ class PythonNetwork(RateCollection):
 
                 if len(rlist) > 1:
                     ostr += ")"
-                if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
+                if ipair < len(valid_pairs) - 1:
                     ostr += " +"
                 ostr = ostr.rstrip() + "\n"
+
+            # if there were no rates, just output 0.0
+            if len(valid_pairs) == 0:
+                ostr += f"{indent}      0.0\n"
 
             ostr += f"{indent}   )\n\n"
 
