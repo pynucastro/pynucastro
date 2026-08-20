@@ -246,11 +246,15 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ni in self.unique_nuclei:
                 rsym_is_null = True
                 rsym = float(sympy.sympify(0.0))
-                for r in self.nuclei_consumed[nj]:
-                    rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
-                    rsym = rsym + rsym_add
-                    rsym_is_null = rsym_is_null and rsym_add_null
-                for r in self.nuclei_produced[nj]:
+                # A rate can be in both lists when a nucleus is both a
+                # reactant and a product.  jacobian_term_symbol() already
+                # accounts for the net stoichiometric coefficient, so it
+                # must be included only once.
+                seen_rate_ids = set()
+                for r in self.nuclei_consumed[nj] + self.nuclei_produced[nj]:
+                    if id(r) in seen_rate_ids:
+                        continue
+                    seen_rate_ids.add(id(r))
                     rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
                     rsym = rsym + rsym_add
                     rsym_is_null = rsym_is_null and rsym_add_null
