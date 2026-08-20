@@ -111,4 +111,17 @@ class TestNetworkCompare:
                 assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
 
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_energy(self, eval_cond1):
+
+        # we use a relaxed tolerance here because of differences
+        # in constants in simple C++ nets (N_A)
+        for other in [eval_cond1.enuc_cxx, eval_cond1.enuc_amrex, eval_cond1.enuc_py_module]:
+            assert other == approx(eval_cond1.enuc_py_inline,
+                                   rel=1.e-7, abs=1.e-30)
+        for other in [eval_cond1.enu_weak_cxx, eval_cond1.enu_weak_amrex, eval_cond1.enu_weak_py_module]:
+            assert other == approx(eval_cond1.enu_weak_py_inline,
+                                   rel=1.e-7, abs=1.e-30)
+
     # pylint: enable=duplicate-code

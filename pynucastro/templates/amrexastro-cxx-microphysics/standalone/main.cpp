@@ -66,6 +66,18 @@ int main(int argc, char *argv[]) {
     constexpr int do_T_derivatives{0};
     evaluate_rates<do_T_derivatives>(burn_state, Y, rate_eval);
 
+    // compute and output energy generation rates
+
+    amrex::Real enuc{};
+    ener_gener_rate(ydot, enuc);
+
+    std::cout << "Instantaneous energy generation rate" << std::endl;
+    std::cout << "ε_nuc = " << enuc << std::endl;
+    std::cout << "ε_{ν,weak} = " << rate_eval.enuc_weak << std::endl;
+    std::cout << std::endl;
+
+    // output reaction rates
+
     for (int n = 1; n <= Rates::NumRates; ++n) {
         std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
                   << rate_eval.screened_rates(n) << std::endl;
