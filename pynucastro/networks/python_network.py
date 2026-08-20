@@ -702,11 +702,14 @@ class PythonNetwork(RateCollection):
             # rate then it's contribution might be 0.  So ignore this
             # pair if that is true for both the forward and reverse
             # for this nucleus
+            def net_coefficient(rate):
+                if rate is None:
+                    return 0
+                return rate.product_count(nucleus) - rate.reactant_count(nucleus)
+
             valid_pairs = [q for q in self.nuclei_rate_pairs[nucleus] if
-                           not (q.forward.product_count(nucleus) -
-                                q.forward.reactant_count(nucleus) == 0 and
-                                q.reverse.product_count(nucleus) -
-                                q.forward.reactant_count(nucleus) == 0)]
+                           not (net_coefficient(q.forward) == 0 and
+                                net_coefficient(q.reverse) == 0)]
 
             for ipair, rp in enumerate(valid_pairs):
                 # when we are working with rate pairs, one or more of the
