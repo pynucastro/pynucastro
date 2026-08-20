@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 3.0.0.post9+g3b11a821d documentation</title>
+    <title>pynucastro.networks.sympy_network_support &#8212; pynucastro 3.0.0.post10+g89754b1b4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=fd4d30ad"></script>
+    <script src="../../../_static/documentation_options.js?v=b8444f96"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -577,12 +577,13 @@
         <span class="c1"># Check if y_i is a reactant or product</span>
         <span class="n">c_reac</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
         <span class="n">c_prod</span> <span class="o">=</span> <span class="n">rate</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">y_i</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">c_reac</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c_prod</span> <span class="o">-</span> <span class="n">c_reac</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># The rate doesn't contribute to the ydot for this y_i</span>
             <span class="n">ydot_sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># y_i appears as a product or reactant</span>
-            <span class="n">ydot_sym</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_prod</span> <span class="o">-</span> <span class="n">c_reac</span><span class="p">)</span> <span class="o">*</span> <span class="n">srate</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># y_i appears as a product or reactant</span>
+        <span class="n">ydot_sym</span> <span class="o">=</span> <span class="p">(</span><span class="n">c_prod</span> <span class="o">-</span> <span class="n">c_reac</span><span class="p">)</span> <span class="o">*</span> <span class="n">srate</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">ydot_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ydot_term_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">return</span> <span class="n">result</span></div>
@@ -663,10 +664,16 @@
 <span class="sd">        """</span>
         <span class="n">ydot_sym</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydot_term_symbol</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">ydot_j</span><span class="p">)</span>
         <span class="n">deriv_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Y__j</span><span class="si">{</span><span class="n">y_i</span><span class="si">}</span><span class="s1">__'</span><span class="p">)</span>
-        <span class="n">jac_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ydot_sym</span><span class="p">,</span> <span class="n">deriv_sym</span><span class="p">)</span>
         <span class="n">symbol_is_null</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">jac_sym</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ydot_sym</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># the rate may be null if the same nucleus appears</span>
+            <span class="c1"># both as a reactant and product</span>
+            <span class="n">jac_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">sympify</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
             <span class="n">symbol_is_null</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">jac_sym</span> <span class="o">=</span> <span class="n">sympy</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ydot_sym</span><span class="p">,</span> <span class="n">deriv_sym</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">jac_sym</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="mi">0</span><span class="p">):</span>
+                <span class="n">symbol_is_null</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">jac_sym</span><span class="o">.</span><span class="n">evalf</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">float_explicit_num_digits</span><span class="p">),</span> <span class="n">symbol_is_null</span><span class="p">)</span></div>
 
 

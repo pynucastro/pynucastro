@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post9+g3b11a821d documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post10+g89754b1b4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=fd4d30ad"></script>
+    <script src="../../../_static/documentation_options.js?v=b8444f96"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1262,7 +1262,22 @@
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] = 0.0</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">dYdt[j</span><span class="si">{</span><span class="n">nucleus</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] = (</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="k">for</span> <span class="n">ipair</span><span class="p">,</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]):</span>
+
+            <span class="c1"># if a nucleus appears both as a reactant and product in a</span>
+            <span class="c1"># rate then it's contribution might be 0.  So ignore this</span>
+            <span class="c1"># pair if that is true for both the forward and reverse</span>
+            <span class="c1"># for this nucleus</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">net_coefficient</span><span class="p">(</span><span class="n">rate</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="mi">0</span>
+                <span class="k">return</span> <span class="n">rate</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span> <span class="o">-</span> <span class="n">rate</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">nucleus</span><span class="p">)</span>
+
+            <span class="n">valid_pairs</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">nucleus</span><span class="p">]</span> <span class="k">if</span>
+                           <span class="ow">not</span> <span class="p">(</span><span class="n">net_coefficient</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">forward</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span>
+                                <span class="n">net_coefficient</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">reverse</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span>
+
+            <span class="k">for</span> <span class="n">ipair</span><span class="p">,</span> <span class="n">rp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">valid_pairs</span><span class="p">):</span>
                 <span class="c1"># when we are working with rate pairs, one or more of the</span>
                 <span class="c1"># rates may be missing.  We also have not clearly separated</span>
                 <span class="c1"># them into creation / destruction, so we'll figure that out</span>
@@ -1284,9 +1299,13 @@
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">")"</span>
-                <span class="k">if</span> <span class="n">ipair</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nuclei_rate_pairs</span><span class="p">[</span><span class="n">nucleus</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ipair</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_pairs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">" +"</span>
                 <span class="n">ostr</span> <span class="o">=</span> <span class="n">ostr</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+
+            <span class="c1"># if there were no rates, just output 0.0</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_pairs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">      0.0</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   )</span><span class="se">\n\n</span><span class="s2">"</span>
 
