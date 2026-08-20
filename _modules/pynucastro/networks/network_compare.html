@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post8+gffeba7987 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post9+g3b11a821d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=30e58375"></script>
+    <script src="../../../_static/documentation_options.js?v=fd4d30ad"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -587,6 +587,26 @@
 <span class="sd">        The raw rates (e.g. N_A &lt;σv&gt;) parsed from a build of a</span>
 <span class="sd">        :py:class:`SimpleCxxNetwork</span>
 <span class="sd">        &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`.</span>
+<span class="sd">    enuc_py_inline : float</span>
+<span class="sd">        The total energy generation rate from the mass changes (just</span>
+<span class="sd">        strong reactions) in erg/g/s computed via</span>
+<span class="sd">        :py:meth:`evaluate_energy_generation</span>
+<span class="sd">        &lt;pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation&gt;`.</span>
+<span class="sd">    enuc_py_module : float</span>
+<span class="sd">        The total energy generation rate from the mass changes (just</span>
+<span class="sd">        strong reactions) in erg/g/s evaluated from a :py:class:`PythonNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.python_network.PythonNetwork&gt;` module.</span>
+<span class="sd">    enuc_amrex : float</span>
+<span class="sd">        The total energy generation rate from the mass changes (just</span>
+<span class="sd">        strong reactions) in erg/g/s parsed from a build of an</span>
+<span class="sd">        :py:class:`AmrexAstroCxxNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`.</span>
+<span class="sd">    enuc_cxx : float</span>
+<span class="sd">        The total energy generation rate from the mass changes (just</span>
+<span class="sd">        strong reactions) in erg/g/s parsed from a build of a</span>
+<span class="sd">        :py:class:`SimpleCxxNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`.</span>
+
 <span class="sd">    T_eval : float</span>
 <span class="sd">        The temperature used in the evaluation.</span>
 <span class="sd">    rho_eval : float</span>
@@ -654,6 +674,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="c1"># storage for the nuclear energy (strong rates)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_amrex</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_cxx</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># storage for the nuclear energy (strong rates)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_amrex</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_cxx</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">T_eval</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rho_eval</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -669,6 +701,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">,</span>
                                           <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
                                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_inline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_inline</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_energy_generation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                                                  <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">,</span>
+                                                  <span class="n">return_enu</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># we adopt the convention that enu_weak is negative, since it</span>
+        <span class="c1"># is an energy loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_inline</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_python_module_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Write the python network to a module and import it, and</span>
@@ -692,6 +731,8 @@
 
         <span class="n">rate_eval</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">do_rate_eval</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rate_eval</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_module</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">_tmp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_module</span> <span class="o">=</span> <span class="n">rate_eval</span><span class="o">.</span><span class="n">enuc_weak</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_amrex_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Output the AMReX C++ network code, build it, run, and</span>
@@ -752,6 +793,13 @@
                 <span class="n">rr</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rate_fname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
+        <span class="c1"># now get the energy generation rates</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"ε_nuc ="</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enuc_amrex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"ε_{ν,weak} ="</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_amrex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_simple_cxx_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Output the simple C++ network code, build it, run, and</span>
 <span class="sd">        parse the output to get the rates.</span>
@@ -803,6 +851,13 @@
                 <span class="n">rate_fname</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">rr</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span> <span class="o">==</span> <span class="n">rate_fname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span><span class="p">[</span><span class="n">rr</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
+        <span class="c1"># now get the energy generation rates</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"ε_nuc ="</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enuc_cxx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"ε_{ν,weak} ="</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_cxx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"="</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
 <div class="viewcode-block" id="NetworkCompare.evaluate">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">[docs]</a>
@@ -914,6 +969,47 @@
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"energy"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"======"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"py (inline)"</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_inline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_inline</span><span class="p">),</span>
+                        <span class="s2">"py (module)"</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_module</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"AMReX C++"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enuc_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_amrex</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"simple C++"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enuc_cxx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_cxx</span><span class="p">)</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="s1">'rate'</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> "</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'error'</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> "</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">"ε_nuc"</span><span class="p">,</span> <span class="s2">"ε_{ν,weak}"</span><span class="p">]):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">25</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="n">data_headers</span><span class="p">[</span><span class="s2">"py (inline)"</span><span class="p">][</span><span class="n">n</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ref</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 </div>
