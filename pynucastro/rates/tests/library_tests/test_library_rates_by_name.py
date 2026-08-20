@@ -12,7 +12,7 @@ class TestGetRatesByName:
         r5 = "f20(,e)ne20"
         r6 = "he3(he3,pp)he4"
 
-        assert reaclib_library.get_rate_by_name(r1).fname == "He4_C12_to_O16_reaclib"
+        assert reaclib_library.get_rate_by_name(r1).fname == "C12_He4_to_O16_reaclib"
         assert reaclib_library.get_rate_by_name(r2).fname == "C12_C12_to_He4_Ne20_reaclib"
         assert reaclib_library.get_rate_by_name(r3).fname == "He4_He4_He4_to_C12_reaclib"
         assert reaclib_library.get_rate_by_name(r4) is None

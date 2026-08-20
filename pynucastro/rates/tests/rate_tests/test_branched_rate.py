@@ -87,7 +87,7 @@ class TestBranchedRate:
         # and not squared (from the stoichiometry)
 
         b1 = branched_rates["n14(pp,ae+nu)c12"]
-        assert b1.ydot_string_py() == "rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_He4_C12_branched"
+        assert b1.ydot_string_py() == "rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_branched"
 
         b2 = branched_rates["n14(pp,e+nu)o16"]
-        assert b2.ydot_string_py() == "rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O16_branched"
+        assert b2.ydot_string_py() == "rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_branched"
