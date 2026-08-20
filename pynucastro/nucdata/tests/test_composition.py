@@ -29,6 +29,7 @@ class TestComposition:
         assert comp["he4"] == comp[n] == comp.X[n]
 
     def test_setter_and_getting(self, comp):
+        comp.set_all(1.e-16)
         assert comp.X == {Nucleus("H1"): 1e-16, Nucleus("He4"): 1e-16, Nucleus("C12"): 1e-16,
                           Nucleus("O16"): 1e-16, Nucleus("N14"): 1e-16, Nucleus("Ca40"): 1e-16}
 
