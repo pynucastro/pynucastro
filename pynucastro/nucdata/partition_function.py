@@ -1,15 +1,18 @@
+"""Classes and methods for dealing with nuclear partition functions."""
+
+
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
-class PartitionFunction:
-    """
-    This class holds the tabulated data for the partition function for a
-    specific nucleus, which can be combined with other (non-overlapping)
-    partition functions by addition and evaluated for different temperature
-    values.
+class PartitionFunction:  # noqa: PLW1641  (not hashable)
+    """Store the tabulated data for the partition function for a
+    specific nucleus, which can be combined with other
+    (non-overlapping) partition functions by addition and evaluated
+    for different temperature values.
 
     Adding two PartitionFunction objects is implemented by simply appending the
     temperature and partition function arrays of the higher-temperature
@@ -21,47 +24,59 @@ class PartitionFunction:
     returned PartitionFunction of order equal to the maximum order of the added
     PartitionFunction objects.
 
-    :var nucleus:            a string composed by a lowercase element and the
-                             atomic number, e.g. ``"ni56"``
-    :var name:               the name of the table on which the nucleus is read
-    :var temperature:        a sorted array of all the temperatures involved
-    :var partition_function: an array with all the partition function values
-                             given in the same order as ``temperature``
-    :var interpolant_order:  the interpolation spline order, must be between
-                             1 and 5, inclusive
+    Parameters
+    ----------
+    nucleus : str
+        The nucleus (e.g. ``"ni56"``)
+    name : str
+        The name of the table on which the nucleus is read
+    T9_points : numpy.ndarray
+        A sorted array of all the temperatures involved. This is in GK.
+    log_pf_data : numpy.ndarray
+        An array with all the partition function values given in the
+        same order as ``temperature``. This is log(pf)
+    interpolant_order : int
+        The interpolation spline order, must be between 1 and 5, inclusive
+
     """
 
-    def __init__(self, nucleus, name, temperature, partition_function, interpolant_order=3):
+    def __init__(self, nucleus, name, T9_points,
+                 log_pf_data, interpolant_order=3):
         assert isinstance(nucleus, str)
 
-        temperature = np.asarray(temperature)
-        partition_function = np.asarray(partition_function)
+        T9_points = np.asarray(T9_points)
+        log_pf_data = np.asarray(log_pf_data)
 
-        assert temperature.shape == partition_function.shape
-        assert np.all(temperature[:-1] <= temperature[1:]), "temperature array must be sorted"
+        assert T9_points.shape == log_pf_data.shape
+        assert np.all(T9_points[:-1] <= T9_points[1:]), "temperature array must be sorted"
 
         self.nucleus = nucleus
         self.name = name
-        self.temperature = temperature
-        self.partition_function = partition_function
+        self.T9_points = T9_points
+        self.log_pf_data = log_pf_data
         self.interpolant_order = interpolant_order
         self._interpolant = None
 
-    def lower_partition(self):
-        """Return the partition function value for :meth:`lower_temperature`."""
-        return self.partition_function[0]
-
-    def upper_partition(self):
-        """Return the partition function value for :meth:`upper_temperature`."""
-        return self.partition_function[-1]
-
     def lower_temperature(self):
-        """Return the lowest temperature this object supports."""
-        return self.temperature[0]
+        """Return the lowest temperature [K] this object supports.
+
+        Returns
+        -------
+        float
+
+        """
+
+        return self.T9_points[0] * 1.e9
 
     def upper_temperature(self):
-        """Return the highest temperature this object supports."""
-        return self.temperature[-1]
+        """Return the highest temperature [K] this object supports.
+
+        Returns
+        -------
+        float
+        """
+
+        return self.T9_points[-1] * 1.e9
 
     def __add__(self, other):
         assert self.nucleus == other.nucleus
@@ -75,71 +90,104 @@ class PartitionFunction:
         if lower.upper_temperature() >= upper.lower_temperature():
             raise ValueError("temperature ranges cannot overlap")
 
-        temperature = np.concatenate([lower.temperature, upper.temperature])
-        partition_function = np.concatenate([lower.partition_function,
-                                             upper.partition_function])
+        T9_points = np.concatenate([lower.T9_points, upper.T9_points])
+        log_pf_data = np.concatenate([lower.log_pf_data,
+                                      upper.log_pf_data])
 
         name = f'{lower.name}+{upper.name}'
 
         order = max(self.interpolant_order, other.interpolant_order)
         newpf = PartitionFunction(nucleus=self.nucleus, name=name,
-                                  temperature=temperature,
-                                  partition_function=partition_function,
+                                  T9_points=T9_points,
+                                  log_pf_data=log_pf_data,
                                   interpolant_order=order)
 
         return newpf
 
     def __eq__(self, other):
-        return (np.all(self.partition_function == other.partition_function) and
-                np.all(self.temperature == other.temperature))
-
-    def construct_spline_interpolant(self, order=3):
-        """
-        Construct an interpolating univariate spline of order >= 1 and
-        order <= 5 using the scipy InterpolatedUnivariateSpline
-        implementation.
-
-        Interpolate in log space for the partition function and in GK
-        for temperature.
-        """
-        self._interpolant = None
-        self.interpolant_order = order
+        return (np.all(self.log_pf_data == other.log_pf_data) and
+                np.all(self.T9_points == other.T9_points))
 
     def eval(self, T):
-        """Return the interpolated partition function value for the temperature T."""
+        """Compute the interpolated partition function value for the
+        temperature T. Note this returns log(pf)
+
+        Parameters
+        ----------
+        T : float
+            temperature in K
+
+        Returns
+        -------
+        float
+
+        """
 
         # lazily construct the interpolant object, since it's pretty expensive
         if not self._interpolant:
             self._interpolant = InterpolatedUnivariateSpline(
-                self.temperature/1.0e9,
-                np.log10(self.partition_function),
+                self.T9_points,
+                self.log_pf_data,
                 k=self.interpolant_order
             )
         try:
-            T = float(T)/1.0e9
+            T = float(T)*1.0e-9
         except ValueError:
             print("invalid temperature")
             raise
         # extrapolates keeping the boundaries fixed.
-        return float(10**self._interpolant(T, ext='const'))
+        return float(self._interpolant(T, ext='const'))
+
+    def plot(self, T_min=1.e7, T_max=1.e11):
+        """Plot the partition function as a function of T
+
+        Parameters
+        ----------
+        T_min : float
+            minimum temperature [K] to plot
+        T_max : float
+            maximum temperature [K] to plot
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
+
+        fig, ax = plt.subplots()
+
+        T_points = self.T9_points * 1.e9
+
+        ax.plot(T_points, np.exp(self.log_pf_data))
+        mask = (T_points >= T_min) & (T_points <= T_max)
+        ax.grid(ls=":")
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xlim(T_min, T_max)
+        ax.set_ylim(min(0.5, np.exp(self.log_pf_data[mask].min())),
+                    max(2, np.exp(self.log_pf_data[mask].max())))
+        ax.set_xlabel("T (K)")
+        ax.set_ylabel("G(T)")
+
+        return fig
 
 
 class PartitionFunctionTable:
-    """
-    Class for reading a partition function table file. A
-    :class:`PartitionFunction` object is constructed for each nucleus and
-    stored in a dictionary keyed by the lowercase nucleus name in the form e.g.
-    "ni56". The table files are stored in the ``PartitionFunction``
-    subdirectory.
+    """Manage a partition function table file. A
+    :class:`PartitionFunction` object is constructed for each nucleus
+    and stored in a dictionary keyed by the lowercase nucleus name in
+    the form e.g.  "ni56". The table files are stored in the
+    ``PartitionFunction`` subdirectory.
 
     :var name:         the name of the table (as defined in the data file)
-    :var temperatures: an array of temperature values
+    :var T9_points: an array of temperature values in [GK]
+
     """
 
     def __init__(self, file_name):
         self._partition_function = {}
         self.name = None
-        self.temperatures = None
+        self.T9_points = None
         self._read_table(file_name)
 
     def _add_nuclide_pfun(self, nuc, pfun):
@@ -171,9 +219,10 @@ class PartitionFunctionTable:
                 fin.readline()
 
             # Now, we want to read the lines of the file where
-            # the temperatures are located
+            # the temperatures are located. Temperature is converted to GK
+            # Explicitly divide by 1e9 instead of multiply by 1.0e-9 to avoid roundoff
             temp_strings = fin.readline().strip().split()
-            self.temperatures = np.array(temp_strings, dtype=np.float64)
+            self.T9_points = np.array(temp_strings, dtype=np.float64) / 1.0e9
 
             # Now, we append on the array lines = [] all the remaining file, the structure
             # 1. The nucleus
@@ -186,18 +235,18 @@ class PartitionFunctionTable:
                     lines.append(ls)
 
         # Using .pop(0) twice we construct each nucleus partition function.
+        # Note the partition function value stored is log(pf)
         while lines:
             nuc = lines.pop(0)
             pfun_strings = lines.pop(0).split()
-            partitionfun = np.array(pfun_strings, dtype=np.float64)
-            pfun = PartitionFunction(nuc, self.name, self.temperatures, partitionfun)
+            log_pf = np.log(np.array(pfun_strings, dtype=np.float64))
+            pfun = PartitionFunction(nuc, self.name, self.T9_points, log_pf)
             self._add_nuclide_pfun(nuc, pfun)
 
 
 class PartitionFunctionCollection:
-    """
-    This class holds a collection of :class:`PartitionFunctionTable` objects in
-    a dictionary keyed by the name of the tables.
+    """A collection of :class:`PartitionFunctionTable` objects in a
+    dictionary keyed by the name of the tables.
 
     In our discussion we have two different sets of tables: FRDM and ETFSI-Q.
 
@@ -205,6 +254,7 @@ class PartitionFunctionCollection:
                                 tables
     :var use_set: selects between the FRDM (``'frdm'``) and ETFSI-Q
                   (``'etfsiq'``) data sets.
+
     """
 
     def __init__(self, use_high_temperatures=True, use_set='frdm'):

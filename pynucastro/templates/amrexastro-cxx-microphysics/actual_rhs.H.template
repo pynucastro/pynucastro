@@ -1,5 +1,5 @@
-#ifndef actual_rhs_H
-#define actual_rhs_H
+#ifndef ACTUAL_RHS_H
+#define ACTUAL_RHS_H
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
@@ -13,22 +13,21 @@
 #endif
 #include <microphysics_autodiff.H>
 #ifdef NEUTRINOS
-#include <sneut5.H>
+#include <neutrino.H>
 #endif
+#include <rate_type.H>
 #include <reaclib_rates.H>
-#include <table_rates.H>
+#include <approximate_rates.H>
+#include <modified_rates.H>
+#include <branched_rates.H>
+#include <temperature_table_rates.H>
+#include <tabular_weak_rates.H>
+#include <derived_rates.H>
 
-using namespace amrex;
-using namespace ArrayUtil;
-
-using namespace Species;
-using namespace Rates;
-
-using namespace rate_tables;
-
+using namespace amrex::literals;
 
 template<class T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 {
 
@@ -38,29 +37,23 @@ void ener_gener_rate(T const& dydt, amrex::Real& enuc)
 
     enuc = 0.0_rt;
 
-    for (int n = 1; n <= NumSpec; ++n) {
-        enuc += dydt(n) * network::mion(n);
-    }
+    amrex::constexpr_for<1, NumSpec+1>([&] (auto n)
+    {
+        enuc += dydt(n) * network::mion<n>();
+    });
 
     enuc *= C::enuc_conv2;
 }
 
 
+#ifdef SCREENING
 template <int do_T_derivatives, typename T>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void evaluate_rates(const burn_t& state, T& rate_eval) {
+AMREX_GPU_DEVICE AMREX_INLINE
+void evaluate_screening(const burn_t& state,
+                        const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+                        T& rate_eval) {
 
-
-    // create molar fractions
-
-    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
-    for (int n = 1; n <= NumSpec; ++n) {
-        Y(n) = state.xn[n-1] * aion_inv[n-1];
-    }
-
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
-
-    // Calculate Reaclib rates
+    // Evaluate screening terms
 
     using number_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
     number_t temp = state.T;
@@ -69,53 +62,100 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
         autodiff::seed(temp);
     }
 
-#ifdef SCREENING
     plasma_state_t<number_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
+
+    amrex::Real log_scor, dlog_scor_dT;
+
+    <compute_screening_factors>(1)
+}
 #endif
 
-    tf_t tfactors = evaluate_tfactors(state.T);
 
-    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+template <int do_T_derivatives, typename T>
+AMREX_GPU_DEVICE AMREX_INLINE
+void evaluate_rates(const burn_t& state,
+                    const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+                    T& rate_eval) {
+
+    // here Y is consistent with state.xn
+
+    [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
+
+    const tf_t tfactors = evaluate_tfactors(state.T);
+
+    // Precompute screening terms
+
+#ifdef SCREENING
+    evaluate_screening<do_T_derivatives, T>(state, Y, rate_eval);
+#endif
+
+    // Fill in different rates
+
+    reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // fill modified rates next -- these can have ReacLib or
+    // TemperatureTabular/StarLib rates as the original rate
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates next. This should go last but before
+    // approx rates, since those may have ReacLibRate,
+    // TemperatureTabularRate / StarLibRate, or DerivedRate as the
+    // underlying rate.
+
+    derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // fill branched rates -- these can have ReacLib or
+    // TemperatureTabular/StarLib as the underlying rate or branches.
+    // We do this after DerivedRate in case the branching depends
+    // on a derived rate.
+    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+
 
     <rate_param_tests>(1)
 
-#ifdef SCREENING
-    // Evaluate screening factors
-
-    amrex::Real ratraw, dratraw_dT;
-    amrex::Real scor, dscor_dt;
-    [[maybe_unused]] amrex::Real scor2, dscor2_dt;
-
-    <compute_screening_factors>(1)
-#endif
-
     // Fill approximate rates
 
-    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+    approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
-    // Calculate tabular rates
-
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
-    <compute_tabular_rates>(1)
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
 }
 
+
+// backwards-compatible wrapper
+template <int do_T_derivatives, typename T>
+AMREX_GPU_DEVICE AMREX_INLINE
+void evaluate_rates(const burn_t& state,
+                    T& rate_eval) {
+
+    // create molar fractions
+    amrex::Array1D<amrex::Real, 1, NumSpec> Y;
+    for (int n = 1; n <= NumSpec; ++n) {
+        Y(n) = state.xn[n-1] * aion_inv[n-1];
+    }
+
+    evaluate_rates<do_T_derivatives>(state, Y, rate_eval);
+}
+
+
 #ifdef NSE_NET
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void get_ydot_weak(const burn_t& state,
-             amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
-             amrex::Real& enuc_weak,
-             [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
+                   amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
+                   amrex::Real& enuc_weak,
+                   [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
     ///
     /// Calculate Ydots contribute only from weak reactions.
     /// This is used to calculate dyedt and energy generation from
     /// weak reactions for self-consistent NSE
     ///
 
+    using namespace modified_rates;
+    using namespace temp_tabular;
 
     // initialize ydot_nuc to 0
 
@@ -125,12 +165,13 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    [[maybe_unused]] amrex::Real rate, drate_dt, edot_nu, edot_gamma;
+    constexpr int do_T_derivatives = 0;
+    [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
     [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
 
     rate_eval.enuc_weak = 0.0_rt;
 
-    // Calculate tabular rates and get ydot_weak
+    // Compute all weak rates and get ydot_weak
 
     <ydot_weak>(1)
     enuc_weak = rate_eval.enuc_weak;
@@ -138,7 +179,7 @@ void get_ydot_weak(const burn_t& state,
 #endif
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -150,13 +191,9 @@ void rhs_nuc(const burn_t& state,
 }
 
 
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
-void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
+AMREX_GPU_DEVICE AMREX_INLINE
+void actual_rhs (const burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 {
-    for (int i = 1; i <= neqs; ++i) {
-        ydot(i) = 0.0_rt;
-    }
-
 
     // Set molar abundances
     amrex::Array1D<amrex::Real, 1, NumSpec> Y;
@@ -170,7 +207,7 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 
     constexpr int do_T_derivatives = 0;
 
-    evaluate_rates<do_T_derivatives, rate_t>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_t>(state, Y, rate_eval);
 
     rhs_nuc(state, ydot, Y, rate_eval.screened_rates);
 
@@ -188,7 +225,9 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 #ifdef NEUTRINOS
     constexpr int do_derivatives{0};
     amrex::Real dsneutdt{}, dsneutdd{}, dsnuda{}, dsnudz{};
-    sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
+
+    neutrino_cooling<do_derivatives>(state.T, state.rho, state.abar, state.zbar,
+                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 #endif
 
     // Append the energy equation (this is erg/g/s)
@@ -199,7 +238,7 @@ void actual_rhs (burn_t& state, amrex::Array1D<amrex::Real, 1, neqs>& ydot)
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
@@ -215,7 +254,7 @@ void jac_nuc(const burn_t& state,
 
 
 template<class MatrixType>
-AMREX_GPU_HOST_DEVICE AMREX_INLINE
+AMREX_GPU_DEVICE AMREX_INLINE
 void actual_jac(const burn_t& state, MatrixType& jac)
 {
 
@@ -226,13 +265,11 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 
 
-    jac.zero();
-
     rate_derivs_t rate_eval;
 
     constexpr int do_T_derivatives = 1;
 
-    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, rate_eval);
+    evaluate_rates<do_T_derivatives, rate_derivs_t>(state, Y, rate_eval);
 
     // Species Jacobian elements with respect to other species
 
@@ -242,7 +279,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     for (int j = 1; j <= NumSpec; ++j) {
         auto jac_slice_2 = [&](int i) -> amrex::Real { return jac.get(i, j); };
-        ener_gener_rate(jac_slice_2, jac(net_ienuc,j));
+        amrex::Real tmp{};
+        ener_gener_rate(jac_slice_2, tmp);
+        jac(net_ienuc,j) = tmp;
     }
 
     // Account for the thermal neutrino losses
@@ -251,7 +290,8 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 #ifdef NEUTRINOS
     amrex::Real sneut, dsneutdd, dsnuda, dsnudz;
     constexpr int do_derivatives{1};
-    sneut5<do_derivatives>(state.T, state.rho, state.abar, state.zbar, sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
+    neutrino_cooling<do_derivatives>(state.T, state.rho, state.abar, state.zbar,
+                                     sneut, dsneutdt, dsneutdd, dsnuda, dsnudz);
 
     for (int j = 1; j <= NumSpec; ++j) {
        amrex::Real b1 = (-state.abar * state.abar * dsnuda + (zion[j-1] - state.zbar) * state.abar * dsnudz);
@@ -285,7 +325,6 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 AMREX_INLINE
 void actual_rhs_init () {
 
-    init_tabular();
 
 }
 

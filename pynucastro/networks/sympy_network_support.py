@@ -7,7 +7,7 @@ import re
 
 import sympy
 
-from pynucastro.rates import TabularRate
+from pynucastro.rates import TabularWeakRate
 
 
 class SympyRates:
@@ -50,7 +50,7 @@ class SympyRates:
         sympy.core.expr.Expr
 
         """
-        key = (rate.cname(), y_i)
+        key = (rate.fname, y_i)
         if key in self._ydot_term_cache:
             return self._ydot_term_cache[key]
         srate = self.specific_rate_symbol(rate)
@@ -101,16 +101,16 @@ class SympyRates:
 
         # electron fraction if electron capture reaction
         y_e_sym = sympy.sympify(1)
-        if not isinstance(rate, TabularRate):
-            if rate.weak_type == 'electron_capture' and not rate.tabular:
+        if not isinstance(rate, TabularWeakRate):
+            if rate.use_ye_weighting:
                 y_e_sym = sympy.symbols('__y_e__')
 
         # prefactor
         prefactor_sym = sympy.sympify(1)/sympy.sympify(rate.inv_prefactor)
 
         # screened rate
-        sym_final = self.name_rate_data + f'(k_{rate.cname()})'
-        sym_temp = f'NRD__k_{rate.cname()}__'
+        sym_final = self.name_rate_data + f'(k_{rate.fname})'
+        sym_temp = f'NRD__k_{rate.fname}__'
         self.symbol_ludict[sym_temp] = sym_final
         screened_rate_sym = sympy.symbols(sym_temp)
 

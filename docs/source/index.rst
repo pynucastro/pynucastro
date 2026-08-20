@@ -10,12 +10,9 @@ pynucastro
 
 `https://github.com/pynucastro/pynucastro <https://github.com/pynucastro/pynucastro>`_
 
-pynucastro is a set of python interfaces to nuclear reaction rate
-databases (including the JINA reaclib nuclear reaction rate database).
-It is meant for both interactive exploration of rates (through Jupyter
-notebooks) and to create reaction networks for use in simulation
-codes.
-
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data and reaction rates, and tools for building
+and interactively exploring nuclear reaction networks.
 
 .. toctree::
    :maxdepth: 1
@@ -34,15 +31,18 @@ codes.
 
    sources
    nucleus
+   solar_composition.ipynb
 
 .. toctree::
    :maxdepth: 1
-   :caption: Exploring Networks in Python
+   :caption: pynucastro Overview
    :hidden:
 
    pynucastro-examples.ipynb
    plot-types.ipynb
+   basic_network.ipynb
    pynucastro-integration.ipynb
+   starlib.ipynb
 
 
 .. toctree::
@@ -50,7 +50,7 @@ codes.
    :caption: Working with Libraries
    :hidden:
 
-   library-examples.ipynb
+   finding-rates.ipynb
    tabulated-weak-rates.ipynb
 
 .. toctree::
@@ -63,6 +63,8 @@ codes.
    electron-capture-example.ipynb
    electron-captures.ipynb
    alternate-rates.ipynb
+   inert-nuclei.ipynb
+   documenting-networks.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -71,8 +73,9 @@ codes.
 
    screening-examples
    modify-example.ipynb
+   branched-rates.ipynb
    custom-rates.ipynb
-   partition-function
+   derived-rates
 
 .. toctree::
    :maxdepth: 1
@@ -84,14 +87,28 @@ codes.
    unimportant-rates.ipynb
    network-cycles.ipynb
    stiffness.ipynb
+   reduction.ipynb
+   sens_analysis_example.ipynb
 
 .. toctree::
    :maxdepth: 1
    :caption: Nuclear Statistical Equilibrium
    :hidden:
 
+   nse-intro
    NSE-example
+   NSE-direct-integration
    nse_table
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Thermodynamics
+   :hidden:
+
+   fermi-integrals
+   electron-eos
+   stellar-eos
+   temperature-evolution
 
 .. toctree::
    :maxdepth: 1
@@ -99,6 +116,7 @@ codes.
    :hidden:
 
    neutrino-cooling.ipynb
+   neutrino-cooling-effects.ipynb
 
 .. toctree::
    :maxdepth: 1
@@ -117,6 +135,7 @@ codes.
    :caption: Some Useful Networks
    :hidden:
 
+   aprox13
    he-burning-example
 
 .. toctree::
@@ -130,6 +149,15 @@ codes.
    examples/triple_alpha_eval.ipynb
    examples/he-burning.ipynb
    examples/supernova-lightcurve.ipynb
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Developer Documentation
+   :hidden:
+
+   rates-devel
+   adding-rates
+   testing
 
 .. toctree::
    :maxdepth: 1

@@ -1,3 +1,8 @@
+"""Classes and methods for working with rates from the ReacLib
+library.
+
+"""
+
 import io
 from pathlib import Path
 
@@ -6,10 +11,10 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, RateSource, Tfactors
+from pynucastro.rates.rate import Rate, Tfactors, ThermoState
 
 
-class SingleSet:
+class SingleSet:  # noqa: PLW1641 (not hashable)
     """A single ReacLib set for a reaction in the form:
 
     λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
@@ -23,6 +28,17 @@ class SingleSet:
     labelprops : str
         a collection of flags that classify a ReacLib rate
 
+    Attributes
+    ----------
+    label : str
+        the ReacLib label for this set
+    resonant : bool
+        whether this set is for a resonance
+    weak : bool
+        whether this set represents a weak interaction
+    derived_from_inverse : bool
+        has this set be recomputed via detailed balance?
+
     """
 
     def __init__(self, a, labelprops):
@@ -31,13 +47,13 @@ class SingleSet:
         self.label = None
         self.resonant = None
         self.weak = None
-        self.reverse = None
+        self.derived_from_inverse = None
 
         self._update_label_properties()
 
     def _update_label_properties(self):
         """Set label and flags indicating Set is resonant, weak, or
-            reverse.
+        reverse.
 
         """
         assert isinstance(self.labelprops, str)
@@ -46,7 +62,7 @@ class SingleSet:
         self.label = self.labelprops[0:4]
         self.resonant = self.labelprops[4] == 'r'
         self.weak = self.labelprops[4] == 'w'
-        self.reverse = self.labelprops[5] == 'v'
+        self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
         x = True
@@ -57,8 +73,25 @@ class SingleSet:
         x = x and (self.label == other.label)
         x = x and (self.resonant == other.resonant)
         x = x and (self.weak == other.weak)
-        x = x and (self.reverse == other.reverse)
+        x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
+
+    def log_f(self):
+        """Return a function for ``log_rate(tf)`` where ``tf`` is a
+        :py:class:`Tfactors <pynucastro.rates.rate.Tfactors>` object
+
+        Returns
+        -------
+        Callable
+
+        """
+        return lambda tf: (self.a[0] +
+                           self.a[1]*tf.T9i +
+                           self.a[2]*tf.T913i +
+                           self.a[3]*tf.T913 +
+                           self.a[4]*tf.T9 +
+                           self.a[5]*tf.T953 +
+                           self.a[6]*tf.lnT9)
 
     def f(self):
         """Return a function for ``rate(tf)`` where ``tf`` is a
@@ -69,13 +102,7 @@ class SingleSet:
         Callable
 
         """
-        return lambda tf: float(np.exp(self.a[0] +
-                                       self.a[1]*tf.T9i +
-                                       self.a[2]*tf.T913i +
-                                       self.a[3]*tf.T913 +
-                                       self.a[4]*tf.T9 +
-                                       self.a[5]*tf.T953 +
-                                       self.a[6]*tf.lnT9))
+        return lambda tf: float(np.exp(self.log_f()(tf)))
 
     def dfdT(self):
         """Return a function for the temperature derivative of the
@@ -95,7 +122,8 @@ class SingleSet:
                                           (5./3.) * self.a[5] * tf.T913 * tf.T913 +
                                           self.a[6] * tf.T9i) / 1.e9
 
-    def set_string_py(self, *, prefix="set", plus_equal=False):
+    def set_string_py(self, *, prefix="set", plus_equal=False,
+                      with_exp=True):
         """Generate the python code needed to evaluate the set.
 
         Parameters
@@ -105,6 +133,10 @@ class SingleSet:
         plus_equal : bool
             do we add to the existing set? or create a new
             variable and initialize it to this set?
+        with_exp : bool
+            do we compute the set (``True``) or the log of the
+            set (``False``)?  The later is useful if we work
+            with a derived rate for reaclib rate.
 
         Returns
         -------
@@ -112,9 +144,11 @@ class SingleSet:
 
         """
         if plus_equal:
-            string = f"{prefix} += np.exp( "
+            string = f"{prefix} += "
         else:
-            string = f"{prefix} = np.exp( "
+            string = f"{prefix} = "
+        if with_exp:
+            string += "np.exp( "
         string += f" {self.a[0]}"
         if not self.a[1] == 0.0:
             string += f" + {self.a[1]}*tf.T9i"
@@ -123,6 +157,8 @@ class SingleSet:
         if not self.a[3] == 0.0:
             string += f" + {self.a[3]}*tf.T913"
         if not (self.a[4] == 0.0 and self.a[5] == 0.0 and self.a[6] == 0.0):
+            if not with_exp:
+                string += " \\"
             indent = len(prefix)*" "
             string += f"\n{indent}         "
         if not self.a[4] == 0.0:
@@ -131,7 +167,8 @@ class SingleSet:
             string += f" + {self.a[5]}*tf.T953"
         if not self.a[6] == 0.0:
             string += f" + {self.a[6]}*tf.lnT9"
-        string += ")"
+        if with_exp:
+            string += ")"
         return string
 
     def set_string_cxx(self, *, prefix="set", plus_equal=False,
@@ -237,139 +274,53 @@ class ReacLibRate(Rate):
 
     Parameters
     ----------
-    rfile : str, pathlib.Path, io.StringIO
-        the data file or string containing the rate in ReacLib format.
-    chapter : int
-        the ReacLib chapter describing the number of reactants and products
-    original_source : str
-        the original source.  This is usually set automatically when
-        reading ``rfile``, but can be manually provided when adding
-        rates together.
     reactants : list(str), list(Nucleus)
         the reactants for the reaction
     products : list(str), list(Nucleus)
         the products for the reaction
     sets : list(SingleSet)
         the sets that make up the rate
-    labelprops : str
-        a collection of flags that classify a ReacLib rate
     Q : float
         the energy release (in MeV)
-
-    Raises
-    ------
-    RateFileError
-        If the rate file is not correctly formatted.
-    UnsupportedNucleus
-        If the nucleus is unknown to pynucastro
+    weak_type : str
+        the type of weak reaction the rate represents.
+        Possible values include "electron_capture", "beta_pos", or
+        "beta_neg".  Note for electron-capture rates, we will
+        include an explicit ρYₑ weighting in the evaluation
+    label : str
+        a descriptive label for the rate (usually representative
+        of the source)
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv
 
     """
-    def __init__(self, rfile=None, chapter=None, original_source=None,
-                 reactants=None, products=None, sets=None, labelprops=None, Q=None):
-        # pylint: disable=super-init-not-called
 
-        self.rfile_path = None
-        self.rfile = None
-        self.source = None
+    def __init__(self, reactants=None, products=None,
+                 sets=None, Q=None, weak_type="",
+                 label="reaclib", rate_source=None):
 
-        if isinstance(rfile, (str, Path)):
-            rfile = Path(rfile)
-            self.rfile_path = _find_rate_file(rfile)
-            self.rfile = rfile.name
+        # Metadata for rate data files
+        self.rfile_name = set()
+        self.rfile_path = set()
+        self.original_data = None
+        self.chapter = None
+        self.labelprops = None
 
-        self.chapter = chapter    # the Reaclib chapter for this reaction
-        self.original_source = original_source   # the contents of the original rate file
-        self.fname = None
-
-        if reactants:
-            self.reactants = Nucleus.cast_list(reactants)
-        else:
-            self.reactants = []
-
-        if products:
-            self.products = Nucleus.cast_list(products)
-        else:
-            self.products = []
-
-        if sets:
+        if sets is not None:
             self.sets = sets
         else:
             self.sets = []
 
-        # a modified rate is one where we manually changed some of its
-        # properties
+        use_ye_weighting = False
+        if weak_type == "electron_capture":
+            use_ye_weighting = True
 
-        self.modified = False
-
-        self.labelprops = labelprops
-
-        self.approx = self.labelprops == "approx"
-
-        self.derived = self.labelprops == "derived"
-
-        self.label = None
-        self.resonant = None
-        self.weak = None
-        self.weak_type = None
-        self.reverse = None
-
-        self.removed = None
-
-        self.Q = Q
-
-        self.tabular = False
-
-        self.use_identical_particle_factor = True
-
-        self.rate_eval_needs_rho = False
-        self.rate_eval_needs_comp = False
-
-        # some subclasses might define a stoichmetry as a dict{Nucleus}
-        # that gives the numbers for the dY/dt equations
-        self.stoichiometry = None
-
-        if isinstance(rfile, Path):
-            # read in the file, parse the different sets and store them as
-            # SingleSet objects in sets[]
-            f = self.rfile_path.open()
-        elif isinstance(rfile, io.StringIO):
-            # Set f to the io.StringIO object
-            f = rfile
-        else:
-            f = None
-
-        if f:
-            self._read_from_file(f)
-            f.close()
-        else:
-            self._set_label_properties()
-
-        self._set_rhs_properties()
-        self._set_screening()
-        self._set_print_representation()
-
-    def _set_print_representation(self):
-        """Compose the string representations of this Rate."""
-
-        super()._set_print_representation()
-
-        # This is used to determine which rates to detect as the same reaction
-        # from multiple sources in a Library file, so it should not be unique
-        # to a given source, e.g. wc12, but only unique to the reaction.
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}__{products_str}'
-
-        if self.weak:
-            self.fname += f'__weak__{self.weak_type}'
-        if self.modified:
-            self.fname += "__modified"
-        if self.approx:
-            self.fname += "__approx"
-        if self.derived:
-            self.fname += "__derived"
-        if self.removed:
-            self.fname += "__removed"
+        super().__init__(reactants=reactants, products=products,
+                         Q=Q, weak_type=weak_type, label=label,
+                         use_ye_weighting=use_ye_weighting,
+                         stoichiometry=None, rate_source=rate_source,
+                         use_identical_particle_factor=True)
 
     def __hash__(self):
         return hash(self.__repr__())
@@ -385,10 +336,12 @@ class ReacLibRate(Rate):
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = (self.chapter == other.chapter) and (self.products == other.products) and \
-                (self.reactants == other.reactants)
+        x = ((self.chapter == other.chapter) and
+             (self.products == other.products) and
+             (self.reactants == other.reactants))
         if not x:
             return x
+
         x = len(self.sets) == len(other.sets)
         if not x:
             return x
@@ -405,7 +358,7 @@ class ReacLibRate(Rate):
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the
-           same reaction. Must be Reaclib rates.
+        same reaction. Must be Reaclib rates.
 
         """
         assert self.reactants == other.reactants
@@ -413,104 +366,104 @@ class ReacLibRate(Rate):
         assert self.chapter == other.chapter
         assert isinstance(self.chapter, int)
         assert self.label == other.label
+        assert self.src == other.src
         assert self.weak == other.weak
         assert self.weak_type == other.weak_type
-        assert self.reverse == other.reverse
-
+        assert self.derived_from_inverse == other.derived_from_inverse
         if self.resonant != other.resonant:
-            self._labelprops_combine_resonance()
-        new_rate = ReacLibRate(chapter=self.chapter,
-                               original_source='\n'.join([self.original_source,
-                                                          other.original_source]),
-                               reactants=self.reactants,
+            self.labelprops = self.labelprops[:4] + 'c' + self.labelprops[5:]
+
+        new_rate = ReacLibRate(reactants=self.reactants,
                                products=self.products,
                                sets=self.sets + other.sets,
-                               labelprops=self.labelprops,
-                               Q=self.Q)
+                               Q=self.Q,
+                               weak_type=self.weak_type,
+                               rate_source=self.src)
+
+        # Update the metadata for the rate data file
+        new_rate.rfile_name = self.rfile_name | other.rfile_name
+        new_rate.rfile_path = self.rfile_path | other.rfile_path
+        new_rate.chapter = self.chapter
+        new_rate.original_data = '\n'.join([self.original_data,
+                                            other.original_data])
+        new_rate.labelprops = self.labelprops
+
+        # Update label based on labelprops
+        new_rate._set_label_properties()
+
         return new_rate
 
-    def _set_label_properties(self, labelprops=None):
-        """Calls _update_resonance_combined and then
-            _update_label_properties.
+    def _set_label_properties(self):
+        """Update labelprops based on the Sets in this Rate
+        to set the resonance_combined flag properly.
+        And update different rate properties based on labelprops.
 
         """
-        if labelprops:
-            self.labelprops = labelprops
 
-        # Update labelprops based on the Sets in this Rate
-        # to set the resonance_combined flag properly
-        self._update_resonance_combined()
-        self._update_label_properties()
-
-    def _update_resonance_combined(self):
-        """Checks the Sets in this Rate and updates the
-            resonance_combined flag as well as self.labelprops[4]
-
-        """
-        sres = [s.resonant for s in self.sets]
-        if True in sres and False in sres:
-            self._labelprops_combine_resonance()
-
-    def _labelprops_combine_resonance(self):
-        """Update self.labelprops[4] = 'c'"""
-        llp = list(self.labelprops)
-        llp[4] = 'c'
-        self.labelprops = ''.join(llp)
-
-    def _update_label_properties(self):
-        """Set label and flags indicating Rate is resonant, weak, or
-            reverse.
-
-        """
-        assert isinstance(self.labelprops, str)
-        if self.labelprops == "approx":
-            self.label = "approx"
-            self.resonant = False
-            self.weak = False
-            self.weak_type = None
-            self.reverse = False
-        elif self.labelprops == "derived":
-            self.label = "derived"
-            self.resonant = False  # Derived may be resonant in some cases
-            self.weak = False
-            self.weak_type = None
-            self.reverse = False
-        else:
+        if self.labelprops is not None:
+            assert isinstance(self.labelprops, str)
             assert len(self.labelprops) == 6
-            self.label = self.labelprops[0:4]
+
+            # Update labelprops with 'c' to indicate resonance_combined
+            sres = [s.resonant for s in self.sets]
+            if True in sres and False in sres:
+                self.labelprops = self.labelprops[:4] + 'c' + self.labelprops[5:]
+
+            # Update other flags
             self.resonant = self.labelprops[4] == 'r'
             self.weak = self.labelprops[4] == 'w'
-            if self.weak:
-                if self.label.strip() == 'ec' or self.label.strip() == 'bec':
-                    self.weak_type = 'electron_capture'
-                else:
-                    self.weak_type = self.label.strip().replace('+', '_pos_').replace('-', '_neg_')
-            else:
-                self.weak_type = None
-            self.reverse = self.labelprops[5] == 'v'
-            self.source = RateSource.source(self.label)
+            self.derived_from_inverse = self.labelprops[5] == 'v'
 
-    def _read_from_file(self, f):
+    @staticmethod
+    def _read_from_file(rfile):
         """Given a file object, read rate data from the file.
 
         Parameters
         ----------
-        f : io.TextIOWrapper, io.StringIO
+        rfile : str, pathlib.Path, io.StringIO
+            the data file or string containing the rate in ReacLib format.
 
+        Returns
+        -------
+        dict(str)
         """
+
+        if not isinstance(rfile, (str, Path, io.StringIO)):
+            raise TypeError(f"rfile must be a str or pathlib.Path or io.StringIO, "
+                            f"got {type(rfile).__name__}")
+
+        rfile_name = None
+        rfile_path = None
+        if isinstance(rfile, (str, Path)):
+            rfile = Path(rfile)
+            rfile_name = rfile.name
+            rfile_path = _find_rate_file(rfile)
+
+            # Read in the rate data file
+            f = rfile_path.open()
+        else:
+            # Set f to the io.StringIO object
+            assert isinstance(rfile, io.StringIO)
+            f = rfile
+
         lines = f.readlines()
         f.close()
 
-        self.original_source = "".join(lines)
+        # Get the original rate data content
+        original_data = "".join(lines)
 
         # first line is the chapter
-        self.chapter = lines[0].strip()
-        self.chapter = int(self.chapter)
+        chapter = int(lines[0].strip())
 
         # remove any blank lines
         set_lines = [line for line in lines[1:] if not line.strip() == ""]
 
-        # the rest is the sets
+        # Initialize in case of potential using variable before assignment
+        reactants = []
+        products = []
+
+        # the rest is the sets, which can have multiple of them.
+        sets = []
         first = 1
         while len(set_lines) > 0:
             # check for a new chapter id in case of Reaclib v2 format
@@ -520,8 +473,8 @@ class ReacLibRate(Rate):
                 check_chapter = int(check_chapter)
                 # check that the chapter number is the same as the first
                 # set in this rate file
-                if check_chapter != self.chapter:
-                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {self.chapter} for this rate set.')
+                if check_chapter != chapter:
+                    raise RateFileError(f'read chapter {check_chapter}, expected chapter {chapter} for this rate set.')
                 # get rid of chapter number so we can read a rate set
                 set_lines.pop(0)
             except (TypeError, ValueError):
@@ -563,8 +516,6 @@ class ReacLibRate(Rate):
             Q = float(s1.strip())
 
             if first:
-                self.Q = Q
-
                 # what's left are the nuclei -- their interpretation
                 # depends on the chapter
 
@@ -583,17 +534,17 @@ class ReacLibRate(Rate):
                 }
 
                 try:
-                    r, p = chapter_dict[self.chapter]
-                    self.reactants += [Nucleus.from_cache(f[i-1]) for i in r]
-                    self.products += [Nucleus.from_cache(f[j-1]) for j in p]
+                    r, p = chapter_dict[chapter]
+                    reactants = [Nucleus.from_cache(f[i-1]) for i in r]
+                    products = [Nucleus.from_cache(f[j-1]) for j in p]
 
                     # support historical format, where chapter 8 also handles what are
                     # now chapter 9 rates
-                    if self.chapter == 8 and len(f) == 5:
-                        self.products.append(Nucleus.from_cache(f[4]))
+                    if chapter == 8 and len(f) == 5:
+                        products.append(Nucleus.from_cache(f[4]))
 
                 except KeyError as exc:
-                    raise RateFileError(f'Chapter {self.chapter} could not be identified in {self.original_source}') from exc
+                    raise RateFileError(f'Chapter {chapter} could not be identified in {original_data}') from exc
 
                 first = 0
 
@@ -605,8 +556,65 @@ class ReacLibRate(Rate):
             a += [s3[i:i+n] for i in range(0, len(s3), n)]
 
             a = [float(e) for e in a if not e.strip() == ""]
-            self.sets.append(SingleSet(a, labelprops=labelprops))
-            self._set_label_properties(labelprops)
+            sets.append(SingleSet(a, labelprops=labelprops))
+
+            # Update labelprops to have "c" -- combined
+            # when we a mix of resonant and non-resonant sets
+            sres = [s.resonant for s in sets]
+            if True in sres and False in sres:
+                labelprops = labelprops[:4] + 'c' + labelprops[5:]
+
+        return {"rfile_name": rfile_name,
+                "rfile_path": rfile_path,
+                "original_data": original_data,
+                "chapter": chapter,
+                "reactants": reactants,
+                "products": products,
+                "sets": sets,
+                "labelprops": labelprops,
+                "Q": Q}
+
+    @classmethod
+    def from_file(cls, rfile):
+        """Construct the ReacLibRate object given the rfile.
+
+        Parameters
+        ----------
+        rfile : str, pathlib.Path, io.StringIO
+            the data file or string containing the rate in ReacLib format.
+
+        Returns
+        -------
+        ReacLibRate
+        """
+
+        # Parse the data and create the Rate
+        rate_data = cls._read_from_file(rfile)
+        rate_source = rate_data["labelprops"][0:4]
+
+        # Explicitly handle electron-capture weak type.
+        # Otherwise the constructor automatically determines beta-decay type.
+        weak_type = ""
+        if rate_source.strip() in ("ec", "bec"):
+            weak_type = "electron_capture"
+
+        obj = cls(reactants=rate_data["reactants"], products=rate_data["products"],
+                  sets=rate_data["sets"], Q=rate_data["Q"],
+                  weak_type=weak_type, rate_source=rate_source)
+
+        # Store file-specific metadata
+        if (rfile_name := rate_data["rfile_name"]) is not None:
+            obj.rfile_name.add(rfile_name)
+        if (rfile_path := rate_data["rfile_path"]) is not None:
+            obj.rfile_path.add(rfile_path)
+        obj.original_data = rate_data["original_data"]
+        obj.chapter = rate_data["chapter"]
+        obj.labelprops = rate_data["labelprops"]
+
+        # Update properties based on labelprops
+        obj._set_label_properties()
+
+        return obj
 
     def write_to_file(self, f):
         """Given a file object, write rate data to the file.
@@ -617,37 +625,14 @@ class ReacLibRate(Rate):
 
         """
 
-        if self.original_source is None:
+        if self.original_data is None:
             raise NotImplementedError(
-                f"Original source is not stored for this rate ({self})."
+                f"Original rate data is not stored for this rate ({self})."
                 " At present, we cannot reconstruct the rate representation without"
-                " storing the original source."
+                " storing the original rate data"
             )
 
-        print(self.original_source, file=f)
-
-    def get_rate_id(self):
-        """Get an identifying string for this rate.  Don't include
-        resonance state since we combine resonant and non-resonant
-        versions of reactions.
-
-        Returns
-        -------
-        str
-
-        """
-
-        srev = ''
-        if self.reverse:
-            srev = 'reverse'
-
-        sweak = ''
-        if self.weak:
-            sweak = 'weak'
-
-        ssrc = 'reaclib'
-
-        return f'{self.rid} <{self.label.strip()}_{ssrc}_{sweak}_{srev}>'
+        print(self.original_data, file=f)
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -661,17 +646,20 @@ class ReacLibRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
         for s in self.sets:
             fstring += f"    # {s.labelprops[0:5]}\n"
-            set_string = s.set_string_py(prefix="rate", plus_equal=True)
+            set_string = s.set_string_py(prefix="ln_set_rate", plus_equal=False, with_exp=False)
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
+            fstring += "\n"
+            fstring += "    ln_set_rate += log_scor\n"
+            fstring += "    set_rate = np.exp(ln_set_rate)\n"
+            fstring += "    rate += set_rate\n\n"
 
-        fstring += "\n"
         fstring += f"    rate_eval.{self.fname} = rate\n\n"
         return fstring
 
@@ -702,15 +690,20 @@ class ReacLibRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         if extra_args is None:
             extra_args = ()
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        # pylint: enable=duplicate-code
+
         fstring += "    rate = 0.0;\n"
         fstring += "    drate_dT = 0.0;\n\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
@@ -723,11 +716,15 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
+            fstring += "    ln_set_rate += log_scor;\n\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
+            fstring += "\n"
+            fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+
             fstring += "    }\n"
             fstring += "\n"
 
@@ -738,7 +735,7 @@ class ReacLibRate(Rate):
             fstring += "    rate += set_rate;\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
-            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 / 1.0e9;\n"
+            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
             fstring += "    }\n\n"
 
         if not leave_open:
@@ -746,8 +743,10 @@ class ReacLibRate(Rate):
 
         return fstring
 
-    def eval(self, T, *, rho=None, comp=None):
-        """Evaluate the reaction rate for temperature T
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate the natural log of reaction rate for all the ReacLib sets
+        for temperature T.
 
         Parameters
         ----------
@@ -755,29 +754,41 @@ class ReacLibRate(Rate):
             the temperature to evaluate the rate at
         rho : float
             the density to evaluate the rate at (not needed for ReacLib
-            rates).
+            rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates).
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates),
+            but needed for evaluating screening effects.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
 
         Returns
         -------
-        float
+        list(float)
 
         """
 
         tf = Tfactors(T)
-        r = 0.0
-        for s in self.sets:
-            f = s.f()
-            r += f(tf)
+        log_rate = []
 
-        return r
+        log_scor = 0.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
+
+        for s in self.sets:
+            log_f = s.log_f()
+            log_rate.append(log_f(tf) + log_scor)
+
+        return log_rate
 
     def eval_deriv(self, T, *, rho=None, comp=None):
-        """Evaluate the derivative of reaction rate with respect to T
-
+        """Evaluate the derivative of reaction rate with respect to T.
+        This currently does NOT consider electron screening effects.
 
         Parameters
         ----------
@@ -788,7 +799,7 @@ class ReacLibRate(Rate):
             rates).
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates).
 
         Returns
@@ -808,14 +819,27 @@ class ReacLibRate(Rate):
 
         return drdT
 
-    def get_rate_exponent(self, T0):
+    def get_rate_exponent(self, T0, *, rho=None, comp=None,
+                          screen_func=None):
         """For a rate written as a power law, r = r_0 (T/T0)**nu,
-        return nu corresponding to T0
+        return nu corresponding to T0. This also considers electron
+        screening effect if screen_func is passed in.
 
         Parameters
         ----------
         T0 : float
             the temperature to base the power law from
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates), but needed for evaluating screening effects.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates),
+            but needed for evaluating screening effects.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate exponent will include screening correction.
 
         Returns
         -------
@@ -824,15 +848,15 @@ class ReacLibRate(Rate):
         """
 
         # nu = dln r /dln T, so we need dr/dT
-        r1 = self.eval(T0)
+        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func)
         dT = 1.e-8*T0
-        r2 = self.eval(T0 + dT)
+        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func)
 
         drdT = (r2 - r1)/dT
         return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10)):
+             figsize=(10, 10), *, rho=None, comp=None, screen_func=None):
         """Plot the rate's temperature sensitivity vs temperature
 
         Parameters
@@ -847,6 +871,15 @@ class ReacLibRate(Rate):
             unused for ReacLib rates
         figsize : tuple
             the horizontal, vertical size (in inches) for the plot
+        rho : float
+            the density to evaluate the screening effect.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the screening effect.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include the screening correction.
 
         Returns
         -------
@@ -861,7 +894,7 @@ class ReacLibRate(Rate):
         r = np.zeros_like(temps)
 
         for n, T in enumerate(temps):
-            r[n] = self.eval(T)
+            r[n] = self.eval(T, rho=rho, comp=comp, screen_func=screen_func)
 
         ax.loglog(temps, r)
         ax.set_xlabel(r"$T$")
@@ -869,9 +902,9 @@ class ReacLibRate(Rate):
         if self.dens_exp == 0:
             ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
-            ax.set_ylabel(r"$N_A <\sigma v>$")
+            ax.set_ylabel(r"$N_A \langle\sigma v\rangle$")
         elif self.dens_exp == 2:
-            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+            ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
 

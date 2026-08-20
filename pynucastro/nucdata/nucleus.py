@@ -1,6 +1,4 @@
-"""
-Classes and methods to interface with files storing rate data.
-"""
+"""Classes and methods to interface with files storing rate data."""
 
 import re
 from pathlib import Path
@@ -19,14 +17,20 @@ _pynucastro_tabular_dir = _pynucastro_rates_dir/'tabular'
 # read the various tables with nuclear properties at the module-level
 _mass_table = MassTable()
 _halflife_table = HalfLifeTable()
-_spin_table = SpinTable(reliable=True)
+_spin_table = SpinTable()
 
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
 
+_NUCLEUS_SYMBOL_MASS_RE = re.compile(r"^([a-zA-Z]+)(\d*)$")
+_NUCLEUS_MASS_SYMBOL_RE = re.compile(r"^(\d*)([a-zA-Z]*)$")
+
+# Note: for Nubase 2020, we need to use the CODATA 18 constants
+_mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
+
 
 class UnsupportedNucleus(Exception):
-    pass
+    """Exception for a nucleus that we do not know about."""
 
 
 class Nucleus:
@@ -79,6 +83,9 @@ class Nucleus:
     nse : bool
         an NSE proton has the same properties
         as a proton but compares as being distinct
+    spin_reliable : bool
+        whether the number of spin states is supported by
+        experimentally strong arguments
     """
 
     _cache = {}
@@ -114,7 +121,7 @@ class Nucleus:
             self.short_spec_name = "he4"
             self.raw = "he4"
             self.caps_name = "He4"
-        elif name == "n":
+        elif name in ("n", 'neut'):
             self.el = "n"
             self.A = 1
             self.Z = 0
@@ -139,12 +146,14 @@ class Nucleus:
         elif name.lower().strip() in ("al-6", "al*6"):
             raise UnsupportedNucleus("isomers of Al26 are not currently supported")
         else:
-            if e := re.match(r"([a-zA-Z]+)(\d*)", name):
+            if e := _NUCLEUS_SYMBOL_MASS_RE.match(name):
                 self.el = e.group(1).title()  # chemical symbol
                 self.A = int(e.group(2))
-            elif e := re.match(r"(\d*)([a-zA-Z]*)", name):
+            elif e := _NUCLEUS_MASS_SYMBOL_RE.match(name):
                 self.el = e.group(2).title()  # chemical symbol
                 self.A = int(e.group(1))
+            if e is None:
+                raise ValueError(f"invalid nucleus string, {name}")
 
             assert self.el
             assert self.A >= 0
@@ -156,7 +165,7 @@ class Nucleus:
         self.el = self.el.lower()
 
         # atomic number comes from periodic table
-        if name not in ["n", "p_nse"]:
+        if name not in ["n", "neut", "p_nse"]:
             i = PeriodicTable.lookup_abbreviation(self.el)
             self.Z = i.Z
             assert isinstance(self.Z, int)
@@ -174,8 +183,10 @@ class Nucleus:
         # set the number of spin states
         try:
             self.spin_states = _spin_table.get_spin_states(a=self.A, z=self.Z)
+            self.spin_reliable = _spin_table.get_spin_reliability(a=self.A, z=self.Z)
         except NotImplementedError:
             self.spin_states = None
+            self.spin_reliable = False
 
         # set a partition function object to every nucleus
         try:
@@ -185,12 +196,10 @@ class Nucleus:
 
         # nuclear mass
         try:
-            # Note: for Nubase 2020, we need to use the CODATA 18 constants
-            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
             self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
             self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV_C18
             self.mass = self.A * constants.m_u_MeV_C18 + self.dm
-            B = (self.Z * mass_H + self.N * constants.m_n_MeV_C18) - self.mass
+            B = (self.Z * _mass_H + self.N * constants.m_n_MeV_C18) - self.mass
             self.nucbind = B / self.A
 
         except NotImplementedError:
@@ -270,7 +279,7 @@ class Nucleus:
         return cls.from_cache(name, dummy)
 
     def summary(self):
-        """print a summary of the nuclear properties"""
+        """Print a summary of the nuclear properties"""
 
         heading = f"{self.caps_name} / {self.spec_name}"
         print(heading)
@@ -304,6 +313,7 @@ class Nucleus:
         print("")
         print(f"  dummy: {self.dummy}")
         print(f"  nse: {self.nse}")
+        print(f"  spin states are reliable: {self.spin_reliable}")
 
     def __repr__(self):
         if self.raw not in ("p", "p_nse", "d", "t", "n"):
@@ -346,6 +356,28 @@ class Nucleus:
         A = self.A - other.A
         dummy = self.dummy and other.dummy
         return Nucleus.from_Z_A(Z, A, dummy)
+
+    def get_part_func_threshold_temp(self):
+        """Return the temperature [GK] corresponding to the last value where
+        the log(partition function) is equal to 0.  For temperatures higher
+        than this, the log(partition function) is not equal to 0.
+
+        Returns
+        -------
+        float
+
+        """
+
+        threshold_T9 = -1.0
+        for T9, log_pf in zip(self.partition_function.T9_points,
+                              self.partition_function.log_pf_data):
+
+            if log_pf == 0.0:
+                threshold_T9 = T9
+            else:
+                break
+
+        return threshold_T9
 
     @classmethod
     def cast(cls, obj):
@@ -395,45 +427,85 @@ class Nucleus:
         return [cls.cast(obj) for obj in lst]
 
 
-def get_nuclei_in_range(zmin, zmax, amin, amax):
-    """Given a range of Z = [zmin, zmax], and A = [amin, amax],
-    return a list of Nucleus objects for all nuclei in this range
+def get_nuclei_in_range(name=None, *,
+                        Z_range=None, A_range=None, neutron_excess_range=None):
+    """Create a range of nuclei.  Both the proton number(s) and mass
+    range need to be specified.  This can be done in several ways:
+
+    * proton number: give either a single element name via `name`
+      (e.g., "Fe") or the range of proton numbers via ``Z_range``
+
+    * masses: give either the range of atomic weights via ``A_range`` or
+      the range of neutron excess, ``neutron_excess_range``.
 
     Parameters
     ----------
-    zmin : int
-        minimum atomic number
-    zmax : int
-        maximum atomic number
-    amin : int
-        minimum atomic weight
-    amax : int
-        maximum atomic weight
+    name : str
+        the element name for a single atomic number
+    Z_range : Iterable(int)
+        minimum and maximum atomic number
+    A_range : Iterable(int)
+        minimum and maximum atomic weight
+    neutron_excess_range : Iterable(int)
+        the minimum and maximum value of N-Z
 
     Returns
     -------
-    list
+    list(Nucleus)
+
+    Examples
+    --------
+    Get all of the oxygen isotopes that have anywhere from 2 fewer
+    neutrons than protons to 2 more neutrons than protons:
+
+    >>> nuc = get_nuclei_in_range("O", neutron_excess_range=[-2, 2])
+
+    Get all the iron, cobalt, and nickel nuclei with masses in the
+    range 52 to 64
+
+    >>> nuc = get_nuclei_in_range(Z_range=[26, 28], A_range=[52, 64])
+
     """
 
-    nuc_list = []
-    assert zmax >= zmin, "zmax must be >= zmin"
-    assert amax >= amin, "amax must be >= amin"
+    if name is None and Z_range is None:
+        raise ValueError("one of name or Z_range need to be provided")
 
-    for z in range(zmin, zmax+1):
-        element = PeriodicTable.lookup_Z(z)
-        for a in range(amin, amax+1):
-            name = f"{element.abbreviation}{a}"
-            nuc_list.append(Nucleus(name))
+    elements = []
+    if name:
+        elements.append(name)
+    else:
+        for z in range(Z_range[0], Z_range[1]+1):
+            elements.append(PeriodicTable.lookup_Z(z).abbreviation)
+
+    if A_range is None and neutron_excess_range is None:
+        raise ValueError("one of A_range or neutron_excess_range need to be provided")
+
+    nuc_list = []
+
+    for e in elements:
+        if A_range:
+            for a in range(A_range[0], A_range[1]+1):
+                nuc = f"{e}{a}"
+                nuc_list.append(Nucleus(nuc))
+        else:
+            # find the Z for this element
+            Z = PeriodicTable.lookup_abbreviation(e.lower()).Z
+            A_symmetric = 2 * Z
+            for a in range(A_symmetric + neutron_excess_range[0],
+                           A_symmetric + neutron_excess_range[1] + 1):
+                nuc = f"{e}{a}"
+                nuc_list.append(Nucleus(nuc))
 
     return nuc_list
 
 
 def get_all_nuclei():
-    """Return a list with every Nucleus that has a known mass
+    """Return a list with every Nucleus that has a known mass.
 
     Returns
     -------
     list
+
     """
 
     nuc_list = []

@@ -1,0 +1,1 @@
+pynucastro version: 2.4.0.post71+g102c9931

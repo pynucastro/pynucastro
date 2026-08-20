@@ -1,7 +1,7 @@
 Fortran Networks
 ================
 
-A ``FortranNetwork`` provides Fortran wrappers to a ``SimpleCxxNetwork``,
+A :class:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>` provides Fortran wrappers to a :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`,
 in particular, the righthand side and Jacobian functions.  All features
 supported by ``SimpleCxxNetwork`` are supported by ``FortranNetwork``.
 
@@ -24,7 +24,7 @@ energy evolution to the network.
 
 .. note::
 
-   A C++17 compiler and Fortran 2003 compiler is required.
+   A C++20 compiler and Fortran 2003 compiler is required.
 
 In addition to the files output from a ``SimpleCxxNetwork``, the
 following additional files are output:

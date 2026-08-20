@@ -1,3 +1,5 @@
+"""Classes and methods for exploring thermal neutrinos."""
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -8,7 +10,9 @@ class NeutrinoCooling:
     """A class to provide an interface to explore neutrino cooling.
     This calls a specific implementation of the cooling that includes
     contributions from pairs, plasma, recombination, bremsstrahlung,
-    and photoneutrinos."""
+    and photoneutrinos.
+
+    """
 
     def __init__(self, neutrino_function=sneut5):
 
@@ -16,8 +20,33 @@ class NeutrinoCooling:
 
     def plot(self, *, Tmin=1.e7, Tmax=1.e10, rhomin=1.e3, rhomax=1.e10,
              abar=20, zbar=10, npts_temp=50, npts_rho=50):
-        """given a fixed abar/zbar, make a plot of neutrino cooling over
-        a range of density and temperature"""
+        """Plot the cooling term in as a function of density and
+        temperature given a fixed abar/zbar.
+
+        Parameters
+        ----------
+        Tmin : float
+            Minimum temperature to plot
+        Tmax : float
+            Maximum temperature to plot
+        rhomin : float
+            Minimum density to plot
+        rhomax : float
+            Maximum density to plot
+        abar : float
+            Mean molecular weight of composition
+        zbar : float
+            Average charge of composition
+        npts_temp : int
+            Number of temperature samples to use
+        npts_rho : int
+            Number of density samples to use
+
+        Returns
+        -------
+        matplotlib.figure.Figure
+
+        """
 
         Ts = np.logspace(np.log10(Tmin), np.log10(Tmax), npts_temp)
         rhos = np.logspace(np.log10(rhomin), np.log10(rhomax), npts_rho)
@@ -38,7 +67,10 @@ class NeutrinoCooling:
 
         im = ax.imshow(data, cmap="viridis",
                        extent=extent, aspect="auto", origin="lower")
-        fig.colorbar(im, ax=ax)
+        cbar = fig.colorbar(im, ax=ax)
+        cbar.set_label(
+            r"$\log(\epsilon_{\nu, \mathrm{therm}})$ [erg g$^{-1}$ s$^{-1}$]"
+        )
 
         ax.set_ylabel(r"$\log(T)$ [K]")
         ax.set_xlabel(r"$\log(\rho)$ [g/cm$^3$]")

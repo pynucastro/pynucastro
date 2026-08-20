@@ -1,3 +1,4 @@
+import numpy as np
 from pytest import approx, raises
 
 from pynucastro.nucdata import Nucleus, get_nuclei_in_range
@@ -28,6 +29,8 @@ class TestNucleus:
         self.ne41 = Nucleus("ne41")
         self.ni61 = Nucleus("ni61")
         self.pb237 = Nucleus("pb237")
+        self.ag95 = Nucleus("ag95")
+        self.ru95 = Nucleus("ru95")
 
     def teardown_method(self):
         """ this is run after each test """
@@ -68,21 +71,25 @@ class TestNucleus:
         assert int(self.c12.spin_states) == 1
         assert int(self.ni56.spin_states) == 1
 
+    def test_spin_reliability(self):
+        assert self.ag95.spin_reliable is False
+        assert self.ru95.spin_reliable is True
+
     def test_partition_low_temp(self):
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function.eval(0.35e9) == approx(1.0121446711436666)
-        assert self.ni61.partition_function.eval(0.35e9) == approx(1.160524742683722)
-        assert self.pb237.partition_function.eval(0.35e9) == approx(1.4410114805045504)
+        assert np.exp(self.ne41.partition_function.eval(0.35e9)) == approx(1.0121446711436666)
+        assert np.exp(self.ni61.partition_function.eval(0.35e9)) == approx(1.160524742683722)
+        assert np.exp(self.pb237.partition_function.eval(0.35e9)) == approx(1.4410114805045504)
 
     def test_partition_high_temp(self):
 
         assert not self.p.partition_function
         assert not self.h1.partition_function
-        assert self.ne41.partition_function.eval(32.0e9) == approx(4.901052000000001)
-        assert self.ni61.partition_function.eval(32.0e9) == approx(1927800.437886083)
-        assert self.pb237.partition_function.eval(32.0e9) == approx(5.05620611030359e+28)
+        assert np.exp(self.ne41.partition_function.eval(32.0e9)) == approx(4.901052000000001)
+        assert np.exp(self.ni61.partition_function.eval(32.0e9)) == approx(1927800.437886083)
+        assert np.exp(self.pb237.partition_function.eval(32.0e9)) == approx(5.05620611030359e+28)
 
     def test_A_nuc(self):
 
@@ -109,7 +116,7 @@ class TestNucleus:
 
     def test_range(self):
 
-        nuc_list = get_nuclei_in_range(6, 8, 12, 16)
+        nuc_list = get_nuclei_in_range(Z_range=[6, 8], A_range=[12, 16])
 
         assert len(nuc_list) == 15
         assert nuc_list[0] == Nucleus("c12")
@@ -127,6 +134,17 @@ class TestNucleus:
         assert nuc_list[12] == Nucleus("o14")
         assert nuc_list[13] == Nucleus("o15")
         assert nuc_list[14] == Nucleus("o16")
+
+    def test_range2(self):
+
+        nuc_list = get_nuclei_in_range("O", neutron_excess_range=[-2, 2])
+
+        assert len(nuc_list) == 5
+        assert nuc_list[0] == Nucleus("o14")
+        assert nuc_list[1] == Nucleus("o15")
+        assert nuc_list[2] == Nucleus("o16")
+        assert nuc_list[3] == Nucleus("o17")
+        assert nuc_list[4] == Nucleus("o18")
 
     def test_cast(self):
         assert Nucleus.cast("c12") == self.c12
@@ -163,6 +181,12 @@ class TestNucleus:
     def test_add_subtract(self):
         assert self.c12 + self.n == Nucleus("c13")
         assert self.d - self.n == self.h1
+
+    def test_parsing(self):
+        assert Nucleus("ni56") == Nucleus("56ni")
+
+        with raises(ValueError):
+            _ = Nucleus("ni56n")
 
 
 class TestNSEProtons:

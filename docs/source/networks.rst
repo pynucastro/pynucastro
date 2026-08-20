@@ -45,3 +45,8 @@ Usually the steps are something like:
   .. prompt:: bash
 
      python mynet.py
+
+.. tip::
+
+   If you start with one network type and want to convert it to another,
+   you can use the :py:meth:`export_as <pynucastro.networks.rate_collection.RateCollection.export_as>` method.

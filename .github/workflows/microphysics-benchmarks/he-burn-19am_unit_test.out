@@ -1,0 +1,97 @@
+Initializing AMReX (26.01-40-gbac24575699e)...
+AMReX (26.01-40-gbac24575699e) initialized
+starting the single zone burn...
+Maximum Time (s): 1e-05
+State Density (g/cm^3): 1000000
+State Temperature (K): 3000000000
+Mass Fraction (H1): 0.1
+Mass Fraction (He4): 0.5
+Mass Fraction (C12): 0.1
+Mass Fraction (N13): 0.1
+Mass Fraction (N14): 0.1
+Mass Fraction (O16): 0.1
+Mass Fraction (Ne20): 0
+Mass Fraction (Na23): 0
+Mass Fraction (Mg24): 0
+Mass Fraction (Al27): 0
+Mass Fraction (Si28): 0
+Mass Fraction (P31): 0
+Mass Fraction (S32): 0
+Mass Fraction (Ar36): 0
+Mass Fraction (Ca40): 0
+Mass Fraction (Ti44): 0
+Mass Fraction (Cr48): 0
+Mass Fraction (Fe52): 0
+Mass Fraction (Ni56): 0
+RHS at t = 0
+    H1 898948349
+   He4 -116753836.8
+   C12 782535741.4
+   N13 -899326286.6
+   N14 88431.06466
+   O16 116599965.3
+  Ne20 102098.4703
+  Na23 14.2963137
+  Mg24 1.933938048
+  Al27 0.08700012543
+  Si28 0.0160176069
+   P31 3.723541443e-05
+   S32 7.325504904e-06
+  Ar36 -6.821497568e-28
+  Ca40 1.43555349e-26
+  Ti44 -6.27197625e-28
+  Cr48 6.782771346e-28
+  Fe52 1.086820666e-28
+  Ni56 2.574224319e-29
+------------------------------------
+successful? 1
+ - Hnuc = 1.324540812e+23
+ - added e = 1.324540812e+18
+ - final T = 3539822187
+------------------------------------
+e initial = 1.396711859e+18
+e final =   2.721252671e+18
+------------------------------------
+new mass fractions: 
+H1 0.06140795233
+He4 0.001406041039
+C12 1.188571148e-07
+N13 7.911951489e-11
+N14 0.001127469777
+O16 6.934162224e-06
+Ne20 0.0012678847
+Na23 5.835716503e-09
+Mg24 0.001847155269
+Al27 1.1090365e-07
+Si28 0.3024962095
+P31 2.222117667e-06
+S32 0.3485051369
+Ar36 0.1639523174
+Ca40 0.1170443047
+Ti44 0.0008749930848
+Cr48 6.05126979e-05
+Fe52 6.292729762e-07
+Ni56 1.357092251e-09
+------------------------------------
+species creation rates: 
+omegadot(H1): -3859.204767
+omegadot(He4): -49859.3959
+omegadot(C12): -9999.988114
+omegadot(N13): -9999.999992
+omegadot(N14): -9887.253022
+omegadot(O16): -9999.306584
+omegadot(Ne20): 126.78847
+omegadot(Na23): 0.0005835716503
+omegadot(Mg24): 184.7155269
+omegadot(Al27): 0.011090365
+omegadot(Si28): 30249.62095
+omegadot(P31): 0.2222117667
+omegadot(S32): 34850.51369
+omegadot(Ar36): 16395.23174
+omegadot(Ca40): 11704.43047
+omegadot(Ti44): 87.49930848
+omegadot(Cr48): 6.05126979
+omegadot(Fe52): 0.06292729762
+omegadot(Ni56): 0.0001357092251
+number of steps taken: 688
+AMReX (26.01-40-gbac24575699e) finalized

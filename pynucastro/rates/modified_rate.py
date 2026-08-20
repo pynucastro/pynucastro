@@ -1,4 +1,16 @@
-from pynucastro.rates.rate import Rate
+"""Classes and methods for describing rates where one or more
+properties have been modified from the original source.
+
+"""
+
+import copy
+
+import numpy as np
+
+from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.starlib_rate import StarLibRate
+from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class ModifiedRate(Rate):
@@ -39,25 +51,55 @@ class ModifiedRate(Rate):
         self.original_rate = original_rate
         self.update_screening = update_screening
 
-        if new_reactants:
+        # at the moment, this is only tested with ReacLibRate,
+        # TemperatureTabularRate, and StarLibRate rates.  It is
+        # important in the C++ code generation the we fill modified
+        # rates only after the original rate is filled.
+        assert isinstance(original_rate,
+                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
+
+        if new_reactants is not None:
             reactants = new_reactants
         else:
-            reactants = original_rate.reactants
+            reactants = self.original_rate.reactants
 
-        if new_products:
+        if new_products is not None:
             products = new_products
         else:
-            products = original_rate.products
+            products = self.original_rate.products
 
         super().__init__(reactants=reactants, products=products,
+                         weak_type=self.original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry)
 
-        self.chapter = "m"
+        self.modified = True
 
-        # update the Q value
-        if new_products or new_reactants:
-            self._set_q()
+        self._set_print_representation()
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        # copy the original rate
+        new.original_rate = copy.copy(self.original_rate)
+
+        return new
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
@@ -66,9 +108,8 @@ class ModifiedRate(Rate):
         update_screening.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         if self.update_screening:
             _reac = self.reactants
@@ -76,54 +117,57 @@ class ModifiedRate(Rate):
             _reac = self.original_rate.reactants
         nucz = [q for q in _reac if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
 
-        # if the rate is a reverse rate (defined as Q < 0), then we
-        # might actually want to compute the screening based on the
-        # reactants of the forward rate that was used in the detailed
-        # balance.  Rate.symmetric_screen is what should be used in
-        # the screening in this case
-        self.symmetric_screen = []
-        if self.Q < 0:
-            if self.update_screening:
-                _prod = self.products
-            else:
-                _prod = self.original_rate.products
-            nucz = [q for q in _prod if q.Z != 0]
-            if len(nucz) > 1:
-                nucz.sort(key=lambda x: x.Z)
-                self.symmetric_screen = []
-                self.symmetric_screen.append(nucz[0])
-                self.symmetric_screen.append(nucz[1])
-                if len(nucz) == 3:
-                    self.symmetric_screen.append(nucz[2])
-        else:
-            self.symmetric_screen = self.ion_screen
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
 
-    def eval(self, T, *, rho=None, comp=None):
-        """Evaluate the modified rate.  This simply calls the
-        evaluation of the underlying original rate.
+    def log_eval(self, T, *, rho=None, comp=None,
+                 screen_func=None):
+        """Evaluate natural log of reaction rates for the modified rate.
+        This simply calls the evaluation of the underlying original rate.
 
         Parameters
         ----------
         T : float
             the temperature to evaluate the rate at
         rho : float
-            the density to evaluate the rate at
-        comp : Composition
-            the composition to evaluate the rate with
+            the density to evaluate screening effects at.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate screening effects with.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate will include screening correction.
+
         Returns
         -------
-        float
+        numpy.ndarray
 
         """
 
-        return self.original_rate.eval(T, rho=rho, comp=comp)
+        # Evaluate original rate without screening
+        # The modified rate can have a different set of reactants for screening
+        log_rate = self.original_rate.log_eval(T, rho=rho, comp=comp, screen_func=None)
+
+        # Apply screening correction
+        log_scor = 0.0
+        if screen_func is not None:
+            if rho is None or comp is None:
+                raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
+
+        # To consider general cases, convert to 1D array
+        log_rate = np.atleast_1d(log_rate)
+
+        # Apply screening
+        log_rate += log_scor
+
+        return log_rate
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -138,9 +182,9 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf)\n"
+        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
@@ -172,15 +216,17 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = ["const tf_t& tfactors",
+                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"
-        fstring += f"void rate_{self.cname()}({', '.join(args)}) {{\n\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         # first we need to get all of the rates that make this up
         fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.cname()}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
 
         if not leave_open:
             fstring += "}\n\n"

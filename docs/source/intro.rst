@@ -1,10 +1,9 @@
 Overview of pynucastro
 ======================
 
-pynucastro is a set of python interfaces to nuclear reaction rates. It
-is meant for both interactive exploration of rates (through Jupyter
-notebooks) and to create reaction networks for use in simulation
-codes.
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data, reaction rates, equations of state, and tools
+for building and interactively exploring nuclear reaction networks.
 
 The preferred way of importing pynucastro is as follows:
 
@@ -15,12 +14,12 @@ The preferred way of importing pynucastro is as follows:
 
 The main classes are:
 
-* :func:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`: This is a single
+* :py:obj:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>`: This is a single
   nucleus.  It knows its proton number, ``Z``, neutron number, ``N``,
   weight, ``A``, and binding energy, ``nucbind``, as well as
   T-dependent partition function and ground state spin.
 
-* :func:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.
+* :py:obj:`Rate <pynucastro.rates.rate.Rate>`: This is a single rate.
   It knows the reactants and products and has methods that allow you
   to evaluate it at a specified temperature and plot its temperature
   dependence.  A `Rate` also knows how to the generate code (C++ and
@@ -28,54 +27,95 @@ The main classes are:
 
   There are a few special rates derived from `Rate`:
 
-  * :func:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`: This is a rate in the
-    JINA ReacLib format, with the temperature dependence specified by an interpolant
-    with 7 different coefficients.
+  * :py:obj:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`:
+    This is a rate in the JINA ReacLib format, with the temperature
+    dependence specified by an interpolant with 7 different
+    coefficients.
 
-  * :func:`TabularRate <pynucastro.rates.tabular_rate.TabularRate>`: This is a
-    rate that is tabulated in terms of :math:`(T, \rho Y_e)`.  This is
-    how the weak rate (electron captures and beta-decays) are stored.
-    Interpolation is used to find the rate at any thermodynamic state.
+  * :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>`:
+    This is a rate in the StarLib, with median rate and uncertainty
+    tabulated in terms of temperature.
 
-  * :func:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
+  * :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>`:
+    This is a rate that is tabulated in terms of :math:`(T, \rho
+    Y_e)`.  This is how the weak rates (electron captures and
+    beta-decays) are stored.  Interpolation is used to find the rate
+    at any thermodynamic state.
+
+  * :py:obj:`TemperatureTabularRate
+    <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`:
+    This supports a strong rate where the temperature dependent part
+    ($N_A \langle\sigma v\rangle$) is given as a tabulation in terms
+    of temperature.
+
+  * :py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>`:
     An approximate rate assumes equilibration of intermediate nuclei to create
-    an approximation for a rate sequence.  Currently, there are two
-    approximations that can be made:
+    an approximation for a rate sequence.  Currently, it can make the following
+    approximations:
 
-    * grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
-      a single effective rate, assuming equilibrium of $p$ and $X$.
+    * ``"ap_pg"`` : grouping $A(\alpha, \gamma)B$ and $A(\alpha,p)X(p,\gamma)B$ into
+      a single effective rate, assuming equilibrium of $p$ and $X$
+      (allowing for the possibility of a capture $X(p,Y)C$, where $Y$
+      and $C$ are heavy nuclei not in our sequence).
 
-    * converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
+    * ``"nn_g"`` : converting $A(n,\gamma)X(n,\gamma)B$ into $A(nn,\gamma)B$
       by assuming equilibrium of $X$.
 
-  * :func:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
+    * ``"Yp_pg"`` : combining $A(Y,p)X(p,\gamma)B$ and (optionally) $A(Y,\gamma)B$
+      into a single $A(Y,\gamma)B$ rate, where $Y$ is a heavy nucleus.
+      This also includes the pathway from $X$ connecting to nucleus $C$,
+      $X(p,\alpha)C$ for normalization.
+
+    * ``"Yp_pa"`` : combining $A(Y,\alpha)B$ and $A(Y,p)X(p,\alpha)B$ into
+      a single $A(Y,\alpha)B$ rate, where $Y$ is a heavy nucleus.  This includes
+      the pathway from $X$ connecting to nucleus $C$, $X(p,\gamma)C$ for
+      normalization.
+
+  * :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`:
     A container for a single rate that allows for different stoichiometry
     or products.
 
-  * :func:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`: A
-    derived rate uses detailed balance to recompute a reverse rate from the forward rate.
+  * :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>`:
+    a container that holds an underlying rate and rates that affect the
+    endpoint branching.
 
-* :func:`RatePair <pynucastro.rates.rate.RatePair>`: For a single nuclear process,
-  this holds the corresponding forward and reverse rates.
+  * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`:
+    A derived rate uses detailed balance to recompute a reverse rate
+    from the forward rate.
 
-* :func:`Library <pynucastro.rates.library.Library>`: This is a collection of
-  rates (for example, the entire ReacLib library).  It provides methods
-  for filtering out rates based on different sets of rules.
+* :py:obj:`RatePair <pynucastro.rates.rate.RatePair>`: For a single
+  nuclear process, this holds the corresponding forward and reverse
+  rates.
 
-  There are two important subclasses:
+* :py:obj:`Library <pynucastro.rates.library.Library>`: This is a
+  collection of rates (for example, the entire ReacLib library).  It
+  provides methods for filtering out rates based on different sets of
+  rules.
 
-  * :func:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
-    entire ReacLib rate library (> 80,000 rates)
+  There are a few important subclasses:
 
-  * :func:`TabularLibrary <pynucastro.rates.library.TabularLibrary>`: A
-    `Library` containing all known tabular weak rates.
+  * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>`: The
+    entire ReacLib rate library, which provides simple 7-parameter fits
+    to rates.
 
-* :func:`Composition
-  <pynucastro.networks.rate_collection.Composition>`: This is a
+  * :py:obj:`StarLibLibrary <pynucastro.rates.library.StarLibLibrary>`: The
+    entire StarLib reaction rate library, which provides uncertainties
+    on rates.
+
+  * :py:obj:`TabularWeakLibrary <pynucastro.rates.library.TabularWeakLibrary>`: A
+    `Library` providing tabulated weak rate coverage of nuclei.
+
+  additionally, the helper function, :func:`full_library
+  <pynucastro.rates.library.full_library>` will return a ``Library``
+  with every rate known to pynucastro.
+
+
+* :py:obj:`Composition
+  <pynucastro.nucdata.composition.Composition>`: This is a
   collection of nuclei and their mass fractions.  A ``Composition`` is
   used when evaluating the full rates in a network.
 
-* :func:`RateCollection
+* :py:obj:`RateCollection
   <pynucastro.networks.rate_collection.RateCollection>`: This is the
   most basic form of a network.  It is a collection of rates and
   nuclei, that knows about the connectivity of the nuclei through
@@ -85,38 +125,41 @@ The main classes are:
 
   There are a few important subclasses:
 
-  * :func:`NSENetwork
+  * :py:obj:`NSENetwork
     <pynucastro.networks.nse_network.NSENetwork>`: This allows
     a user to find the nuclear statistical equilibrium state
     of a collection of nuclei.
 
-  * :func:`PythonNetwork
+  * :py:obj:`PythonNetwork
     <pynucastro.networks.python_network.PythonNetwork>`: This is a
     collection of rates with functions that know how to write python
     code to express the righthand side of the system of ODEs.
 
-  * :func:`SimpleCxxNetwork
+  * :py:obj:`SimpleCxxNetwork
     <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`:
     This is a simple C++ network that provides functions for
     computing the righthand side and Jacobian of a network.
     Not all pynucastro features are supported in this network.
 
-  * :func:`FortranNetwork
+  * :py:obj:`FortranNetwork
     <pynucastro.networks.fortran_network.FortranNetwork>`:
     A network that provides Fortran wrappers to ``SimpleCxxNetwork``.
 
-  * :func:`AmrexAstroCxxNetwork
+  * :py:obj:`AmrexAstroCxxNetwork
     <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`:
     This is a C++ network of the form needed by the `AMReX
     Astrophysics Microphysics
     <https://github.com/AMReX-Astro/Microphysics>`_ library used by
     the Castro and MAESTROeX simulation codes.
 
+* :py:obj:`StellarEOS <pynucastro.eos.stellar_eos.StellarEOS>`:
+  An equation of state with ions (ideal gas), radiation, and
+  electrons / positrons (with arbitrary degree of degeneracy).
 
 Usage
 -----
 
-There are two modes of usage for pynucastro.  
+There are two modes of usage for pynucastro.
 
 * Within a Jupyter notebook, one can evaluate the rates and
   interactively visualize a network and see the flow between nuclei as
@@ -124,19 +167,21 @@ There are two modes of usage for pynucastro.
 
 * You can use pynucastro to write the righthand side routine for the
   system of ODEs that must be integrated to evolve a reaction network.
-  A reaction network takes the form:
+  A reaction network (considering binary reactions) takes the form:
 
   .. math::
 
-     \frac{dY_i}{dt} = - \sum_{j,k} Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} Y_l Y_k \lambda_{l(j,k)i}
+     \frac{dY_i}{dt} = - \sum_{j,k} \rho Y_i Y_j \lambda_{i(j,k)l} + \sum_{j,k} \rho Y_l Y_k \lambda_{l(k,j)i}
 
   where the :math:`\lambda`'s are the rates of destruction and creation
   of species i, represented by the molar fraction :math:`Y_i` (see,
-  e.g., :cite:t:`timmes:1999`).  pynucastro
-  will create the righthand sides of this system of ODEs (as python or
-  C++ code) from the list of rates you provide. One can use this to
-  add reaction networks to existing simulation codes, for example, the
-  `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_ and `Castro
-  <https://amrex-astro.github.io/Castro/>`_ codes.
+  e.g., :cite:t:`timmes:1999`).  For strong-force-mediated rates,
+  $\lambda = N_A \langle \sigma v \rangle$.
+
+  pynucastro will create the righthand sides of this system of ODEs
+  (as python or C++ code) from the list of rates you provide. One can
+  use this to add reaction networks to existing simulation codes, for
+  example, the `MAESTROeX <https://amrex-astro.github.io/MAESTROeX/>`_
+  and `Castro <https://amrex-astro.github.io/Castro/>`_ codes.
 
 

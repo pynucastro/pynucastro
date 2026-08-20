@@ -1,10 +1,14 @@
+"""Tools for detecting if a list of rates contains duplicates."""
+
 import collections
 
 # there are some exceptions to the no-duplicate rates restriction.  We
-# list them here by class name and then fname
+# list them here by class name and then rate id
 ALLOWED_DUPLICATES = [
-    {"ReacLibRate: p_p__d__weak__bet_pos_",
-     "ReacLibRate: p_p__d__weak__electron_capture"}
+    {"ReacLibRate: p + p --> d <reaclib_bet+>",
+     "ReacLibRate: p + p --> d <reaclib_ec>"},
+    {"StarLibRate: p + p --> d <starlib_nacr>",
+     "StarLibRate: p + p --> d <starlib_ec>"}
 ]
 
 
@@ -37,10 +41,10 @@ def find_duplicate_rates(rate_list):
 
 
 def is_allowed_dupe(rate_list):
-    """Some duplicates may be allowed since they represent distinct
-    processes between the same endpoints (those rates are listed in
-    ``ALLOWED_DUPLICATES``).  Return `True` is the input set of rates
-    is an allowed duplicate.
+    """Check if any of the duplicates are allowed.  Some duplicates
+    may be allowed since they represent distinct processes between the
+    same endpoints (those rates are listed in ``ALLOWED_DUPLICATES``).
+    Return `True` is the input set of rates is an allowed duplicate.
 
     Parameters
     ----------
@@ -56,5 +60,5 @@ def is_allowed_dupe(rate_list):
 
     # make rate_list into a set of strings in the same format as
     # ALLOWED_DUPLICATES, then check if it matches any of the allowed sets
-    key_set = {f"{r.__class__.__name__}: {r.fname}" for r in rate_list}
+    key_set = {f"{r.__class__.__name__}: {r.id}" for r in rate_list}
     return key_set in ALLOWED_DUPLICATES

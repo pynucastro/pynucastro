@@ -1,7 +1,7 @@
 Python network
 ==============
 
-A ``PythonNetwork`` will output a python module with all the data
+A :class:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>` will output a python module with all the data
 needed for constructing the righthand side and Jacobian of the ODE
 system.  This is designed to solve the system:
 
@@ -16,7 +16,7 @@ where $Y_i$ is the molar fraction of species $i$.
    The functions output when the network is written are marked up with
    Numba JIT decorators for performance.
 
-Using the previous example:
+Consider the following example:
 
 .. code:: python
 
@@ -28,7 +28,12 @@ Using the previous example:
    net = pyna.PythonNetwork(libraries=[lib])
    net.write_network("triple_alpha.py")
 
-after running this script, we could then ``import triple_alpha`` and
+after running this script, we could then import the network as:
+
+.. code:: python
+
+   import triple_alpha
+
 access the information needed for an ODE integrator.
 
 For this example, 4 rates will be found (forward and reverse).
@@ -49,10 +54,13 @@ The following information is provided:
 * some helper functions:
 
   * ``to_composition(Y)`` : convert an array of molar fractions to a :func:`Composition
-    <pynucastro.networks.rate_collection.Composition>` object
+    <pynucastro.nucdata.composition.Composition>` object
 
   * ``energy_release(dY)`` : computes the energy release (in erg/g) given the change
-    in molar fractions ``dY``.
+    in molar fractions ``dY``. This does not include weak-rate energy terms from neutrino losses and gamma deposition.
+    These contributions are accumulated separately during rate evaluations and included in self-heating
+    integrations and :func:`NetworkSolution.energy_release_at <pynucastro.networks.python_network.NetworkSolution.energy_release_at>`.
+
 
   * ``ye(Y)`` : computes the electron fraction, $Y_e$, for input molar fractions ``Y``.
 
@@ -84,9 +92,19 @@ The following information is provided:
     It returns the array of $dY/dt$.
 
   * ``jacobian(t, Y, rho, T, screen_func=None``) : the Jacobian routine.  The arguments are the same
-    as for ``rhs``. 
+    as for ``rhs``.
 
     This returns the Jacobian array, $J_{i,j} = \partial \dot{Y}_i/\partial Y_j$.
 
-A ``PythonNetwork`` can be integrated using the SciPy ``solve_ivp`` methods.
+A ``PythonNetwork`` can be integrated using the SciPy
+`solve_ivp <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html>`_ methods.
 
+.. tip::
+
+   ``PythonNetwork`` provides the convenient method
+   :func:`integrate_network <pynucastro.networks.python_network.PythonNetwork.integrate_network>`,
+   which is a wrapper around :func:`scipy.integrate.solve_ivp` for integrating
+   the reaction network. This method returns a ``NetworkSolution`` object that stores the solution
+   of the system. It also contains convenient methods for post-processing and visualizations,
+   such as :func:`plot_evolution <pynucastro.networks.python_network.NetworkSolution.plot_evolution>`,
+   which plots the time evolution of the mass fractions.

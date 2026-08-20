@@ -22,13 +22,23 @@ Related numpy PRs and issues:
   https://github.com/numpy/numpy/issues/23523
 """
 import os
+import sys
 import warnings
 
-os.environ["NPY_DISABLE_CPU_FEATURES"] = "AVX512F AVX512CD AVX512_SKX"
+if sys.platform == "linux" or sys.platform == "linux2":
+    os.environ["NPY_DISABLE_CPU_FEATURES"] = "X86_V4"
+elif sys.platform == "win32":
+    os.environ["NPY_DISABLE_CPU_FEATURES"] = "X86_V3"
+    os.environ.setdefault("PYTHONIOENCODING", "utf-8")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+elif sys.platform == "darwin":
+    os.environ["NPY_DISABLE_CPU_FEATURES"] = "ASIMDHP"
 
 # ignore all NPY_DISABLE_CPU_FEATURES warnings in any subprocesses
 # need this for nbval as it expects stderr to be empty
 os.environ["PYTHONWARNINGS"] = "ignore:During parsing environment variable 'NPY_DISABLE_CPU_FEATURES':RuntimeWarning::"
+
 with warnings.catch_warnings():
     # ignore just the "not supported by your machine" warning for the standard pytest tests
     warnings.filterwarnings(

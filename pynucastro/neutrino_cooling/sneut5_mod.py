@@ -1,9 +1,30 @@
+"""Classes and methods that implement the Itoh et al. 1996 thermal
+neutron loss terms.
+
+"""
+
 import numpy as np
 
 
 class NeutrinoComponents:
-    """a simple container that holds the individual components to the
-    neutrino cooling"""
+    """A simple container that holds the individual components to the
+    neutrino cooling.
+
+    Attributes
+    ----------
+    splas : float
+        Plasma neutrino cooling rate
+    spair : float
+        Pair neutrino cooling rate
+    sphot : float
+        Photo-ionization neutrino cooling rate
+    sbrem : float
+        Bremmstrahlung neutrino cooling rate
+    sreco : float
+        Recombination neutrino cooling rate
+
+    """
+
     def __init__(self):
         self.splas = None
         self.spair = None
@@ -16,10 +37,21 @@ class NeutrinoComponents:
 
 
 def ifermi12(f):
-    """apply a rational function expansion to get the inverse
+    """Apply a rational function expansion to get the inverse
     fermi-dirac integral of order 1/2 when it is equal to f.
-    maximum error is 4.19e-9_rt.
-    reference: Antia ApJS 84,101 1993"""
+
+    The maximum error is 4.19e-9_rt (see Antia ApJS 84,101 1993)
+
+    Parameters
+    ----------
+    f : float
+        Value of the Fermi integral
+
+    Returns
+    -------
+    float
+
+    """
 
     # coefficients of the expansion from Table 8 of Antia
 
@@ -28,9 +60,16 @@ def ifermi12(f):
     m2 = 5
     k2 = 4
 
-    a1 = np.array([1.999266880833e4, 5.702479099336e3, 6.610132843877e2, 3.818838129486e1, 1.0e0])
+    a1 = np.array([1.999266880833e4,
+                   5.702479099336e3,
+                   6.610132843877e2,
+                   3.818838129486e1,
+                   1.0e0])
 
-    b1 = np.array([1.771804140488e4, -2.014785161019e3, 9.130355392717e1, -1.670718177489e0])
+    b1 = np.array([1.771804140488e4,
+                   -2.014785161019e3,
+                   9.130355392717e1,
+                   -1.670718177489e0])
 
     a2 = np.array([-1.277060388085e-2,
                    7.187946804945e-2,
@@ -103,20 +142,35 @@ def ifermi12(f):
 
 def sneut5(rho, T, comp=None, *, abar=None, zbar=None,
            full_output=False):
-    """compute thermal neutrino losses from the analytic fits of Itoh
-    et al. ApJS 102, 411, 1996.  Note that either a Composition object
-    of abar/zbar need to be provided.
+    """Compute thermal neutrino losses (in erg/g/s) from the analytic
+    fits of Itoh et al. ApJS 102, 411, 1996.  Note that either a
+    Composition object of abar/zbar need to be provided.
+
+    Parameters
+    ----------
+    rho : float
+        density
+    T : float
+        temperature
+    comp : Composition
+        composition of the plasma
+    abar : float
+        mean molecular weight of the plasma (1 / sum{X_k/A_k})
+    zbar : float
+        average charge of the plasma (abar * sum{X_k Z_k / A_k})
+    full_output : bool
+        do we return the individual contributions to the cooling in
+        addition to the total cooling rate?
+
+    Returns
+    -------
+    float
+        The cooling rate if `full_output` is False
+
+    tuple of (float, NeutrinoComponents)
+        The cooling rate and components if `full_output` is True
 
     """
-
-    # input:
-    # T = temperature
-    # rho  = density
-    # abar = mean atomic weight
-    # zbar = mean charge
-
-    # output:
-    # snu    = total neutrino loss rate in erg/g/sec
 
     if abar is None or zbar is None:
         abar = comp.abar

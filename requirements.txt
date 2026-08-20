@@ -1,10 +1,13 @@
 # runtime dependencies
-ipywidgets>=7.1.2
 matplotlib
-networkx>=3.3
-numpy>=1.13.3,<3.0
+networkx>=3.4
+numpy>=2.0,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
+
+# jupyter notebook dependencies (for running examples)
+ipywidgets>=7.1.2
+jupyterlab-myst
 
 # optional dependencies
 numba
@@ -13,18 +16,5 @@ numba
 nbval>=0.9.0
 pytest-cov>=2.6.0
 pytest>=3.6
-
-# docs
-ipykernel
-jinja2
-nbsphinx>=0.3.1
-numpydoc
-Sphinx
-sphinx-copybutton
-sphinx-math-dollar
-sphinx-mdinclude
-sphinx-prompt
-sphinxcontrib-bibtex
-sphinx-book-theme
-myst-nb
-jupyterlab-myst
+pytest-random-order
+pytest-xdist

@@ -21,3 +21,8 @@ help:
 	curl -L -H 'Accept: application/x-bibtex' https://zenodo.org/api/records/1202434 > source/zenodo.bibtex.txt
 	python parse_changelog.py ../CHANGES.md > source/changelog.md
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+clean:
+	rm -rf build
+	rm -f source/changelog.md
+	rm -f source/zenodo.bibtex.txt

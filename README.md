@@ -19,32 +19,45 @@
 
 ![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/logo/logo.png)
 
-pynucastro is a python library for interactively creating and
-exploring nuclear reaction networks.  It provides interfaces to
-nuclear reaction rate databases, including the JINA Reaclib nuclear
-reactions database.
+pynucastro is a python library for nuclear astrophysics.  It provides
+access to nuclear data and reaction rates, and tools for building
+and interactively exploring nuclear reaction networks.
 
 The main features are:
-
-  * Ability to create a reaction network based on a collection of rates, a set of nuclei,
-    or an arbitrary filter applied to a library.
-
-  * Interactive exploration of rates and networks in Jupyter notebooks.
-
-  * Many different ways of visualizing a network.
-
-  * An NSE solver to find the equilibrium abundance of a set of nuclei given a
-    thermodynamic state.
-
-  * Ability to write out python or C++ code needed to integrate the network.
-
-  * Support for tabular weak rates.
-
-  * Rate approximations and the derivation of reverse rates via detailed balance.
 
   * Easy access to nuclear properties, including T-dependent partition
     functions, spins, masses, etc.
 
+  * The ability to create a reaction network based on a collection of
+    rates, a set of nuclei, or an arbitrary filter applied to a
+    library.
+
+    * Includes support for ReacLib rates and tabulated weak rates from
+      a variety of sources.
+
+  * Interactive exploration of rates and networks in Jupyter
+    notebooks, including:
+
+    * Many different ways of visualizing a network.
+
+    * The ability to export a NetworkX graph (for instance, to find
+      cycles).
+
+  * Methods to determine which rates are important and which might be
+    missing from a network, as well as analyze the stiffness of a
+    network.
+
+  * The ability to approximate rates and derive reverse rates via
+    detailed balance.
+
+  * An NSE solver to find the equilibrium abundance of a set of nuclei
+    given a thermodynamic state.
+
+  * The ability to write out python or C++ code needed to integrate
+    the network.
+
+  * Additional physics methods for thermal neutrino sources and
+    Fermi-Dirac integrals.
 
 ## Documentation
 
@@ -54,6 +67,8 @@ https://pynucastro.github.io/pynucastro/
 
 
 ## Examples
+
+### Exploring a reaction rate
 
 The following example reads in the ReacLib rate database and
 gets the rate for C13(p,g)N14 and evaluates it at a
@@ -76,16 +91,71 @@ In [6]: fig.savefig("c13pg.png")
 ```
 
 The resulting figure is:
-![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/examples/c13pg.png)
+![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/docs/images/c13pg.png)
 
-An extensive demonstration of the capabilities of pynucastro is shown in this notebook:
+### Creating a network
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/main?filepath=examples%2Fpynucastro-examples.ipynb)
+The following builds a simple network that has carbon burning, outputs
+the value of the rates at a set of thermodynamic conditions, and plots
+the network:
 
-[pynucastro-examples.ipynb](https://github.com/pynucastro/pynucastro/blob/main/examples/pynucastro-examples.ipynb)
+```
+In [1]: import pynucastro as pyna
 
+In [2]: nuclei = ["p", "he4", "c12", "n13", "o16", "ne20", "na23", "mg24"]
 
-We can also interactively explore a reaction network.  Here's an example of hot-CNO with breakout reactions:
+In [3]: net = pyna.network_helper(nuclei, use_tabular_rates=False)
+
+In [4]: rho = 1.e7
+
+In [5]: T = 3.e9
+
+In [6]: comp = pyna.Composition(nuclei)
+
+In [7]: comp.set_equal()
+
+In [8]: net.evaluate_rates(rho=rho, T=T, composition=comp)
+Out[8]: 
+{C12 + p ⟶ N13 + 𝛾: 52860361.23712939,
+ C12 + He4 ⟶ O16 + 𝛾: 231.46132999413808,
+ O16 + He4 ⟶ Ne20 + 𝛾: 4660.126437920582,
+ Ne20 + He4 ⟶ Mg24 + 𝛾: 53650.76987097864,
+ Na23 + p ⟶ Mg24 + 𝛾: 71891152.99067408,
+ C12 + C12 ⟶ p + Na23: 209.07753161235584,
+ C12 + C12 ⟶ He4 + Ne20: 259.65215046037304,
+ N13 + He4 ⟶ p + O16: 355698292.6571981,
+ O16 + C12 ⟶ He4 + Mg24: 0.8082923986833515,
+ Na23 + p ⟶ He4 + Ne20: 6840366554.79809,
+ 3 He4 ⟶ C12 + 𝛾: 0.12389170353139083,
+ N13 ⟶ p + C12: 984313528.3619095,
+ O16 ⟶ He4 + C12: 0.00013799339351820605,
+ Ne20 ⟶ He4 + O16: 39.38899256329942,
+ Mg24 ⟶ p + Na23: 6.121492897494776e-07,
+ Mg24 ⟶ He4 + Ne20: 9.835129431742516e-06,
+ C12 ⟶ 3 He4: 0.008264918834094248,
+ O16 + p ⟶ He4 + N13: 11.428884290229457,
+ Ne20 + He4 ⟶ p + Na23: 317753.8001151714,
+ Ne20 + He4 ⟶ C12 + C12: 1.929507593099608e-05,
+ Na23 + p ⟶ C12 + C12: 0.33819870621531356,
+ Mg24 + He4 ⟶ C12 + O16: 1.8802924022864885e-11}
+
+In [9]: fig = net.plot(rotated=True, hide_xalpha=True)
+
+In [10]: fig.savefig("c-net.png")
+```
+
+Here `network_helper` found all of the rates that link the input
+nuclei and rederived the reverse rates to be in detailed balance with
+the forward rates.
+
+The resulting figure is:
+
+![](https://raw.githubusercontent.com/pynucastro/pynucastro/main/docs/images/c-net.png)
+
+### Interactive exploration
+
+We can also interactively explore a reaction network.  Here's an
+example of hot-CNO with breakout reactions:
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/pynucastro/pynucastro/HEAD?labpath=examples%2Fhot-CNO-breakout-example.ipynb)
 
@@ -134,13 +204,13 @@ pynucastro is supported on Python 3.10 or later and the following libraries:
 
 To build the documentation or run the unit tests, `sphinx` and
 `pytest` are additionally required along with some supporting
-packages. See the included `requirements.txt` file for a list of these
-packages and versions. To install the packages from the requirements
-file, do:
+packages. See the included `requirements.txt` and
+`requirements-docs.txt` files for a list of these packages and
+versions. To install the packages from the requirements file, do:
 ```
-pip install -r requirements.txt
+pip install -r requirements.txt -r requirements-docs.txt
 ```
-Is important to stress out that all the dependencies should be
+It is important to stress out that all the dependencies should be
 installed before `pynucastro`, otherwise the installation should be
 repeated.
 
