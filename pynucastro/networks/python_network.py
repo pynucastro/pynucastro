@@ -739,6 +739,10 @@ class PythonNetwork(RateCollection):
                     ostr += " +"
                 ostr = ostr.rstrip() + "\n"
 
+            # if there were no rates, just output 0.0
+            if len(valid_pairs) == 0:
+                ostr += f"{indent}      0.0\n"
+
             ostr += f"{indent}   )\n\n"
 
         return ostr
