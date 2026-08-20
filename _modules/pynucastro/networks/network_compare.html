@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post7+g889be7b53 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.0.0.post8+gffeba7987 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=c75fc88c"></script>
+    <script src="../../../_static/documentation_options.js?v=30e58375"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -709,10 +709,18 @@
             <span class="n">opts</span> <span class="o">=</span> <span class="s2">"SCREEN_METHOD=null"</span>
 
         <span class="c1"># to reduce compilation time, we'll build in debug mode</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"make DEBUG=TRUE -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                       <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                       <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
+        <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"make DEBUG=TRUE -j 4 </span><span class="si">{</span><span class="n">opts</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">cwd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cp</span><span class="o">.</span><span class="n">returncode</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"AMReX network build failed in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">amrex_test_path</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"command: </span><span class="si">{</span><span class="n">cp</span><span class="o">.</span><span class="n">args</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"exit code: </span><span class="si">{</span><span class="n">cp</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"stdout:</span><span class="se">\n</span><span class="si">{</span><span class="n">cp</span><span class="o">.</span><span class="n">stdout</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"stderr:</span><span class="se">\n</span><span class="si">{</span><span class="n">cp</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
 
         <span class="n">cp</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s2">"./main3d.gnu.DEBUG.ex testing.density=</span><span class="si">{</span><span class="n">rho</span><span class="si">}</span><span class="s2"> testing.temperature=</span><span class="si">{</span><span class="n">T</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                             <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
