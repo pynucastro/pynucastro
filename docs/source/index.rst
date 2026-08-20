@@ -74,6 +74,7 @@ and interactively exploring nuclear reaction networks.
    screening-examples
    modify-example.ipynb
    branched-rates.ipynb
+   not_in_ydot_term.ipynb
    custom-rates.ipynb
    derived-rates
 
