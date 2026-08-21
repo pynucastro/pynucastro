@@ -90,6 +90,8 @@ class SympyRates:
         # composition dependence
         Y_sym = 1
         for r in sorted(set(rate.reactants)):
+            if r in rate.not_in_ydot_term:
+                continue
             c = rate.reactants.count(r)
             sym_final = f'{self.name_y}({r.cindex()})'
             sym_temp = f'Y__j{r}__'
