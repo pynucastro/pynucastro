@@ -28,7 +28,7 @@ class TestModifiedRateSource:
         with pytest.raises(ValueError,
                            match="supplied a Rate object already in the Library: 3 p --> He3 <modified>"):
             _ = pyna.Library(rates=[rppp_he3, rpepp_he3])
-        
+
     def test_with_source(self, pprates):
 
         rpp, rpep = pprates
