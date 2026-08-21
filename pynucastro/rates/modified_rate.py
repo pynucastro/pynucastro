@@ -52,6 +52,10 @@ class ModifiedRate(Rate):
     description : str
         a description of the rate sequence we are approximating.  This
         will be added as a comment to code outputs.
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv.  This information is also used in the
+        unique ``Rate.id``
 
     """
 
@@ -60,7 +64,8 @@ class ModifiedRate(Rate):
                  new_reactants=None, new_products=None,
                  update_screening=False,
                  not_in_ydot_term=None,
-                 description=None):
+                 description=None,
+                 rate_source=None):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
@@ -87,9 +92,8 @@ class ModifiedRate(Rate):
                          weak_type=self.original_rate.weak_type,
                          label="modified",
                          stoichiometry=stoichiometry,
-                         not_in_ydot_term=not_in_ydot_term)
-
-        self.modified = True
+                         not_in_ydot_term=not_in_ydot_term,
+                         rate_source=rate_source)
 
         self._set_print_representation()
 
