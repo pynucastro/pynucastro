@@ -6,7 +6,7 @@ aprox13, aprox19, aprox21 family of reaction networks
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.approximate_rates import ApproximateRate
 from pynucastro.rates.derived_rate import DerivedRate
-from pynucastro.rates.library import Library, _rate_name_to_nuc
+from pynucastro.rates.library import Library
 
 
 def make_ap_pg_rates(lib, reactant, product, *, use_detailed_balance=False):
