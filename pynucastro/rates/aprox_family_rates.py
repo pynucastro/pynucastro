@@ -39,7 +39,7 @@ def make_ap_pg_rates(lib, reactant, product, *, use_detailed_balance=False):
         product = Nucleus(product)
 
     if isinstance(lib, list):
-        lib = Library(rates=[lib])
+        lib = Library(rates=lib)
 
     intermediate = reactant + Nucleus("he4") - Nucleus("p")
 
@@ -97,7 +97,7 @@ def make_double_neutron_rates(lib, reactant, product, *, use_detailed_balance=Fa
         product = Nucleus(product)
 
     if isinstance(lib, list):
-        lib = Library(rates=[lib])
+        lib = Library(rates=lib)
 
     intermediate = reactant + Nucleus("n")
 
@@ -191,7 +191,7 @@ def make_CO_approx_rates(lib, root_nuclei, *,
     """
 
     if isinstance(lib, list):
-        lib = Library(rates=[lib])
+        lib = Library(rates=lib)
 
     assert root_nuclei in ["C", "CO", "O"]
 
