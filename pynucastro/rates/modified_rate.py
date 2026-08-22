@@ -40,13 +40,18 @@ class ModifiedRate(Rate):
         do we reset the screening pairs for this rate to reflect any
         new products or stoichiometry? or do we still screen based on
         the underlying rate?
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv.  This information is also used in the
+        unique ``Rate.id``
 
     """
 
     def __init__(self, original_rate, *,
                  stoichiometry=None,
                  new_reactants=None, new_products=None,
-                 update_screening=False):
+                 update_screening=False,
+                 rate_source=None):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
@@ -71,9 +76,8 @@ class ModifiedRate(Rate):
         super().__init__(reactants=reactants, products=products,
                          weak_type=self.original_rate.weak_type,
                          label="modified",
-                         stoichiometry=stoichiometry)
-
-        self.modified = True
+                         stoichiometry=stoichiometry,
+                         rate_source=rate_source)
 
         self._set_print_representation()
 
