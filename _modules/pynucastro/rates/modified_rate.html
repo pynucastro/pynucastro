@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.0.0.post10+g89754b1b4 documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.0.0.post11+g6a87a02e6 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=b8444f96"></script>
+    <script src="../../../_static/documentation_options.js?v=2d077d0e"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -557,13 +557,18 @@
 <span class="sd">        do we reset the screening pairs for this rate to reflect any</span>
 <span class="sd">        new products or stoichiometry? or do we still screen based on</span>
 <span class="sd">        the underlying rate?</span>
+<span class="sd">    rate_source: str</span>
+<span class="sd">        the key to get the source information for the rate</span>
+<span class="sd">        from rate_sources.csv.  This information is also used in the</span>
+<span class="sd">        unique ``Rate.id``</span>
 
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_rate</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                  <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">new_reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">new_products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">update_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">update_screening</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span> <span class="o">=</span> <span class="n">original_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_screening</span> <span class="o">=</span> <span class="n">update_screening</span>
@@ -588,9 +593,8 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reactants</span><span class="o">=</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="n">products</span><span class="p">,</span>
                          <span class="n">weak_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">weak_type</span><span class="p">,</span>
                          <span class="n">label</span><span class="o">=</span><span class="s2">"modified"</span><span class="p">,</span>
-                         <span class="n">stoichiometry</span><span class="o">=</span><span class="n">stoichiometry</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="kc">True</span>
+                         <span class="n">stoichiometry</span><span class="o">=</span><span class="n">stoichiometry</span><span class="p">,</span>
+                         <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span>
 
