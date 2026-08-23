@@ -125,6 +125,10 @@ class RateCollection:
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
+    allowed_duplicates : Iterable((Rate, Rate))
+        A list of rate pairs that are allowed to be duplicates.
+        It is up to the user to ensure that you are not double
+        counting a particular process in the network.
     verbose : bool
         do we show informational messages?
 
@@ -135,6 +139,7 @@ class RateCollection:
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  do_screening=True,
+                 allowed_duplicates=None,
                  verbose=False):
 
         combined_library = Library()
@@ -142,6 +147,11 @@ class RateCollection:
         self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
         self.do_screening = do_screening
+
+        if allowed_duplicates:
+            self.allowed_duplicates = allowed_duplicates
+        else:
+            self.allowed_duplicates = []
 
         self.verbose = verbose
 
@@ -1421,6 +1431,9 @@ class RateCollection:
         simple decay), but they will present themselves in the network
         as the same link.
 
+        If allowed_duplicates was passed in when the network was created,
+        then those rate pairs will be allowed.
+
         We return a list, where each entry is a list of all the rates
         that share the same link.
 
@@ -1436,8 +1449,18 @@ class RateCollection:
         # will now check for those
         dupe_to_remove = []
         for dupe in duplicates:
+            # check against the duplicates we know about from
+            # ReacLib and StarLib
             if is_allowed_dupe(dupe):
                 dupe_to_remove.append(dupe)
+                continue
+
+            # also check any allowed rate pair dupes passed in when
+            # the network was created
+            for allowed_pairs in self.allowed_duplicates:
+                if set(dupe) in [set(allowed_pairs), set(allowed_pairs[::-1])]:
+                    dupe_to_remove.append(dupe)
+                    break
 
         for dupe in dupe_to_remove:
             duplicates.remove(dupe)
