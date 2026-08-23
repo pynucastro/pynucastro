@@ -14,7 +14,7 @@ from pynucastro.constants import constants
 from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
-from pynucastro.nucdata import Composition
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.rates import ApproximateRate, BranchedRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
@@ -1222,6 +1222,7 @@ class PythonNetwork(RateCollection):
                           self_heating=False,
                           thermal_neutrinos=False,
                           initial_comp="uniform",
+                          stopping_condition=None,
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
         SciPy's solve_ivp() with BDF method.  Optionally, we can
@@ -1252,6 +1253,9 @@ class PythonNetwork(RateCollection):
             different modes to use to set up the initial composition if
             molar_composition is None.
             Valid choices are: `uniform`, `random`, and `solar`.
+        stopping_condition : tuple([Nucleus, str], float)
+            If provided, then we stop the integration when the specified nucleus
+            mass fraction drops to the value provided.
         rtol : float
             relative tolerance for SciPy's solve_ivp()
         atol : float
@@ -1296,6 +1300,19 @@ class PythonNetwork(RateCollection):
             else:
                 Y0 = np.asarray(molar_composition)
 
+        # if we have a stopping condition, setup the event
+        events = None
+        if stopping_condition:
+            nuc, val = stopping_condition
+            if isinstance(nuc, str):
+                nuc = Nucleus(nuc)
+            # find the index of nuc in the solution vector
+            idx = self.unique_nuclei.index(nuc)
+            assert idx >= 0, "nucleus not present in solution vector"
+            events = lambda t, y, *args: y[idx] > val / nuc.A
+            events.terminal = True
+            events.direction = -1
+
         if self_heating:
             energy_release = getattr(network, "energy_release")
 
@@ -1336,14 +1353,16 @@ class PythonNetwork(RateCollection):
             sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
                             dense_output=True,
                             args=(do_rate_eval, ydot_eq, energy_release, rho, screen_func),
-                            rtol=rtol, atol=atol)
+                            rtol=rtol, atol=atol,
+                            events=events)
 
         else:
             # Integrate using SciPy's solve_ivp() using BDF method --
             # good for stiff system.
             sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
                             dense_output=True, args=(rho, T, screen_func),
-                            rtol=rtol, atol=atol, jac=jacobian)
+                            rtol=rtol, atol=atol, jac=jacobian,
+                            events=events)
 
         if not sol.success:
             warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
