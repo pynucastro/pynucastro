@@ -670,6 +670,22 @@ class PythonNetwork(RateCollection):
 
     """
 
+    def __init__(self, *args, **kwargs):
+
+        # initialize the base class
+        super().__init__(*args, **kwargs)
+
+        # carry the numba compiled network used in integration
+        self.network_module = None
+
+    def _build_collection(self):
+
+        super()._build_collection()
+
+        # invalidate any compiled network module since the network
+        # changed
+        self.network_module = None
+
     def full_ydot_string(self, nucleus, indent=""):
         """Construct a string containing the python code for
         dY(nucleus)/dt by considering every reaction that involves
@@ -1269,15 +1285,20 @@ class PythonNetwork(RateCollection):
         """
 
         # Write the network module as a string
-        f = io.StringIO()
-        self.write_network(outfile=f)
-        network_code = f.getvalue()
+        if not self.network_module:
+            f = io.StringIO()
+            self.write_network(outfile=f)
+            network_code = f.getvalue()
 
-        # Create a new in-memory module called `network`
-        network = types.ModuleType("network")
+            # Create a new in-memory module called `network`
+            network = types.ModuleType("network")
 
-        # Execute the code inside the module namespace
-        exec(network_code, network.__dict__)  # pylint: disable=exec-used
+            # Execute the code inside the module namespace
+            exec(network_code, network.__dict__)  # pylint: disable=exec-used
+
+            self.network_module = network
+        else:
+            network = self.network_module
 
         # Get RHS and Jacobian. Use getattr to avoid pylint warning.
         rhs = getattr(network, "rhs")
