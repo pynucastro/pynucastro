@@ -14,7 +14,6 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
-from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
 from pynucastro.screening.screen import make_plasma_state, make_screen_factors
 
 
@@ -597,17 +596,13 @@ class Rate:
             fname_reactants = multiplicity * [nuc] + fname_reactants
 
         self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
+
+        if self.weak_type != "":
+            self.fname += f"_{self.weak_type}"
+
         # for fractional stoichiometry, we cannot have "." in the
         # name, since it won't compile
         self.fname = self.fname.replace(".", "_")
-
-        # Treat special duplicate rate cases
-        # These are likely weak rates with beta plus decay and electron captures
-        # So add weak_type to them.
-        is_dupe = any(f"{self.__class__.__name__}: {self.id}" in dupe_set
-                      for dupe_set in ALLOWED_DUPLICATES)
-        if is_dupe:
-            self.fname += '_' + self.weak_type
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
