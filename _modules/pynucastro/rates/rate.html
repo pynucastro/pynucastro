@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.0.0.post17+ge00be34e5 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.0.0.post18+gbb31ea68e documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=8c0ae359"></script>
+    <script src="../../../_static/documentation_options.js?v=ab206c54"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -197,6 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modify-example.html">Modifying Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../derived-rates.html">Derived Rates</a></li>
 </ul>
@@ -764,14 +765,23 @@
 <span class="sd">        we apply a multiplicity factor, N!, where N is the number of times</span>
 <span class="sd">        the nucleus appears.  This can be disabled by setting</span>
 <span class="sd">        use_identical_particle_factor = False</span>
-
+<span class="sd">    not_in_ydot_term : list(Nucleus)</span>
+<span class="sd">        A list of nuclei that appear in ``reactants`` but should not</span>
+<span class="sd">        contribute to the Y[nuc] scaling in the dY/dt term of the</span>
+<span class="sd">        rate equations.  As an example, consider the sequence:</span>
+<span class="sd">        He4(He3,γ)Be7(e-,ν)Li7(p,α)He4.  Here, He4, He3, and p are</span>
+<span class="sd">        consumed, but if we want to model this using just the first</span>
+<span class="sd">        rate in the sequence, then the dY/dt term is ρY(He3)Y(He4)λ,</span>
+<span class="sd">        Even though p doesn't appear here, we still want to account</span>
+<span class="sd">        for its consumption in dY(p)/dt.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">Q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weak_type</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"generic"</span><span class="p">,</span>
                  <span class="n">use_ye_weighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">stoichiometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                 <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">not_in_ydot_term</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">reactants</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span>
@@ -782,6 +792,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">products</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">not_in_ydot_term</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span> <span class="o">=</span> <span class="n">not_in_ydot_term</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">assert</span> <span class="s1">'_'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">label</span><span class="p">,</span> <span class="s2">"Rate label should not contain underscore"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span>
@@ -1117,7 +1132,7 @@
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefactor</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inv_prefactor</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dens_exp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">nuc</span> <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="k">if</span> <span class="n">nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
             <span class="c1"># electron-capture rates from some sources need ρYₑ,</span>
@@ -1406,6 +1421,8 @@
 
         <span class="c1"># composition dependence</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">ydot_string_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Y[j</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">]**</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -1538,7 +1555,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_ye_weighting</span><span class="p">:</span>
             <span class="c1"># we already added 1 to dens_exp</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">y_e</span>
-        <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">])</span>
+        <span class="n">yfac</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="p">[</span><span class="n">ys</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span>
+                                      <span class="k">if</span> <span class="n">q</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">yfac</span> <span class="o">*</span> <span class="n">val</span></div>
 
 
@@ -1574,7 +1592,7 @@
 <span class="sd">        str</span>
 
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">or</span> <span class="n">y_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">""</span>
 
         <span class="n">jac_string_components</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1595,6 +1613,8 @@
 
         <span class="c1"># composition dependence</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
                 <span class="c1"># take the derivative</span>
@@ -1649,7 +1669,7 @@
 <span class="sd">        float</span>
 
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">y_i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">or</span> <span class="n">y_i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.0</span>
 
         <span class="n">rho</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span>
@@ -1661,6 +1681,8 @@
         <span class="c1"># composition dependence</span>
         <span class="n">Y_term</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_in_ydot_term</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">y_i</span> <span class="o">==</span> <span class="n">r</span><span class="p">:</span>
                 <span class="c1"># take the derivative</span>
