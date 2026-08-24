@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 3.0.0.post14+gb6b16c0ac documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 3.0.0.post15+gbb28c7c6d documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=77acf1c4"></script>
+    <script src="_static/documentation_options.js?v=da2ca259"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -711,8 +711,13 @@ combining them into a single effective rate by assuming that the protons and nuc
 <h2>Approximate version<a class="headerlink" href="#approximate-version" title="Link to this heading">#</a></h2>
 <p>Now we will approximate the rates, combining <span class="math notranslate nohighlight">\((\alpha, \gamma)\)</span> and
 <span class="math notranslate nohighlight">\((\alpha, p)(p, \gamma)\)</span> into a single effective rate.</p>
-<p>The routine <code class="docutils literal notranslate"><span class="pre">make_ap_pg_approx()</span></code> will find all of the rates that make up that sequence and create a
-single <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> that captures the effective rate.  The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
+<p>The method <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx" title="pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_ap_pg_approx</span></code></a> will find all of the rates that make up that sequence and create a
+single <a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a> that captures the effective rate.  The original rates will still be stored in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> object and will be evaluated to compute the needed approximation when the effective rate is evaluated.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>We could alternately create the approximate rates before creating the network, by using the <a class="reference internal" href="pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_ap_pg_rates" title="pynucastro.rates.aprox_family_rates.make_ap_pg_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_ap_pg_rates</span></code></a> function.  Then we could include these rates in the library
+used to build the network.  The end result will be the same.</p>
+</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pynet</span><span class="o">.</span><span class="n">make_ap_pg_approx</span><span class="p">()</span>

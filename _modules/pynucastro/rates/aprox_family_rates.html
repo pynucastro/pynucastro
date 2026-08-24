@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.aprox_family_rates &#8212; pynucastro 3.0.0.post14+gb6b16c0ac documentation</title>
+    <title>pynucastro.rates.aprox_family_rates &#8212; pynucastro 3.0.0.post15+gbb28c7c6d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=77acf1c4"></script>
+    <script src="../../../_static/documentation_options.js?v=da2ca259"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -520,24 +520,28 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.approximate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rate_name_to_nuc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.derived_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">DerivedRate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">Library</span>
 
 
-<div class="viewcode-block" id="make_double_neutron_rates">
-<a class="viewcode-back" href="../../../pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_double_neutron_rates">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_double_neutron_rates</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">):</span>
+<div class="viewcode-block" id="make_ap_pg_rates">
+<a class="viewcode-back" href="../../../pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_ap_pg_rates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_ap_pg_rates</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Return a pair of :py:class:`ApproximateRate</span>
-<span class="sd">    &lt;pynucastro.rates.approximate_rates.ApproximateRate&gt;` objects for</span>
-<span class="sd">    the A(n,g)X(n,g)B -&gt; A(nn,g)B approximation</span>
+<span class="sd">    &lt;pynucastro.rates.approximate_rates.ApproximateRate&gt;` objects</span>
+<span class="sd">    (forward, reverse) for the A(α,γ)B + A(α,p)X(p,γ)B approximation.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    lib : Library</span>
-<span class="sd">         A Library object containing the neutron-capture rates</span>
+<span class="sd">    lib : Library or list(Rate)</span>
+<span class="sd">         A Library or list of rates containing all the necessary rates</span>
+<span class="sd">         for the approximation.</span>
 <span class="sd">    reactant : Nucleus, str</span>
-<span class="sd">         The reactant, A, in the sequence A(n,g)X(n,g)B</span>
+<span class="sd">         The reactant, A, in the sequence A(α,γ)B</span>
 <span class="sd">    product: Nucleus, str</span>
-<span class="sd">         The product, B, in the sequence A(n,g)X(n,g)B</span>
+<span class="sd">         The product, B, in the sequence A(α,γ)B</span>
+<span class="sd">    use_detailed_balance : bool</span>
+<span class="sd">         Do we rederive the reverse rates using detailed balance?</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -551,6 +555,70 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">product</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+
+    <span class="n">intermediate</span> <span class="o">=</span> <span class="n">reactant</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span> <span class="o">-</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+
+    <span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"A(a,g)B"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(a,g)</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"B(g,a)A"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(g,a)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"A(a,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(a,p)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,g)B"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(p,g)</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"B(g,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(g,p)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)A"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(p,a)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_detailed_balance</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"A(a,g)B"</span><span class="p">,</span> <span class="s2">"B(g,a)A"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"A(a,p)X"</span><span class="p">,</span> <span class="s2">"X(p,a)A"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"X(p,g)B"</span><span class="p">,</span> <span class="s2">"B(g,p)X"</span><span class="p">)]:</span>
+            <span class="c1"># forward rate is the one with Q &gt; 0</span>
+            <span class="n">fwd</span><span class="p">,</span> <span class="n">rvs</span> <span class="o">=</span> <span class="n">pair</span> <span class="k">if</span> <span class="n">rates</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pair</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rates</span><span class="p">[</span><span class="n">rvs</span><span class="p">]</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">rates</span><span class="p">[</span><span class="n">fwd</span><span class="p">],</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"ap_pg"</span><span class="p">)</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"ap_pg"</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">forward</span><span class="p">,</span> <span class="n">reverse</span></div>
+
+
+
+<div class="viewcode-block" id="make_double_neutron_rates">
+<a class="viewcode-back" href="../../../pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_double_neutron_rates">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_double_neutron_rates</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">reactant</span><span class="p">,</span> <span class="n">product</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a pair of :py:class:`ApproximateRate</span>
+<span class="sd">    &lt;pynucastro.rates.approximate_rates.ApproximateRate&gt;` objects</span>
+<span class="sd">    (forward, reverse) for the A(n,γ)X(n,γ)B -&gt; A(nn,γ)B approximation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lib : Library or list(Rate)</span>
+<span class="sd">         A Library or list of rates object containing the</span>
+<span class="sd">         neutron-capture rates</span>
+<span class="sd">    reactant : Nucleus, str</span>
+<span class="sd">         The reactant, A, in the sequence A(n,γ)X(n,γ)B</span>
+<span class="sd">    product: Nucleus, str</span>
+<span class="sd">         The product, B, in the sequence A(n,γ)X(n,γ)B</span>
+<span class="sd">    use_detailed_balance : bool</span>
+<span class="sd">         Do we rederive the reverse rates using detailed balance?</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ApproximateRate, ApproximateRate</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reactant</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">reactant</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">reactant</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">product</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">product</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">product</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
+
     <span class="n">intermediate</span> <span class="o">=</span> <span class="n">reactant</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)</span>
 
     <span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
@@ -560,8 +628,15 @@
     <span class="n">rates</span><span class="p">[</span><span class="s2">"B(g,n)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
     <span class="n">rates</span><span class="p">[</span><span class="s2">"X(g,n)A"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">intermediate</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">(,n)</span><span class="si">{</span><span class="n">reactant</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"nn_g"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">use_detailed_balance</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"A(n,g)X"</span><span class="p">,</span> <span class="s2">"X(g,n)A"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"X(n,g)B"</span><span class="p">,</span> <span class="s2">"B(g,n)X"</span><span class="p">)]:</span>
+            <span class="c1"># forward rate is the one with Q &gt; 0</span>
+            <span class="n">fwd</span><span class="p">,</span> <span class="n">rvs</span> <span class="o">=</span> <span class="n">pair</span> <span class="k">if</span> <span class="n">rates</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pair</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rates</span><span class="p">[</span><span class="n">rvs</span><span class="p">]</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">rates</span><span class="p">[</span><span class="n">fwd</span><span class="p">],</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
+    <span class="n">forward</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"nn_g"</span><span class="p">)</span>
     <span class="n">reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"nn_g"</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">forward</span><span class="p">,</span> <span class="n">reverse</span></div>
@@ -570,8 +645,9 @@
 
 <div class="viewcode-block" id="make_CO_approx_rates">
 <a class="viewcode-back" href="../../../pynucastro.rates.aprox_family_rates.html#pynucastro.rates.aprox_family_rates.make_CO_approx_rates">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_CO_approx_rates</span><span class="p">(</span><span class="n">all_rates</span><span class="p">,</span> <span class="n">root_nuclei</span><span class="p">,</span>
-                         <span class="n">return_obsolete_rate_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_CO_approx_rates</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">root_nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                         <span class="n">return_obsolete_rate_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Create approximate rates describing C/O burning.</span>
 <span class="sd">    We want to model a sequence like:</span>
 
@@ -613,9 +689,9 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    all_rates : list(Rate)</span>
+<span class="sd">    lib : Library or list(Rate)</span>
 <span class="sd">         the collection of rates that we will use for finding λ1 through λ5 and</span>
-<span class="sd">         their inverses.  This could be via</span>
+<span class="sd">         their inverses.  This could be a `Library` or a list obtained via</span>
 <span class="sd">         :py:func:`Library.get_rates &lt;pynucastro.rates.library.Library.get_rates&gt;`</span>
 <span class="sd">         or :py:func:`RateCollection.get_rates &lt;pynucastro.networks.rate_collection.RateCollection.get_rates&gt;`.</span>
 <span class="sd">    root_nuclei : str</span>
@@ -624,6 +700,8 @@
 <span class="sd">    return_obsolete_rate_names : bool</span>
 <span class="sd">         Do we return a list of rates names that can be removed if we use</span>
 <span class="sd">         these approximate rates?</span>
+<span class="sd">    use_detailed_balance : bool</span>
+<span class="sd">         Do we rederive the reverse rates using detailed balance?</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -634,6 +712,9 @@
 <span class="sd">        obsoleted by the new approximate rates.</span>
 
 <span class="sd">    """</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">lib</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">root_nuclei</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"C"</span><span class="p">,</span> <span class="s2">"CO"</span><span class="p">,</span> <span class="s2">"O"</span><span class="p">]</span>
 
@@ -662,53 +743,40 @@
 
     <span class="n">lambda1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">S1</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">S2</span><span class="si">}</span><span class="s2">,p)</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">lambda1_r</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">(p,</span><span class="si">{</span><span class="n">S2</span><span class="si">}</span><span class="s2">)</span><span class="si">{</span><span class="n">S1</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">lambda1</span><span class="p">)</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"S(S,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,S)S"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"S(S,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda1</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,S)S"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda1_r</span><span class="p">)</span>
 
     <span class="n">lambda2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">S1</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">S2</span><span class="si">}</span><span class="s2">,a)</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">lambda2_r</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">(a,</span><span class="si">{</span><span class="n">S2</span><span class="si">}</span><span class="s2">)</span><span class="si">{</span><span class="n">S1</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">lambda2</span><span class="p">)</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"S(S,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,S)S"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"S(S,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda2</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,S)S"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda2_r</span><span class="p">)</span>
 
     <span class="n">lambda3</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">(p,a)</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">lambda3_r</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">(a,p)</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">lambda3</span><span class="p">)</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda3</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda3_r</span><span class="p">)</span>
 
     <span class="n">lambda4</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">(p,g)</span><span class="si">{</span><span class="n">F</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">lambda4_r</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">F</span><span class="si">}</span><span class="s2">(g,p)</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">lambda4</span><span class="p">)</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,g)F"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"F(g,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,g)F"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda4</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"F(g,p)X"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda4_r</span><span class="p">)</span>
 
     <span class="n">lambda5</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">(a,g)</span><span class="si">{</span><span class="n">F</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">lambda5_r</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">F</span><span class="si">}</span><span class="s2">(g,a)</span><span class="si">{</span><span class="n">E</span><span class="si">}</span><span class="s2">"</span>
-    <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">lambda5</span><span class="p">)</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,g)F"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">rates</span><span class="p">[</span><span class="s2">"F(g,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_rates</span>
-                        <span class="k">if</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">products</span><span class="p">)</span> <span class="ow">and</span>
-                           <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">reactants</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"E(a,g)F"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda5</span><span class="p">)</span>
+    <span class="n">rates</span><span class="p">[</span><span class="s2">"F(g,a)E"</span><span class="p">]</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="n">lambda5_r</span><span class="p">)</span>
+
+    <span class="c1"># rederive reverse rates if asked</span>
+    <span class="k">if</span> <span class="n">use_detailed_balance</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"S(S,p)X"</span><span class="p">,</span> <span class="s2">"X(p,S)S"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"S(S,a)E"</span><span class="p">,</span> <span class="s2">"E(a,S)S"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"X(p,a)E"</span><span class="p">,</span> <span class="s2">"E(a,p)X"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"X(p,g)F"</span><span class="p">,</span> <span class="s2">"F(g,p)X"</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s2">"E(a,g)F"</span><span class="p">,</span> <span class="s2">"F(g,a)E"</span><span class="p">)]:</span>
+            <span class="c1"># forward rate is the one with Q &gt; 0</span>
+            <span class="n">fwd</span><span class="p">,</span> <span class="n">rvs</span> <span class="o">=</span> <span class="n">pair</span> <span class="k">if</span> <span class="n">rates</span><span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">Q</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pair</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">rates</span><span class="p">[</span><span class="n">rvs</span><span class="p">]</span> <span class="o">=</span> <span class="n">DerivedRate</span><span class="p">(</span><span class="n">source_rate</span><span class="o">=</span><span class="n">rates</span><span class="p">[</span><span class="n">fwd</span><span class="p">],</span> <span class="n">use_pf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">use_unreliable_spins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">new_rates</span> <span class="o">=</span> <span class="p">[]</span>
 
