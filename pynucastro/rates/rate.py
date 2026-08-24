@@ -364,7 +364,9 @@ class Rate:
 
         """
 
-        return (self.reactants, self.products) == (other.reactants, other.products)
+        test1 = self.weak_type == other.weak_type
+        test2 = (self.reactants, self.products) == (other.reactants, other.products)
+        return test1 and test2
 
     def __lt__(self, other):
         """Sort such that lightest reactants come first, and then look
