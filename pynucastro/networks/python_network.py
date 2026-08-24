@@ -1309,9 +1309,13 @@ class PythonNetwork(RateCollection):
             # find the index of nuc in the solution vector
             idx = self.unique_nuclei.index(nuc)
             assert idx >= 0, "nucleus not present in solution vector"
-            events = lambda t, y, *args: y[idx] > val / nuc.A
-            events.terminal = True
-            events.direction = -1
+
+            def exhaustion(t, y, *args):
+                return y[idx] > val / nuc.A
+            exhaustion.terminal = True
+            exhaustion.direction = -1
+
+            events = [exhaustion]
 
         if self_heating:
             energy_release = getattr(network, "energy_release")
