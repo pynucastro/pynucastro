@@ -5,14 +5,93 @@ Notes on Working with ``Rate`` Objects
 Attributes
 ==========
 
-There are several different attributes that refer to the name / properties of the rate in some way.  These are:
+There are several different attributes that refer to the name / properties of the rate in some way.  Consider the rate for ${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$:
 
-* ``Rate.id``
+.. code:: python
 
-* ``Rate.rid``
+   rl = pyna.ReacLibLibrary()
+   c12ag = rl.get_rate_by_name("c12(a,g)o16")
 
-* ``Rate.fname``
+The following rate attributes are defined:
 
+* ``Rate.rid`` : this is a string that gives the reactants and
+  products, using only ASCII characters.  No information about the
+  source of the rate included.
+
+  It is not used for library operations directly, but instead is used
+  to build ``rid`` (described next) and included as a human-readable
+  comment in the generated rate functions in exported networks.
+
+  For ``c12ag.rid``, we have:
+
+  ::
+
+     'C12 + He4 --> O16'
+
+  .. note::
+
+     Other sources of ${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$ will have the
+     same ``rid``.  For instance:
+
+     .. code:: python
+
+        from pynucastro.rates.alternate_rates import DeBoerC12agO16
+        c12ag_deboer = DeBoerC12agO16()
+      
+     We would find ``c12ag_deboer.rid`` to be:
+
+     ::
+
+        'C12 + He4 --> O16'
+
+
+
+* ``Rate.id`` : this is intended to be a unique identifier for a rate.
+  It is composed of the ``rid`` and the rate source (``Rate.src``).
+  This is used to test equality of rates, for example, given a
+  ``Rate`` ``r`` and a list of rates ``rate_list`` doing:
+
+  .. code:: python
+
+     if r in rate_list:
+         # do something
+
+  will use ``r.id`` for the comparison.
+
+  For ``c12ag.id``, we have:
+
+  ::
+
+     'C12 + He4 --> O16 <reaclib_nac2>'
+
+  This is distinct from other sources of the ${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$ rate,
+  so using ``c12ag_deboer`` defined above, we could see ``c12ag_deboer.id`` as:
+
+  ``Rate,id`` must be unique in a ``Library`` and a generated network.
+
+  ::
+
+     'C12 + He4 --> O16 <deboer_deboer2017>'
+
+* ``Rate.fname`` : this is a programming-language safe name for the
+  string (no special characters except for ``_``), and is used for the function names
+  and rate indices in exported networks.
+
+  This must be unique in a generated network.
+
+  For ``c12ag``, we have:
+
+  ::
+
+     'He4_C12_to_O16_reaclib'
+
+
+.. important::
+
+   There are some rates where the above logic breaks.  For example, ReacLib provides two
+   rates for $p + p$, a $\beta^+$ and $e^-$-capture.  Ordinarily, these would have the
+   same ``fname``, but in this case, we explicitly add the ``weak_type`` to the ``fname``
+   to make the distinguishable.
 
 Copying
 =======
