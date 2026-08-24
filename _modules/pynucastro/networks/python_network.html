@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post16+ga283f6c7f documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post17+ge00be34e5 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=c67182ca"></script>
+    <script src="../../../_static/documentation_options.js?v=8c0ae359"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1232,6 +1232,22 @@
 
 <span class="sd">    """</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># initialize the base class</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># carry the numba compiled network used in integration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
+
+        <span class="c1"># invalidate any compiled network module since the network</span>
+        <span class="c1"># changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="kc">None</span>
+
 <div class="viewcode-block" id="PythonNetwork.full_ydot_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_ydot_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_ydot_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
@@ -1845,15 +1861,20 @@
 <span class="sd">        """</span>
 
         <span class="c1"># Write the network module as a string</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">network_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_network</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">network_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
 
-        <span class="c1"># Create a new in-memory module called `network`</span>
-        <span class="n">network</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">(</span><span class="s2">"network"</span><span class="p">)</span>
+            <span class="c1"># Create a new in-memory module called `network`</span>
+            <span class="n">network</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">(</span><span class="s2">"network"</span><span class="p">)</span>
 
-        <span class="c1"># Execute the code inside the module namespace</span>
-        <span class="n">exec</span><span class="p">(</span><span class="n">network_code</span><span class="p">,</span> <span class="n">network</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
+            <span class="c1"># Execute the code inside the module namespace</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">network_code</span><span class="p">,</span> <span class="n">network</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># pylint: disable=exec-used</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="n">network</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">network</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span>
 
         <span class="c1"># Get RHS and Jacobian. Use getattr to avoid pylint warning.</span>
         <span class="n">rhs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">"rhs"</span><span class="p">)</span>
