@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post15+gbb28c7c6d documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post16+ga283f6c7f documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=da2ca259"></script>
+    <script src="../../../_static/documentation_options.js?v=c67182ca"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -529,7 +529,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">StellarEOS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.rate_collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateCollection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.neutrino_cooling</span><span class="w"> </span><span class="kn">import</span> <span class="n">sneut5</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Composition</span><span class="p">,</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApproximateRate</span><span class="p">,</span> <span class="n">BranchedRate</span><span class="p">,</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.screening</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_screening_func</span><span class="p">,</span> <span class="n">get_screening_pair_set</span>
 
@@ -1798,6 +1798,7 @@
                           <span class="n">self_heating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">thermal_neutrinos</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                           <span class="n">initial_comp</span><span class="o">=</span><span class="s2">"uniform"</span><span class="p">,</span>
+                          <span class="n">stopping_condition</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                           <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Integrate the network to tmax given (rho, T, Y0) using</span>
 <span class="sd">        SciPy's solve_ivp() with BDF method.  Optionally, we can</span>
@@ -1828,6 +1829,9 @@
 <span class="sd">            different modes to use to set up the initial composition if</span>
 <span class="sd">            molar_composition is None.</span>
 <span class="sd">            Valid choices are: `uniform`, `random`, and `solar`.</span>
+<span class="sd">        stopping_condition : tuple([Nucleus, str], float)</span>
+<span class="sd">            If provided, then we stop the integration when the specified nucleus</span>
+<span class="sd">            mass fraction drops to the value provided.</span>
 <span class="sd">        rtol : float</span>
 <span class="sd">            relative tolerance for SciPy's solve_ivp()</span>
 <span class="sd">        atol : float</span>
@@ -1872,6 +1876,23 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Y0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">molar_composition</span><span class="p">)</span>
 
+        <span class="c1"># if we have a stopping condition, setup the event</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">stopping_condition</span><span class="p">:</span>
+            <span class="n">nuc</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">stopping_condition</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+            <span class="c1"># find the index of nuc in the solution vector</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"nucleus not present in solution vector"</span>
+
+            <span class="k">def</span><span class="w"> </span><span class="nf">exhaustion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+                <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">val</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
+            <span class="n">exhaustion</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">exhaustion</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+            <span class="n">events</span> <span class="o">=</span> <span class="p">[</span><span class="n">exhaustion</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">self_heating</span><span class="p">:</span>
             <span class="n">energy_release</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="s2">"energy_release"</span><span class="p">)</span>
 
@@ -1912,14 +1933,16 @@
             <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs_wrapper</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">xi0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                             <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                             <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">do_rate_eval</span><span class="p">,</span> <span class="n">ydot_eq</span><span class="p">,</span> <span class="n">energy_release</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
-                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span>
+                            <span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Integrate using SciPy's solve_ivp() using BDF method --</span>
             <span class="c1"># good for stiff system.</span>
             <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">tmax</span><span class="p">],</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                             <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="p">),</span>
-                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">)</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">,</span> <span class="n">jac</span><span class="o">=</span><span class="n">jacobian</span><span class="p">,</span>
+                            <span class="n">events</span><span class="o">=</span><span class="n">events</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">sol</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning, integration failed, final integration time = </span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
