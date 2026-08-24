@@ -1310,7 +1310,7 @@ class PythonNetwork(RateCollection):
             idx = self.unique_nuclei.index(nuc)
             assert idx >= 0, "nucleus not present in solution vector"
 
-            def exhaustion(t, y, *args):
+            def exhaustion(t, y, *args):  # pylint: disable=unused-argument
                 return y[idx] > val / nuc.A
             exhaustion.terminal = True
             exhaustion.direction = -1
