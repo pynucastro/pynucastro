@@ -4,7 +4,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.rates import make_double_neutron_rates
+from pynucastro.rates import make_CO_approx_rates, make_double_neutron_rates
 
 
 class TestAlphaGammaTfactors:
@@ -120,3 +120,11 @@ def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
         # rate scaled by rho Y(n)
 
         assert rf.eval(T, rho=rho, comp=comp) == approx(2.0 * rf1.eval(T, rho=rho, comp=comp) / rho / Yn)
+
+
+def test_co_approx_accepts_rate_list(reaclib_library):
+    """A list returned by ``Library.get_rates()`` is valid input."""
+
+    crates = make_CO_approx_rates(reaclib_library.get_rates(), "C")
+
+    assert len(crates) == 6
