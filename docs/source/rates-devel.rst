@@ -2,18 +2,29 @@
 Notes on Working with ``Rate`` Objects
 **************************************
 
+Attributes
+==========
+
+There are several different attributes that refer to the name / properties of the rate in some way.  These are:
+
+* ``Rate.id``
+
+* ``Rate.rid``
+
+* ``Rate.fname``
+
 
 Copying
 =======
 
-A ``Rate`` is not immutable.  When we do:
+A ``Rate`` is not immutable.  This can be an issue when we we do:
 
 .. code:: python
 
    rl = pyna.ReacLibLibrary()
    c12ag = rl.get_rate_by_name("c12(a,g)o16")
 
-the rate ``c12ag`` is actually a reference to the version stored
+Here, the rate ``c12ag`` is actually a reference to the version stored
 internally in the ``Library`` that ``ReacLibLibrary`` creates.
 
 This means if we modify the rate, e.g, as:
