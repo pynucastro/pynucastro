@@ -39,8 +39,8 @@ Instantaneous energy generation rate
 ε_{ν,weak} = 0
 
 Reaction rate values
-rate(               Na20_to_Ne20_reaclib) = 1.2369887515025
-rate(            Na20_to_He4_O16_reaclib) = 0.31021489871773
+rate(      Na20_to_Ne20_beta_pos_reaclib) = 1.2369887515025
+rate(   Na20_to_He4_O16_beta_pos_reaclib) = 0.31021489871773
 rate(             C12_He4_to_O16_reaclib) = 0.67096139839131
 rate(            O16_He4_to_Ne20_reaclib) = 5.1760152165499
 rate(        C12_C12_to_He4_Ne20_reaclib) = 73.295705197358
