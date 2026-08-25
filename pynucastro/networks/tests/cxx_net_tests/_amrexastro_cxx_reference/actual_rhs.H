@@ -194,12 +194,12 @@ void get_ydot_weak(const burn_t& state,
     const tf_t tfactors = evaluate_tfactors(state.T);
 
     {
-        // n_to_p_reaclib
+        // n_to_p_beta_neg_reaclib
 
         amrex::Real log_scor {0.0_rt};
         amrex::Real dlog_scor_dT {0.0_rt};
-        reaclib_rates::rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-        rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
+        reaclib_rates::rate_n_to_p_beta_neg_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+        rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
     }
 
     tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
@@ -207,10 +207,10 @@ void get_ydot_weak(const burn_t& state,
     const auto& screened_rates = rate_eval.screened_rates;
 
     ydot_nuc(N) =
-        -screened_rates(k_n_to_p_reaclib)*Y(N);
+        -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
 
     ydot_nuc(H1) =
-        screened_rates(k_n_to_p_reaclib)*Y(N);
+        screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
 
     ydot_nuc(He4) = 0.0_rt;
 
@@ -221,10 +221,10 @@ void get_ydot_weak(const burn_t& state,
     ydot_nuc(Ne20) = 0.0_rt;
 
     ydot_nuc(Ne23) =
-        (-screened_rates(k_Ne23_to_Na23_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_weaktab)*Y(Na23));
+        (-screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
 
     ydot_nuc(Na23) =
-        (screened_rates(k_Ne23_to_Na23_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_weaktab)*Y(Na23));
+        (screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
 
     ydot_nuc(Mg23) = 0.0_rt;
 
@@ -242,12 +242,12 @@ void rhs_nuc(const burn_t& state,
     using namespace Rates;
 
     ydot_nuc(N) =
-        -screened_rates(k_n_to_p_reaclib)*Y(N) +
+        -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N) +
         0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
     ydot_nuc(H1) =
         0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        screened_rates(k_n_to_p_reaclib)*Y(N);
+        screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
 
     ydot_nuc(He4) =
         0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
@@ -266,11 +266,11 @@ void rhs_nuc(const burn_t& state,
         0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
 
     ydot_nuc(Ne23) =
-        (-screened_rates(k_Ne23_to_Na23_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_weaktab)*Y(Na23));
+        (-screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
 
     ydot_nuc(Na23) =
         0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        (screened_rates(k_Ne23_to_Na23_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_weaktab)*Y(Na23));
+        (screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
 
     ydot_nuc(Mg23) =
         0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
@@ -334,7 +334,7 @@ void jac_nuc(const burn_t& state,
 
     amrex::Real scratch;
 
-    scratch = -screened_rates(k_n_to_p_reaclib);
+    scratch = -screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(N, N, scratch);
 
     jac.set(N, H1, 0.0);
@@ -354,7 +354,7 @@ void jac_nuc(const burn_t& state,
 
     jac.set(N, Mg23, 0.0);
 
-    scratch = screened_rates(k_n_to_p_reaclib);
+    scratch = screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(H1, N, scratch);
 
     jac.set(H1, H1, 0.0);
@@ -465,10 +465,10 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Ne23, Ne20, 0.0);
 
-    scratch = -screened_rates(k_Ne23_to_Na23_weaktab);
+    scratch = -screened_rates(k_Ne23_to_Na23_beta_neg_weaktab);
     jac.set(Ne23, Ne23, scratch);
 
-    scratch = screened_rates(k_Na23_to_Ne23_weaktab);
+    scratch = screened_rates(k_Na23_to_Ne23_electron_capture_weaktab);
     jac.set(Ne23, Na23, scratch);
 
     jac.set(Ne23, Mg23, 0.0);
@@ -486,10 +486,10 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Na23, Ne20, 0.0);
 
-    scratch = screened_rates(k_Ne23_to_Na23_weaktab);
+    scratch = screened_rates(k_Ne23_to_Na23_beta_neg_weaktab);
     jac.set(Na23, Ne23, scratch);
 
-    scratch = -screened_rates(k_Na23_to_Ne23_weaktab);
+    scratch = -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab);
     jac.set(Na23, Na23, scratch);
 
     jac.set(Na23, Mg23, 0.0);

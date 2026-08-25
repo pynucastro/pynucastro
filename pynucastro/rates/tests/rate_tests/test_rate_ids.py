@@ -51,13 +51,13 @@ class TestRateIds:
 
         assert r1.rid == "Ni56 --> Co56"
         assert r1.id == "Ni56 --> Co56 <weaktab_langanke>"
-        assert r1.fname == "Ni56_to_Co56_weaktab"
+        assert r1.fname == "Ni56_to_Co56_electron_capture_weaktab"
 
         r2 = ffn_library.get_rate_by_name("ni56(,)co56")
 
         assert r2.rid == "Ni56 --> Co56"
         assert r2.id == "Ni56 --> Co56 <weaktab_ffn>"
-        assert r2.fname == "Ni56_to_Co56_weaktab"
+        assert r2.fname == "Ni56_to_Co56_electron_capture_weaktab"
 
         assert r1 == r2
 

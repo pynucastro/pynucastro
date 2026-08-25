@@ -181,7 +181,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_n_to_p_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_n_to_p_beta_neg_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // n --> p
 
@@ -298,14 +298,14 @@ namespace reaclib_rates {
         }
 
         {
-            // n_to_p_reaclib
+            // n_to_p_beta_neg_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
-            rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
+            rate_n_to_p_beta_neg_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_n_to_p_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_n_to_p_beta_neg_reaclib) = drate_dT;
             }
         }
 

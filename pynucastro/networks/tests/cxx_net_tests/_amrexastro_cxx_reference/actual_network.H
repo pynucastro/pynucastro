@@ -154,10 +154,10 @@ namespace Rates
         k_C12_C12_to_n_Mg23_reaclib = 2,
         k_C12_C12_to_p_Na23_reaclib = 3,
         k_C12_He4_to_O16_reaclib = 4,
-        k_n_to_p_reaclib = 5,
-        k_Na23_to_Ne23_weaktab = 6,
-        k_Ne23_to_Na23_weaktab = 7,
-        NumRates = k_Ne23_to_Na23_weaktab
+        k_n_to_p_beta_neg_reaclib = 5,
+        k_Na23_to_Ne23_electron_capture_weaktab = 6,
+        k_Ne23_to_Na23_beta_neg_weaktab = 7,
+        NumRates = k_Ne23_to_Na23_beta_neg_weaktab
     };
 
     enum ScreenPairs :
@@ -178,9 +178,9 @@ namespace Rates
         "C12_C12_to_n_Mg23_reaclib",  // 2,
         "C12_C12_to_p_Na23_reaclib",  // 3,
         "C12_He4_to_O16_reaclib",  // 4,
-        "n_to_p_reaclib",  // 5,
-        "Na23_to_Ne23_weaktab",  // 6,
-        "Ne23_to_Na23_weaktab"  // 7,
+        "n_to_p_beta_neg_reaclib",  // 5,
+        "Na23_to_Ne23_electron_capture_weaktab",  // 6,
+        "Ne23_to_Na23_beta_neg_weaktab"  // 7,
     };
 
     template<std::uint8_t rate>

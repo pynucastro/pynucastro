@@ -312,7 +312,7 @@ void rate_Mg23_n_to_Mg24_reaclib(const tf_t& tfactors, const Real log_scor, cons
 
 template <int do_T_derivatives>
 inline
-void rate_n_to_p_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+void rate_n_to_p_beta_neg_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
     // n --> p
 
@@ -458,14 +458,14 @@ fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
     }
 
     {
-        // n_to_p_reaclib
+        // n_to_p_beta_neg_reaclib
 
         Real log_scor {0.0_rt};
         Real dlog_scor_dT {0.0_rt};
-        rate_n_to_p_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-        rate_eval.screened_rates(k_n_to_p_reaclib) = rate;
+        rate_n_to_p_beta_neg_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+        rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_n_to_p_reaclib) = drate_dT;
+            rate_eval.dscreened_rates_dT(k_n_to_p_beta_neg_reaclib) = drate_dT;
         }
     }
 

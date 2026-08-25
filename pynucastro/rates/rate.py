@@ -595,10 +595,12 @@ class Rate:
             nuc = cnuc[1:]
             fname_reactants = multiplicity * [nuc] + fname_reactants
 
-        self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
+        self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products)
 
         if self.weak_type != "":
             self.fname += f"_{self.weak_type}"
+
+        self.fname += f"_{self.label}"
 
         # for fractional stoichiometry, we cannot have "." in the
         # name, since it won't compile
