@@ -44,10 +44,10 @@ class TestAmrexAstroCxxNetwork:
                   '    k_C12_C12_to_n_Mg23_reaclib = 2,\n' +
                   '    k_C12_C12_to_p_Na23_reaclib = 3,\n' +
                   '    k_C12_He4_to_O16_reaclib = 4,\n' +
-                  '    k_n_to_p_reaclib = 5,\n' +
-                  '    k_Na23_to_Ne23_weaktab = 6,\n' +
-                  '    k_Ne23_to_Na23_weaktab = 7,\n' +
-                  '    NumRates = k_Ne23_to_Na23_weaktab\n')
+                  '    k_n_to_p_beta_neg_reaclib = 5,\n' +
+                  '    k_Na23_to_Ne23_electron_capture_weaktab = 6,\n' +
+                  '    k_Ne23_to_Na23_beta_neg_weaktab = 7,\n' +
+                  '    NumRates = k_Ne23_to_Na23_beta_neg_weaktab\n')
         assert self.cromulent_ftag(fn._nrxn, answer, n_indent=1)
 
     def test_ebind(self, fn):

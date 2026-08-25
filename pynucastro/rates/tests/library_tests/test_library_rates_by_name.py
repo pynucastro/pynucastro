@@ -16,7 +16,7 @@ class TestGetRatesByName:
         assert reaclib_library.get_rate_by_name(r2).fname == "C12_C12_to_He4_Ne20_reaclib"
         assert reaclib_library.get_rate_by_name(r3).fname == "He4_He4_He4_to_C12_reaclib"
         assert reaclib_library.get_rate_by_name(r4) is None
-        assert reaclib_library.get_rate_by_name(r5).fname == "F20_to_Ne20_reaclib"
+        assert reaclib_library.get_rate_by_name(r5).fname == "F20_to_Ne20_beta_neg_reaclib"
         assert reaclib_library.get_rate_by_name(r6).fname == "He3_He3_to_p_p_He4_reaclib"
 
     def test_tabular_rates(self, tabular_library):
@@ -26,7 +26,7 @@ class TestGetRatesByName:
         r6 = "ti45(e,nu)sc45"
         r7 = "ti45(,e)v45"
 
-        assert tabular_library.get_rate_by_name(r4).fname == "F20_to_O20_weaktab"
-        assert tabular_library.get_rate_by_name(r5).fname == "F20_to_Ne20_weaktab"
-        assert tabular_library.get_rate_by_name(r6).fname == "Ti45_to_Sc45_weaktab"
-        assert tabular_library.get_rate_by_name(r7).fname == "Ti45_to_V45_weaktab"
+        assert tabular_library.get_rate_by_name(r4).fname == "F20_to_O20_electron_capture_weaktab"
+        assert tabular_library.get_rate_by_name(r5).fname == "F20_to_Ne20_beta_neg_weaktab"
+        assert tabular_library.get_rate_by_name(r6).fname == "Ti45_to_Sc45_electron_capture_weaktab"
+        assert tabular_library.get_rate_by_name(r7).fname == "Ti45_to_V45_beta_neg_weaktab"
