@@ -599,7 +599,7 @@ class Rate:
         self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products) + f"_{self.label}"
         # for fractional stoichiometry, we cannot have "." in the
         # name, since it won't compile
-        self.fname = self.fname.replace(".", "_")
+        self.fname = self.fname.replace(".", "p")
 
         # Treat special duplicate rate cases
         # These are likely weak rates with beta plus decay and electron captures
