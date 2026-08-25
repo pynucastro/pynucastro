@@ -232,14 +232,23 @@ class Rate:
         we apply a multiplicity factor, N!, where N is the number of times
         the nucleus appears.  This can be disabled by setting
         use_identical_particle_factor = False
-
+    not_in_ydot_term : list(Nucleus)
+        A list of nuclei that appear in ``reactants`` but should not
+        contribute to the Y[nuc] scaling in the dY/dt term of the
+        rate equations.  As an example, consider the sequence:
+        He4(He3,γ)Be7(e-,ν)Li7(p,α)He4.  Here, He4, He3, and p are
+        consumed, but if we want to model this using just the first
+        rate in the sequence, then the dY/dt term is ρY(He3)Y(He4)λ,
+        Even though p doesn't appear here, we still want to account
+        for its consumption in dY(p)/dt.
     """
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
                  use_ye_weighting=False,
                  stoichiometry=None, rate_source=None,
-                 use_identical_particle_factor=True):
+                 use_identical_particle_factor=True,
+                 not_in_ydot_term=None):
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -250,6 +259,11 @@ class Rate:
             self.products = Nucleus.cast_list(products)
         else:
             self.products = []
+
+        if not_in_ydot_term:
+            self.not_in_ydot_term = not_in_ydot_term
+        else:
+            self.not_in_ydot_term = []
 
         assert '_' not in label, "Rate label should not contain underscore"
         self.label = label
@@ -585,7 +599,7 @@ class Rate:
             for r in set(self.reactants):
                 self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
-        self.dens_exp = len(self.reactants)-1
+        self.dens_exp = len([nuc for nuc in self.reactants if nuc not in self.not_in_ydot_term])-1
 
         if self.use_ye_weighting:
             # electron-capture rates from some sources need ρYₑ,
@@ -848,6 +862,8 @@ class Rate:
 
         # composition dependence
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if c > 1:
                 ydot_string_components.append(f"Y[j{r.raw}]**{c}")
@@ -971,7 +987,8 @@ class Rate:
         if self.use_ye_weighting:
             # we already added 1 to dens_exp
             val = val * y_e
-        yfac = functools.reduce(mul, [ys[q] for q in self.reactants])
+        yfac = functools.reduce(mul, [ys[q] for q in self.reactants
+                                      if q not in self.not_in_ydot_term])
         return yfac * val
 
     def function_string_py(self):
@@ -1001,7 +1018,7 @@ class Rate:
         str
 
         """
-        if y_i not in self.reactants:
+        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
             return ""
 
         jac_string_components = []
@@ -1022,6 +1039,8 @@ class Rate:
 
         # composition dependence
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
@@ -1073,7 +1092,7 @@ class Rate:
         float
 
         """
-        if y_i not in self.reactants:
+        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
             return 0.0
 
         rho = state.rho
@@ -1085,6 +1104,8 @@ class Rate:
         # composition dependence
         Y_term = 1.0
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
