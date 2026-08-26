@@ -604,7 +604,7 @@ class Rate:
 
         # for fractional stoichiometry, we cannot have "." in the
         # name, since it won't compile
-        self.fname = self.fname.replace(".", "_")
+        self.fname = self.fname.replace(".", "p")
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
