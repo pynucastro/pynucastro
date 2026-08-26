@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Modified Rates &#8212; pynucastro 3.0.0.post18+gbb31ea68e documentation</title>
+    <title>Modified Rates &#8212; pynucastro 3.0.0.post19+gfcf9ce2c5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ab206c54"></script>
+    <script src="_static/documentation_options.js?v=0592ffca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -677,10 +677,10 @@ the original rate and uses it.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def He4_N14_to_Ne20_modified(rate_eval, tf, log_scor=0.0):
+def N14_1p5He4_to_Ne20_modified(rate_eval, tf, log_scor=0.0):
     # N14 + 1.5 He4 --&gt; Ne20
-    He4_N14_to_F18_reaclib(rate_eval, tf, log_scor=log_scor)
-    rate_eval.He4_N14_to_Ne20_modified = rate_eval.He4_N14_to_F18_reaclib
+    N14_He4_to_F18_reaclib(rate_eval, tf, log_scor=log_scor)
+    rate_eval.N14_1p5He4_to_Ne20_modified = rate_eval.N14_He4_to_F18_reaclib
 </pre></div>
 </div>
 </div>
@@ -710,11 +710,11 @@ def He4_N14_to_Ne20_modified(rate_eval, tf, log_scor=0.0):
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jhe4] = (
-      -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib  +
-      -rho*Y[jhe4]*Y[jo16]*rate_eval.He4_O16_to_Ne20_reaclib  +
+      -rho*Y[jhe4]*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib  +
+      -rho*Y[jhe4]*Y[jo16]*rate_eval.O16_He4_to_Ne20_reaclib  +
       +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_He4_Ne20_reaclib  +
       + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4_to_C12_reaclib  +
-      + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.He4_N14_to_Ne20_modified
+      + -1.5*rho*Y[jhe4]*Y[jn14]*rate_eval.N14_1p5He4_to_Ne20_modified
    )
 </pre></div>
 </div>

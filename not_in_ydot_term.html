@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Rate Sequences with Extra Reactants &#8212; pynucastro 3.0.0.post18+gbb31ea68e documentation</title>
+    <title>Rate Sequences with Extra Reactants &#8212; pynucastro 3.0.0.post19+gfcf9ce2c5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ab206c54"></script>
+    <script src="_static/documentation_options.js?v=0592ffca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -676,7 +676,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>'rho*Y[jhe3]*Y[jhe4]*rate_eval.He4_He3_p_to_He4_He4_modified'
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>'rho*Y[jhe3]*Y[jhe4]*rate_eval.He3_He4_p_to_He4_He4_beta_pos_modified'
 </pre></div>
 </div>
 </div>
@@ -734,11 +734,11 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jp] = (
-      + -2*5.00000000000000e-01*rho*Y[jp]**2*rate_eval.p_p_to_d_reaclib_beta_pos  +
-      + -2*5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p_to_d_reaclib_electron_capture  +
-      -rho*Y[jp]*Y[jd]*rate_eval.p_d_to_He3_reaclib  +
+      + -2*5.00000000000000e-01*rho*Y[jp]**2*rate_eval.p_p_to_d_beta_pos_reaclib  +
+      + -2*5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p_to_d_electron_capture_reaclib  +
+      -rho*Y[jp]*Y[jd]*rate_eval.d_p_to_He3_reaclib  +
       + 2*5.00000000000000e-01*rho*Y[jhe3]**2*rate_eval.He3_He3_to_p_p_He4_reaclib  +
-      -rho*Y[jhe3]*Y[jhe4]*rate_eval.He4_He3_p_to_He4_He4_modified
+      -rho*Y[jhe3]*Y[jhe4]*rate_eval.He3_He4_p_to_He4_He4_beta_pos_modified
    )
 </pre></div>
 </div>
@@ -846,8 +846,8 @@ decay directly (it is actually doing <span class="math notranslate nohighlight">
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dYdt[jb8] = (
-      -Y[jb8]*rate_eval.B8_to_He4_He4_reaclib  +
-      +rho*Y[jp]*Y[jbe7]*rate_eval.p_Be7_to_B8_reaclib
+      -Y[jb8]*rate_eval.B8_to_He4_He4_beta_pos_reaclib  +
+      +rho*Y[jp]*Y[jbe7]*rate_eval.Be7_p_to_B8_reaclib
    )
 </pre></div>
 </div>

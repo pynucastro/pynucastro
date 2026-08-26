@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BranchedRate &#8212; pynucastro 3.0.0.post18+gbb31ea68e documentation</title>
+    <title>BranchedRate &#8212; pynucastro 3.0.0.post19+gfcf9ce2c5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ab206c54"></script>
+    <script src="_static/documentation_options.js?v=0592ffca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -871,16 +871,16 @@ first rate, then we need to specify the stoichiometry.</p>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def p_N14_to_He4_C12_branched(rate_eval, tf, log_scor=0.0):
+def N14_p_p_to_He4_C12_beta_pos_branched(rate_eval, tf, log_scor=0.0):
     # N14 + p + p --&gt; He4 + C12
     # represents the sequence: N14(p,g)O15(,e+nu)N15(p,a)C12
 
-    r0 = rate_eval.p_N14_to_O15_reaclib
-    r_prim_br = rate_eval.p_N15_to_He4_C12_reaclib
-    r_other_br = rate_eval.p_N15_to_O16_reaclib
+    r0 = rate_eval.N14_p_to_O15_reaclib
+    r_prim_br = rate_eval.N15_p_to_He4_C12_reaclib
+    r_other_br = rate_eval.N15_p_to_O16_reaclib
 
     f = r_prim_br / (r_prim_br + r_other_br)
-    rate_eval.p_N14_to_He4_C12_branched = f * r0
+    rate_eval.N14_p_p_to_He4_C12_beta_pos_branched = f * r0
 </pre></div>
 </div>
 </div>

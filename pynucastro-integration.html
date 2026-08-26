@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.0.0.post18+gbb31ea68e documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.0.0.post19+gfcf9ce2c5 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ab206c54"></script>
+    <script src="_static/documentation_options.js?v=0592ffca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -707,7 +707,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib
 </pre></div>
 </div>
 </div>
@@ -721,7 +721,7 @@ and pass in the names of the rates in the form of a string <code class="docutils
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
+def C13_p_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     # C13 + p --&gt; N14
     rate = 0.0
 
@@ -749,7 +749,7 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_C13_to_N14_reaclib = rate
+    rate_eval.C13_p_to_N14_reaclib = rate
 </pre></div>
 </div>
 </div>
@@ -873,33 +873,33 @@ def energy_release(dY):
 
 @jitclass([
     ("enuc_weak", numba.float64),
-    ("p_C12_to_N13_reaclib", numba.float64),
-    ("p_C13_to_N14_reaclib", numba.float64),
-    ("N13_to_C13_reaclib", numba.float64),
-    ("p_N13_to_O14_reaclib", numba.float64),
-    ("p_N14_to_O15_reaclib", numba.float64),
-    ("p_N15_to_He4_C12_reaclib", numba.float64),
-    ("O14_to_N14_reaclib", numba.float64),
-    ("O15_to_N15_reaclib", numba.float64),
+    ("C12_p_to_N13_reaclib", numba.float64),
+    ("C13_p_to_N14_reaclib", numba.float64),
+    ("N13_to_C13_beta_pos_reaclib", numba.float64),
+    ("N13_p_to_O14_reaclib", numba.float64),
+    ("N14_p_to_O15_reaclib", numba.float64),
+    ("N15_p_to_He4_C12_reaclib", numba.float64),
+    ("O14_to_N14_beta_pos_reaclib", numba.float64),
+    ("O15_to_N15_beta_pos_reaclib", numba.float64),
 ])
 class RateEval:
     def __init__(self):
         self.enuc_weak = 0.0
-        self.p_C12_to_N13_reaclib = np.nan
-        self.p_C13_to_N14_reaclib = np.nan
-        self.N13_to_C13_reaclib = np.nan
-        self.p_N13_to_O14_reaclib = np.nan
-        self.p_N14_to_O15_reaclib = np.nan
-        self.p_N15_to_He4_C12_reaclib = np.nan
-        self.O14_to_N14_reaclib = np.nan
-        self.O15_to_N15_reaclib = np.nan
+        self.C12_p_to_N13_reaclib = np.nan
+        self.C13_p_to_N14_reaclib = np.nan
+        self.N13_to_C13_beta_pos_reaclib = np.nan
+        self.N13_p_to_O14_reaclib = np.nan
+        self.N14_p_to_O15_reaclib = np.nan
+        self.N15_p_to_He4_C12_reaclib = np.nan
+        self.O14_to_N14_beta_pos_reaclib = np.nan
+        self.O15_to_N15_beta_pos_reaclib = np.nan
 
 @numba.njit()
 def ye(Y):
     return np.sum(Z * Y)/np.sum(A * Y)
 
 @numba.njit()
-def p_C12_to_N13_reaclib(rate_eval, tf, log_scor=0.0):
+def C12_p_to_N13_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + p --&gt; N13
     rate = 0.0
 
@@ -919,10 +919,10 @@ def p_C12_to_N13_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_C12_to_N13_reaclib = rate
+    rate_eval.C12_p_to_N13_reaclib = rate
 
 @numba.njit()
-def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
+def C13_p_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     # C13 + p --&gt; N14
     rate = 0.0
 
@@ -950,10 +950,10 @@ def p_C13_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_C13_to_N14_reaclib = rate
+    rate_eval.C13_p_to_N14_reaclib = rate
 
 @numba.njit()
-def N13_to_C13_reaclib(rate_eval, tf, log_scor=0.0):
+def N13_to_C13_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
     # N13 --&gt; C13
     rate = 0.0
 
@@ -964,10 +964,10 @@ def N13_to_C13_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.N13_to_C13_reaclib = rate
+    rate_eval.N13_to_C13_beta_pos_reaclib = rate
 
 @numba.njit()
-def p_N13_to_O14_reaclib(rate_eval, tf, log_scor=0.0):
+def N13_p_to_O14_reaclib(rate_eval, tf, log_scor=0.0):
     # N13 + p --&gt; O14
     rate = 0.0
 
@@ -987,10 +987,10 @@ def p_N13_to_O14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_N13_to_O14_reaclib = rate
+    rate_eval.N13_p_to_O14_reaclib = rate
 
 @numba.njit()
-def p_N14_to_O15_reaclib(rate_eval, tf, log_scor=0.0):
+def N14_p_to_O15_reaclib(rate_eval, tf, log_scor=0.0):
     # N14 + p --&gt; O15
     rate = 0.0
 
@@ -1026,10 +1026,10 @@ def p_N14_to_O15_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_N14_to_O15_reaclib = rate
+    rate_eval.N14_p_to_O15_reaclib = rate
 
 @numba.njit()
-def p_N15_to_He4_C12_reaclib(rate_eval, tf, log_scor=0.0):
+def N15_p_to_He4_C12_reaclib(rate_eval, tf, log_scor=0.0):
     # N15 + p --&gt; He4 + C12
     rate = 0.0
 
@@ -1065,10 +1065,10 @@ def p_N15_to_He4_C12_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_N15_to_He4_C12_reaclib = rate
+    rate_eval.N15_p_to_He4_C12_reaclib = rate
 
 @numba.njit()
-def O14_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
+def O14_to_N14_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
     # O14 --&gt; N14
     rate = 0.0
 
@@ -1079,10 +1079,10 @@ def O14_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.O14_to_N14_reaclib = rate
+    rate_eval.O14_to_N14_beta_pos_reaclib = rate
 
 @numba.njit()
-def O15_to_N15_reaclib(rate_eval, tf, log_scor=0.0):
+def O15_to_N15_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
     # O15 --&gt; N15
     rate = 0.0
 
@@ -1093,7 +1093,7 @@ def O15_to_N15_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.O15_to_N15_reaclib = rate
+    rate_eval.O15_to_N15_beta_pos_reaclib = rate
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
@@ -1125,14 +1125,14 @@ def do_rate_eval(t, Y, rho, T, screen_func):
         log_scor_p_C13 = screen_func(plasma_state, scn_fac)
 
     # reaclib rates
-    p_C12_to_N13_reaclib(rate_eval, tf, log_scor=log_scor_p_C12)
-    p_C13_to_N14_reaclib(rate_eval, tf, log_scor=log_scor_p_C13)
-    N13_to_C13_reaclib(rate_eval, tf)
-    p_N13_to_O14_reaclib(rate_eval, tf, log_scor=log_scor_p_N13)
-    p_N14_to_O15_reaclib(rate_eval, tf, log_scor=log_scor_p_N14)
-    p_N15_to_He4_C12_reaclib(rate_eval, tf, log_scor=log_scor_p_N15)
-    O14_to_N14_reaclib(rate_eval, tf)
-    O15_to_N15_reaclib(rate_eval, tf)
+    C12_p_to_N13_reaclib(rate_eval, tf, log_scor=log_scor_p_C12)
+    C13_p_to_N14_reaclib(rate_eval, tf, log_scor=log_scor_p_C13)
+    N13_to_C13_beta_pos_reaclib(rate_eval, tf)
+    N13_p_to_O14_reaclib(rate_eval, tf, log_scor=log_scor_p_N13)
+    N14_p_to_O15_reaclib(rate_eval, tf, log_scor=log_scor_p_N14)
+    N15_p_to_He4_C12_reaclib(rate_eval, tf, log_scor=log_scor_p_N15)
+    O14_to_N14_beta_pos_reaclib(rate_eval, tf)
+    O15_to_N15_beta_pos_reaclib(rate_eval, tf)
 
     return rate_eval
 
@@ -1142,52 +1142,52 @@ def ydot_eq(Y, rho, rate_eval):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jp] = (
-          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
-          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
-          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
-          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+          -rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_reaclib  +
+          -rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.N13_p_to_O14_reaclib  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_reaclib  +
+          -rho*Y[jp]*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     dYdt[jhe4] = (
-          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+          +rho*Y[jp]*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     dYdt[jc12] = (
-          -rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
-          +rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+          -rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_reaclib  +
+          +rho*Y[jp]*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     dYdt[jc13] = (
-          -rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
-          +Y[jn13]*rate_eval.N13_to_C13_reaclib
+          -rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib  +
+          +Y[jn13]*rate_eval.N13_to_C13_beta_pos_reaclib
        )
 
     dYdt[jn13] = (
-          +rho*Y[jp]*Y[jc12]*rate_eval.p_C12_to_N13_reaclib  +
-          -Y[jn13]*rate_eval.N13_to_C13_reaclib  +
-          -rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
+          +rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_reaclib  +
+          -Y[jn13]*rate_eval.N13_to_C13_beta_pos_reaclib  +
+          -rho*Y[jp]*Y[jn13]*rate_eval.N13_p_to_O14_reaclib
        )
 
     dYdt[jn14] = (
-          +rho*Y[jp]*Y[jc13]*rate_eval.p_C13_to_N14_reaclib  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
-          +Y[jo14]*rate_eval.O14_to_N14_reaclib
+          +rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_reaclib  +
+          +Y[jo14]*rate_eval.O14_to_N14_beta_pos_reaclib
        )
 
     dYdt[jn15] = (
-          -rho*Y[jp]*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib  +
-          +Y[jo15]*rate_eval.O15_to_N15_reaclib
+          -rho*Y[jp]*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib  +
+          +Y[jo15]*rate_eval.O15_to_N15_beta_pos_reaclib
        )
 
     dYdt[jo14] = (
-          +rho*Y[jp]*Y[jn13]*rate_eval.p_N13_to_O14_reaclib  +
-          -Y[jo14]*rate_eval.O14_to_N14_reaclib
+          +rho*Y[jp]*Y[jn13]*rate_eval.N13_p_to_O14_reaclib  +
+          -Y[jo14]*rate_eval.O14_to_N14_beta_pos_reaclib
        )
 
     dYdt[jo15] = (
-          +rho*Y[jp]*Y[jn14]*rate_eval.p_N14_to_O15_reaclib  +
-          -Y[jo15]*rate_eval.O15_to_N15_reaclib
+          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_reaclib  +
+          -Y[jo15]*rate_eval.O15_to_N15_beta_pos_reaclib
        )
 
     return dYdt
@@ -1209,131 +1209,131 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
     jac[jp, jp] = (
-       -rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
-       -rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
-       -rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
-       -rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
-       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+       -rho*Y[jc12]*rate_eval.C12_p_to_N13_reaclib
+       -rho*Y[jc13]*rate_eval.C13_p_to_N14_reaclib
+       -rho*Y[jn13]*rate_eval.N13_p_to_O14_reaclib
+       -rho*Y[jn14]*rate_eval.N14_p_to_O15_reaclib
+       -rho*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jp, jc12] = (
-       -rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
+       -rho*Y[jp]*rate_eval.C12_p_to_N13_reaclib
        )
 
     jac[jp, jc13] = (
-       -rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
+       -rho*Y[jp]*rate_eval.C13_p_to_N14_reaclib
        )
 
     jac[jp, jn13] = (
-       -rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
+       -rho*Y[jp]*rate_eval.N13_p_to_O14_reaclib
        )
 
     jac[jp, jn14] = (
-       -rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
+       -rho*Y[jp]*rate_eval.N14_p_to_O15_reaclib
        )
 
     jac[jp, jn15] = (
-       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
+       -rho*Y[jp]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jhe4, jp] = (
-       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+       +rho*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jhe4, jn15] = (
-       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
+       +rho*Y[jp]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jc12, jp] = (
-       -rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
-       +rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+       -rho*Y[jc12]*rate_eval.C12_p_to_N13_reaclib
+       +rho*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jc12, jc12] = (
-       -rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
+       -rho*Y[jp]*rate_eval.C12_p_to_N13_reaclib
        )
 
     jac[jc12, jn15] = (
-       +rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
+       +rho*Y[jp]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jc13, jp] = (
-       -rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
+       -rho*Y[jc13]*rate_eval.C13_p_to_N14_reaclib
        )
 
     jac[jc13, jc13] = (
-       -rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
+       -rho*Y[jp]*rate_eval.C13_p_to_N14_reaclib
        )
 
     jac[jc13, jn13] = (
-       +rate_eval.N13_to_C13_reaclib
+       +rate_eval.N13_to_C13_beta_pos_reaclib
        )
 
     jac[jn13, jp] = (
-       -rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
-       +rho*Y[jc12]*rate_eval.p_C12_to_N13_reaclib
+       -rho*Y[jn13]*rate_eval.N13_p_to_O14_reaclib
+       +rho*Y[jc12]*rate_eval.C12_p_to_N13_reaclib
        )
 
     jac[jn13, jc12] = (
-       +rho*Y[jp]*rate_eval.p_C12_to_N13_reaclib
+       +rho*Y[jp]*rate_eval.C12_p_to_N13_reaclib
        )
 
     jac[jn13, jn13] = (
-       -rate_eval.N13_to_C13_reaclib
-       -rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
+       -rate_eval.N13_to_C13_beta_pos_reaclib
+       -rho*Y[jp]*rate_eval.N13_p_to_O14_reaclib
        )
 
     jac[jn14, jp] = (
-       -rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
-       +rho*Y[jc13]*rate_eval.p_C13_to_N14_reaclib
+       -rho*Y[jn14]*rate_eval.N14_p_to_O15_reaclib
+       +rho*Y[jc13]*rate_eval.C13_p_to_N14_reaclib
        )
 
     jac[jn14, jc13] = (
-       +rho*Y[jp]*rate_eval.p_C13_to_N14_reaclib
+       +rho*Y[jp]*rate_eval.C13_p_to_N14_reaclib
        )
 
     jac[jn14, jn14] = (
-       -rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
+       -rho*Y[jp]*rate_eval.N14_p_to_O15_reaclib
        )
 
     jac[jn14, jo14] = (
-       +rate_eval.O14_to_N14_reaclib
+       +rate_eval.O14_to_N14_beta_pos_reaclib
        )
 
     jac[jn15, jp] = (
-       -rho*Y[jn15]*rate_eval.p_N15_to_He4_C12_reaclib
+       -rho*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jn15, jn15] = (
-       -rho*Y[jp]*rate_eval.p_N15_to_He4_C12_reaclib
+       -rho*Y[jp]*rate_eval.N15_p_to_He4_C12_reaclib
        )
 
     jac[jn15, jo15] = (
-       +rate_eval.O15_to_N15_reaclib
+       +rate_eval.O15_to_N15_beta_pos_reaclib
        )
 
     jac[jo14, jp] = (
-       +rho*Y[jn13]*rate_eval.p_N13_to_O14_reaclib
+       +rho*Y[jn13]*rate_eval.N13_p_to_O14_reaclib
        )
 
     jac[jo14, jn13] = (
-       +rho*Y[jp]*rate_eval.p_N13_to_O14_reaclib
+       +rho*Y[jp]*rate_eval.N13_p_to_O14_reaclib
        )
 
     jac[jo14, jo14] = (
-       -rate_eval.O14_to_N14_reaclib
+       -rate_eval.O14_to_N14_beta_pos_reaclib
        )
 
     jac[jo15, jp] = (
-       +rho*Y[jn14]*rate_eval.p_N14_to_O15_reaclib
+       +rho*Y[jn14]*rate_eval.N14_p_to_O15_reaclib
        )
 
     jac[jo15, jn14] = (
-       +rho*Y[jp]*rate_eval.p_N14_to_O15_reaclib
+       +rho*Y[jp]*rate_eval.N14_p_to_O15_reaclib
        )
 
     jac[jo15, jo15] = (
-       -rate_eval.O15_to_N15_reaclib
+       -rate_eval.O15_to_N15_beta_pos_reaclib
        )
 
     return jac
