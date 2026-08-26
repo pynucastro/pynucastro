@@ -686,6 +686,31 @@ class PythonNetwork(RateCollection):
         # changed
         self.network_module = None
 
+    def resample(self, seed=None):
+        """Resample starlib rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+
+        super().resample(seed=seed)
+
+        # invalid when we do resample.
+        # Since StarLibRate log_rate_data will be changed
+        self.network_module = None
+
+    def unsample(self):
+        """Restore starlib rates to median values."""
+
+        super().unsample()
+
+        # invalid when we do resample.
+        # Since StarLibRate log_rate_data will be changed
+        self.network_module = None
+
     def full_ydot_string(self, nucleus, indent=""):
         """Construct a string containing the python code for
         dY(nucleus)/dt by considering every reaction that involves
