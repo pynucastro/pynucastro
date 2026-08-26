@@ -16,8 +16,8 @@ class TestRateCollection:
 
         assert len(rr) == 4
         assert rr[0].fname == "O16_to_He4_C12_reaclib"
-        assert rr[1].fname == "C12_to_He4_He4_He4_reaclib"
-        assert rr[2].fname == "He4_C12_to_O16_reaclib"
+        assert rr[1].fname == "C12_to_3He4_reaclib"
+        assert rr[2].fname == "C12_He4_to_O16_reaclib"
         assert rr[3].fname == "He4_He4_He4_to_C12_reaclib"
 
     def test_get_rate(self, rc):
@@ -25,7 +25,7 @@ class TestRateCollection:
         assert r.fname == "He4_He4_He4_to_C12_reaclib"
 
     def test_find_reverse(self, rc):
-        rr = rc.find_reverse(rc.get_rate("He4_C12_to_O16"))
+        rr = rc.find_reverse(rc.get_rate("C12_He4_to_O16"))
         assert rr.fname == "O16_to_He4_C12_reaclib"
 
     def test_evaluate_energy_gen(self, rc):

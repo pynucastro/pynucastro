@@ -16,7 +16,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_He4_Mg24_to_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Mg24_He4_to_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Mg24 + He4 --> Si28
 
@@ -73,7 +73,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_He4_Mg24_to_p_Al27_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Mg24_He4_to_p_Al27_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Mg24 + He4 --> p + Al27
 
@@ -151,7 +151,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_p_Al27_to_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Al27_p_to_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Al27 + p --> Si28
 
@@ -362,7 +362,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_p_Al27_to_He4_Mg24_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Al27_p_to_He4_Mg24_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Al27 + p --> He4 + Mg24
 
@@ -440,7 +440,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_He4_Si28_to_S32_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_He4_to_S32_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 + He4 --> S32
 
@@ -476,7 +476,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_He4_Si28_to_p_P31_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_He4_to_p_P31_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 + He4 --> p + P31
 
@@ -554,7 +554,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_p_P31_to_S32_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_P31_p_to_S32_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // P31 + p --> S32
 
@@ -744,7 +744,7 @@ namespace reaclib_rates {
 
     template <int do_T_derivatives>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_p_P31_to_He4_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_P31_p_to_He4_Si28_reaclib(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // P31 + p --> He4 + Si28
 
@@ -832,7 +832,7 @@ namespace reaclib_rates {
         [[maybe_unused]] amrex::Real drate_dT;
 
         {
-            // He4_Mg24_to_Si28_reaclib
+            // Mg24_He4_to_Si28_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -842,15 +842,15 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Mg24);
             }
 #endif
-            rate_He4_Mg24_to_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_He4_Mg24_to_Si28_reaclib) = rate;
+            rate_Mg24_He4_to_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Mg24_He4_to_Si28_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_He4_Mg24_to_Si28_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Mg24_He4_to_Si28_reaclib) = drate_dT;
             }
         }
 
         {
-            // He4_Mg24_to_p_Al27_reaclib
+            // Mg24_He4_to_p_Al27_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -860,15 +860,15 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Mg24);
             }
 #endif
-            rate_He4_Mg24_to_p_Al27_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_He4_Mg24_to_p_Al27_reaclib) = rate;
+            rate_Mg24_He4_to_p_Al27_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Mg24_He4_to_p_Al27_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_He4_Mg24_to_p_Al27_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Mg24_He4_to_p_Al27_reaclib) = drate_dT;
             }
         }
 
         {
-            // p_Al27_to_Si28_reaclib
+            // Al27_p_to_Si28_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -878,10 +878,10 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Al27);
             }
 #endif
-            rate_p_Al27_to_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_p_Al27_to_Si28_reaclib) = rate;
+            rate_Al27_p_to_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Al27_p_to_Si28_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_p_Al27_to_Si28_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Al27_p_to_Si28_reaclib) = drate_dT;
             }
         }
 
@@ -910,7 +910,7 @@ namespace reaclib_rates {
         }
 
         {
-            // p_Al27_to_He4_Mg24_reaclib
+            // Al27_p_to_He4_Mg24_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -920,15 +920,15 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Al27);
             }
 #endif
-            rate_p_Al27_to_He4_Mg24_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_p_Al27_to_He4_Mg24_reaclib) = rate;
+            rate_Al27_p_to_He4_Mg24_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Al27_p_to_He4_Mg24_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_p_Al27_to_He4_Mg24_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Al27_p_to_He4_Mg24_reaclib) = drate_dT;
             }
         }
 
         {
-            // He4_Si28_to_S32_reaclib
+            // Si28_He4_to_S32_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -938,15 +938,15 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Si28);
             }
 #endif
-            rate_He4_Si28_to_S32_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_He4_Si28_to_S32_reaclib) = rate;
+            rate_Si28_He4_to_S32_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Si28_He4_to_S32_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_He4_Si28_to_S32_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Si28_He4_to_S32_reaclib) = drate_dT;
             }
         }
 
         {
-            // He4_Si28_to_p_P31_reaclib
+            // Si28_He4_to_p_P31_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -956,15 +956,15 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Si28);
             }
 #endif
-            rate_He4_Si28_to_p_P31_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_He4_Si28_to_p_P31_reaclib) = rate;
+            rate_Si28_He4_to_p_P31_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_Si28_He4_to_p_P31_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_He4_Si28_to_p_P31_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_Si28_He4_to_p_P31_reaclib) = drate_dT;
             }
         }
 
         {
-            // p_P31_to_S32_reaclib
+            // P31_p_to_S32_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -974,10 +974,10 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_P31);
             }
 #endif
-            rate_p_P31_to_S32_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_p_P31_to_S32_reaclib) = rate;
+            rate_P31_p_to_S32_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_P31_p_to_S32_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_p_P31_to_S32_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_P31_p_to_S32_reaclib) = drate_dT;
             }
         }
 
@@ -1006,7 +1006,7 @@ namespace reaclib_rates {
         }
 
         {
-            // p_P31_to_He4_Si28_reaclib
+            // P31_p_to_He4_Si28_reaclib
 
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
@@ -1016,10 +1016,10 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_P31);
             }
 #endif
-            rate_p_P31_to_He4_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_p_P31_to_He4_Si28_reaclib) = rate;
+            rate_P31_p_to_He4_Si28_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_eval.screened_rates(k_P31_p_to_He4_Si28_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_p_P31_to_He4_Si28_reaclib) = drate_dT;
+                rate_eval.dscreened_rates_dT(k_P31_p_to_He4_Si28_reaclib) = drate_dT;
             }
         }
 

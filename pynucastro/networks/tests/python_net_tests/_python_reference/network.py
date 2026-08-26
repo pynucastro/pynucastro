@@ -92,11 +92,11 @@ def energy_release(dY):
     ("C12_C12_to_He4_Ne20_reaclib", numba.float64),
     ("C12_C12_to_n_Mg23_reaclib", numba.float64),
     ("C12_C12_to_p_Na23_reaclib", numba.float64),
-    ("He4_C12_to_O16_reaclib", numba.float64),
-    ("n_to_p_reaclib", numba.float64),
+    ("C12_He4_to_O16_reaclib", numba.float64),
+    ("n_to_p_beta_neg_reaclib", numba.float64),
     ("He4_He4_He4_to_C12_reaclib", numba.float64),
-    ("Na23_to_Ne23_weaktab", numba.float64),
-    ("Ne23_to_Na23_weaktab", numba.float64),
+    ("Na23_to_Ne23_electron_capture_weaktab", numba.float64),
+    ("Ne23_to_Na23_beta_neg_weaktab", numba.float64),
 ])
 class RateEval:
     def __init__(self):
@@ -104,15 +104,15 @@ class RateEval:
         self.C12_C12_to_He4_Ne20_reaclib = np.nan
         self.C12_C12_to_n_Mg23_reaclib = np.nan
         self.C12_C12_to_p_Na23_reaclib = np.nan
-        self.He4_C12_to_O16_reaclib = np.nan
-        self.n_to_p_reaclib = np.nan
+        self.C12_He4_to_O16_reaclib = np.nan
+        self.n_to_p_beta_neg_reaclib = np.nan
         self.He4_He4_He4_to_C12_reaclib = np.nan
-        self.Na23_to_Ne23_weaktab = np.nan
-        self.Ne23_to_Na23_weaktab = np.nan
+        self.Na23_to_Ne23_electron_capture_weaktab = np.nan
+        self.Ne23_to_Na23_beta_neg_weaktab = np.nan
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
-Na23_to_Ne23_weaktab_info = (
+Na23_to_Ne23_electron_capture_weaktab_info = (
     152,    # table_rhoy_lines
     39,    # table_temp_lines
     # tabular_data_table
@@ -120,7 +120,7 @@ Na23_to_Ne23_weaktab_info = (
 )
 
 # load data for Ne23 --> Na23
-Ne23_to_Na23_weaktab_info = (
+Ne23_to_Na23_beta_neg_weaktab_info = (
     152,    # table_rhoy_lines
     39,    # table_temp_lines
     # tabular_data_table
@@ -177,7 +177,7 @@ def C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.C12_C12_to_p_Na23_reaclib = rate
 
 @numba.njit()
-def He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
+def C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     # C12 + He4 --> O16
     rate = 0.0
 
@@ -197,10 +197,10 @@ def He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.He4_C12_to_O16_reaclib = rate
+    rate_eval.C12_He4_to_O16_reaclib = rate
 
 @numba.njit()
-def n_to_p_reaclib(rate_eval, tf, log_scor=0.0):
+def n_to_p_beta_neg_reaclib(rate_eval, tf, log_scor=0.0):
     # n --> p
     rate = 0.0
 
@@ -211,7 +211,7 @@ def n_to_p_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.n_to_p_reaclib = rate
+    rate_eval.n_to_p_beta_neg_reaclib = rate
 
 @numba.njit()
 def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
@@ -245,35 +245,35 @@ def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.He4_He4_He4_to_C12_reaclib = rate
 
 @numba.njit()
-def Na23_to_Ne23_weaktab(rate_eval, T, rho, Y):
+def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, rho, Y):
     # Na23 --> Ne23
     rhoY = rho * ye(Y)
-    Na23_to_Ne23_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_weaktab_info)
+    Na23_to_Ne23_electron_capture_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_electron_capture_weaktab_info)
     log_rhoY = np.log10(rhoY)
     log_T = np.log10(T)
 
-    r = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
-    enu = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
-    egamma = Na23_to_Ne23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
+    r = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
+    enu = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
+    egamma = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
 
-    rate_eval.Na23_to_Ne23_weaktab = 10.0**r
+    rate_eval.Na23_to_Ne23_electron_capture_weaktab = 10.0**r
     edot_nu = -10.0**enu
     edot_gamma = 10.0**egamma
     rate_eval.enuc_weak += N_A * Y[jna23] * (edot_nu + edot_gamma)
 
 @numba.njit()
-def Ne23_to_Na23_weaktab(rate_eval, T, rho, Y):
+def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, rho, Y):
     # Ne23 --> Na23
     rhoY = rho * ye(Y)
-    Ne23_to_Na23_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_weaktab_info)
+    Ne23_to_Na23_beta_neg_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_beta_neg_weaktab_info)
     log_rhoY = np.log10(rhoY)
     log_T = np.log10(T)
 
-    r = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
-    enu = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
-    egamma = Ne23_to_Na23_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
+    r = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
+    enu = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
+    egamma = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
 
-    rate_eval.Ne23_to_Na23_weaktab = 10.0**r
+    rate_eval.Ne23_to_Na23_beta_neg_weaktab = 10.0**r
     edot_nu = -10.0**enu
     edot_gamma = 10.0**egamma
     rate_eval.enuc_weak += N_A * Y[jne23] * (edot_nu + edot_gamma)
@@ -308,13 +308,13 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
-    He4_C12_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
-    n_to_p_reaclib(rate_eval, tf)
+    C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
+    n_to_p_beta_neg_reaclib(rate_eval, tf)
     He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
-    Na23_to_Ne23_weaktab(rate_eval, T, rho=rho, Y=Y)
-    Ne23_to_Na23_weaktab(rate_eval, T, rho=rho, Y=Y)
+    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, rho=rho, Y=Y)
+    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, rho=rho, Y=Y)
 
     return rate_eval
 
@@ -324,31 +324,31 @@ def ydot_eq(Y, rho, rate_eval):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jn] = (
-          -Y[jn]*rate_eval.n_to_p_reaclib  +
+          -Y[jn]*rate_eval.n_to_p_beta_neg_reaclib  +
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_n_Mg23_reaclib
        )
 
     dYdt[jp] = (
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_p_Na23_reaclib  +
-          +Y[jn]*rate_eval.n_to_p_reaclib
+          +Y[jn]*rate_eval.n_to_p_beta_neg_reaclib
        )
 
     dYdt[jhe4] = (
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_He4_Ne20_reaclib  +
-          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib  +
           + -3*1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4_to_C12_reaclib
        )
 
     dYdt[jc12] = (
           + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_He4_Ne20_reaclib  +
           + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_p_Na23_reaclib  +
-          -rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib  +
+          -rho*Y[jhe4]*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib  +
           +1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.He4_He4_He4_to_C12_reaclib  +
           + -2*5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_n_Mg23_reaclib
        )
 
     dYdt[jo16] = (
-          +rho*Y[jhe4]*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib
+          +rho*Y[jhe4]*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib
        )
 
     dYdt[jne20] = (
@@ -356,12 +356,12 @@ def ydot_eq(Y, rho, rate_eval):
        )
 
     dYdt[jne23] = (
-          ( -Y[jne23]*rate_eval.Ne23_to_Na23_weaktab +Y[jna23]*rate_eval.Na23_to_Ne23_weaktab )
+          ( -Y[jne23]*rate_eval.Ne23_to_Na23_beta_neg_weaktab +Y[jna23]*rate_eval.Na23_to_Ne23_electron_capture_weaktab )
        )
 
     dYdt[jna23] = (
           +5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.C12_C12_to_p_Na23_reaclib  +
-          ( +Y[jne23]*rate_eval.Ne23_to_Na23_weaktab -Y[jna23]*rate_eval.Na23_to_Ne23_weaktab )
+          ( +Y[jne23]*rate_eval.Ne23_to_Na23_beta_neg_weaktab -Y[jna23]*rate_eval.Na23_to_Ne23_electron_capture_weaktab )
        )
 
     dYdt[jmg23] = (
@@ -387,7 +387,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
     jac[jn, jn] = (
-       -rate_eval.n_to_p_reaclib
+       -rate_eval.n_to_p_beta_neg_reaclib
        )
 
     jac[jn, jc12] = (
@@ -395,7 +395,7 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        )
 
     jac[jp, jn] = (
-       +rate_eval.n_to_p_reaclib
+       +rate_eval.n_to_p_beta_neg_reaclib
        )
 
     jac[jp, jc12] = (
@@ -403,17 +403,17 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        )
 
     jac[jhe4, jhe4] = (
-       -rho*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib
+       -rho*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib
        -3*1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.He4_He4_He4_to_C12_reaclib
        )
 
     jac[jhe4, jc12] = (
-       -rho*Y[jhe4]*rate_eval.He4_C12_to_O16_reaclib
+       -rho*Y[jhe4]*rate_eval.C12_He4_to_O16_reaclib
        +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12_to_He4_Ne20_reaclib
        )
 
     jac[jc12, jhe4] = (
-       -rho*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib
+       -rho*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib
        +1.66666666666667e-01*rho**2*3*Y[jhe4]**2*rate_eval.He4_He4_He4_to_C12_reaclib
        )
 
@@ -421,15 +421,15 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12_to_He4_Ne20_reaclib
        -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12_to_n_Mg23_reaclib
        -2*5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12_to_p_Na23_reaclib
-       -rho*Y[jhe4]*rate_eval.He4_C12_to_O16_reaclib
+       -rho*Y[jhe4]*rate_eval.C12_He4_to_O16_reaclib
        )
 
     jac[jo16, jhe4] = (
-       +rho*Y[jc12]*rate_eval.He4_C12_to_O16_reaclib
+       +rho*Y[jc12]*rate_eval.C12_He4_to_O16_reaclib
        )
 
     jac[jo16, jc12] = (
-       +rho*Y[jhe4]*rate_eval.He4_C12_to_O16_reaclib
+       +rho*Y[jhe4]*rate_eval.C12_He4_to_O16_reaclib
        )
 
     jac[jne20, jc12] = (
@@ -437,11 +437,11 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        )
 
     jac[jne23, jne23] = (
-       -rate_eval.Ne23_to_Na23_weaktab
+       -rate_eval.Ne23_to_Na23_beta_neg_weaktab
        )
 
     jac[jne23, jna23] = (
-       +rate_eval.Na23_to_Ne23_weaktab
+       +rate_eval.Na23_to_Ne23_electron_capture_weaktab
        )
 
     jac[jna23, jc12] = (
@@ -449,11 +449,11 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        )
 
     jac[jna23, jne23] = (
-       +rate_eval.Ne23_to_Na23_weaktab
+       +rate_eval.Ne23_to_Na23_beta_neg_weaktab
        )
 
     jac[jna23, jna23] = (
-       -rate_eval.Na23_to_Ne23_weaktab
+       -rate_eval.Na23_to_Ne23_electron_capture_weaktab
        )
 
     jac[jmg23, jc12] = (
