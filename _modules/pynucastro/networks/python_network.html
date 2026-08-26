@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post19+gfcf9ce2c5 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post20+g0bf0aa086 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=0592ffca"></script>
+    <script src="../../../_static/documentation_options.js?v=a0a5a1b4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1248,6 +1248,37 @@
         <span class="c1"># invalidate any compiled network module since the network</span>
         <span class="c1"># changed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="PythonNetwork.resample">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.resample">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Resample starlib rates</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        seed: int</span>
+<span class="sd">            Seed for resampling. If no seed is provided then</span>
+<span class="sd">            an arbitrary seed is used.</span>
+<span class="sd">        """</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># invalid when we do resample.</span>
+        <span class="c1"># Since StarLibRate log_rate_data will be changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PythonNetwork.unsample">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.unsample">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unsample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Restore starlib rates to median values."""</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">unsample</span><span class="p">()</span>
+
+        <span class="c1"># invalid when we do resample.</span>
+        <span class="c1"># Since StarLibRate log_rate_data will be changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_module</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 
 <div class="viewcode-block" id="PythonNetwork.full_ydot_string">
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_ydot_string">[docs]</a>
