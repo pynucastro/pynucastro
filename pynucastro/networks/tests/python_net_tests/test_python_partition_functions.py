@@ -41,14 +41,14 @@ class TestPythonPartitionNetwork:
         rate_eval = der_net.RateEval()
 
         # Need to first evaluate the corresponding source rate.
-        der_net.He4_Fe52_to_p_Co55_reaclib(rate_eval, tf)
-        der_net.p_Co55_to_Ni56_reaclib(rate_eval, tf)
+        der_net.Fe52_He4_to_p_Co55_reaclib(rate_eval, tf)
+        der_net.Co55_p_to_Ni56_reaclib(rate_eval, tf)
 
         # Now evaluate the derived rate.
-        der_net.p_Co55_to_He4_Fe52_derived(rate_eval, tf)
+        der_net.Co55_p_to_He4_Fe52_derived(rate_eval, tf)
         der_net.Ni56_to_p_Co55_derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(4.470365366766347, rel=1.e-10)
+        assert rate_eval.Co55_p_to_He4_Fe52_derived == pytest.approx(4.470365366766347, rel=1.e-10)
 
         assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(24174490.605820727, rel=1.e-10)
 
@@ -58,14 +58,14 @@ class TestPythonPartitionNetwork:
         rate_eval = der_net.RateEval()
 
         # Need to first evaluate the corresponding source rate.
-        der_net.He4_Fe52_to_p_Co55_reaclib(rate_eval, tf)
-        der_net.p_Co55_to_Ni56_reaclib(rate_eval, tf)
+        der_net.Fe52_He4_to_p_Co55_reaclib(rate_eval, tf)
+        der_net.Co55_p_to_Ni56_reaclib(rate_eval, tf)
 
         # Now evaluate the derived rate.
-        der_net.p_Co55_to_He4_Fe52_derived(rate_eval, tf)
+        der_net.Co55_p_to_He4_Fe52_derived(rate_eval, tf)
         der_net.Ni56_to_p_Co55_derived(rate_eval, tf)
 
-        assert rate_eval.p_Co55_to_He4_Fe52_derived == pytest.approx(15175.43937172369, rel=1.e-10)
+        assert rate_eval.Co55_p_to_He4_Fe52_derived == pytest.approx(15175.43937172369, rel=1.e-10)
         assert rate_eval.Ni56_to_p_Co55_derived == pytest.approx(436556819577.45264, rel=1.e-10)
 
         # clean up generated files if the test passed
