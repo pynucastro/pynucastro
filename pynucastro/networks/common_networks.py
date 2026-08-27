@@ -1,3 +1,5 @@
+"""Helper functions for creating common networks used in simulations."""
+
 from pynucastro.networks.helper import get_net_class, network_helper
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import (BranchedRate, Library, ModifiedRate,
