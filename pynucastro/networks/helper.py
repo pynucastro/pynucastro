@@ -24,8 +24,11 @@ def network_helper(nuclei, *,
 
     Parameters
     ----------
-    nuclei : Iterable(Nucleus)
-        the nuclei to use for the network
+    nuclei : Iterable(Nucleus) or Iterable(str)
+        the nuclei to use for the network.  In addition of names of
+        nuclei, ranges of masses for the same element can be
+        specified in a string like "ni56-58", or comma-separated like
+        "ni56,58,60".
     network_type : str
         The type of network to create.  Allowed values are:
 
