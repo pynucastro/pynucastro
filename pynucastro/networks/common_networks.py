@@ -1,6 +1,7 @@
 from pynucastro.networks.helper import get_net_class, network_helper
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import ApproximateRate, BranchedRate, Library, ModifiedRate, ReacLibLibrary, make_ap_pg_rates
+from pynucastro.rates import (BranchedRate, Library, ModifiedRate,
+                              ReacLibLibrary, make_ap_pg_rates)
 
 
 def aprox13(*, network_type="python"):
