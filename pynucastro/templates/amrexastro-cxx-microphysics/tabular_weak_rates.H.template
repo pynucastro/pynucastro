@@ -15,8 +15,9 @@ namespace tabular_weak_rates {
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
-    fill_rates([[maybe_unused]] const amrex::Real temp, const amrex::Real rhoy,
-               const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+    fill_rates([[maybe_unused]] const amrex::Real temp,
+               [[maybe_unused]] const amrex::Real rhoy,
+               [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                [[maybe_unused]] T& rate_eval)
     {
 
