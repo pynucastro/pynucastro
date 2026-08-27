@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BranchedRate &#8212; pynucastro 3.0.0.post20+g0bf0aa086 documentation</title>
+    <title>BranchedRate &#8212; pynucastro 3.0.0.post21+g904e3e044 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=a0a5a1b4"></script>
+    <script src="_static/documentation_options.js?v=95b4ad28"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1056,16 +1056,46 @@ def N14_p_p_to_He4_C12_beta_pos_branched(rate_eval, tf, log_scor=0.0):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">reduced</span><span class="o">.</span><span class="n">rhs_eq</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">reduced</span><span class="o">.</span><span class="n">ydot_eq</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def rhs_eq(t, Y, rho, T, screen_func):
+def ydot_eq(Y, rho, rate_eval):
 
-    rate_eval = do_rate_eval(t, Y, rho, T, screen_func)
-    return ydot_eq(Y, rho, rate_eval)
+    dYdt = np.zeros((nnuc), dtype=np.float64)
+
+    dYdt[jp] = (
+          + -2*rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
+          + -2*rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
+          + -2*rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
+          + -2*rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+       )
+
+    dYdt[jhe4] = (
+          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
+          +rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+       )
+
+    dYdt[jc12] = (
+          -rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
+          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched
+       )
+
+    dYdt[jn14] = (
+          +rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
+          +rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+       )
+
+    dYdt[jo16] = (
+          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
+          -rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+       )
+
+    return dYdt
 </pre></div>
 </div>
 </div>
