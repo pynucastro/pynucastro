@@ -1,5 +1,6 @@
 """Methods to ease the creation of networks."""
 
+from pynucastro.nucdata import Nucleus, parse_nuclei_group
 from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
                               TabularWeakLibrary)
 
@@ -62,12 +63,25 @@ def network_helper(nuclei, *,
 
     assert main_library in ["reaclib", "starlib"]
 
+    # interpret the nuclei
+    nuclist = []
+    for n in nuclei:
+        try:
+            _nuc = Nucleus.cast(n)
+            nuclist.append(_nuc)
+            continue
+        except ValueError:
+            pass
+
+        _nucs = parse_nuclei_group(n)
+        nuclist.extend(_nucs)
+
     if main_library == "reaclib":
         rl = ReacLibLibrary()
-        lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
+        lib = rl.linking_nuclei(nuclist, with_reverse=with_reverse, print_warning=verbose)
     else:
         sl = StarLibLibrary()
-        lib = sl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
+        lib = sl.linking_nuclei(nuclist, with_reverse=with_reverse, print_warning=verbose)
 
     if use_tabular_rates:
         if tabular_ordering:
@@ -75,7 +89,7 @@ def network_helper(nuclei, *,
         else:
             tl = TabularWeakLibrary()
 
-        lib += tl.linking_nuclei(nuclei, print_warning=verbose)
+        lib += tl.linking_nuclei(nuclist, print_warning=verbose)
 
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version
