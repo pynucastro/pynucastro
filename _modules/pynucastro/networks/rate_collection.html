@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post24+g59be9fd87 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post25+g1299feccc documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=64826f37"></script>
+    <script src="../../../_static/documentation_options.js?v=e0f7e911"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1106,24 +1106,47 @@
 <div class="viewcode-block" id="RateCollection.get_rate_by_name">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_rate_by_name">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Given a rate in the form 'A(x,y)B' return the rate</span>
+<span class="w">        </span><span class="sd">"""Given a string representing a rate in the form 'A(x,y)B'</span>
+<span class="sd">        (or a list of strings for multiple rates) return the Rate</span>
+<span class="sd">        objects that match from the network.  If there are multiple</span>
+<span class="sd">        inputs, then a list of Rate objects is returned.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        name : str</span>
-<span class="sd">            the name of the rate, in the form "A(x,y)B"</span>
+<span class="sd">        name : str, Iterable(str)</span>
+<span class="sd">            the name of the rate or list of names, in the form</span>
+<span class="sd">            "A(x,y)B"</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Rate</span>
+<span class="sd">        rates : list(Rate), Rate</span>
+<span class="sd">            A single rate or a list of rates</span>
 
 <span class="sd">        """</span>
 
-        <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rate_name_list</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rate_name_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="n">rates_out</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">rname</span> <span class="ow">in</span> <span class="n">rate_name_list</span><span class="p">:</span>
+            <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span> <span class="o">=</span> <span class="n">_rate_name_to_nuc</span><span class="p">(</span><span class="n">rname</span><span class="p">)</span>
+
+            <span class="n">_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">(</span><span class="n">reactants</span><span class="p">,</span> <span class="n">products</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_r</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_r</span><span class="p">,</span> <span class="n">Rate</span><span class="p">):</span>
+                <span class="n">rates_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># we might get a list</span>
+                <span class="n">rates_out</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rates_out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">_r</span></div>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rates_out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">rates_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">rates_out</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.get_nuclei_needing_partition_functions">
