@@ -163,5 +163,4 @@ def mesa_basic(*, network_type="python"):
 
     net_class = get_net_class(network_type=network_type)
 
-    return net_class(libraries=[lib_pp, lib_cno, lib_he],
-                     allowed_duplicates=[(rppp_he3, rpepp_he3)])
+    return net_class(libraries=[lib_pp, lib_cno, lib_he])
