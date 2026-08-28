@@ -145,6 +145,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    mesa-basic
+   cno-network
    aprox13
    he-burning-example
 
