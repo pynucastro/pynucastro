@@ -47,7 +47,7 @@ def find_duplicate_rates(rate_list):
             # e⁻-capture and β⁺-decay have the same reactants and products, but
             # represent 2 distinct processes.  If they are separated out, then we
             # assume that they are designed to be used in tandem and of the same type
-            if type(dupe[0]) == type(dupe[1]):
+            if type(dupe[0]) is type(dupe[1]):
                 remove.append(dupe)
 
     for dupe in remove:
