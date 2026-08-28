@@ -72,18 +72,26 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    screening-examples
-   modify-example.ipynb
-   branched-rates.ipynb
-   not_in_ydot_term.ipynb
    custom-rates.ipynb
    derived-rates
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Approximating Rates
+   :hidden:
+
+   alpha-gamma-approx.ipynb
+   double-n-capture.ipynb
+   modified-rates.ipynb
+   co-approximations.ipynb
+   branched-rates.ipynb
+   not_in_ydot_term.ipynb
 
 .. toctree::
    :maxdepth: 1
    :caption: Advanced Network Operations
    :hidden:
 
-   approximate-rates
    nse-protons.ipynb
    unimportant-rates.ipynb
    network-cycles.ipynb
