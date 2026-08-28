@@ -564,24 +564,47 @@ class RateCollection:
         return _tmp
 
     def get_rate_by_name(self, name):
-        """Given a rate in the form 'A(x,y)B' return the rate
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the network.  If there are multiple
+        inputs, then a list of Rate objects is returned.
 
         Parameters
         ----------
-        name : str
-            the name of the rate, in the form "A(x,y)B"
+        name : str, Iterable(str)
+            the name of the rate or list of names, in the form
+            "A(x,y)B"
 
         Returns
         -------
-        Rate
+        rates : list(Rate), Rate
+            A single rate or a list of rates
 
         """
 
-        reactants, products = _rate_name_to_nuc(name)
-        _r = self.get_rate_by_nuclei(reactants, products)
-        if _r is None:
+        rate_name_list = name
+        if isinstance(name, str):
+            rate_name_list = [name]
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            _r = self.get_rate_by_nuclei(reactants, products)
+            if _r is None:
+                continue
+            if isinstance(_r, Rate):
+                rates_out.append(_r)
+            else:
+                # we might get a list
+                rates_out.extend(_r)
+
+        if len(rates_out) == 0:
             return None
-        return _r
+        if len(rates_out) == 1:
+            return rates_out[0]
+        return rates_out
 
     def get_nuclei_needing_partition_functions(self):
         """Return a list of nuclei that require partition functions
