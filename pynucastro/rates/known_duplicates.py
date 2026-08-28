@@ -2,14 +2,14 @@
 
 import collections
 
-# there are some exceptions to the no-duplicate rates restriction.  We
-# list them here by class name and then rate id
-ALLOWED_DUPLICATES = [
-    {"ReacLibRate: p + p --> d <reaclib_bet+>",
-     "ReacLibRate: p + p --> d <reaclib_ec>"},
-    {"StarLibRate: p + p --> d <starlib_nacr>",
-     "StarLibRate: p + p --> d <starlib_ec>"}
-]
+# put any exceptions to the no-duplicate rates restriction.
+# For example, a set like
+#  {"ReacLibRate: p + p --> d <reaclib_bet+>",
+#   "ReacLibRate: p + p --> d <reaclib_ec>"},
+#
+# Different weak rate types are already allowed, so
+# the above does not need to be listed here.
+ALLOWED_DUPLICATES = []
 
 
 def find_duplicate_rates(rate_list):
@@ -36,6 +36,22 @@ def find_duplicate_rates(rate_list):
 
     # any entry in grouped_rates containing more than one rate is a duplicate
     duplicates = [entry for entry in grouped_rates.values() if len(entry) > 1]
+
+    # now check to see if the duplicates are allowed weak rate pairs
+    remove = []
+    for dupe in duplicates:
+        if len(dupe) != 2:
+            continue
+        if ((dupe[0].weak_type == "electron_capture" and dupe[1].weak_type == "beta_pos") or
+            (dupe[1].weak_type == "electron_capture" and dupe[0].weak_type == "beta_pos")):
+            # e⁻-capture and β⁺-decay have the same reactants and products, but
+            # represent 2 distinct processes.  If they are separated out, then we
+            # assume that they are designed to be used in tandem and of the same type
+            if type(dupe[0]) == type(dupe[1]):
+                remove.append(dupe)
+
+    for dupe in remove:
+        duplicates.remove(dupe)
 
     return duplicates
 
