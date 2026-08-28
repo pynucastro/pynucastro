@@ -125,10 +125,6 @@ class RateCollection:
     do_screening : bool
         should we consider screening at all -- this mainly affects
         whether we build the screening map
-    allowed_duplicates : Iterable((Rate, Rate))
-        A list of rate pairs that are allowed to be duplicates.
-        It is up to the user to ensure that you are not double
-        counting a particular process in the network.
     verbose : bool
         do we show informational messages?
 
@@ -139,7 +135,6 @@ class RateCollection:
     def __init__(self, rate_files=None, libraries=None, rates=None,
                  inert_nuclei=None,
                  do_screening=True,
-                 allowed_duplicates=None,
                  verbose=False):
 
         combined_library = Library()
@@ -147,11 +142,6 @@ class RateCollection:
         self.inert_nuclei = Nucleus.cast_list(inert_nuclei, allow_None=True)
 
         self.do_screening = do_screening
-
-        if allowed_duplicates:
-            self.allowed_duplicates = allowed_duplicates
-        else:
-            self.allowed_duplicates = []
 
         self.verbose = verbose
 
@@ -564,24 +554,47 @@ class RateCollection:
         return _tmp
 
     def get_rate_by_name(self, name):
-        """Given a rate in the form 'A(x,y)B' return the rate
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the network.  If there are multiple
+        inputs, then a list of Rate objects is returned.
 
         Parameters
         ----------
-        name : str
-            the name of the rate, in the form "A(x,y)B"
+        name : str, Iterable(str)
+            the name of the rate or list of names, in the form
+            "A(x,y)B"
 
         Returns
         -------
-        Rate
+        rates : list(Rate), Rate
+            A single rate or a list of rates
 
         """
 
-        reactants, products = _rate_name_to_nuc(name)
-        _r = self.get_rate_by_nuclei(reactants, products)
-        if _r is None:
+        rate_name_list = name
+        if isinstance(name, str):
+            rate_name_list = [name]
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            _r = self.get_rate_by_nuclei(reactants, products)
+            if _r is None:
+                continue
+            if isinstance(_r, Rate):
+                rates_out.append(_r)
+            else:
+                # we might get a list
+                rates_out.extend(_r)
+
+        if len(rates_out) == 0:
             return None
-        return _r
+        if len(rates_out) == 1:
+            return rates_out[0]
+        return rates_out
 
     def get_nuclei_needing_partition_functions(self):
         """Return a list of nuclei that require partition functions
@@ -1431,9 +1444,6 @@ class RateCollection:
         simple decay), but they will present themselves in the network
         as the same link.
 
-        If allowed_duplicates was passed in when the network was created,
-        then those rate pairs will be allowed.
-
         We return a list, where each entry is a list of all the rates
         that share the same link.
 
@@ -1453,14 +1463,6 @@ class RateCollection:
             # ReacLib and StarLib
             if is_allowed_dupe(dupe):
                 dupe_to_remove.append(dupe)
-                continue
-
-            # also check any allowed rate pair dupes passed in when
-            # the network was created
-            for allowed_pairs in self.allowed_duplicates:
-                if set(dupe) in [set(allowed_pairs), set(allowed_pairs[::-1])]:
-                    dupe_to_remove.append(dupe)
-                    break
 
         for dupe in dupe_to_remove:
             duplicates.remove(dupe)
