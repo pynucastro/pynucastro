@@ -1463,7 +1463,6 @@ class RateCollection:
             # ReacLib and StarLib
             if is_allowed_dupe(dupe):
                 dupe_to_remove.append(dupe)
-                continue
 
         for dupe in dupe_to_remove:
             duplicates.remove(dupe)
