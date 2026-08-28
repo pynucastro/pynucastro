@@ -62,7 +62,7 @@ or equivalently,
 
 .. math:: \mu = \underbrace{k_B T \log \left[\dfrac{n}{g}\left( \dfrac{2\pi \hbar^2}{mkT} \right)^{3/2} \right]}_{\mu^{kin}} + mc^2 + \mu^c
 
-as summarized in :cite:`rauscher:2000`.
+as summarized in :cite:t:`rauscher:2000`.
 
 Often times we want to work in massfractions, :math:`X_i = m_i n_i / \rho`,
 or in molar fractions, :math:`Y_i = X_i / A_i`. Hence:
@@ -81,7 +81,7 @@ in their ground state as they approach. Hence to account for state degeneracy,
 However, particles may be in a superposition of states due to excitation
 of upper levels, with excitation energies :math:`\Delta_l`,
 caused by an steady increase of the temperature.
-As pointed out in :cite:`rauscher:2000`, we have to replace
+As pointed out in :cite:t:`rauscher:2000`, we have to replace
 :math:`g \rightarrow (2J_0 + 1) G`, where :math:`G` is the internal partition
 function normalized by the ground state spin.
 
@@ -108,7 +108,7 @@ The partition function information is contained in three main classes:
 
 * :class:`PartitionFunctionCollection <pynucastro.nucdata.partition_function.PartitionFunctionCollection>`
   collects all the formatted table information, inside ``/nucdata/PartitionFunction/``.
-  It allow us to include the high temperature tables in :cite:`rauscher:2003` and to
+  It allow us to include the high temperature tables in :cite:t:`rauscher:2003` and to
   select the model used to compute the partition functions, respectively. By default,
   we include high temperatures, and our partition function model to be the
   *finite range droplet model (FRDM)*. If a nucleus is not in the collection,
@@ -161,9 +161,9 @@ Derived rate definition
 The forward and reverse reactions are entangled due to thermodynamical and
 nuclear equilibrium aspects. In this section we will see how this connection is introduced
 and explore its consequences in the nuclear rates computation,
-as discussed in :cite:`rauscher:2000`. The general case is worked out in the appendix of
-:cite:`smith_pynucastro_2023`. Here we demonstrate a less general reaction channel,
-:math:`A + B \rightarrow C + D`, discussed in :cite:`ReacLib`, for simplicity.
+as discussed in :cite:t:`rauscher:2000`. The general case is worked out in the appendix of
+:cite:t:`smith_pynucastro_2023`. Here we demonstrate a less general reaction channel,
+:math:`A + B \rightarrow C + D`, discussed in :cite:t:`ReacLib`, for simplicity.
 
 Starting with a pair of reaction channels, where $A$, $B$, $C$, $D$ are distinct
 nuclear species:
@@ -303,6 +303,6 @@ work in log-space:
    When deriving an inverse rate from a ReacLib rate,
    the equilibrium ratio, excluding the partition functions,
    can be absorbed into the :ref:`reaclib` parameterization,
-   as shown in :cite:`rauscher:2000`.
+   as shown in :cite:t:`rauscher:2000`.
    The general ReacLib parameterization of the DerivedRate
-   is given in the appendix of :cite:`smith_pynucastro_2023`.
+   is given in the appendix of :cite:t:`smith_pynucastro_2023`.
