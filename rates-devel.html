@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Notes on Working with Rate Objects &#8212; pynucastro 3.0.0.post25+g1299feccc documentation</title>
+    <title>Notes on Working with Rate Objects &#8212; pynucastro 3.0.0.post26+gb04daaf5a documentation</title>
   
   
   
@@ -42,12 +42,14 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=e0f7e911"></script>
+    <script src="_static/documentation_options.js?v=bf620768"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'rates-devel';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -593,6 +595,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
             </nav>
@@ -607,14 +610,101 @@
                   
   <section id="notes-on-working-with-rate-objects">
 <h1>Notes on Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects<a class="headerlink" href="#notes-on-working-with-rate-objects" title="Link to this heading">#</a></h1>
-<section id="copying">
-<h2>Copying<a class="headerlink" href="#copying" title="Link to this heading">#</a></h2>
-<p>A <code class="docutils literal notranslate"><span class="pre">Rate</span></code> is not immutable.  When we do:</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<p>There are several different attributes that refer to the name /
+properties of the rate in some way.  Consider the rate for
+<span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
 <span class="n">c12ag</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(a,g)o16"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>the rate <code class="docutils literal notranslate"><span class="pre">c12ag</span></code> is actually a reference to the version stored
+<p>The following rate attributes are defined:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">Rate.rid</span></code> : this is a string that gives the reactants and
+products, using only ASCII characters.  No information about the
+source of the rate included.</p>
+<p>It is not used for library operations directly, but instead is used
+to build <code class="docutils literal notranslate"><span class="pre">rid</span></code> (described next) and included as a human-readable
+comment in the generated rate functions in exported networks.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">c12ag.rid</span></code>, we have:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16'</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Other sources of <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> will have the
+same <code class="docutils literal notranslate"><span class="pre">rid</span></code>.  For instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.alternate_rates</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeBoerC12agO16</span>
+<span class="n">c12ag_deboer</span> <span class="o">=</span> <span class="n">DeBoerC12agO16</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We would find <code class="docutils literal notranslate"><span class="pre">c12ag_deboer.rid</span></code> to be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16'</span>
+</pre></div>
+</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Rate.id</span></code> : this is intended to be a unique identifier for a rate.
+It is composed of the <code class="docutils literal notranslate"><span class="pre">rid</span></code> and the rate source (<code class="docutils literal notranslate"><span class="pre">Rate.src</span></code>).</p>
+<p>Here are several ways <code class="docutils literal notranslate"><span class="pre">Rate.id</span></code> is used:</p>
+<ul>
+<li><p>To test equality of rates, for example, given a
+<code class="docutils literal notranslate"><span class="pre">Rate</span></code> <code class="docutils literal notranslate"><span class="pre">r</span></code> and a list of rates <code class="docutils literal notranslate"><span class="pre">rate_list</span></code> doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
+    <span class="c1"># do something</span>
+</pre></div>
+</div>
+<p>will use <code class="docutils literal notranslate"><span class="pre">r.id</span></code> for the comparison.</p>
+</li>
+<li><p>For a <code class="docutils literal notranslate"><span class="pre">Library</span></code>, the main storage for rates (<code class="docutils literal notranslate"><span class="pre">Library._rates</span></code>)
+is a dictionary keyed by <code class="docutils literal notranslate"><span class="pre">Rate.id</span></code>.</p>
+<p>As a result, <code class="docutils literal notranslate"><span class="pre">Rate,id</span></code> must
+be unique in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> and a generated network.</p>
+</li>
+<li><p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we use lists for <code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code>
+and <code class="docutils literal notranslate"><span class="pre">RateCollection.all_rates</span></code>.  As noted above, to test membership
+in a list, the <code class="docutils literal notranslate"><span class="pre">id</span></code> will be used.</p></li>
+</ul>
+<p>For <code class="docutils literal notranslate"><span class="pre">c12ag.id</span></code>, we have:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16 &lt;reaclib_nac2&gt;'</span>
+</pre></div>
+</div>
+<p>This is distinct from other sources of the <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}\)</span> rate,
+so using <code class="docutils literal notranslate"><span class="pre">c12ag_deboer</span></code> defined above, we could see <code class="docutils literal notranslate"><span class="pre">c12ag_deboer.id</span></code> as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16 &lt;deboer_deboer2017&gt;'</span>
+</pre></div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Rate.fname</span></code> : this is a programming-language safe name for the
+string (no special characters except for <code class="docutils literal notranslate"><span class="pre">_</span></code>), and is used for the function names
+and rate indices in exported networks.</p>
+<p>This must be unique in a generated network.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">c12ag</span></code>, we have:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'He4_C12_to_O16_reaclib'</span>
+</pre></div>
+</div>
+<p>For weak rates, the weak rate type is added to the string.  This is important,
+for example, since ReacLib provides two rates for <span class="math notranslate nohighlight">\(p + p\)</span>, a <span class="math notranslate nohighlight">\(\beta^+\)</span> and <span class="math notranslate nohighlight">\(e^-\)</span>-capture:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="p">,</span> <span class="n">pep</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"p(p,)d"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we look at these separately, we see:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pp.fname</span></code> is <code class="docutils literal notranslate"><span class="pre">'p_p_to_d_beta_pos_reaclib'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pep.fname</span></code> is <code class="docutils literal notranslate"><span class="pre">'p_p_to_d_electron_capture_reaclib'</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="copying">
+<h2>Copying<a class="headerlink" href="#copying" title="Link to this heading">#</a></h2>
+<p>A <code class="docutils literal notranslate"><span class="pre">Rate</span></code> is not immutable.  This can be an issue when we we do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<span class="n">c12ag</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(a,g)o16"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, the rate <code class="docutils literal notranslate"><span class="pre">c12ag</span></code> is actually a reference to the version stored
 internally in the <code class="docutils literal notranslate"><span class="pre">Library</span></code> that <code class="docutils literal notranslate"><span class="pre">ReacLibLibrary</span></code> creates.</p>
 <p>This means if we modify the rate, e.g, as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">c12ag</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">True</span>
@@ -686,6 +776,7 @@ copy the rates into the network.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
   </nav></div>
