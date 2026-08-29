@@ -5,7 +5,9 @@ Notes on Working with ``Rate`` Objects
 Attributes
 ==========
 
-There are several different attributes that refer to the name / properties of the rate in some way.  Consider the rate for ${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$:
+There are several different attributes that refer to the name /
+properties of the rate in some way.  Consider the rate for
+${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$:
 
 .. code:: python
 
@@ -80,7 +82,6 @@ The following rate attributes are defined:
   This is distinct from other sources of the ${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$ rate,
   so using ``c12ag_deboer`` defined above, we could see ``c12ag_deboer.id`` as:
 
-
   ::
 
      'C12 + He4 --> O16 <deboer_deboer2017>'
@@ -97,13 +98,18 @@ The following rate attributes are defined:
 
      'He4_C12_to_O16_reaclib'
 
+  For weak rates, the weak rate type is added to the string.  This is important,
+  for example, since ReacLib provides two rates for $p + p$, a $\beta^+$ and $e^-$-capture:
 
-.. important::
+  .. code:: python
 
-   There are some rates where the above logic breaks.  For example, ReacLib provides two
-   rates for $p + p$, a $\beta^+$ and $e^-$-capture.  Ordinarily, these would have the
-   same ``fname``, but in this case, we explicitly add the ``weak_type`` to the ``fname``
-   to make the distinguishable.
+     pp, pep = rl.get_rate_by_name("p(p,)d")
+
+  If we look at these separately, we see:
+
+  * ``pp.fname`` is ``'p_p_to_d_beta_pos_reaclib'``
+  * ``pep.fname`` is ``'p_p_to_d_electron_capture_reaclib'``
+
 
 Copying
 =======
