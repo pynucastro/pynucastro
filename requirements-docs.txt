@@ -12,3 +12,5 @@ sphinx-book-theme
 myst-nb
 nbclient!=0.10.3
 
+# for MESA example
+mesa-reader
