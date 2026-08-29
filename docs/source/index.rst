@@ -144,6 +144,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Some Useful Networks
    :hidden:
 
+   common-nets
    mesa-basic
    cno-network
    aprox13
