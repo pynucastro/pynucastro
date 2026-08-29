@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 3.0.0.post26+gb04daaf5a documentation</title>
+    <title>pynucastro.rates.known_duplicates &#8212; pynucastro 3.0.0.post27+gfa8d239f3 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=bf620768"></script>
+    <script src="../../../_static/documentation_options.js?v=12af83e0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -251,6 +251,7 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -517,14 +518,14 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
 
-<span class="c1"># there are some exceptions to the no-duplicate rates restriction.  We</span>
-<span class="c1"># list them here by class name and then rate id</span>
-<span class="n">ALLOWED_DUPLICATES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="s2">"ReacLibRate: p + p --&gt; d &lt;reaclib_bet+&gt;"</span><span class="p">,</span>
-     <span class="s2">"ReacLibRate: p + p --&gt; d &lt;reaclib_ec&gt;"</span><span class="p">},</span>
-    <span class="p">{</span><span class="s2">"StarLibRate: p + p --&gt; d &lt;starlib_nacr&gt;"</span><span class="p">,</span>
-     <span class="s2">"StarLibRate: p + p --&gt; d &lt;starlib_ec&gt;"</span><span class="p">}</span>
-<span class="p">]</span>
+<span class="c1"># put any exceptions to the no-duplicate rates restriction.</span>
+<span class="c1"># For example, a set like</span>
+<span class="c1">#  {"ReacLibRate: p + p --&gt; d &lt;reaclib_bet+&gt;",</span>
+<span class="c1">#   "ReacLibRate: p + p --&gt; d &lt;reaclib_ec&gt;"},</span>
+<span class="c1">#</span>
+<span class="c1"># Different weak rate types are already allowed, so</span>
+<span class="c1"># the above does not need to be listed here.</span>
+<span class="n">ALLOWED_DUPLICATES</span> <span class="o">=</span> <span class="p">[]</span>
 
 
 <div class="viewcode-block" id="find_duplicate_rates">
@@ -553,6 +554,22 @@
 
     <span class="c1"># any entry in grouped_rates containing more than one rate is a duplicate</span>
     <span class="n">duplicates</span> <span class="o">=</span> <span class="p">[</span><span class="n">entry</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">grouped_rates</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># now check to see if the duplicates are allowed weak rate pairs</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dupe</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dupe</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">dupe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s2">"electron_capture"</span> <span class="ow">and</span> <span class="n">dupe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s2">"beta_pos"</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">dupe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s2">"electron_capture"</span> <span class="ow">and</span> <span class="n">dupe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">weak_type</span> <span class="o">==</span> <span class="s2">"beta_pos"</span><span class="p">)):</span>
+            <span class="c1"># e⁻-capture and β⁺-decay have the same reactants and products, but</span>
+            <span class="c1"># represent 2 distinct processes.  If they are separated out, then we</span>
+            <span class="c1"># assume that they are designed to be used in tandem and of the same type</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dupe</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">dupe</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dupe</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dupe</span> <span class="ow">in</span> <span class="n">remove</span><span class="p">:</span>
+        <span class="n">duplicates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">dupe</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">duplicates</span></div>
 
