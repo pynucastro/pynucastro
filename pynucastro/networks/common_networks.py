@@ -202,7 +202,8 @@ def cno(*, network_type="python"):
            "ne18-20",
            "mg22,24"]
 
-    net = network_helper(nuc, network_type=network_type)
+    net = network_helper(nuc, network_type=network_type,
+                         tabular_ordering=["ffn", "oda", "langanke"])
 
     # remove C-burning rates
     rr = net.get_rate_by_name(["c12(c12,a)ne20",
