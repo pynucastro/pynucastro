@@ -26,7 +26,7 @@ def _make_pp_approx_lib(lib):
                              rate_source=rpep.src)
 
     rhe3he3 = lib.get_rate_by_name("he3(he3,pp)he4")
-    rhe3p = lib.get_rate_by_name("he3(p,he4")
+    rhe3p = lib.get_rate_by_name("he3(p,)he4")
 
     rhe3he4 = lib.get_rate_by_name("he4(he3,g)be7")
     rhe3he4p_2he4 = ModifiedRate(rhe3he4,
