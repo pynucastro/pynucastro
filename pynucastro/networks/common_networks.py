@@ -26,6 +26,7 @@ def _make_pp_approx_lib(lib):
                              rate_source=rpep.src)
 
     rhe3he3 = lib.get_rate_by_name("he3(he3,pp)he4")
+    rhe3p = lib.get_rate_by_name("he3(p,he4")
 
     rhe3he4 = lib.get_rate_by_name("he4(he3,g)be7")
     rhe3he4p_2he4 = ModifiedRate(rhe3he4,
@@ -38,7 +39,7 @@ def _make_pp_approx_lib(lib):
                                  description="He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4")
 
     return Library(rates=[rppp_he3, rpepp_he3,
-                          rhe3he3, rhe3he4p_2he4])
+                          rhe3he3, rhe3p, rhe3he4p_2he4])
 
 
 def aprox13(*, network_type="python"):
