@@ -1,14 +1,16 @@
-import numpy as np
 import warnings
 
-# tests of the networkx graph function
+import numpy as np
+import pytest
+from pytest import approx
 
 from pynucastro.networks import network_helper
 from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.rates import ThermoState
 
-import pytest
-from pytest import approx
+# tests of the networkx graph function
+
+
 
 
 class TestNetworkXGraph:
