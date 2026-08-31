@@ -1459,6 +1459,8 @@ class RateCollection:
         # will now check for those
         dupe_to_remove = []
         for dupe in duplicates:
+            # check against the duplicates we know about from
+            # ReacLib and StarLib
             if is_allowed_dupe(dupe):
                 dupe_to_remove.append(dupe)
 
