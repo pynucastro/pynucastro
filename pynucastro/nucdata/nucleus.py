@@ -25,6 +25,9 @@ _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='
 _NUCLEUS_SYMBOL_MASS_RE = re.compile(r"^([a-zA-Z]+)(\d*)$")
 _NUCLEUS_MASS_SYMBOL_RE = re.compile(r"^(\d*)([a-zA-Z]*)$")
 
+# this matches something like "ni56-58,60"
+_NUCLEUS_RANGE_RE = re.compile(r"([A-Za-z]+)(\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*)")
+
 # Note: for Nubase 2020, we need to use the CODATA 18 constants
 _mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
 
@@ -425,6 +428,40 @@ class Nucleus:
                 return [cls.cast(lst)]
             raise ValueError("Single object passed to Nucleus.cast_list() instead of list")
         return [cls.cast(obj) for obj in lst]
+
+
+def parse_nuclei_group(nstr):
+    """Parse a string representing a group of nuclei, like "ni56-58,60"
+    and return a list of Nucleus objects
+
+    Parameters
+    ----------
+    nstr : str
+        A string representing a group of nuclei consisting of a single
+        element name followed by mass numbers, using "-" for a range and
+        "," for single values in the sequence.
+
+    Returns
+    -------
+    list(Nucleus)
+
+    """
+
+    match = _NUCLEUS_RANGE_RE.fullmatch(nstr)
+
+    if not match:
+        raise ValueError(f"invalid nuclei range specification: {nstr!r}")
+    element, numbers = match.groups()
+    result = []
+
+    for part in numbers.split(","):
+        if "-" in part:
+            start, end = map(int, part.split("-"))
+            result.extend(Nucleus(f"{element}{n}") for n in range(start, end+1))
+        else:
+            result.append(Nucleus(f"{element}{int(part)}"))
+
+    return result
 
 
 def get_nuclei_in_range(name=None, *,
