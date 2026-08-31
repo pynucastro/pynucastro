@@ -11,8 +11,6 @@ from pynucastro.rates import ThermoState
 # tests of the networkx graph function
 
 
-
-
 class TestNetworkXGraph:
 
     @pytest.fixture(scope="class")
@@ -36,7 +34,6 @@ class TestNetworkXGraph:
         return ThermoState(rho=rho, T=T, comp=comp)
 
     def test_probability(self, net, state):
-
 
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=UserWarning)
