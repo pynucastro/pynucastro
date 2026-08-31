@@ -14,6 +14,7 @@ Submodules
 
    pynucastro.networks.amrexastro_cxx_network
    pynucastro.networks.base_cxx_network
+   pynucastro.networks.common_networks
    pynucastro.networks.fortran_network
    pynucastro.networks.helper
    pynucastro.networks.network_compare
