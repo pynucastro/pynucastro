@@ -61,4 +61,3 @@ class TestNetworkXGraph:
                     ptot += np.exp(-data["weight"])
 
             assert ptot == approx(1.0)
-
