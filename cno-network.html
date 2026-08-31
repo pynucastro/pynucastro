@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Removing Unimportant Rates &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
+    <title>CNO burning network &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
   
   
   
@@ -50,12 +50,12 @@
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'unimportant-rates';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cno-network';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Finding Cycles (with NetworkX)" href="network-cycles.html" />
-    <link rel="prev" title="Using NSE Protons" href="nse-protons.html" />
+    <link rel="next" title="The “aprox13” network" href="aprox13.html" />
+    <link rel="prev" title="MESA basic.net Network" href="mesa-basic.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="3.0" />
@@ -211,9 +211,9 @@
 <li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
@@ -253,10 +253,10 @@
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="common-nets.html">Common Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">CNO burning network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -442,7 +442,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/unimportant-rates.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/cno-network.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -459,7 +459,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/unimportant-rates.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/cno-network.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -476,7 +476,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Funimportant-rates.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fcno-network.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -506,7 +506,7 @@
       
       
       
-      <li><a href="_sources/unimportant-rates.ipynb" target="_blank"
+      <li><a href="_sources/cno-network.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -576,7 +576,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -587,11 +589,22 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Removing Unimportant Rates</h1>
+    <h1>CNO burning network</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-rates">CNO rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-breakout-rates">Additional breakout rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp-rates">PP rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-network">Final network</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -601,11 +614,13 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="removing-unimportant-rates">
-<h1>Removing Unimportant Rates<a class="headerlink" href="#removing-unimportant-rates" title="Link to this heading">#</a></h1>
-<p>When you create a network given a list of nuclei, it will pull in all of the rates that connect those nuclei in the library, even if they are not important for the thermodynamic conditions under which the network will be used.</p>
-<p>Here we see how to feed a set of thermodynamic conditions to a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> and remove the rates that are never important.</p>
-<p>Let’s consider the case of wanting to model H burning in conditions close to the core of the Sun.  We start by generating a network with all of the pp and CNO nuclei</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="cno-burning-network">
+<h1>CNO burning network<a class="headerlink" href="#cno-burning-network" title="Link to this heading">#</a></h1>
+<p>For CNO burning, we need to have both the cold and hot CNO cycles, as well as breakout via the rp-process.  To complete the description, we should also include the pp chains and He burning.</p>
+<p>We’ll model this network off of MESA’s <code class="docutils literal notranslate"><span class="pre">cno_extras</span></code> network.</p>
+<section id="cno-rates">
+<h2>CNO rates<a class="headerlink" href="#cno-rates" title="Link to this heading">#</a></h2>
+<p>We can start by building a network using the core nuclei involved in CNO burning.  This will give us all the links (forward and reverse).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
@@ -615,128 +630,234 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reaclib_library</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+                           <span class="s2">"c12-13"</span><span class="p">,</span>
+                           <span class="s2">"n13-15"</span><span class="p">,</span>
+                           <span class="s2">"o14-18"</span><span class="p">,</span>
+                           <span class="s2">"f17-19"</span><span class="p">,</span>
+                           <span class="s2">"ne18-20"</span><span class="p">,</span>
+                           <span class="s2">"mg22,24"</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>We’ll remove the C-burning rates</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">h_burn</span> <span class="o">=</span> <span class="n">reaclib_library</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">([</span><span class="s2">"h1"</span><span class="p">,</span> <span class="s2">"h2"</span><span class="p">,</span> <span class="s2">"he3"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
-                                         <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rr</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">([</span><span class="s2">"c12(c12,a)ne20"</span><span class="p">,</span>
+                           <span class="s2">"o16(c12,a)mg24"</span><span class="p">,</span>
+                           <span class="s2">"ne20(a,c12)c12"</span><span class="p">,</span>
+                           <span class="s2">"mg24(a,c12)o16"</span><span class="p">])</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">h_burn</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/b7869e3090b0b804d90f33aa4d34393a65c20c5f3161d424786c29fc5b96b0ae.png" src="_images/b7869e3090b0b804d90f33aa4d34393a65c20c5f3161d424786c29fc5b96b0ae.png" />
-</div>
-</div>
-<p>Notice a few things:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If we compare to MESA’s <code class="docutils literal notranslate"><span class="pre">cno_extras</span></code> network, the above construction
+contains more reverse rates that MESA <code class="docutils literal notranslate"><span class="pre">cno_extras</span></code>, including</p>
 <ul class="simple">
-<li><p>The 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate (and its reverse) are included</p></li>
-<li><p>Lots of reverse rates are included between the CNO nuclei, but we only expect that the forward rates in the traditional CNO cycle matter</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta\)</span>-decays:
+<span class="math notranslate nohighlight">\({}^{17}\mathrm{O}(,e^-\nu){}^{17}\mathrm{F}\)</span>,
+<span class="math notranslate nohighlight">\({}^{18}\mathrm{O}(,e^-\nu){}^{18}\mathrm{F}\)</span>,
+<span class="math notranslate nohighlight">\({}^{18}\mathrm{F}(,e^-\nu){}^{18}\mathrm{Ne}\)</span>,
+<span class="math notranslate nohighlight">\({}^{19}\mathrm{F}(,e^-\nu){}^{19}\mathrm{Ne}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\((p,\alpha)\)</span> reactions:
+<span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\alpha){}^{13}\mathrm{N}\)</span>
+<span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}(p,\alpha){}^{17}\mathrm{F}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\((\gamma,\alpha)\)</span> reactions:
+<span class="math notranslate nohighlight">\({}^{18}\mathrm{F}(\gamma,\alpha){}^{14}\mathrm{N}\)</span>,
+<span class="math notranslate nohighlight">\({}^{18}\mathrm{Ne}(\gamma,\alpha){}^{14}\mathrm{O}\)</span>,
+<span class="math notranslate nohighlight">\({}^{19}\mathrm{F}(\gamma,\alpha){}^{15}\mathrm{N}\)</span>.</p></li>
 </ul>
-<p>To filter rates we need to pass in a set of thermodynamic conditions, including density and temperature (in CGS units) and a <code class="docutils literal notranslate"><span class="pre">Composition</span></code> object giving the mass fractions</p>
+<p>It also includes the reverse rates for the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain as well as
+some carbon-burning rates, like <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}({}^{12}\mathrm{C},\alpha){}^{20}\mathrm{Ne}\)</span> and its inverse and <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}({}^{12}\mathrm{C},\alpha){}^{24}\mathrm{Mg}\)</span> and its inverse.</p>
+</div>
+</section>
+<section id="additional-breakout-rates">
+<h2>Additional breakout rates<a class="headerlink" href="#additional-breakout-rates" title="Link to this heading">#</a></h2>
+<p>We’ll approximate a few rate sequences for breakout, following MESA’s <code class="docutils literal notranslate"><span class="pre">cno_extras</span></code>.  These include:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\({}^{18}\mathrm{Ne}(\alpha,p){}^{21}\mathrm{Na}(p,\gamma){}^{22}\mathrm{Mg}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\({}^{19}\mathrm{Ne}(p,\gamma){}^{20}\mathrm{Na}(p,\gamma){}^{21}\mathrm{Mg}(,e^+\nu){}^{21}\mathrm{Na}(p,\gamma){}^{22}\mathrm{Mg}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\({}^{20}\mathrm{Ne}(p,\gamma){}^{21}\mathrm{Na}(p,\gamma){}^{22}\mathrm{Mg}\)</span></p></li>
+</ul>
+<p>The first one is the <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> counterpart to a rate we already included, so we will replace that with an <a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>.</p>
+<p>The other two can be represented as a <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a>, assuming that the first rate in the
+sequence is the slowest.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">get_nuclei</span><span class="p">())</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>First we’ll deal with the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code>.  We’ll remove the <span class="math notranslate nohighlight">\((\alpha,\gamma)\)</span> version and then make the new rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rne18ag</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne18(a,g)mg22"</span><span class="p">)</span>
+<span class="n">net</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rne18ag</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rne18_mg22</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">make_ap_pg_rates</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"mg22"</span><span class="p">,</span> <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">rne18_mg22</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ne18 + He4 ⟶ Mg22 + 𝛾
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rne19pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne19(p,g)na20"</span><span class="p">)</span>
+<span class="n">rne19_mg22</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rne19pg</span><span class="p">,</span>
+                               <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg22"</span><span class="p">)],</span>
+                               <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                               <span class="n">description</span><span class="o">=</span><span class="s2">"Ne19(p,γ)Na20(p,γ)Mg21(β+)Na21(p,γ)Mg22"</span><span class="p">)</span>
+<span class="n">rne19_mg22</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ne19 + 3 p ⟶ Mg22 + e⁺ + 𝜈
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rne20pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne20(p,g)na21"</span><span class="p">)</span>
+<span class="n">rne20_mg22</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rne20pg</span><span class="p">,</span>
+                               <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg22"</span><span class="p">)],</span>
+                               <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                               <span class="n">description</span><span class="o">=</span><span class="s2">"Ne20(p,γ)Na21(p,γ)Mg22"</span><span class="p">)</span>
+<span class="n">rne20_mg22</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ne20 + p + p ⟶ Mg22 + 𝛾
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">rne18_mg22</span><span class="p">,</span> <span class="n">rne19_mg22</span><span class="p">,</span> <span class="n">rne20_mg22</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="pp-rates">
+<h2>PP rates<a class="headerlink" href="#pp-rates" title="Link to this heading">#</a></h2>
+<p>Finally we will add the same approximation to the pp-chains as done in <a class="reference internal" href="mesa-basic.html"><span class="doc">MESA basic.net Network</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rpp</span><span class="p">,</span> <span class="n">rpep</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"p(p,)d"</span><span class="p">)</span>
 
-<span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+<span class="n">rppp_he3</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpp</span><span class="p">,</span>
+                             <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
+                             <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                             <span class="n">description</span><span class="o">=</span><span class="s2">"p(p,e⁺ν)d(p,γ)He3"</span><span class="p">,</span>
+                             <span class="n">rate_source</span><span class="o">=</span><span class="n">rpp</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+<span class="n">rpepp_he3</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpep</span><span class="p">,</span>
+                              <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
+                              <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                              <span class="n">description</span><span class="o">=</span><span class="s2">"p(pe⁻,ν)d(p,γ)He3"</span><span class="p">,</span>
+                              <span class="n">rate_source</span><span class="o">=</span><span class="n">rpep</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now we find the rates that are not important.  We pass in a cutoff, such that any rate that is smaller that cutoff <span class="math notranslate nohighlight">\(\times\)</span> fastest-rate will be returned</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cutoff_ratio</span> <span class="o">=</span> <span class="mf">1.e-20</span>
-<span class="n">unimportant_rates</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">find_unimportant_rates</span><span class="p">([</span><span class="n">state</span><span class="p">],</span> <span class="n">cutoff_ratio</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhe3he3</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(he3,pp)he4"</span><span class="p">)</span>
+<span class="n">rhe3p</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(p,)he4"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Here <code class="docutils literal notranslate"><span class="pre">unimportant_rates</span></code> is a dictionary with the rate as the key and the ratio of the rate compared to the fastest rate as the value.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unimportant_rates</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhe3he4</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he4(he3,g)be7"</span><span class="p">)</span>
+<span class="n">rhe3he4p_2he4</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rhe3he4</span><span class="p">,</span>
+                                  <span class="n">new_reactants</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
+                                                 <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">),</span>
+                                                 <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
+                                  <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
+                                                <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
+                                  <span class="n">not_in_ydot_term</span><span class="o">=</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="s2">"He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">rppp_he3</span><span class="p">,</span> <span class="n">rpepp_he3</span><span class="p">,</span>
+               <span class="n">rhe3he3</span><span class="p">,</span> <span class="n">rhe3p</span><span class="p">,</span> <span class="n">rhe3he4p_2he4</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="final-network">
+<h2>Final network<a class="headerlink" href="#final-network" title="Link to this heading">#</a></h2>
+<p>Our final network appears as</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">node_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="s2">"9"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{He3 ⟶ p + H2: 0,
- He4 ⟶ H2 + H2: 0,
- N13 ⟶ p + C12: 0,
- N14 ⟶ p + C13: 0,
- O15 ⟶ p + N14: 0,
- C12 ⟶ 3 He4: 0,
- He4 + p ⟶ H2 + He3: 0,
- C12 + He4 ⟶ p + N15: 0,
- 3 He4 ⟶ C12 + 𝛾: 7.97446353520212e-59,
- He4 + p + p ⟶ He3 + He3: 0}
-</pre></div>
+<img alt="_images/b44eaf28b1ece051c3e62f7f719c3d151e989d8667128d4142f3c075cd2e2ad6.png" src="_images/b44eaf28b1ece051c3e62f7f719c3d151e989d8667128d4142f3c075cd2e2ad6.png" />
 </div>
 </div>
-</div>
-<p>If we are happy with what it found, we can remove them from the <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">unimportant_rates</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we can look at the updated rate collection.  Notice that the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is gone as are a lot of the reverse rates</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>N13 ⟶ C13 + e⁺ + 𝜈
-O15 ⟶ N15 + e⁺ + 𝜈
-p + p ⟶ H2 + e⁺ + 𝜈
-p + p + e⁻ ⟶ H2 + 𝜈
-H2 + p ⟶ He3 + 𝛾
-H2 + H2 ⟶ He4 + 𝛾
-He3 + p ⟶ He4 + e⁺ + 𝜈
-C12 + p ⟶ N13 + 𝛾
-C13 + p ⟶ N14 + 𝛾
-N14 + p ⟶ O15 + 𝛾
-He3 + H2 ⟶ p + He4
-N15 + p ⟶ He4 + C12
-He3 + He3 ⟶ p + p + He4
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
+---------------
+  explicitly carried nuclei: 21
+  approximated-out nuclei: 1
+  inert nuclei (included in carried): 0
+
+  NSE compatible? False
+
+  total number of rates: 84
+
+  rates explicitly connecting nuclei: 74
+  hidden rates: 10
+
+  reaclib rates: 40
+  starlib rates: 0
+  temperature tabular rates: 0
+  weak tabular rates: 8
+  approximate rates: 1
+  derived rates: 30
+  branched rates: 0
+  modified rates: 5
+  custom rates: 0
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell tag_nbval-ignore-output docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">always_show_alpha</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/7a1c59b0974a1af26dabfb66d0e2e5702ec24fbbfc2394f413b4ec31c27d5a1d.png" src="_images/7a1c59b0974a1af26dabfb66d0e2e5702ec24fbbfc2394f413b4ec31c27d5a1d.png" />
-</div>
-</div>
+</section>
 </section>
 
 
@@ -751,20 +872,20 @@ He3 + He3 ⟶ p + p + He4
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="nse-protons.html"
+       href="mesa-basic.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Using NSE Protons</p>
+        <p class="prev-next-title">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</p>
       </div>
     </a>
     <a class="right-next"
-       href="network-cycles.html"
+       href="aprox13.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Finding Cycles (with NetworkX)</p>
+        <p class="prev-next-title">The “aprox13” network</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -774,6 +895,26 @@ He3 + He3 ⟶ p + p + He4
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-rates">CNO rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-breakout-rates">Additional breakout rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp-rates">PP rates</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-network">Final network</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

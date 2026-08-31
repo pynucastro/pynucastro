@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.common_networks module &#8212; pynucastro 3.0.0.post29+gdaafae636 documentation</title>
+    <title>pynucastro.networks.common_networks module &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=cc6014b9"></script>
+    <script src="_static/documentation_options.js?v=22e2cffe"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -254,6 +254,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="common-nets.html">Common Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -597,6 +598,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.aprox13"><code class="docutils literal notranslate"><span class="pre">aprox13()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.cno"><code class="docutils literal notranslate"><span class="pre">cno()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.mesa_basic"><code class="docutils literal notranslate"><span class="pre">mesa_basic()</span></code></a></li>
 </ul>
             </nav>
@@ -619,6 +621,29 @@
 <p>aprox13 contains 13 nuclei and is suitable for explosive He and C
 burning.  It uses the (α,p)(p,γ) approximation for the α-chain
 and approximates C+C, C+O, and O+O burning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>network_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>The type of network to create.  Allowed values are:</p>
+<ul class="simple">
+<li><p>”python” : create a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a></p></li>
+<li><p>”cxx” : create a <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></p></li>
+<li><p>”fortran” : create a <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FortranNetwork</span></code></a></p></li>
+<li><p>”amrex” : create a <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork">PythonNetwork</a>, <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">AmrexAstroCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork">FortranNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.networks.common_networks.cno">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.networks.common_networks.</span></span><span class="sig-name descname"><span class="pre">cno</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'python'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/common_networks.html#cno"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.common_networks.cno" title="Link to this definition">#</a></dt>
+<dd><p>Create a CNO burning network.</p>
+<p>This is based on the MESA cno_extras network, but it has more
+reverse rates (which may or may not be important).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>network_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>The type of network to create.  Allowed values are:</p>
@@ -709,6 +734,7 @@ CNO (but not hot-CNO), and He-burning.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.aprox13"><code class="docutils literal notranslate"><span class="pre">aprox13()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.cno"><code class="docutils literal notranslate"><span class="pre">cno()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.common_networks.mesa_basic"><code class="docutils literal notranslate"><span class="pre">mesa_basic()</span></code></a></li>
 </ul>
   </nav></div>

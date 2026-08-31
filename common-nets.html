@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Common Networks &#8212; pynucastro 3.0.0.post29+gdaafae636 documentation</title>
+    <title>Common Networks &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=cc6014b9"></script>
+    <script src="_static/documentation_options.js?v=22e2cffe"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -256,6 +256,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Common Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -618,6 +619,14 @@ basic stellar evolution.  This can be created via:</p>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="mesa-basic.html"><span class="doc">MESA basic.net Network</span></a> for details on the approximations used in this network.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cno</span></code> : a general network appropriate to CNO/hot-CNO burning with rp-breakout.
+This is based on the MESA <code class="docutils literal notranslate"><span class="pre">cno_extras</span></code> network, but it has a few more reverse
+rates.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">common_networks</span><span class="o">.</span><span class="n">cno</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="cno-network.html"><span class="doc">CNO burning network</span></a> for details on the approximations used in this network.</p>
 </li>
 </ul>
 </section>

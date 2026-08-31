@@ -22,3 +22,14 @@ The current networks are:
      net = pyna.common_networks.mesa_basic()
 
   See :doc:`mesa-basic` for details on the approximations used in this network.
+
+* ``cno`` : a general network appropriate to CNO/hot-CNO burning with rp-breakout.
+  This is based on the MESA ``cno_extras`` network, but it has a few more reverse
+  rates.
+
+  .. code:: python
+
+     net = pyna.common_networks.cno()
+
+  See :doc:`cno-network` for details on the approximations used in this network.
+

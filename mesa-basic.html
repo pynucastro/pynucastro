@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>MESA basic.net Network &#8212; pynucastro 3.0.0.post29+gdaafae636 documentation</title>
+    <title>MESA basic.net Network &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=cc6014b9"></script>
+    <script src="_static/documentation_options.js?v=22e2cffe"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="The “aprox13” network" href="aprox13.html" />
+    <link rel="next" title="CNO burning network" href="cno-network.html" />
     <link rel="prev" title="Common Networks" href="common-nets.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -256,6 +256,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="common-nets.html">Common Networks</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -732,10 +733,11 @@ Notice that we explicitly pass the <code class="docutils literal notranslate"><s
 </div>
 </div>
 </div>
-<p>The <span class="math notranslate nohighlight">\({}^3\mathrm{He} + {}^3\mathrm{He}\)</span> rate is unapproximated.</p>
+<p>The <span class="math notranslate nohighlight">\({}^3\mathrm{He} + {}^3\mathrm{He}\)</span> and <span class="math notranslate nohighlight">\({}^3\mathrm{He} + p\)</span> rates are unapproximated.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rhe3he3</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(he3,pp)he4"</span><span class="p">)</span>
+<span class="n">rhe3p</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(p,)he4"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -760,7 +762,7 @@ Notice that we explicitly pass the <code class="docutils literal notranslate"><s
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib_pp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rppp_he3</span><span class="p">,</span> <span class="n">rpepp_he3</span><span class="p">,</span>
-                             <span class="n">rhe3he3</span><span class="p">,</span> <span class="n">rhe3he4p_2he4</span><span class="p">])</span>
+                             <span class="n">rhe3he3</span><span class="p">,</span> <span class="n">rhe3p</span><span class="p">,</span> <span class="n">rhe3he4p_2he4</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -942,12 +944,12 @@ Notice that we explicitly pass the <code class="docutils literal notranslate"><s
 
   NSE compatible? False
 
-  total number of rates: 38
+  total number of rates: 39
 
-  rates explicitly connecting nuclei: 13
+  rates explicitly connecting nuclei: 14
   hidden rates: 25
 
-  reaclib rates: 18
+  reaclib rates: 19
   starlib rates: 0
   temperature tabular rates: 0
   weak tabular rates: 0
@@ -967,7 +969,7 @@ Notice that we explicitly pass the <code class="docutils literal notranslate"><s
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f20026fff7a82a8919b68c0f727d9c332b1a0e45f9d052e3651b021d59758519.png" src="_images/f20026fff7a82a8919b68c0f727d9c332b1a0e45f9d052e3651b021d59758519.png" />
+<img alt="_images/f56b5dedd2b395c66a75fb2b571698f2e37b9ee61728909db0e45c0dd4a44dff.png" src="_images/f56b5dedd2b395c66a75fb2b571698f2e37b9ee61728909db0e45c0dd4a44dff.png" />
 </div>
 </div>
 </section>
@@ -1081,11 +1083,11 @@ Notice that we explicitly pass the <code class="docutils literal notranslate"><s
       </div>
     </a>
     <a class="right-next"
-       href="aprox13.html"
+       href="cno-network.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">The “aprox13” network</p>
+        <p class="prev-next-title">CNO burning network</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

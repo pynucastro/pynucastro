@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.common_networks &#8212; pynucastro 3.0.0.post29+gdaafae636 documentation</title>
+    <title>pynucastro.networks.common_networks &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=cc6014b9"></script>
+    <script src="../../../_static/documentation_options.js?v=22e2cffe"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -253,6 +253,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../../common-nets.html">Common Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cno-network.html">CNO burning network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aprox13.html">The “aprox13” network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
 </ul>
@@ -524,6 +525,42 @@
                               <span class="n">ReacLibLibrary</span><span class="p">,</span> <span class="n">make_ap_pg_rates</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_pp_approx_lib</span><span class="p">(</span><span class="n">lib</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Make a Library with rates that approximate PP-I,II,III"""</span>
+
+    <span class="c1"># pp</span>
+
+    <span class="n">rpp</span><span class="p">,</span> <span class="n">rpep</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"p(p,)d"</span><span class="p">)</span>
+
+    <span class="n">rppp_he3</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpp</span><span class="p">,</span>
+                            <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
+                            <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                            <span class="n">description</span><span class="o">=</span><span class="s2">"p(p,e⁺ν)d(p,γ)He3"</span><span class="p">,</span>
+                            <span class="n">rate_source</span><span class="o">=</span><span class="n">rpp</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="n">rpepp_he3</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpep</span><span class="p">,</span>
+                             <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
+                             <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                             <span class="n">description</span><span class="o">=</span><span class="s2">"p(pe⁻,ν)d(p,γ)He3"</span><span class="p">,</span>
+                             <span class="n">rate_source</span><span class="o">=</span><span class="n">rpep</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="n">rhe3he3</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(he3,pp)he4"</span><span class="p">)</span>
+    <span class="n">rhe3p</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(p,)he4"</span><span class="p">)</span>
+
+    <span class="n">rhe3he4</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he4(he3,g)be7"</span><span class="p">)</span>
+    <span class="n">rhe3he4p_2he4</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rhe3he4</span><span class="p">,</span>
+                                 <span class="n">new_reactants</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
+                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">),</span>
+                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
+                                 <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
+                                               <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
+                                 <span class="n">not_in_ydot_term</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="s2">"He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rppp_he3</span><span class="p">,</span> <span class="n">rpepp_he3</span><span class="p">,</span>
+                          <span class="n">rhe3he3</span><span class="p">,</span> <span class="n">rhe3p</span><span class="p">,</span> <span class="n">rhe3he4p_2he4</span><span class="p">])</span>
+
+
 <div class="viewcode-block" id="aprox13">
 <a class="viewcode-back" href="../../../pynucastro.networks.common_networks.html#pynucastro.networks.common_networks.aprox13">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">aprox13</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s2">"python"</span><span class="p">):</span>
@@ -599,36 +636,7 @@
 
     <span class="n">rl</span> <span class="o">=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
 
-    <span class="c1"># pp</span>
-
-    <span class="n">rpp</span><span class="p">,</span> <span class="n">rpep</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"p(p,)d"</span><span class="p">)</span>
-
-    <span class="n">rppp_he3</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpp</span><span class="p">,</span>
-                            <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
-                            <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
-                            <span class="n">description</span><span class="o">=</span><span class="s2">"p(p,e⁺ν)d(p,γ)He3"</span><span class="p">,</span>
-                            <span class="n">rate_source</span><span class="o">=</span><span class="n">rpp</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
-
-    <span class="n">rpepp_he3</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rpep</span><span class="p">,</span>
-                             <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">)],</span>
-                             <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
-                             <span class="n">description</span><span class="o">=</span><span class="s2">"p(pe⁻,ν)d(p,γ)He3"</span><span class="p">,</span>
-                             <span class="n">rate_source</span><span class="o">=</span><span class="n">rpep</span><span class="o">.</span><span class="n">src</span><span class="p">)</span>
-
-    <span class="n">rhe3he3</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he3(he3,pp)he4"</span><span class="p">)</span>
-
-    <span class="n">rhe3he4</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"he4(he3,g)be7"</span><span class="p">)</span>
-    <span class="n">rhe3he4p_2he4</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rhe3he4</span><span class="p">,</span>
-                                 <span class="n">new_reactants</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
-                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he3"</span><span class="p">),</span>
-                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
-                                 <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span>
-                                               <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
-                                 <span class="n">not_in_ydot_term</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
-                                 <span class="n">description</span><span class="o">=</span><span class="s2">"He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4"</span><span class="p">)</span>
-
-    <span class="n">lib_pp</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rppp_he3</span><span class="p">,</span> <span class="n">rpepp_he3</span><span class="p">,</span>
-                            <span class="n">rhe3he3</span><span class="p">,</span> <span class="n">rhe3he4p_2he4</span><span class="p">])</span>
+    <span class="n">lib_pp</span> <span class="o">=</span> <span class="n">_make_pp_approx_lib</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
 
     <span class="c1"># CNO</span>
 
@@ -687,6 +695,80 @@
     <span class="n">net_class</span> <span class="o">=</span> <span class="n">get_net_class</span><span class="p">(</span><span class="n">network_type</span><span class="o">=</span><span class="n">network_type</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">net_class</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib_pp</span><span class="p">,</span> <span class="n">lib_cno</span><span class="p">,</span> <span class="n">lib_he</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="cno">
+<a class="viewcode-back" href="../../../pynucastro.networks.common_networks.html#pynucastro.networks.common_networks.cno">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cno</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="s2">"python"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Create a CNO burning network.</span>
+
+<span class="sd">    This is based on the MESA cno_extras network, but it has more</span>
+<span class="sd">    reverse rates (which may or may not be important).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    network_type : str</span>
+<span class="sd">        The type of network to create.  Allowed values are:</span>
+
+<span class="sd">        * "python" : create a :py:obj:`PythonNetwork &lt;pynucastro.networks.python_network.PythonNetwork&gt;`</span>
+<span class="sd">        * "cxx" : create a :py:obj:`SimpleCxxNetwork &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`</span>
+<span class="sd">        * "fortran" : create a :py:obj:`FortranNetwork &lt;pynucastro.networks.fortran_network.FortranNetwork&gt;`</span>
+<span class="sd">        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork</span>
+
+<span class="sd">    """</span>
+
+    <span class="n">nuc</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+           <span class="s2">"c12-13"</span><span class="p">,</span>
+           <span class="s2">"n13-15"</span><span class="p">,</span>
+           <span class="s2">"o14-18"</span><span class="p">,</span>
+           <span class="s2">"f17-19"</span><span class="p">,</span>
+           <span class="s2">"ne18-20"</span><span class="p">,</span>
+           <span class="s2">"mg22,24"</span><span class="p">]</span>
+
+    <span class="n">net</span> <span class="o">=</span> <span class="n">network_helper</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">network_type</span><span class="o">=</span><span class="n">network_type</span><span class="p">)</span>
+
+    <span class="c1"># remove C-burning rates</span>
+    <span class="n">rr</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">([</span><span class="s2">"c12(c12,a)ne20"</span><span class="p">,</span>
+                               <span class="s2">"o16(c12,a)mg24"</span><span class="p">,</span>
+                               <span class="s2">"ne20(a,c12)c12"</span><span class="p">,</span>
+                               <span class="s2">"mg24(a,c12)o16"</span><span class="p">])</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span>
+
+    <span class="c1"># add additional breakout rates</span>
+    <span class="n">rl</span> <span class="o">=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
+
+    <span class="c1"># first the (a,p)(p,g) approximation for Ne18(a,g)Mg22</span>
+    <span class="n">rne18ag</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne18(a,g)mg22"</span><span class="p">)</span>
+    <span class="n">net</span><span class="o">.</span><span class="n">remove_rates</span><span class="p">(</span><span class="n">rne18ag</span><span class="p">)</span>
+
+    <span class="n">rne18_mg22</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">make_ap_pg_rates</span><span class="p">(</span><span class="n">rl</span><span class="p">,</span> <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"mg22"</span><span class="p">,</span> <span class="n">use_detailed_balance</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># next sequences connecting Ne19 and Ne20 to Mg22</span>
+    <span class="n">rne19pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne19(p,g)na20"</span><span class="p">)</span>
+    <span class="n">rne19_mg22</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rne19pg</span><span class="p">,</span>
+                              <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg22"</span><span class="p">)],</span>
+                              <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">3</span><span class="p">},</span>
+                              <span class="n">description</span><span class="o">=</span><span class="s2">"Ne19(p,γ)Na20(p,γ)Mg21(β+)Na21(p,γ)Mg22"</span><span class="p">)</span>
+
+    <span class="n">rne20pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"ne20(p,g)na21"</span><span class="p">)</span>
+    <span class="n">rne20_mg22</span> <span class="o">=</span> <span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rne20pg</span><span class="p">,</span>
+                              <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"mg22"</span><span class="p">)],</span>
+                              <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                              <span class="n">description</span><span class="o">=</span><span class="s2">"Ne20(p,γ)Na21(p,γ)Mg22"</span><span class="p">)</span>
+
+    <span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">([</span><span class="n">rne18_mg22</span><span class="p">,</span> <span class="n">rne19_mg22</span><span class="p">,</span> <span class="n">rne20_mg22</span><span class="p">])</span>
+
+    <span class="c1"># finally, the pp approximation</span>
+    <span class="n">lib_pp</span> <span class="o">=</span> <span class="n">_make_pp_approx_lib</span><span class="p">(</span><span class="n">rl</span><span class="p">)</span>
+
+    <span class="n">net</span><span class="o">.</span><span class="n">add_rates</span><span class="p">(</span><span class="n">lib_pp</span><span class="o">.</span><span class="n">get_rates</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">net</span></div>
 
 </pre></div>
 
