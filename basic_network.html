@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Basic Networks &#8212; pynucastro 3.0.0.post27+gfa8d239f3 documentation</title>
+    <title>Basic Networks &#8212; pynucastro 3.0.0.post28+ga11aa8264 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=12af83e0"></script>
+    <script src="_static/documentation_options.js?v=40d92675"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -615,6 +615,10 @@ rates are more general.</p></li>
 </ul>
 <p>pynucastro gives you control over each of these steps, which is needed for some complex network types. But if you just want to create a network that has all possible links connecting a set of nuclei, then the
 <a class="reference internal" href="pynucastro.networks.helper.html#pynucastro.networks.helper.network_helper" title="pynucastro.networks.helper.network_helper"><code class="xref py py-func docutils literal notranslate"><span class="pre">network_helper</span></code></a> function is enough.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can pass in the names of individual nuclei, or a range of nuclei, like <code class="docutils literal notranslate"><span class="pre">&quot;ni56-58&quot;</span></code>, or a comma-separated group of the same element, like <code class="docutils literal notranslate"><span class="pre">&quot;ni56,58,60&quot;</span></code>.</p>
+</div>
 <p>Here’s an example of a CNO network with some breakout.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -626,11 +630,8 @@ rates are more general.</p></li>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
-          <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span>
-          <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
-          <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"o18"</span><span class="p">,</span>
-          <span class="s2">"f17"</span><span class="p">,</span> <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"f19"</span><span class="p">,</span>
-          <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"ne19"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span> <span class="s2">"ne21"</span><span class="p">]</span>
+          <span class="s2">"c12-13"</span><span class="p">,</span> <span class="s2">"n13-15"</span><span class="p">,</span> <span class="s2">"o14-18"</span><span class="p">,</span>
+          <span class="s2">"f17-19"</span><span class="p">,</span> <span class="s2">"ne18-21"</span><span class="p">]</span>
 <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 </pre></div>
 </div>

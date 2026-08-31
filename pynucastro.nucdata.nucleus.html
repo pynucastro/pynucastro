@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.nucleus module &#8212; pynucastro 3.0.0.post27+gfa8d239f3 documentation</title>
+    <title>pynucastro.nucdata.nucleus module &#8212; pynucastro 3.0.0.post28+ga11aa8264 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=12af83e0"></script>
+    <script src="_static/documentation_options.js?v=40d92675"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -625,6 +625,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.UnsupportedNucleus"><code class="docutils literal notranslate"><span class="pre">UnsupportedNucleus</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.get_all_nuclei"><code class="docutils literal notranslate"><span class="pre">get_all_nuclei()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.get_nuclei_in_range"><code class="docutils literal notranslate"><span class="pre">get_nuclei_in_range()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.parse_nuclei_group"><code class="docutils literal notranslate"><span class="pre">parse_nuclei_group()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -1008,6 +1009,23 @@ range 52 to 64</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.nucdata.nucleus.parse_nuclei_group">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.nucleus.</span></span><span class="sig-name descname"><span class="pre">parse_nuclei_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nstr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/nucleus.html#parse_nuclei_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.nucleus.parse_nuclei_group" title="Link to this definition">#</a></dt>
+<dd><p>Parse a string representing a group of nuclei, like “ni56-58,60”
+and return a list of Nucleus objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nstr</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A string representing a group of nuclei consisting of a single
+element name followed by mass numbers, using “-” for a range and
+“,” for single values in the sequence.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>(<a class="reference internal" href="#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1088,6 +1106,7 @@ range 52 to 64</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.UnsupportedNucleus"><code class="docutils literal notranslate"><span class="pre">UnsupportedNucleus</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.get_all_nuclei"><code class="docutils literal notranslate"><span class="pre">get_all_nuclei()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.get_nuclei_in_range"><code class="docutils literal notranslate"><span class="pre">get_nuclei_in_range()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.nucleus.parse_nuclei_group"><code class="docutils literal notranslate"><span class="pre">parse_nuclei_group()</span></code></a></li>
 </ul>
   </nav></div>
 

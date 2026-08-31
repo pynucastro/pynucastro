@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 3.0.0.post27+gfa8d239f3 documentation</title>
+    <title>pynucastro.nucdata.nucleus &#8212; pynucastro 3.0.0.post28+ga11aa8264 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=12af83e0"></script>
+    <script src="../../../_static/documentation_options.js?v=40d92675"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -541,6 +541,9 @@
 <span class="n">_NUCLEUS_SYMBOL_MASS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^([a-zA-Z]+)(\d*)$"</span><span class="p">)</span>
 <span class="n">_NUCLEUS_MASS_SYMBOL_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^(\d*)([a-zA-Z]*)$"</span><span class="p">)</span>
 
+<span class="c1"># this matches something like "ni56-58,60"</span>
+<span class="n">_NUCLEUS_RANGE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"([A-Za-z]+)(\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*)"</span><span class="p">)</span>
+
 <span class="c1"># Note: for Nubase 2020, we need to use the CODATA 18 constants</span>
 <span class="n">_mass_H</span> <span class="o">=</span> <span class="n">_mass_table</span><span class="o">.</span><span class="n">get_mass_diff</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_u_MeV_C18</span>
 
@@ -970,6 +973,43 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Single object passed to Nucleus.cast_list() instead of list"</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="parse_nuclei_group">
+<a class="viewcode-back" href="../../../pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.parse_nuclei_group">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_nuclei_group</span><span class="p">(</span><span class="n">nstr</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Parse a string representing a group of nuclei, like "ni56-58,60"</span>
+<span class="sd">    and return a list of Nucleus objects</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nstr : str</span>
+<span class="sd">        A string representing a group of nuclei consisting of a single</span>
+<span class="sd">        element name followed by mass numbers, using "-" for a range and</span>
+<span class="sd">        "," for single values in the sequence.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list(Nucleus)</span>
+
+<span class="sd">    """</span>
+
+    <span class="n">match</span> <span class="o">=</span> <span class="n">_NUCLEUS_RANGE_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">nstr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"invalid nuclei range specification: </span><span class="si">{</span><span class="n">nstr</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">element</span><span class="p">,</span> <span class="n">numbers</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">numbers</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">","</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">"-"</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+            <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">element</span><span class="si">}{</span><span class="n">n</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">element</span><span class="si">}{</span><span class="nb">int</span><span class="p">(</span><span class="n">part</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
 
 
 

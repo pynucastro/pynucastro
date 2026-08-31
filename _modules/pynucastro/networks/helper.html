@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 3.0.0.post27+gfa8d239f3 documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 3.0.0.post28+ga11aa8264 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=12af83e0"></script>
+    <script src="../../../_static/documentation_options.js?v=40d92675"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -516,6 +516,7 @@
   <h1>Source code for pynucastro.networks.helper</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Methods to ease the creation of networks."""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">parse_nuclei_group</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DerivedRate</span><span class="p">,</span> <span class="n">ReacLibLibrary</span><span class="p">,</span> <span class="n">StarLibLibrary</span><span class="p">,</span>
                               <span class="n">TabularWeakLibrary</span><span class="p">)</span>
 
@@ -541,8 +542,11 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    nuclei : Iterable(Nucleus)</span>
-<span class="sd">        the nuclei to use for the network</span>
+<span class="sd">    nuclei : Iterable(Nucleus) or Iterable(str)</span>
+<span class="sd">        the nuclei to use for the network.  In addition of names of</span>
+<span class="sd">        nuclei, ranges of masses for the same element can be</span>
+<span class="sd">        specified in a string like "ni56-58", or comma-separated like</span>
+<span class="sd">        "ni56,58,60".</span>
 <span class="sd">    network_type : str</span>
 <span class="sd">        The type of network to create.  Allowed values are:</span>
 
@@ -580,12 +584,25 @@
 
     <span class="k">assert</span> <span class="n">main_library</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"reaclib"</span><span class="p">,</span> <span class="s2">"starlib"</span><span class="p">]</span>
 
+    <span class="c1"># interpret the nuclei</span>
+    <span class="n">nuclist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nuclei</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+            <span class="n">nuclist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_nuc</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">_nucs</span> <span class="o">=</span> <span class="n">parse_nuclei_group</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">nuclist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_nucs</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">main_library</span> <span class="o">==</span> <span class="s2">"reaclib"</span><span class="p">:</span>
         <span class="n">rl</span> <span class="o">=</span> <span class="n">ReacLibLibrary</span><span class="p">()</span>
-        <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">sl</span> <span class="o">=</span> <span class="n">StarLibLibrary</span><span class="p">()</span>
-        <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">lib</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="n">with_reverse</span><span class="o">=</span><span class="n">with_reverse</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">use_tabular_rates</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">tabular_ordering</span><span class="p">:</span>
@@ -593,7 +610,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tl</span> <span class="o">=</span> <span class="n">TabularWeakLibrary</span><span class="p">()</span>
 
-        <span class="n">lib</span> <span class="o">+=</span> <span class="n">tl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">lib</span> <span class="o">+=</span> <span class="n">tl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclist</span><span class="p">,</span> <span class="n">print_warning</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># if we have both a tabular and ReacLib rate,</span>
         <span class="c1"># remove the ReacLib version</span>
