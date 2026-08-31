@@ -21,7 +21,7 @@ class TestCommon:
         assert len(net.unique_nuclei) == 8
         assert len(net.approx_nuclei) == 3
 
-        assert len(net.reaclib_rates) == 18
+        assert len(net.reaclib_rates) == 19
         assert len(net.approx_rates) == 3
         assert len(net.derived_rates) == 9
         assert len(net.branched_rates) == 2

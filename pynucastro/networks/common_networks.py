@@ -6,6 +6,42 @@ from pynucastro.rates import (BranchedRate, Library, ModifiedRate,
                               ReacLibLibrary, make_ap_pg_rates)
 
 
+def _make_pp_approx_lib(lib):
+    """Make a Library with rates that approximate PP-I,II,III"""
+
+    # pp
+
+    rpp, rpep = lib.get_rate_by_name("p(p,)d")
+
+    rppp_he3 = ModifiedRate(rpp,
+                            new_products=[Nucleus("he3")],
+                            stoichiometry={Nucleus("p"): 3},
+                            description="p(p,e⁺ν)d(p,γ)He3",
+                            rate_source=rpp.src)
+
+    rpepp_he3 = ModifiedRate(rpep,
+                             new_products=[Nucleus("he3")],
+                             stoichiometry={Nucleus("p"): 3},
+                             description="p(pe⁻,ν)d(p,γ)He3",
+                             rate_source=rpep.src)
+
+    rhe3he3 = lib.get_rate_by_name("he3(he3,pp)he4")
+    rhe3p = lib.get_rate_by_name("he3(p,)he4")
+
+    rhe3he4 = lib.get_rate_by_name("he4(he3,g)be7")
+    rhe3he4p_2he4 = ModifiedRate(rhe3he4,
+                                 new_reactants=[Nucleus("he4"),
+                                                Nucleus("he3"),
+                                                Nucleus("p")],
+                                 new_products=[Nucleus("he4"),
+                                               Nucleus("he4")],
+                                 not_in_ydot_term=[Nucleus("p")],
+                                 description="He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4")
+
+    return Library(rates=[rppp_he3, rpepp_he3,
+                          rhe3he3, rhe3p, rhe3he4p_2he4])
+
+
 def aprox13(*, network_type="python"):
     """Create the aprox13 network.
 
@@ -76,36 +112,7 @@ def mesa_basic(*, network_type="python"):
 
     rl = ReacLibLibrary()
 
-    # pp
-
-    rpp, rpep = rl.get_rate_by_name("p(p,)d")
-
-    rppp_he3 = ModifiedRate(rpp,
-                            new_products=[Nucleus("he3")],
-                            stoichiometry={Nucleus("p"): 3},
-                            description="p(p,e⁺ν)d(p,γ)He3",
-                            rate_source=rpp.src)
-
-    rpepp_he3 = ModifiedRate(rpep,
-                             new_products=[Nucleus("he3")],
-                             stoichiometry={Nucleus("p"): 3},
-                             description="p(pe⁻,ν)d(p,γ)He3",
-                             rate_source=rpep.src)
-
-    rhe3he3 = rl.get_rate_by_name("he3(he3,pp)he4")
-
-    rhe3he4 = rl.get_rate_by_name("he4(he3,g)be7")
-    rhe3he4p_2he4 = ModifiedRate(rhe3he4,
-                                 new_reactants=[Nucleus("he4"),
-                                                Nucleus("he3"),
-                                                Nucleus("p")],
-                                 new_products=[Nucleus("he4"),
-                                               Nucleus("he4")],
-                                 not_in_ydot_term=[Nucleus("p")],
-                                 description="He4(He3,γ)Be7(e⁻,ν)Li7(p,α)He4")
-
-    lib_pp = Library(rates=[rppp_he3, rpepp_he3,
-                            rhe3he3, rhe3he4p_2he4])
+    lib_pp = _make_pp_approx_lib(rl)
 
     # CNO
 
@@ -164,3 +171,74 @@ def mesa_basic(*, network_type="python"):
     net_class = get_net_class(network_type=network_type)
 
     return net_class(libraries=[lib_pp, lib_cno, lib_he])
+
+
+def cno(*, network_type="python"):
+    """Create a CNO burning network.
+
+    This is based on the MESA cno_extras network, but it has more
+    reverse rates (which may or may not be important).
+
+    Parameters
+    ----------
+    network_type : str
+        The type of network to create.  Allowed values are:
+
+        * "python" : create a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`
+        * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
+        * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
+        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+
+    Returns
+    -------
+    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork
+
+    """
+
+    nuc = ["p", "he4",
+           "c12-13",
+           "n13-15",
+           "o14-18",
+           "f17-19",
+           "ne18-20",
+           "mg22,24"]
+
+    net = network_helper(nuc, network_type=network_type)
+
+    # remove C-burning rates
+    rr = net.get_rate_by_name(["c12(c12,a)ne20",
+                               "o16(c12,a)mg24",
+                               "ne20(a,c12)c12",
+                               "mg24(a,c12)o16"])
+    net.remove_rates(rr)
+
+    # add additional breakout rates
+    rl = ReacLibLibrary()
+
+    # first the (a,p)(p,g) approximation for Ne18(a,g)Mg22
+    rne18ag = rl.get_rate_by_name("ne18(a,g)mg22")
+    net.remove_rates(rne18ag)
+
+    rne18_mg22, _ = make_ap_pg_rates(rl, "ne18", "mg22", use_detailed_balance=True)
+
+    # next sequences connecting Ne19 and Ne20 to Mg22
+    rne19pg = rl.get_rate_by_name("ne19(p,g)na20")
+    rne19_mg22 = ModifiedRate(rne19pg,
+                              new_products=[Nucleus("mg22")],
+                              stoichiometry={Nucleus("p"): 3},
+                              description="Ne19(p,γ)Na20(p,γ)Mg21(β+)Na21(p,γ)Mg22")
+
+    rne20pg = rl.get_rate_by_name("ne20(p,g)na21")
+    rne20_mg22 = ModifiedRate(rne20pg,
+                              new_products=[Nucleus("mg22")],
+                              stoichiometry={Nucleus("p"): 2},
+                              description="Ne20(p,γ)Na21(p,γ)Mg22")
+
+    net.add_rates([rne18_mg22, rne19_mg22, rne20_mg22])
+
+    # finally, the pp approximation
+    lib_pp = _make_pp_approx_lib(rl)
+
+    net.add_rates(lib_pp.get_rates())
+
+    return net
