@@ -1,0 +1,32 @@
+#ifndef TABULAR_WEAK_RATES_H
+#define TABULAR_WEAK_RATES_H
+
+#include <amrex_bridge.H>
+
+#include <table_rates.H>
+
+namespace tabular_weak_rates {
+
+    using namespace Species;
+
+    using namespace rate_tables;
+
+    template <typename T>
+    inline
+    void
+    fill_rates([[maybe_unused]] const Real temp,
+               [[maybe_unused]] const Real rhoy,
+               [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
+               [[maybe_unused]] T& rate_eval)
+    {
+
+        // Calculate tabular weak rates
+
+        [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
+
+        rate_eval.enuc_weak = 0.0_rt;
+
+    }
+
+}
+#endif
