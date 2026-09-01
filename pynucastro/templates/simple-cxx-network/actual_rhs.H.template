@@ -13,6 +13,7 @@
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>
+#include <tabular_weak_rates.H>
 
 using namespace Species;
 using namespace Rates;
@@ -105,11 +106,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // Calculate tabular rates
 
-    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
-    <compute_tabular_rates>(1)
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
 }
 
