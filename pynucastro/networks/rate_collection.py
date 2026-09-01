@@ -772,7 +772,7 @@ class RateCollection:
             try:
                 ar, ar_reverse = make_ap_pg_rates(self.rates, nuc_start, nuc_end)
             except AttributeError:
-                print(f"unabled to approximate out {nuc_inter}")
+                print(f"unable to approximate out {nuc_inter}")
                 continue
 
             if self.verbose:
