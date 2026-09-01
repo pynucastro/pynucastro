@@ -169,6 +169,7 @@ and interactively exploring nuclear reaction networks.
 
    rates-devel
    adding-rates
+   nets-devel
    testing
 
 .. toctree::
