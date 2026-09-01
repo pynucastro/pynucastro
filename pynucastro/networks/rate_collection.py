@@ -758,10 +758,19 @@ class RateCollection:
         """
 
         if intermediate_nuclei is None:
-            raise ValueError("no intermediate_nuclei specified")
-
-        # make sure that the intermediate_nuclei list are Nuclei objects
-        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+            intermediate_nuclei = []
+            # find all the intermediate nuclei
+            for r in self.rates:
+                if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                    len(r.products) == 1):
+                    prim_nuc = sorted(r.reactants)[-1]
+                    inter_nuc = prim_nuc + Nucleus("he4") - Nucleus("p")
+                    if inter_nuc in self.unique_nuclei:
+                        intermediate_nuclei.append(inter_nuc)
+        else:
+            # make sure that the intermediate_nuclei list are Nuclei objects
+            intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei,
+                                                    allow_None=True)
 
         approx_rates = []
 
