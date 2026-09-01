@@ -550,7 +550,7 @@ class ApproximateRate(Rate):
         list(Rate)
 
         """
-        return list(self.rates.values())
+        return sorted(list(self.rates.values()))
 
     def _set_screening(self):
         # the individual rates are screened -- we don't screen the combination of them
