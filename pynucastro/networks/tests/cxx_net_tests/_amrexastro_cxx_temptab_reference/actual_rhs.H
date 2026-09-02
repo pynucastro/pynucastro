@@ -89,6 +89,8 @@ void evaluate_rates(const burn_t& state,
                     const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                     T& rate_eval) {
 
+    using namespace Rates;
+
     // here Y is consistent with state.xn
 
     [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
