@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post33+g06bd59fce documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post35+g2da363a59 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=29eb3c21"></script>
+    <script src="../../../_static/documentation_options.js?v=e9efcf2d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -552,8 +552,8 @@
                               <span class="n">RatePair</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span>
                               <span class="n">TabularWeakRate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">,</span>
                               <span class="n">ThermoState</span><span class="p">,</span> <span class="n">find_duplicate_rates</span><span class="p">,</span>
-                              <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">,</span> <span class="n">make_CO_approx_rates</span><span class="p">,</span>
-                              <span class="n">need_state</span><span class="p">)</span>
+                              <span class="n">is_allowed_dupe</span><span class="p">,</span> <span class="n">load_rate</span><span class="p">,</span> <span class="n">make_ap_pg_rates</span><span class="p">,</span>
+                              <span class="n">make_CO_approx_rates</span><span class="p">,</span> <span class="n">need_state</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">_rate_name_to_nuc</span><span class="p">,</span> <span class="n">capitalize_id</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">'figure.dpi'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
@@ -1326,7 +1326,7 @@
 
 <div class="viewcode-block" id="RateCollection.make_ap_pg_approx">
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.make_ap_pg_approx">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">make_ap_pg_approx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intermediate_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_ap_pg_approx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">intermediate_nuclei</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the</span>
 <span class="sd">        reverse) into a single effective approximate rate.  The new</span>
 <span class="sd">        approximate rates will be added to the network and the original</span>
@@ -1341,59 +1341,32 @@
 
 <span class="sd">        """</span>
 
-        <span class="c1"># make sure that the intermediate_nuclei list are Nuclei objects</span>
-        <span class="n">intermediate_nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">intermediate_nuclei</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">intermediate_nuclei</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># find all the intermediate nuclei</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">prim_nuc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">inter_nuc</span> <span class="o">=</span> <span class="n">prim_nuc</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span> <span class="o">-</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">inter_nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
+                        <span class="n">intermediate_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inter_nuc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># make sure that the intermediate_nuclei list are Nuclei objects</span>
+            <span class="n">intermediate_nuclei</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">intermediate_nuclei</span><span class="p">,</span>
+                                                    <span class="n">allow_None</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="c1"># find all of the (a,g) rates</span>
-        <span class="n">ag_rates</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span> <span class="ow">and</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">products</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">ag_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-        <span class="c1"># for each (a,g), check to see if the remaining rates are present</span>
         <span class="n">approx_rates</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">r_ag</span> <span class="ow">in</span> <span class="n">ag_rates</span><span class="p">:</span>
-            <span class="n">prim_nuc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r_ag</span><span class="o">.</span><span class="n">reactants</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">prim_prod</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">r_ag</span><span class="o">.</span><span class="n">products</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">nuc_inter</span> <span class="ow">in</span> <span class="n">intermediate_nuclei</span><span class="p">:</span>
+            <span class="n">nuc_start</span> <span class="o">=</span> <span class="n">nuc_inter</span> <span class="o">-</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)</span>
+            <span class="n">nuc_end</span> <span class="o">=</span> <span class="n">nuc_start</span> <span class="o">+</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)</span>
 
-            <span class="n">inter_nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">from_Z_A</span><span class="p">(</span><span class="n">prim_nuc</span><span class="o">.</span><span class="n">Z</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">prim_nuc</span><span class="o">.</span><span class="n">A</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">intermediate_nuclei</span> <span class="ow">and</span> <span class="n">inter_nuc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">intermediate_nuclei</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ar</span><span class="p">,</span> <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">make_ap_pg_rates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">,</span> <span class="n">nuc_start</span><span class="p">,</span> <span class="n">nuc_end</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unable to approximate out </span><span class="si">{</span><span class="n">nuc_inter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="k">continue</span>
-
-            <span class="c1"># look for A(a,p)X</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_ap</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">([</span><span class="n">prim_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
-                                                    <span class="p">[</span><span class="n">inter_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)])):</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># look for X(p,g)B</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_pg</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">([</span><span class="n">inter_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
-                                                    <span class="p">[</span><span class="n">prim_prod</span><span class="p">])):</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># look for reverse B(g,a)A</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_ga</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">([</span><span class="n">prim_prod</span><span class="p">],</span>
-                                                    <span class="p">[</span><span class="n">prim_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)])):</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># look for reverse B(g,p)X</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_gp</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">([</span><span class="n">prim_prod</span><span class="p">],</span>
-                                                    <span class="p">[</span><span class="n">inter_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)])):</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># look for reverse X(p,a)A</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">r_pa</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rate_by_nuclei</span><span class="p">([</span><span class="n">inter_nuc</span><span class="p">,</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)],</span>
-                                                    <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span> <span class="n">prim_nuc</span><span class="p">])):</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># build the approximate rates</span>
-            <span class="n">rates</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"A(a,g)B"</span><span class="p">:</span> <span class="n">r_ag</span><span class="p">,</span> <span class="s2">"A(a,p)X"</span><span class="p">:</span> <span class="n">r_ap</span><span class="p">,</span> <span class="s2">"X(p,g)B"</span><span class="p">:</span> <span class="n">r_pg</span><span class="p">,</span>
-                     <span class="s2">"B(g,a)A"</span><span class="p">:</span> <span class="n">r_ga</span><span class="p">,</span> <span class="s2">"B(g,p)X"</span><span class="p">:</span> <span class="n">r_gp</span><span class="p">,</span> <span class="s2">"X(p,a)A"</span><span class="p">:</span> <span class="n">r_pa</span><span class="p">}</span>
-
-            <span class="n">ar</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"ap_pg"</span><span class="p">)</span>
-            <span class="n">ar_reverse</span> <span class="o">=</span> <span class="n">ApproximateRate</span><span class="p">(</span><span class="n">rates</span><span class="p">,</span> <span class="n">is_reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approx_type</span><span class="o">=</span><span class="s2">"ap_pg"</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"using approximate rate </span><span class="si">{</span><span class="n">ar</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
