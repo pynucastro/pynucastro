@@ -152,6 +152,13 @@ and interactively exploring nuclear reaction networks.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Working With Simulation Codes
+   :hidden:
+
+   mesa-nova.ipynb
+
+.. toctree::
+   :maxdepth: 1
    :caption: Examples in Nuclear Astrophysics
    :hidden:
 
