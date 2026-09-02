@@ -696,6 +696,25 @@ class RateCollection:
 
         self._build_collection()
 
+    def add_inert_nucleus(self, nuc):
+        """Add an inert nucleus to the network
+
+        Parameters
+        ----------
+        nuc : Nucleus, str
+            The nucleus to add
+
+        """
+
+        nuc = Nucleus.cast(nuc)
+
+        if self.inert_nuclei is None:
+            self.inert_nuclei = [nuc]
+        else:
+            self.inert_nuclei.append(nuc)
+
+        self._build_collection()
+
     def add_rates(self, rates):
         """Add new rates to the network.  If the rate already exists,
         it will not be added.  The network is then regenerated using
