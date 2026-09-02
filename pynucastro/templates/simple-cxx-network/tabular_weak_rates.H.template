@@ -7,6 +7,7 @@
 
 namespace tabular_weak_rates {
 
+    using namespace Rates;
     using namespace Species;
 
     using namespace rate_tables;
