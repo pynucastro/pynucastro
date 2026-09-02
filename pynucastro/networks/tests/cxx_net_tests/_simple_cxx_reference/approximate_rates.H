@@ -7,24 +7,27 @@
 #include <actual_network.H>
 #include <rate_type.H>
 
-using namespace Rates;
-using namespace Species;
+namespace approximate_rates {
+
+    using namespace Rates;
+    using namespace Species;
 
 
 
-template <int do_T_derivatives, typename T>
-inline
-void
-fill_approx_rates([[maybe_unused]] const tf_t& tfactors,
-                  [[maybe_unused]] const Real rho,
-                  [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
-                  [[maybe_unused]] T& rate_eval)
-{
+    template <int do_T_derivatives, typename T>
+    inline
+    void
+    fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] const Real rho,
+               [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
+               [[maybe_unused]] T& rate_eval)
+    {
 
-    [[maybe_unused]] Real rate{};
-    [[maybe_unused]] Real drate_dT{};
+        [[maybe_unused]] Real rate{};
+        [[maybe_unused]] Real drate_dT{};
 
+
+    }
 
 }
-
 #endif
