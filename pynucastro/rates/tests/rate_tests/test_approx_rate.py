@@ -52,12 +52,12 @@ class TestAlphaGammaTfactors:
     def test_child_rates(self, ar):
 
         cr = ar.get_child_rates()
-        assert cr[0].fname == "Mg24_He4_to_Si28_reaclib"
-        assert cr[1].fname == "Mg24_He4_to_p_Al27_reaclib"
-        assert cr[2].fname == "Al27_p_to_Si28_reaclib"
-        assert cr[3].fname == "Si28_to_He4_Mg24_reaclib"
-        assert cr[4].fname == "Si28_to_p_Al27_reaclib"
-        assert cr[5].fname == "Al27_p_to_He4_Mg24_reaclib"
+        assert cr[0].fname == "Mg24_He4_to_p_Al27_reaclib"
+        assert cr[1].fname == "Mg24_He4_to_Si28_reaclib"
+        assert cr[2].fname == "Al27_p_to_He4_Mg24_reaclib"
+        assert cr[3].fname == "Al27_p_to_Si28_reaclib"
+        assert cr[4].fname == "Si28_to_He4_Mg24_reaclib"
+        assert cr[5].fname == "Si28_to_p_Al27_reaclib"
 
         assert len(cr) == 6
 
