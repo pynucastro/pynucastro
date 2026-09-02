@@ -127,4 +127,3 @@ O15
 
         assert len(rc_new.unique_nuclei) == 10
         assert len(rc_new.inert_nuclei) == 1
-
