@@ -4,7 +4,7 @@ import pytest
 from pytest import approx
 
 import pynucastro as pyna
-from pynucastro.rates import make_double_neutron_rates
+from pynucastro.rates import make_CO_approx_rates, make_double_neutron_rates
 
 
 class TestAlphaGammaTfactors:
@@ -17,12 +17,12 @@ class TestAlphaGammaTfactors:
     @pytest.fixture(scope="class")
     @classmethod
     def rp(cls, rc):
-        return rc.get_rate("he4_mg24_to_si28")
+        return rc.get_rate("mg24_he4_to_si28")
 
     @pytest.fixture(scope="class")
     @classmethod
     def rs(cls, rc):
-        return [rc.get_rate("he4_mg24_to_p_al27"), rc.get_rate("p_al27_to_si28")]
+        return [rc.get_rate("mg24_he4_to_p_al27"), rc.get_rate("al27_p_to_si28")]
 
     @pytest.fixture(scope="class")
     @classmethod
@@ -33,7 +33,7 @@ class TestAlphaGammaTfactors:
                  "X(p,g)B": rs[1],
                  "B(g,a)A": rc.get_rate("si28_to_he4_mg24"),
                  "B(g,p)X": rc.get_rate("si28_to_p_al27"),
-                 "X(p,a)A": rc.get_rate("p_al27_to_he4_mg24")}
+                 "X(p,a)A": rc.get_rate("al27_p_to_he4_mg24")}
 
         return pyna.ApproximateRate(rates)
 
@@ -52,12 +52,12 @@ class TestAlphaGammaTfactors:
     def test_child_rates(self, ar):
 
         cr = ar.get_child_rates()
-        assert cr[0].fname == "He4_Mg24_to_Si28_reaclib"
-        assert cr[1].fname == "He4_Mg24_to_p_Al27_reaclib"
-        assert cr[2].fname == "p_Al27_to_Si28_reaclib"
-        assert cr[3].fname == "Si28_to_He4_Mg24_reaclib"
-        assert cr[4].fname == "Si28_to_p_Al27_reaclib"
-        assert cr[5].fname == "p_Al27_to_He4_Mg24_reaclib"
+        assert cr[0].fname == "Mg24_He4_to_p_Al27_reaclib"
+        assert cr[1].fname == "Mg24_He4_to_Si28_reaclib"
+        assert cr[2].fname == "Al27_p_to_He4_Mg24_reaclib"
+        assert cr[3].fname == "Al27_p_to_Si28_reaclib"
+        assert cr[4].fname == "Si28_to_He4_Mg24_reaclib"
+        assert cr[5].fname == "Si28_to_p_Al27_reaclib"
 
         assert len(cr) == 6
 
@@ -91,8 +91,8 @@ class TestDoubleN:
 """@numba.njit()
 def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
     Yn = Y[jn]
-    r1_ng = rate_eval.n_Fe52_to_Fe53_reaclib
-    r2_ng = rate_eval.n_Fe53_to_Fe54_reaclib
+    r1_ng = rate_eval.Fe52_n_to_Fe53_reaclib
+    r2_ng = rate_eval.Fe53_n_to_Fe54_reaclib
     r1_gn = rate_eval.Fe53_to_n_Fe52_reaclib
     rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
     rate_eval.Fe52_n_n_to_Fe54_approx = rate
@@ -120,3 +120,11 @@ def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
         # rate scaled by rho Y(n)
 
         assert rf.eval(T, rho=rho, comp=comp) == approx(2.0 * rf1.eval(T, rho=rho, comp=comp) / rho / Yn)
+
+
+def test_co_approx_accepts_rate_list(reaclib_library):
+    """A list returned by ``Library.get_rates()`` is valid input."""
+
+    crates = make_CO_approx_rates(reaclib_library.get_rates(), "C")
+
+    assert len(crates) == 6

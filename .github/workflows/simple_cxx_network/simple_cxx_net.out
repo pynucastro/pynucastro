@@ -34,20 +34,21 @@ jac(  O16, Na20) = 0.31021489871773
 jac( Ne20, Na20) = 1.2369887515025
 jac( Na20, Na20) = -1.5472036502203
 
-Instantaneous energy generation rate (erg/g/s) = 1.2702975384976e+25
-(that includes weak rate neutrino losses of 0 (erg/g/s))
+Instantaneous energy generation rate
+ε_nuc = 1.2702975384976e+25
+ε_{ν,weak} = 0
 
 Reaction rate values
-rate(               Na20_to_Ne20_reaclib) = 1.2369887515025
-rate(            Na20_to_He4_O16_reaclib) = 0.31021489871773
-rate(             He4_C12_to_O16_reaclib) = 0.67096139839131
-rate(            He4_O16_to_Ne20_reaclib) = 5.1760152165499
+rate(      Na20_to_Ne20_beta_pos_reaclib) = 1.2369887515025
+rate(   Na20_to_He4_O16_beta_pos_reaclib) = 0.31021489871773
+rate(             C12_He4_to_O16_reaclib) = 0.67096139839131
+rate(            O16_He4_to_Ne20_reaclib) = 5.1760152165499
 rate(        C12_C12_to_He4_Ne20_reaclib) = 73.295705197358
 rate(         He4_He4_He4_to_C12_reaclib) = 1.7001375745007e-10
 rate(             O16_to_He4_C12_derived) = 227.26780816478
 rate(            Ne20_to_He4_O16_derived) = 2038559.8726499
-rate(         C12_to_He4_He4_He4_derived) = 1312.1843494813
-rate(        He4_Ne20_to_C12_C12_derived) = 0.00010282672540074
+rate(                C12_to_3He4_derived) = 1312.1843494813
+rate(        Ne20_He4_to_C12_C12_derived) = 0.00010282672540074
 
 Partition function values
 pf(  He4) = 1
