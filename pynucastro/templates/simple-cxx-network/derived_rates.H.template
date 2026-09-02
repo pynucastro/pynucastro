@@ -7,22 +7,26 @@
 #include <actual_network.H>
 #include <partition_functions.H>
 
-using namespace Rates;
+namespace derived_rates {
 
-<derived_rate_functions>(0)
+    using namespace Rates;
 
-template <int do_T_derivatives, typename T>
-inline
-void
-fill_derived_rates(const tf_t& tfactors, T& rate_eval)
-{
-    amrex::ignore_unused(tfactors);
-    amrex::ignore_unused(rate_eval);
+    <derived_rate_functions>(1)
 
-    [[maybe_unused]] Real rate;
-    [[maybe_unused]] Real drate_dT;
+    template <int do_T_derivatives, typename T>
+    inline
+    void
+    fill_rates(const tf_t& tfactors, T& rate_eval)
+    {
+        amrex::ignore_unused(tfactors);
+        amrex::ignore_unused(rate_eval);
 
-    <fill_derived_rates>(1)
+        [[maybe_unused]] Real rate;
+        [[maybe_unused]] Real drate_dT;
+
+        <fill_derived_rates>(2)
+
+    }
 
 }
 #endif
