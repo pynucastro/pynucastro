@@ -29,8 +29,8 @@ from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
                               RatePair, ReacLibRate, StarLibRate,
                               TabularWeakRate, TemperatureTabularRate,
                               ThermoState, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_CO_approx_rates,
-                              need_state)
+                              is_allowed_dupe, load_rate, make_ap_pg_rates,
+                              make_CO_approx_rates, need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -742,7 +742,7 @@ class RateCollection:
         for rate in self.starlib_rates:
             rate.sample_rates()
 
-    def make_ap_pg_approx(self, intermediate_nuclei=None):
+    def make_ap_pg_approx(self, *, intermediate_nuclei=None):
         """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
         reverse) into a single effective approximate rate.  The new
         approximate rates will be added to the network and the original
@@ -757,59 +757,32 @@ class RateCollection:
 
         """
 
-        # make sure that the intermediate_nuclei list are Nuclei objects
-        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+        if intermediate_nuclei is None:
+            intermediate_nuclei = []
+            # find all the intermediate nuclei
+            for r in self.rates:
+                if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                    len(r.products) == 1):
+                    prim_nuc = sorted(r.reactants)[-1]
+                    inter_nuc = prim_nuc + Nucleus("he4") - Nucleus("p")
+                    if inter_nuc in self.unique_nuclei:
+                        intermediate_nuclei.append(inter_nuc)
+        else:
+            # make sure that the intermediate_nuclei list are Nuclei objects
+            intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei,
+                                                    allow_None=True)
 
-        # find all of the (a,g) rates
-        ag_rates = []
-        for r in self.rates:
-            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
-                len(r.products) == 1):
-                ag_rates.append(r)
-
-        # for each (a,g), check to see if the remaining rates are present
         approx_rates = []
 
-        for r_ag in ag_rates:
-            prim_nuc = sorted(r_ag.reactants)[-1]
-            prim_prod = sorted(r_ag.products)[-1]
+        for nuc_inter in intermediate_nuclei:
+            nuc_start = nuc_inter - Nucleus("he4") + Nucleus("p")
+            nuc_end = nuc_start + Nucleus("he4")
 
-            inter_nuc = Nucleus.from_Z_A(prim_nuc.Z+1, prim_nuc.A+3)
-
-            if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
+            try:
+                ar, ar_reverse = make_ap_pg_rates(self.rates, nuc_start, nuc_end)
+            except AttributeError:
+                print(f"unable to approximate out {nuc_inter}")
                 continue
-
-            # look for A(a,p)X
-            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
-                                                    [inter_nuc, Nucleus("p")])):
-                continue
-
-            # look for X(p,g)B
-            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
-                                                    [prim_prod])):
-                continue
-
-            # look for reverse B(g,a)A
-            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
-                                                    [prim_nuc, Nucleus("he4")])):
-                continue
-
-            # look for reverse B(g,p)X
-            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
-                                                    [inter_nuc, Nucleus("p")])):
-                continue
-
-            # look for reverse X(p,a)A
-            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
-                                                    [Nucleus("he4"), prim_nuc])):
-                continue
-
-            # build the approximate rates
-            rates = {"A(a,g)B": r_ag, "A(a,p)X": r_ap, "X(p,g)B": r_pg,
-                     "B(g,a)A": r_ga, "B(g,p)X": r_gp, "X(p,a)A": r_pa}
-
-            ar = ApproximateRate(rates, approx_type="ap_pg")
-            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="ap_pg")
 
             if self.verbose:
                 print(f"using approximate rate {ar}")
