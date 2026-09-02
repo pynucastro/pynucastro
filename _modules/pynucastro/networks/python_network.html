@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post30+g70ea76a64 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.0.0.post31+g7f880c11c documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=22e2cffe"></script>
+    <script src="../../../_static/documentation_options.js?v=c4b90375"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1542,11 +1542,6 @@
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># custom rates</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="n">format_rate_call</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-        <span class="c1"># modified rates will have their own screening,</span>
-        <span class="c1"># either using the original rate or any modified</span>
-        <span class="c1"># form.  Therefore we call them before applying</span>
-        <span class="c1"># screening factors.</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># modified rates</span><span class="se">\n</span><span class="s2">"</span>
