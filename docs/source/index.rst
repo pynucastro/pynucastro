@@ -141,13 +141,6 @@ and interactively exploring nuclear reaction networks.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Working With Simulation Codes
-   :hidden:
-
-   mesa-nova.ipynb
-
-.. toctree::
-   :maxdepth: 1
    :caption: Some Useful Networks
    :hidden:
 
@@ -156,6 +149,13 @@ and interactively exploring nuclear reaction networks.
    cno-network
    aprox13
    he-burning-example
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Working With Simulation Codes
+   :hidden:
+
+   mesa-nova.ipynb
 
 .. toctree::
    :maxdepth: 1
