@@ -108,30 +108,26 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    // fill modified rates next -- these can have ReacLib or
-    // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-    // Calculate Derived Rates. This should go last but before approx rates.
-
-    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-    // fill branched rates -- these can have ReacLib or
-    // TemperatureTabular/StarLib as the underlying rate or branches.
-    // We do this after DerivedRate in case the branching depends
-    // on a derived rate.
-    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-    // Fill approximate rates
-
-    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
-
     // Calculate tabular rates
 
     [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
 
     rate_eval.enuc_weak = 0.0_rt;
 
+
+    // fill modified rates next -- these can have ReacLib or
+    // TemperatureTabular/StarLib rates as the original rate
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // fill branched rates -- these can have ReacLib or
+    // TemperatureTabular/StarLib as the underlying rate or branches.
+    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Calculate Derived Rates. This should go last but before approx rates.
+    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
+    // Fill approximate rates
+    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
 }
 
