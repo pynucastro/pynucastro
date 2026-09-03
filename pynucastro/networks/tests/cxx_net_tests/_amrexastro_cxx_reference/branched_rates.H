@@ -12,6 +12,8 @@
 
 namespace branched_rates {
 
+    using namespace Rates;
+
     using namespace temp_tabular;
 
 
