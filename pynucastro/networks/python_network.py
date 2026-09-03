@@ -960,11 +960,6 @@ class PythonNetwork(RateCollection):
         for r in self.custom_rates:
             ostr += format_rate_call(r)
 
-        # modified rates will have their own screening,
-        # either using the original rate or any modified
-        # form.  Therefore we call them before applying
-        # screening factors.
-
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:

@@ -90,7 +90,7 @@ def Mg24_He4_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
 
         r = pynet.get_rate("mg24_he4_to_si28_approx")
         print(r)
-        assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
+        assert r.get_child_rates()[1].function_string_py().strip() == ostr.strip()
 
     def test_integrating(self, pynet):
         pynet.write_network("app.py")

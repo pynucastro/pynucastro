@@ -53,6 +53,8 @@ void evaluate_screening(const burn_t& state,
                         const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                         T& rate_eval) {
 
+    using namespace Rates;
+
     // Evaluate screening terms
 
     using number_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
@@ -97,6 +99,8 @@ void evaluate_rates(const burn_t& state,
                     const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                     T& rate_eval) {
 
+    using namespace Rates;
+
     // here Y is consistent with state.xn
 
     [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
@@ -113,33 +117,28 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
     modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    // fill branched rates -- these can have ReacLib or
+    // TemperatureTabular/StarLib as the underlying rate or branches.
+    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
     // Calculate Derived Rates next. This should go last but before
     // approx rates, since those may have ReacLibRate,
     // TemperatureTabularRate / StarLibRate, or DerivedRate as the
     // underlying rate.
-
     derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
-    // fill branched rates -- these can have ReacLib or
-    // TemperatureTabular/StarLib as the underlying rate or branches.
-    // We do this after DerivedRate in case the branching depends
-    // on a derived rate.
-    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
 
 
 
     // Fill approximate rates
-
     approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
-
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
 }
 
@@ -212,7 +211,7 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates) {
+             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates) {
 
     using namespace Rates;
 
@@ -290,8 +289,10 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates)
+             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
 {
+
+    using namespace Rates;
 
     amrex::Real scratch;
 

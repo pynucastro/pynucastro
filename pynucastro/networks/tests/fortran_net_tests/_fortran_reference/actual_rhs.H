@@ -13,11 +13,8 @@
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>
+#include <tabular_weak_rates.H>
 
-using namespace Species;
-using namespace Rates;
-
-using namespace rate_tables;
 
 template<class T>
 inline
@@ -44,6 +41,9 @@ inline
 void evaluate_screening(const burn_t& state,
                         const Array1D<Real, 1, NumSpec>& Y,
                         T& rate_eval) {
+
+    using namespace Rates;
+    using namespace Species;
 
     // Evaluating screening factors
 
@@ -84,6 +84,8 @@ template <int do_T_derivatives, typename T>
 inline
 void evaluate_rates(const burn_t& state, T& rate_eval) {
 
+    using namespace Rates;
+
     // create molar fractions
 
     Array1D<Real, 1, NumSpec> Y;
@@ -105,33 +107,24 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     tf_t tfactors = evaluate_tfactors(state.T);
 
     // Calculate Reaclib rates
+    reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    fill_reaclib_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    // Calculate tabular rates
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
     modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    // Calculate Derived Rates. This should go last but before approx rates.
-
-    fill_derived_rates<do_T_derivatives, T>(tfactors, rate_eval);
-
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
-    // We do this after DerivedRate in case the branching depends
-    // on a derived rate.
     branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
+    // Calculate Derived Rates. This should go last but before approx rates.
+    derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+
     // Fill approximate rates
-
-    fill_approx_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
-
-    // Calculate tabular rates
-
-    [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
+    approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
 }
 
@@ -139,9 +132,10 @@ inline
 void rhs_nuc(const burn_t& state,
              Array1D<Real, 1, NumSpec>& ydot_nuc,
              const Array1D<Real, 1, NumSpec>& Y,
-             const Array1D<Real, 1, NumRates>& screened_rates) {
+             const Array1D<Real, 1, Rates::NumRates>& screened_rates) {
 
     using namespace Rates;
+    using namespace Species;
 
     ydot_nuc(N) =
         (-screened_rates(k_Mg23_n_to_Mg24_reaclib)*Y(Mg23)*Y(N)*state.rho + screened_rates(k_Mg24_to_n_Mg23_derived)*Y(Mg24)) +
@@ -188,6 +182,8 @@ inline
 void actual_rhs (burn_t& state, Array1D<Real, 1, NumSpec>& ydot, Real& enu_weak)
 {
 
+    using namespace Rates;
+
     compute_ye(state);
 
     for (int i = 1; i <= NumSpec; ++i) {
@@ -223,8 +219,11 @@ inline
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const Array1D<Real, 1, NumSpec>& Y,
-             const Array1D<Real, 1, NumRates>& screened_rates)
+             const Array1D<Real, 1, Rates::NumRates>& screened_rates)
 {
+
+    using namespace Rates;
+    using namespace Species;
 
     Real scratch;
 
