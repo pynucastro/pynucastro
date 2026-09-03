@@ -140,6 +140,13 @@ class MesaModel:
 
     @property
     def num_zones(self):
+        """Get the number of zones in the MESA model
+
+        Returns
+        -------
+        int
+
+        """
         return len(self.mesa_zones)
 
     def get_data_array(self, var="T"):
