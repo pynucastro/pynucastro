@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post38+gd4179ae35 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post37+gaceff24d9 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=4d2113a5"></script>
+    <script src="../../../_static/documentation_options.js?v=73e4235b"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1265,28 +1265,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="RateCollection.add_inert_nucleus">
-<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.add_inert_nucleus">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">add_inert_nucleus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nuc</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Add an inert nucleus to the network</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        nuc : Nucleus, str</span>
-<span class="sd">            The nucleus to add</span>
-
-<span class="sd">        """</span>
-
-        <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="n">nuc</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">inert_nuclei</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span></div>
 
