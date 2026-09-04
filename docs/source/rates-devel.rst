@@ -114,7 +114,7 @@ The following rate attributes are defined:
 Copying
 =======
 
-A ``Rate`` is not immutable.  This can be an issue when we we do:
+A ``Rate`` is not immutable.  This can be an issue when we do:
 
 .. code:: python
 
