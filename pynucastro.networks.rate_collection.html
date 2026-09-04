@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 3.0.0.post36+g5ade6bfb9 documentation</title>
+    <title>pynucastro.networks.rate_collection module &#8212; pynucastro 3.0.0.post38+gd4179ae35 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=5e49247f"></script>
+    <script src="_static/documentation_options.js?v=4d2113a5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -606,6 +606,7 @@
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection"><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.add_inert_nucleus"><code class="docutils literal notranslate"><span class="pre">RateCollection.add_inert_nucleus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.add_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.add_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.create_network_graph"><code class="docutils literal notranslate"><span class="pre">RateCollection.create_network_graph()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.dedupe_partition_function_temperatures"><code class="docutils literal notranslate"><span class="pre">RateCollection.dedupe_partition_function_temperatures()</span></code></a></li>
@@ -732,6 +733,17 @@ whether we build the screening map</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.add_inert_nucleus">
+<span class="sig-name descname"><span class="pre">add_inert_nucleus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.add_inert_nucleus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.add_inert_nucleus" title="Link to this definition">#</a></dt>
+<dd><p>Add an inert nucleus to the network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nuc</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The nucleus to add</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.networks.rate_collection.RateCollection.add_rates">
 <span class="sig-name descname"><span class="pre">add_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/rate_collection.html#RateCollection.add_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.rate_collection.RateCollection.add_rates" title="Link to this definition">#</a></dt>
@@ -1694,6 +1706,7 @@ are distinguishable.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection"><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.add_inert_nucleus"><code class="docutils literal notranslate"><span class="pre">RateCollection.add_inert_nucleus()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.add_rates"><code class="docutils literal notranslate"><span class="pre">RateCollection.add_rates()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.create_network_graph"><code class="docutils literal notranslate"><span class="pre">RateCollection.create_network_graph()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.rate_collection.RateCollection.dedupe_partition_function_temperatures"><code class="docutils literal notranslate"><span class="pre">RateCollection.dedupe_partition_function_temperatures()</span></code></a></li>

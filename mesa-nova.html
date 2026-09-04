@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Importing MESA Models and Visualizing Reactive Flow &#8212; pynucastro 3.0.0.post36+g5ade6bfb9 documentation</title>
+    <title>Importing MESA Models and Visualizing Reactive Flow &#8212; pynucastro 3.0.0.post38+gd4179ae35 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=5e49247f"></script>
+    <script src="_static/documentation_options.js?v=4d2113a5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -629,7 +629,7 @@ to evaluate the rates.</p>
 </div>
 </div>
 </div>
-<p>We’ll start with a MESA model for a classical nova.  This is from the MESA test suite (<code class="docutils literal notranslate"><span class="pre">$MESA_DIR/star/test_suite/wd_nova_burst</span></code>.  We’ll use the model file closest to
+<p>We’ll start with a MESA model for a classical nova.  This is from the MESA test suite (<code class="docutils literal notranslate"><span class="pre">$MESA_DIR/star/test_suite/wd_nova_burst</span></code>).  We’ll use the model file closest to
 peak luminosity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -690,7 +690,7 @@ We could just find all of the nuclei used in the simulation, via:</p>
 </pre></div>
 </div>
 <p>to the <code class="docutils literal notranslate"><span class="pre">&amp;star_job</span></code> inline.</p>
-<p>In our case, the nova run was built using the <code class="docutils literal notranslate"><span class="pre">cno_extras_o18_to_mg26_plus_fe56.net</span></code> network.  This is essentially our <a class="reference internal" href="pynucastro.networks.common_networks.html#pynucastro.networks.common_networks.cno" title="pynucastro.networks.common_networks.cno"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cno</span></code></a> networks with the addition of <span class="math notranslate nohighlight">\({}^{22}\mathrm{Ne}\)</span> and <span class="math notranslate nohighlight">\({}^{26}\mathrm{Mg}\)</span>.  So we can build the network from there.</p>
+<p>In our case, the nova run was built using the <code class="docutils literal notranslate"><span class="pre">cno_extras_o18_to_mg26_plus_fe56.net</span></code> network.  This is essentially our <a class="reference internal" href="pynucastro.networks.common_networks.html#pynucastro.networks.common_networks.cno" title="pynucastro.networks.common_networks.cno"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cno</span></code></a> network with the addition of <span class="math notranslate nohighlight">\({}^{22}\mathrm{Ne}\)</span> and <span class="math notranslate nohighlight">\({}^{26}\mathrm{Mg}\)</span>.  So we can build the network from there.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">common_networks</span><span class="o">.</span><span class="n">cno</span><span class="p">()</span>
