@@ -12,11 +12,13 @@
 
 namespace branched_rates {
 
+    using namespace Rates;
+
     using namespace temp_tabular;
 
 
     template <int do_T_derivatives, typename T>
-    AMREX_GPU_HOST_DEVICE AMREX_INLINE
+    AMREX_GPU_DEVICE AMREX_INLINE
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,
                [[maybe_unused]] T& rate_eval)

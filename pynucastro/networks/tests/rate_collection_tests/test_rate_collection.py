@@ -16,8 +16,8 @@ class TestRateCollection:
 
         assert len(rr) == 4
         assert rr[0].fname == "O16_to_He4_C12_reaclib"
-        assert rr[1].fname == "C12_to_He4_He4_He4_reaclib"
-        assert rr[2].fname == "He4_C12_to_O16_reaclib"
+        assert rr[1].fname == "C12_to_3He4_reaclib"
+        assert rr[2].fname == "C12_He4_to_O16_reaclib"
         assert rr[3].fname == "He4_He4_He4_to_C12_reaclib"
 
     def test_get_rate(self, rc):
@@ -25,7 +25,7 @@ class TestRateCollection:
         assert r.fname == "He4_He4_He4_to_C12_reaclib"
 
     def test_find_reverse(self, rc):
-        rr = rc.find_reverse(rc.get_rate("He4_C12_to_O16"))
+        rr = rc.find_reverse(rc.get_rate("C12_He4_to_O16"))
         assert rr.fname == "O16_to_He4_C12_reaclib"
 
     def test_evaluate_energy_gen(self, rc):
@@ -47,29 +47,43 @@ class TestRateCollection:
 
         new_rates = reaclib_library.get_rate_by_name(new_rate_names)
 
+        # we will make a new RateCollection so we don't modify
+        # the fixture directly
+        rc_new = pyna.RateCollection(rates=rc.get_rates())
+
         # test adding only a single rate
-        rc.add_rates(new_rates[0])
+        rc_new.add_rates(new_rates[0])
 
         # check to see if the rate is added
-        assert new_rates[0] in rc.get_rates()
+        assert new_rates[0] in rc_new.get_rates()
 
         # now add them all -- and make sure we don't duplicate a rate
-        rc.add_rates(new_rates)
+        rc_new.add_rates(new_rates)
 
         for r in new_rates:
-            assert r in rc.get_rates()
+            assert r in rc_new.get_rates()
 
-        assert rc.get_rates().count(new_rates[0]) == 1
+        assert rc_new.get_rates().count(new_rates[0]) == 1
 
-        # note: this modifies the fixture rc so tests that follow
-        # will see the additional rates
+    def test_remove_rates(self, rc, reaclib_library):
 
-    def test_remove_rates(self, rc):
-        rate = rc.get_rates()[-1]
-        rc.remove_rates(rate)
+        # we'll work on a copy of the RateCollection so we
+        # don't modify the fixture.  Also, we'll add back
+        # in the 3 rates from the previous test.
 
-        assert rate not in rc.get_rates()
-        assert len(rc.get_rates()) == 6
+        new_rate_names = ["o16(a,g)ne20",
+                          "ne20(a,g)mg24",
+                          "mg24(a,g)si28"]
+
+        new_rates = reaclib_library.get_rate_by_name(new_rate_names)
+
+        rc_new = pyna.RateCollection(rates=rc.get_rates() + new_rates)
+
+        rate = rc_new.get_rates()[-1]
+        rc_new.remove_rates(rate)
+
+        assert rate not in rc_new.get_rates()
+        assert len(rc_new.get_rates()) == 6
 
 
 class TestUnimportantRates:

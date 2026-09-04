@@ -75,6 +75,10 @@ The main classes are:
     A container for a single rate that allows for different stoichiometry
     or products.
 
+  * :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>`:
+    a container that holds an underlying rate and rates that affect the
+    endpoint branching.
+
   * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`:
     A derived rate uses detailed balance to recompute a reverse rate
     from the forward rate.

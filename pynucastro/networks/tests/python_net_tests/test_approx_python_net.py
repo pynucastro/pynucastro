@@ -48,11 +48,11 @@ class TestPythonNetwork:
         ostr = \
 """@numba.njit()
 def Mg24_He4_to_Si28_approx(rate_eval, tf):
-    r_pg = rate_eval.p_Al27_to_Si28_reaclib
-    r_pa = rate_eval.p_Al27_to_He4_Mg24_reaclib
+    r_pg = rate_eval.Al27_p_to_Si28_reaclib
+    r_pa = rate_eval.Al27_p_to_He4_Mg24_reaclib
     r_pY = 0.0
-    r_ag = rate_eval.He4_Mg24_to_Si28_reaclib
-    r_ap = rate_eval.He4_Mg24_to_p_Al27_reaclib
+    r_ag = rate_eval.Mg24_He4_to_Si28_reaclib
+    r_ap = rate_eval.Mg24_He4_to_p_Al27_reaclib
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa + r_pY)
     rate_eval.Mg24_He4_to_Si28_approx = rate
 
@@ -64,7 +64,7 @@ def Mg24_He4_to_Si28_approx(rate_eval, tf):
 
         ostr = \
 """@numba.njit()
-def He4_Mg24_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
+def Mg24_He4_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
     # Mg24 + He4 --> Si28
     rate = 0.0
 
@@ -84,13 +84,13 @@ def He4_Mg24_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.He4_Mg24_to_Si28_reaclib = rate
+    rate_eval.Mg24_He4_to_Si28_reaclib = rate
 
 """
 
         r = pynet.get_rate("mg24_he4_to_si28_approx")
         print(r)
-        assert r.get_child_rates()[0].function_string_py().strip() == ostr.strip()
+        assert r.get_child_rates()[1].function_string_py().strip() == ostr.strip()
 
     def test_integrating(self, pynet):
         pynet.write_network("app.py")

@@ -5,12 +5,128 @@ aprox13, aprox19, aprox21 family of reaction networks
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.approximate_rates import ApproximateRate
-from pynucastro.rates.library import _rate_name_to_nuc
+from pynucastro.rates.derived_rate import DerivedRate
+from pynucastro.rates.library import Library
 
 
-def make_CO_approx_rates(all_rates, root_nuclei,
-                         return_obsolete_rate_names=False):
-    """We want to model a sequence like:
+def make_ap_pg_rates(lib, reactant, product, *, use_detailed_balance=False):
+    """Return a pair of :py:class:`ApproximateRate
+    <pynucastro.rates.approximate_rates.ApproximateRate>` objects
+    (forward, reverse) for the A(α,γ)B + A(α,p)X(p,γ)B approximation.
+
+    Parameters
+    ----------
+    lib : Library or list(Rate)
+         A Library or list of rates containing all the necessary rates
+         for the approximation.
+    reactant : Nucleus, str
+         The reactant, A, in the sequence A(α,γ)B
+    product: Nucleus, str
+         The product, B, in the sequence A(α,γ)B
+    use_detailed_balance : bool
+         Do we rederive the reverse rates using detailed balance?
+
+    Returns
+    -------
+    ApproximateRate, ApproximateRate
+
+    """
+
+    if isinstance(reactant, str):
+        reactant = Nucleus(reactant)
+
+    if isinstance(product, str):
+        product = Nucleus(product)
+
+    if isinstance(lib, list):
+        lib = Library(rates=lib)
+
+    intermediate = reactant + Nucleus("he4") - Nucleus("p")
+
+    rates = {}
+    rates["A(a,g)B"] = lib.get_rate_by_name(f"{reactant.raw}(a,g){product.raw}")
+    rates["B(g,a)A"] = lib.get_rate_by_name(f"{product.raw}(g,a){reactant.raw}")
+
+    rates["A(a,p)X"] = lib.get_rate_by_name(f"{reactant.raw}(a,p){intermediate.raw}")
+    rates["X(p,g)B"] = lib.get_rate_by_name(f"{intermediate.raw}(p,g){product.raw}")
+    rates["B(g,p)X"] = lib.get_rate_by_name(f"{product.raw}(g,p){intermediate.raw}")
+    rates["X(p,a)A"] = lib.get_rate_by_name(f"{intermediate.raw}(p,a){reactant.raw}")
+
+    if use_detailed_balance:
+        for pair in [("A(a,g)B", "B(g,a)A"),
+                     ("A(a,p)X", "X(p,a)A"),
+                     ("X(p,g)B", "B(g,p)X")]:
+            # forward rate is the one with Q > 0
+            fwd, rvs = pair if rates[pair[0]].Q > 0 else pair[::-1]
+            rates[rvs] = DerivedRate(source_rate=rates[fwd], use_pf=True,
+                                     use_unreliable_spins=True)
+
+    forward = ApproximateRate(rates, approx_type="ap_pg")
+    reverse = ApproximateRate(rates, approx_type="ap_pg", is_reverse=True)
+
+    return forward, reverse
+
+
+def make_double_neutron_rates(lib, reactant, product, *, use_detailed_balance=False):
+    """Return a pair of :py:class:`ApproximateRate
+    <pynucastro.rates.approximate_rates.ApproximateRate>` objects
+    (forward, reverse) for the A(n,γ)X(n,γ)B -> A(nn,γ)B approximation
+
+    Parameters
+    ----------
+    lib : Library or list(Rate)
+         A Library or list of rates object containing the
+         neutron-capture rates
+    reactant : Nucleus, str
+         The reactant, A, in the sequence A(n,γ)X(n,γ)B
+    product: Nucleus, str
+         The product, B, in the sequence A(n,γ)X(n,γ)B
+    use_detailed_balance : bool
+         Do we rederive the reverse rates using detailed balance?
+
+    Returns
+    -------
+    ApproximateRate, ApproximateRate
+
+    """
+
+    if isinstance(reactant, str):
+        reactant = Nucleus(reactant)
+
+    if isinstance(product, str):
+        product = Nucleus(product)
+
+    if isinstance(lib, list):
+        lib = Library(rates=lib)
+
+    intermediate = reactant + Nucleus("n")
+
+    rates = {}
+    rates["A(n,g)X"] = lib.get_rate_by_name(f"{reactant.raw}(n,){intermediate.raw}")
+    rates["X(n,g)B"] = lib.get_rate_by_name(f"{intermediate.raw}(n,){product.raw}")
+
+    rates["B(g,n)X"] = lib.get_rate_by_name(f"{product.raw}(,n){intermediate.raw}")
+    rates["X(g,n)A"] = lib.get_rate_by_name(f"{intermediate.raw}(,n){reactant.raw}")
+
+    if use_detailed_balance:
+        for pair in [("A(n,g)X", "X(g,n)A"),
+                     ("X(n,g)B", "B(g,n)X")]:
+            # forward rate is the one with Q > 0
+            fwd, rvs = pair if rates[pair[0]].Q > 0 else pair[::-1]
+            rates[rvs] = DerivedRate(source_rate=rates[fwd], use_pf=True,
+                                     use_unreliable_spins=True)
+
+    forward = ApproximateRate(rates, approx_type="nn_g")
+    reverse = ApproximateRate(rates, approx_type="nn_g", is_reverse=True)
+
+    return forward, reverse
+
+
+def make_CO_approx_rates(lib, root_nuclei, *,
+                         return_obsolete_rate_names=False,
+                         use_detailed_balance=False):
+    """Create approximate rates describing C/O burning.
+    We want to model a sequence like:
 
     ::
 
@@ -50,9 +166,9 @@ def make_CO_approx_rates(all_rates, root_nuclei,
 
     Parameters
     ----------
-    all_rates : list(Rate)
+    lib : Library or list(Rate)
          the collection of rates that we will use for finding λ1 through λ5 and
-         their inverses.  This could be via
+         their inverses.  This could be a `Library` or a list obtained via
          :py:func:`Library.get_rates <pynucastro.rates.library.Library.get_rates>`
          or :py:func:`RateCollection.get_rates <pynucastro.networks.rate_collection.RateCollection.get_rates>`.
     root_nuclei : str
@@ -61,6 +177,8 @@ def make_CO_approx_rates(all_rates, root_nuclei,
     return_obsolete_rate_names : bool
          Do we return a list of rates names that can be removed if we use
          these approximate rates?
+    use_detailed_balance : bool
+         Do we rederive the reverse rates using detailed balance?
 
     Returns
     -------
@@ -71,6 +189,9 @@ def make_CO_approx_rates(all_rates, root_nuclei,
         obsoleted by the new approximate rates.
 
     """
+
+    if isinstance(lib, list):
+        lib = Library(rates=lib)
 
     assert root_nuclei in ["C", "CO", "O"]
 
@@ -99,53 +220,40 @@ def make_CO_approx_rates(all_rates, root_nuclei,
 
     lambda1 = f"{S1}({S2},p){X}"
     lambda1_r = f"{X}(p,{S2}){S1}"
-    reactants, products = _rate_name_to_nuc(lambda1)
-    rates["S(S,p)X"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(reactants) and
-                           sorted(r.products) == sorted(products)][0]
-    rates["X(p,S)S"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(products) and
-                           sorted(r.products) == sorted(reactants)][0]
+    rates["S(S,p)X"] = lib.get_rate_by_name(lambda1)
+    rates["X(p,S)S"] = lib.get_rate_by_name(lambda1_r)
 
     lambda2 = f"{S1}({S2},a){E}"
     lambda2_r = f"{E}(a,{S2}){S1}"
-    reactants, products = _rate_name_to_nuc(lambda2)
-    rates["S(S,a)E"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(reactants) and
-                           sorted(r.products) == sorted(products)][0]
-    rates["E(a,S)S"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(products) and
-                           sorted(r.products) == sorted(reactants)][0]
+    rates["S(S,a)E"] = lib.get_rate_by_name(lambda2)
+    rates["E(a,S)S"] = lib.get_rate_by_name(lambda2_r)
 
     lambda3 = f"{X}(p,a){E}"
     lambda3_r = f"{E}(a,p){X}"
-    reactants, products = _rate_name_to_nuc(lambda3)
-    rates["X(p,a)E"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(reactants) and
-                           sorted(r.products) == sorted(products)][0]
-    rates["E(a,p)X"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(products) and
-                           sorted(r.products) == sorted(reactants)][0]
+    rates["X(p,a)E"] = lib.get_rate_by_name(lambda3)
+    rates["E(a,p)X"] = lib.get_rate_by_name(lambda3_r)
 
     lambda4 = f"{X}(p,g){F}"
     lambda4_r = f"{F}(g,p){X}"
-    reactants, products = _rate_name_to_nuc(lambda4)
-    rates["X(p,g)F"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(reactants) and
-                           sorted(r.products) == sorted(products)][0]
-    rates["F(g,p)X"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(products) and
-                           sorted(r.products) == sorted(reactants)][0]
+    rates["X(p,g)F"] = lib.get_rate_by_name(lambda4)
+    rates["F(g,p)X"] = lib.get_rate_by_name(lambda4_r)
 
     lambda5 = f"{E}(a,g){F}"
     lambda5_r = f"{F}(g,a){E}"
-    reactants, products = _rate_name_to_nuc(lambda5)
-    rates["E(a,g)F"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(reactants) and
-                           sorted(r.products) == sorted(products)][0]
-    rates["F(g,a)E"] = [r for r in all_rates
-                        if sorted(r.reactants) == sorted(products) and
-                           sorted(r.products) == sorted(reactants)][0]
+    rates["E(a,g)F"] = lib.get_rate_by_name(lambda5)
+    rates["F(g,a)E"] = lib.get_rate_by_name(lambda5_r)
+
+    # rederive reverse rates if asked
+    if use_detailed_balance:
+        for pair in [("S(S,p)X", "X(p,S)S"),
+                     ("S(S,a)E", "E(a,S)S"),
+                     ("X(p,a)E", "E(a,p)X"),
+                     ("X(p,g)F", "F(g,p)X"),
+                     ("E(a,g)F", "F(g,a)E")]:
+            # forward rate is the one with Q > 0
+            fwd, rvs = pair if rates[pair[0]].Q > 0 else pair[::-1]
+            rates[rvs] = DerivedRate(source_rate=rates[fwd], use_pf=True,
+                                     use_unreliable_spins=True)
 
     new_rates = []
 

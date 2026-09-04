@@ -1,5 +1,5 @@
-#ifndef actual_network_H
-#define actual_network_H
+#ifndef ACTUAL_NETWORK_H
+#define ACTUAL_NETWORK_H
 
 #include <amrex_bridge.H>
 
@@ -36,12 +36,12 @@ namespace Rates
         k_C12_C12_to_He4_Ne20_reaclib = 1,
         k_C12_C12_to_n_Mg23_reaclib = 2,
         k_C12_C12_to_p_Na23_reaclib = 3,
-        k_He4_C12_to_O16_reaclib = 4,
-        k_He4_Ne20_to_Mg24_reaclib = 5,
-        k_n_Mg23_to_Mg24_reaclib = 6,
-        k_n_to_p_reaclib = 7,
-        k_He4_Ne20_to_C12_C12_derived = 8,
-        k_p_Na23_to_C12_C12_derived = 9,
+        k_C12_He4_to_O16_reaclib = 4,
+        k_Ne20_He4_to_Mg24_reaclib = 5,
+        k_Mg23_n_to_Mg24_reaclib = 6,
+        k_n_to_p_beta_neg_reaclib = 7,
+        k_Ne20_He4_to_C12_C12_derived = 8,
+        k_Na23_p_to_C12_C12_derived = 9,
         k_O16_to_He4_C12_derived = 10,
         k_Mg24_to_He4_Ne20_derived = 11,
         k_Mg24_to_n_Mg23_derived = 12,
@@ -66,12 +66,12 @@ namespace Rates
         "C12_C12_to_He4_Ne20_reaclib",  // 1,
         "C12_C12_to_n_Mg23_reaclib",  // 2,
         "C12_C12_to_p_Na23_reaclib",  // 3,
-        "He4_C12_to_O16_reaclib",  // 4,
-        "He4_Ne20_to_Mg24_reaclib",  // 5,
-        "n_Mg23_to_Mg24_reaclib",  // 6,
-        "n_to_p_reaclib",  // 7,
-        "He4_Ne20_to_C12_C12_derived",  // 8,
-        "p_Na23_to_C12_C12_derived",  // 9,
+        "C12_He4_to_O16_reaclib",  // 4,
+        "Ne20_He4_to_Mg24_reaclib",  // 5,
+        "Mg23_n_to_Mg24_reaclib",  // 6,
+        "n_to_p_beta_neg_reaclib",  // 7,
+        "Ne20_He4_to_C12_C12_derived",  // 8,
+        "Na23_p_to_C12_C12_derived",  // 9,
         "O16_to_He4_C12_derived",  // 10,
         "Mg24_to_He4_Ne20_derived",  // 11,
         "Mg24_to_n_Mg23_derived"  // 12,

@@ -29,8 +29,8 @@ from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
                               RatePair, ReacLibRate, StarLibRate,
                               TabularWeakRate, TemperatureTabularRate,
                               ThermoState, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_CO_approx_rates,
-                              need_state)
+                              is_allowed_dupe, load_rate, make_ap_pg_rates,
+                              make_CO_approx_rates, need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -255,8 +255,8 @@ class RateCollection:
 
         for n in self.unique_nuclei:
             self.nuclei_rate_pairs[n] = \
-                [rp for rp in _rp if rp.forward is not None and n in rp.forward.reactants + rp.forward.products or
-                 rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products]
+                [rp for rp in _rp if (rp.forward is not None and n in rp.forward.reactants + rp.forward.products) or
+                 (rp.reverse is not None and n in rp.reverse.reactants + rp.reverse.products)]
 
         # Re-order self.rates so Reaclib rates come first, followed by
         # Tabular rates. This is needed if reaclib coefficients are
@@ -571,24 +571,47 @@ class RateCollection:
         return _tmp
 
     def get_rate_by_name(self, name):
-        """Given a rate in the form 'A(x,y)B' return the rate
+        """Given a string representing a rate in the form 'A(x,y)B'
+        (or a list of strings for multiple rates) return the Rate
+        objects that match from the network.  If there are multiple
+        inputs, then a list of Rate objects is returned.
 
         Parameters
         ----------
-        name : str
-            the name of the rate, in the form "A(x,y)B"
+        name : str, Iterable(str)
+            the name of the rate or list of names, in the form
+            "A(x,y)B"
 
         Returns
         -------
-        Rate
+        rates : list(Rate), Rate
+            A single rate or a list of rates
 
         """
 
-        reactants, products = _rate_name_to_nuc(name)
-        _r = self.get_rate_by_nuclei(reactants, products)
-        if _r is None:
+        rate_name_list = name
+        if isinstance(name, str):
+            rate_name_list = [name]
+
+        rates_out = []
+
+        for rname in rate_name_list:
+            reactants, products = _rate_name_to_nuc(rname)
+
+            _r = self.get_rate_by_nuclei(reactants, products)
+            if _r is None:
+                continue
+            if isinstance(_r, Rate):
+                rates_out.append(_r)
+            else:
+                # we might get a list
+                rates_out.extend(_r)
+
+        if len(rates_out) == 0:
             return None
-        return _r
+        if len(rates_out) == 1:
+            return rates_out[0]
+        return rates_out
 
     def get_nuclei_needing_partition_functions(self):
         """Return a list of nuclei that require partition functions
@@ -690,6 +713,25 @@ class RateCollection:
 
         self._build_collection()
 
+    def add_inert_nucleus(self, nuc):
+        """Add an inert nucleus to the network
+
+        Parameters
+        ----------
+        nuc : Nucleus, str
+            The nucleus to add
+
+        """
+
+        nuc = Nucleus.cast(nuc)
+
+        if self.inert_nuclei is None:
+            self.inert_nuclei = [nuc]
+        else:
+            self.inert_nuclei.append(nuc)
+
+        self._build_collection()
+
     def add_rates(self, rates):
         """Add new rates to the network.  If the rate already exists,
         it will not be added.  The network is then regenerated using
@@ -725,9 +767,8 @@ class RateCollection:
         """
 
         if seed is None:
-            #arbitrarily chosen upper limit for np.random
-            #since it requires one.
-            seed = np.random.randint(10e5)
+            # arbitrarily chosen
+            seed = np.random.default_rng().integers(1.e6)
         rng = np.random.default_rng(seed=seed)
         for rate in self.starlib_rates:
             rate.sample_rates(rng=rng)
@@ -737,7 +778,7 @@ class RateCollection:
         for rate in self.starlib_rates:
             rate.sample_rates()
 
-    def make_ap_pg_approx(self, intermediate_nuclei=None):
+    def make_ap_pg_approx(self, *, intermediate_nuclei=None):
         """Combine the rates A(a,g)B and A(a,p)X(p,g)B (and the
         reverse) into a single effective approximate rate.  The new
         approximate rates will be added to the network and the original
@@ -752,59 +793,32 @@ class RateCollection:
 
         """
 
-        # make sure that the intermediate_nuclei list are Nuclei objects
-        intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei, allow_None=True)
+        if intermediate_nuclei is None:
+            intermediate_nuclei = []
+            # find all the intermediate nuclei
+            for r in self.rates:
+                if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
+                    len(r.products) == 1):
+                    prim_nuc = sorted(r.reactants)[-1]
+                    inter_nuc = prim_nuc + Nucleus("he4") - Nucleus("p")
+                    if inter_nuc in self.unique_nuclei:
+                        intermediate_nuclei.append(inter_nuc)
+        else:
+            # make sure that the intermediate_nuclei list are Nuclei objects
+            intermediate_nuclei = Nucleus.cast_list(intermediate_nuclei,
+                                                    allow_None=True)
 
-        # find all of the (a,g) rates
-        ag_rates = []
-        for r in self.rates:
-            if (len(r.reactants) == 2 and Nucleus("he4") in r.reactants and
-                len(r.products) == 1):
-                ag_rates.append(r)
-
-        # for each (a,g), check to see if the remaining rates are present
         approx_rates = []
 
-        for r_ag in ag_rates:
-            prim_nuc = sorted(r_ag.reactants)[-1]
-            prim_prod = sorted(r_ag.products)[-1]
+        for nuc_inter in intermediate_nuclei:
+            nuc_start = nuc_inter - Nucleus("he4") + Nucleus("p")
+            nuc_end = nuc_start + Nucleus("he4")
 
-            inter_nuc = Nucleus.from_Z_A(prim_nuc.Z+1, prim_nuc.A+3)
-
-            if intermediate_nuclei and inter_nuc not in intermediate_nuclei:
+            try:
+                ar, ar_reverse = make_ap_pg_rates(self.rates, nuc_start, nuc_end)
+            except AttributeError:
+                print(f"unable to approximate out {nuc_inter}")
                 continue
-
-            # look for A(a,p)X
-            if not (r_ap := self.get_rate_by_nuclei([prim_nuc, Nucleus("he4")],
-                                                    [inter_nuc, Nucleus("p")])):
-                continue
-
-            # look for X(p,g)B
-            if not (r_pg := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
-                                                    [prim_prod])):
-                continue
-
-            # look for reverse B(g,a)A
-            if not (r_ga := self.get_rate_by_nuclei([prim_prod],
-                                                    [prim_nuc, Nucleus("he4")])):
-                continue
-
-            # look for reverse B(g,p)X
-            if not (r_gp := self.get_rate_by_nuclei([prim_prod],
-                                                    [inter_nuc, Nucleus("p")])):
-                continue
-
-            # look for reverse X(p,a)A
-            if not (r_pa := self.get_rate_by_nuclei([inter_nuc, Nucleus("p")],
-                                                    [Nucleus("he4"), prim_nuc])):
-                continue
-
-            # build the approximate rates
-            rates = {"A(a,g)B": r_ag, "A(a,p)X": r_ap, "X(p,g)B": r_pg,
-                     "B(g,a)A": r_ga, "B(g,p)X": r_gp, "X(p,a)A": r_pa}
-
-            ar = ApproximateRate(rates, approx_type="ap_pg")
-            ar_reverse = ApproximateRate(rates, is_reverse=True, approx_type="ap_pg")
 
             if self.verbose:
                 print(f"using approximate rate {ar}")
@@ -1454,6 +1468,8 @@ class RateCollection:
         # will now check for those
         dupe_to_remove = []
         for dupe in duplicates:
+            # check against the duplicates we know about from
+            # ReacLib and StarLib
             if is_allowed_dupe(dupe):
                 dupe_to_remove.append(dupe)
 

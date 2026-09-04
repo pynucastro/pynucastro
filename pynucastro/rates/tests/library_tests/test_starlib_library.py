@@ -19,7 +19,8 @@ class TestStarLibLibrary:
     @pytest.fixture(scope="class")
     @classmethod
     def sl_sampled(cls):
-        # use arbitrary yet fixed seed
+        # use arbitrary yet fixed seed -- we'll resample in
+        # each test that uses this in case they run out of order
         return pyna.StarLibLibrary(seed=142)
 
     def test_num_rates(self, sl_median, sl_sampled):
@@ -34,6 +35,8 @@ class TestStarLibLibrary:
         # from their median, we enforce that the temp eval for most
         # rates differs from their median.
 
+        sl_sampled.resample(seed=142)
+
         T = 1.0e9
         sampled_evals = np.array([r.eval(T) for r in sl_sampled.get_rates()])
 
@@ -44,6 +47,8 @@ class TestStarLibLibrary:
         assert nchanged >= 0.9 * len(median_eval_1GK)
 
     def test_sampling_gives_same_rates_for_same_seeds(self, sl_sampled):
+
+        sl_sampled.resample(seed=142)
         T = 1.0e9
         s1_evals = np.array([r.eval(T) for r in sl_sampled.get_rates()])
 
