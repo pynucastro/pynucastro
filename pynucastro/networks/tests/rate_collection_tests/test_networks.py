@@ -115,3 +115,15 @@ O15
      N14 + p ⟶ O15 + 𝛾
 """
         assert rc.network_overview().replace(" ", "").strip() == ostr.replace(" ", "").strip()
+
+    def test_add_inert_nucleus(self, rc):
+
+        rc_new = networks.RateCollection(rates=rc.get_rates())
+
+        assert len(rc_new.unique_nuclei) == 9
+        assert rc_new.inert_nuclei is None
+
+        rc_new.add_inert_nucleus("fe56")
+
+        assert len(rc_new.unique_nuclei) == 10
+        assert len(rc_new.inert_nuclei) == 1
