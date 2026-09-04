@@ -23,6 +23,7 @@
     * add `stopping_condition` to `integrate_network` (#1474)
     * address the case where a nucleus is both a reactant and a
       product (#959)
+    * add `add_inert_nucleus` to `RateCollection` (#1501)
 
   * `ApproximateRate` / `ModifiedRate` :
 
@@ -53,6 +54,7 @@
     * add missing network compare test to testing docs (#1464)
     * add `BranchedRate` to the docs intro (#1460)
     * remove `.nojekyll` on `main` branch (#1457)
+    * fix some docs typos (#1503)
 
   * testing:
 
