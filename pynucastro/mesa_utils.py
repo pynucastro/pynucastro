@@ -147,7 +147,19 @@ class MesaModel:
         int
 
         """
+
         return len(self.mesa_zones)
+
+    def __iter__(self):
+        """Iterate over the zone states in MESA zone-index order.
+
+        Yields
+        ------
+        MesaZoneState
+
+        """
+
+        return iter(self.mesa_zones.values())
 
     def get_data_array(self, var="T"):
         """Return an array of a single variable indexed by zone
