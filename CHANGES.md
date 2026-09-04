@@ -64,7 +64,8 @@
 
     * create the `common_networks` module (#1485)
     * allow `network_helper` to take ranges of nuclei (#1483)
-
+    * `MesaModel` now has `num_zones` property and an `__iter__`
+      method (#1506)
 
 ## 3.0.0
 
