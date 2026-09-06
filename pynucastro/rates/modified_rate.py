@@ -97,6 +97,11 @@ class ModifiedRate(Rate):
                          not_in_ydot_term=not_in_ydot_term,
                          rate_source=rate_source)
 
+        # if the underlying rate needs density and composition, then
+        # this does too
+        self.rate_eval_needs_rho = original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = original_rate.rate_eval_needs_comp
+
         self._set_print_representation()
 
     def __copy__(self):
@@ -204,11 +209,18 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=None")
+        if self.rate_eval_needs_comp:
+            args.append("Y=None")
+        args.append("log_scor=0.0")
+        fstring += f"def {self.fname}(rate_eval, {','.join(args)}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
+        args[-1] = "log_scor=log_scor"
+        fstring += f"    {self.original_rate.fname}(rate_eval, {','.join(args)}\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
