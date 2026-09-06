@@ -24,13 +24,14 @@ from scipy.linalg import eigvals
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, BetaLimitedRate, BranchedRate, DerivedRate,
-                              Library, ModifiedRate, Rate, RateFileError,
-                              RatePair, ReacLibRate, StarLibRate,
-                              TabularWeakRate, TemperatureTabularRate,
-                              ThermoState, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_ap_pg_rates,
-                              make_CO_approx_rates, need_state)
+from pynucastro.rates import (ApproximateRate, BetaLimitedRate, BranchedRate,
+                              DerivedRate, Library, ModifiedRate, Rate,
+                              RateFileError, RatePair, ReacLibRate,
+                              StarLibRate, TabularWeakRate,
+                              TemperatureTabularRate, ThermoState,
+                              find_duplicate_rates, is_allowed_dupe, load_rate,
+                              make_ap_pg_rates, make_CO_approx_rates,
+                              need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100

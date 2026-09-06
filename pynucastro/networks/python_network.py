@@ -15,7 +15,8 @@ from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition, Nucleus
-from pynucastro.rates import ApproximateRate, BetaLimitedRate, BranchedRate, ModifiedRate
+from pynucastro.rates import (ApproximateRate, BetaLimitedRate, BranchedRate,
+                              ModifiedRate)
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
