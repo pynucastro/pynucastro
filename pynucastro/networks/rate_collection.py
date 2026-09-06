@@ -186,15 +186,18 @@ class RateCollection:
         else:
             cr.removed = False
 
-        # child rates may be ReacLibRates, StarLibRates,
-        # ModifiedRates, or DerivedRates.  Make sure we don't double
-        # count
+        # child rates may be ReacLibRate, StarLibRate,
+        # BetaLimitedRate, or DerivedRate.  Make sure we
+        # don't double count
         if isinstance(cr, DerivedRate):
             if cr not in self.derived_rates:
                 self.derived_rates.append(cr)
-        elif isinstance(cr, ModifiedRate):
-            if cr not in self.modified_rates:
-                self.modified_rates.append(cr)
+        elif isinstance(cr, BetaLimitedRate):
+            if cr not in self.beta_limited_rates:
+                self.beta_limited_rates.append(cr)
+                # we also need to classify its hidden rates
+                for br in cr.get_child_rates():
+                    self._classify_hidden_rate(br)
         elif isinstance(cr, StarLibRate):
             if cr not in self.starlib_rates:
                 self.starlib_rates.append(cr)
@@ -282,6 +285,7 @@ class RateCollection:
                 if r not in self.beta_limited_rates:
                     self.beta_limited_rates.append(r)
                 for br in r.get_child_rates():
+                    print(f"checking {br}")
                     self._classify_hidden_rate(br)
             elif isinstance(r, TabularWeakRate):
                 self.tabular_rates.append(r)

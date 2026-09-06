@@ -916,7 +916,7 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, use_tf=True):
+        def format_rate_call(r, *, use_tf=True, do_screening=True):
             args = ["rate_eval"]
             if use_tf:
                 args.append("tf")
@@ -926,7 +926,7 @@ class PythonNetwork(RateCollection):
                 args.append("rho=rho")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
-            if r.screening_pairs:
+            if do_screening and r.screening_pairs:
                 screen_terms = [f"log_scor_{r1}_{r2}" for r1, r2 in r.screening_pairs]
                 args.append("log_scor=" + " + ".join(screen_terms))
             return f"{indent}{r.fname}({', '.join(args)})\n"
@@ -964,7 +964,10 @@ class PythonNetwork(RateCollection):
         if self.beta_limited_rates:
             ostr += f"\n{indent}# beta-limited rates\n"
         for r in self.beta_limited_rates:
-            ostr += format_rate_call(r)
+            # a beta-limited rate simply compares two (or more)
+            # existing rates.  It assumes that they have already been
+            # evaluated and screened.
+            ostr += format_rate_call(r, do_screening=False)
 
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
