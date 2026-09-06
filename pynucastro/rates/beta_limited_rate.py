@@ -79,12 +79,12 @@ class BetaLimitedRate(Rate):
         reactants = self.underlying_rate.reactants
         products = self.underlying_rate.products
 
+        super().__init__(reactants=reactants, products=products,
+                         label="betalimited")
+
         # we will need composition to be able to compare rates
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
-
-        super().__init__(reactants=reactants, products=products,
-                         label="betalimited")
 
         self._set_print_representation()
 
@@ -198,3 +198,29 @@ class BetaLimitedRate(Rate):
         # F = ρY(ξ)Y(X) min{λ_{X(ξ,γ)}, λ_β/(ρY(ξ))}
 
         return min(r0, lambda_beta_tot / (rho * Y_limiter))
+
+    def function_string_py(self):
+        """Return a string containing the python function that
+        computes the rate -- in this case it is the underlying rate
+        limited by the total waiting time of the beta rates
+
+        Returns
+        -------
+        str
+
+        """
+
+        fstring = ""
+        fstring += "@numba.njit()\n"
+        fstring += f"def {self.fname}(rate_eval, tf, rho=None, Y=None):\n"
+        fstring += f"    # {self.rid}\n"
+        if self.description:
+            fstring += f"    # represents the beta limiting: {self.description}\n\n"
+        fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
+        fstring += "    lambda_beta_tot = 0.0\n"
+        for lam in self.beta_limiting_rates:
+            fstring += f"    lambda_beta_tot += 1.0 / rate_eval.{lam.fname}\n"
+        fstring += "    lambda_beta_tot = 1.0 / lambda_beta_tot\n\n"
+        fstring += f"    limited_rate = min(r0, lambda_beta_tot / (rho * Y[j{self.limiter_nucleus.raw}]))\n"
+        fstring += f"    rate_eval.{self.fname} = limited_rate\n\n"
+        return fstring
