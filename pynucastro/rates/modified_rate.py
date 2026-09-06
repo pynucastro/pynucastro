@@ -215,12 +215,19 @@ class ModifiedRate(Rate):
         if self.rate_eval_needs_comp:
             args.append("Y=None")
         args.append("log_scor=0.0")
-        fstring += f"def {self.fname}(rate_eval, {','.join(args)}):\n"
+        fstring += f"def {self.fname}(rate_eval, {', '.join(args)}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        args[-1] = "log_scor=log_scor"
-        fstring += f"    {self.original_rate.fname}(rate_eval, {','.join(args)}\n"
+
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if self.rate_eval_needs_comp:
+            args.append("Y=Y")
+        args.append("log_scor=log_scor")
+
+        fstring += f"    {self.original_rate.fname}(rate_eval, {', '.join(args)})\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 

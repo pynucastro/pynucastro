@@ -212,9 +212,8 @@ class BetaLimitedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        # we tack on **args since some callers might pass in screening, even
-        # though it is not needed
-        fstring += f"def {self.fname}(rate_eval, tf, rho=None, Y=None, **args):\n"
+        # we keep log_scor here just for uniformity, but it is not used.
+        fstring += f"def {self.fname}(rate_eval, tf, rho=None, Y=None, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the beta limiting: {self.description}\n\n"
