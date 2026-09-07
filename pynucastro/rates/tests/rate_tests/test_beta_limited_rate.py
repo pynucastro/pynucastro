@@ -1,9 +1,8 @@
 # test the implementation of BetaLimitedRate
 
 import pytest
-from pytest import approx
 
-from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.nucdata import Composition
 from pynucastro.rates import BetaLimitedRate
 
 
