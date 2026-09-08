@@ -24,6 +24,7 @@
     * address the case where a nucleus is both a reactant and a
       product (#959)
     * add `add_inert_nucleus` to `RateCollection` (#1501)
+    * simplify the loop over rates that writes out functions (#1513)
 
   * `ApproximateRate` / `ModifiedRate` :
 
@@ -41,6 +42,7 @@
 
     * add `pytest-random` test (#1300, #1477)
     * update ruff config (#1456)
+    * add an `AGENTS.md` (#1504)
 
   * documentation:
 
@@ -55,6 +57,9 @@
     * add `BranchedRate` to the docs intro (#1460)
     * remove `.nojekyll` on `main` branch (#1457)
     * fix some docs typos (#1503)
+    * add developer documentation on networks (#1495)
+    * add an example on finding the most probable path between
+      nuclei (#1492)
 
   * testing:
 
