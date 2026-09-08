@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Network Reduction &#8212; pynucastro 3.0.0.post42+g2538308d9 documentation</title>
+    <title>Working with Network Objects &#8212; pynucastro 3.0.0.post42+g2538308d9 documentation</title>
   
   
   
@@ -48,14 +48,12 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reduction';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'nets-devel';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Sensitivity Analysis" href="sens_analysis_example.html" />
-    <link rel="prev" title="Assessing the Stiffness of a Network" href="stiffness.html" />
+    <link rel="next" title="Testing and Comparing Backends" href="testing.html" />
+    <link rel="prev" title="Adding Rates from the Literature" href="adding-rates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="3.0" />
@@ -211,13 +209,13 @@
 <li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
@@ -275,10 +273,10 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adding-rates.html">Adding Rates from the Literature</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Working with Network Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
@@ -448,7 +446,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/reduction.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/nets-devel.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -465,7 +463,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/reduction.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/nets-devel.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -482,7 +480,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Freduction.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fnets-devel.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -512,7 +510,7 @@
       
       
       
-      <li><a href="_sources/reduction.ipynb" target="_blank"
+      <li><a href="_sources/nets-devel.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -522,7 +520,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.ipynb</span>
+<span class="btn__text-container">.rst</span>
 </a>
 </li>
       
@@ -582,7 +580,9 @@
 <button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
 </button>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -593,11 +593,21 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Network Reduction</h1>
+    <h1>Working with Network Objects</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rate-lists">Rate lists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-the-network-meta-data">Updating the network meta-data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering-in-which-we-fill-rates">Ordering in which we fill rates</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -607,198 +617,75 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="network-reduction">
-<h1>Network Reduction<a class="headerlink" href="#network-reduction" title="Link to this heading">#</a></h1>
-<p>pynucastro has an implementation of the directed relation graph with error propagation
-(DRGEP) reduction method described in <span class="bibtex-citation" id="id1">Pepiot-Desjardins and Pitsch [<a class="reference internal" href="zreferences.html#id24" title="P. Pepiot-Desjardins and H. Pitsch. An efficient error-propagation-based reduction method for large chemical kinetic mechanisms. Combustion and Flame, 154(1):67-81, 2008. doi:10.1016/j.combustflame.2007.10.020.">2008</a>]</span> and <span class="bibtex-citation" id="id2">Niemeyer and Sung [<a class="reference internal" href="zreferences.html#id25" title="Kyle E. Niemeyer and Chih-Jen Sung. On the importance of graph search algorithms for DRGEP-based mechanism reduction methods. Combustion and Flame, 158(8):1439-1443, 2011. doi:10.1016/j.combustflame.2010.12.010.">2011</a>]</span>.</p>
-<p>Let’s consider an example of H/He burning in X-ray bursts, where we expect hot-CNO and rp-process to dominate.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+  <section id="working-with-network-objects">
+<h1>Working with Network Objects<a class="headerlink" href="#working-with-network-objects" title="Link to this heading">#</a></h1>
+<section id="rate-lists">
+<h2>Rate lists<a class="headerlink" href="#rate-lists" title="Link to this heading">#</a></h2>
+<p>At its core, a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> holds a <code class="docutils literal notranslate"><span class="pre">list</span></code>
+of <code class="docutils literal notranslate"><span class="pre">Rate</span></code> objects, and uses these to determine everything about the
+network.</p>
+<p>These are the most important:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code> : this is the list of all of the rates in the network
+that <em>explicitly</em> link together nuclei in the network.</p>
+<p>This means that rates that are only used as part of rate approximations
+in <a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a>
+or as the original / underlying rate in <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a> or <a class="reference internal" href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate" title="pynucastro.rates.branched_rate.BranchedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BranchedRate</span></code></a>
+are not included.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The method <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_rates" title="pynucastro.networks.rate_collection.RateCollection.get_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RateCollection.get_rates</span></code></a> returns this list.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection.all_rates</span></code> : this is the list of every rate that will be evaluated
+when integrating the network, including those that are <em>hidden</em> (i.e., part of <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code>, <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code>, or <code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code>).</p>
+<p>The rates that are <em>hidden</em>, and therefore do not appear in <code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code>
+are identified by <code class="docutils literal notranslate"><span class="pre">RateCollection._classify_hidden_rate</span></code>, and they are given the
+<code class="docutils literal notranslate"><span class="pre">Rate.removed</span> <span class="pre">=</span> <span class="pre">True</span></code> attribute.</p>
+<p>It is always the case that:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">all_rates</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The list of rates that are hidden, and therefore not contained in
+<code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code> can be obtained via
+<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.get_hidden_rates" title="pynucastro.networks.rate_collection.RateCollection.get_hidden_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">RateCollection.get_hidden_rates</span></code></a>.</p>
 </div>
+</li>
+<li><p>type-specific lists (<code class="docutils literal notranslate"><span class="pre">reaclib_rates</span></code>, <code class="docutils literal notranslate"><span class="pre">starlib_rates</span></code>, <code class="docutils literal notranslate"><span class="pre">tabular_rates</span></code>, …):
+these contain just the rates of a particular type or <code class="docutils literal notranslate"><span class="pre">Rate</span></code> subclass.  They are
+sorted into these lists by <code class="docutils literal notranslate"><span class="pre">RateCollection._build_collection()</span></code>.</p></li>
+</ul>
+</section>
+<section id="updating-the-network-meta-data">
+<h2>Updating the network meta-data<a class="headerlink" href="#updating-the-network-meta-data" title="Link to this heading">#</a></h2>
+<p>Anytime rates are added, nuclei are added, or other fundamental changes are
+done to the network, we need to rerun <code class="docutils literal notranslate"><span class="pre">RateCollection._build_collection</span></code> to
+update all of the meta-data.</p>
+<p>Most functions already handle this themselves.</p>
+</section>
+<section id="ordering-in-which-we-fill-rates">
+<h2>Ordering in which we fill rates<a class="headerlink" href="#ordering-in-which-we-fill-rates" title="Link to this heading">#</a></h2>
+<p>In the righthand side function that is output by the different backends, we evaluate
+the rates in the following order:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a>
+and <a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a></p></li>
+<li><p>custom rates (in python only)</p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate" title="pynucastro.rates.branched_rate.BranchedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a></p></li>
+<li><p><a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a></p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>From this ordering, it is clear that only an <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> can depend on
+a <code class="docutils literal notranslate"><span class="pre">DerivedRate</span></code>.</p>
 </div>
-<p>First we will create a large network with all the rates connecting nuclei up to a maximum Z and A.  We’ll pick <span class="math notranslate nohighlight">\({}^{60}\mathrm{Zn}\)</span> as this endpoint.</p>
-<p>We will first create a library will all possible rates and then filter it to remove the rates connecting nuclei heavier than we wish.</p>
-<p>Let’s combine the entire ReacLib library with the tabulated rates, and eliminate any duplicates (by keeping the tabulated weak rate over the ReacLib version).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_lib</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span> <span class="o">+</span> <span class="n">pyna</span><span class="o">.</span><span class="n">TabularWeakLibrary</span><span class="p">(</span><span class="n">ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"langanke"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">])</span>
-<span class="n">all_lib</span><span class="o">.</span><span class="n">eliminate_duplicates</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we can create our <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.RateFilter" title="pynucastro.rates.library.RateFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateFilter</span></code></a>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filt</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateFilter</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="s2">"zn60"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>and filter our library</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lib</span> <span class="o">=</span> <span class="n">all_lib</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Now we can create a network.  We’ll do a basic <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a></p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">lib</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can look at the network.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
----------------
-  explicitly carried nuclei: 660
-  approximated-out nuclei: 0
-  inert nuclei (included in carried): 0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  NSE compatible? False
-
-  total number of rates: 7968
-
-  rates explicitly connecting nuclei: 7968
-  hidden rates: 0
-
-  reaclib rates: 7562
-  starlib rates: 0
-  temperature tabular rates: 0
-  weak tabular rates: 406
-  approximate rates: 0
-  derived rates: 0
-  branched rates: 0
-  modified rates: 0
-  custom rates: 0
-</pre></div>
-</div>
-</div>
-</div>
-<p>We see that we have &gt; 600 nuclei!  This is quite large.  Our objective now is to remove the nuclei that might not be important.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Some of these nuclei do not have measured masses, so one might want to remove those from the net before proceeding, depending on the final application.</p>
-</div>
-<p>First we need to create a list of thermodynamic states that we want to consider.</p>
-<p>For this example, we’ll just use the same composition for all states, but we can create unique compositions (and even sample a real simulation using yt and the tools in <a class="reference internal" href="pynucastro.yt_utils.html#module-pynucastro.yt_utils" title="pynucastro.yt_utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">yt_utils</span></code></a>).</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">set_solar_like</span><span class="p">()</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o15"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
-<span class="n">fig</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/820d8675af2b2cae72b09a519aba8b3cb6b87f801a1c0278137e8b50a3febf02.png" src="_images/820d8675af2b2cae72b09a519aba8b3cb6b87f801a1c0278137e8b50a3febf02.png" />
-</div>
-</div>
-<p>We want the data as tuples in the form (composition, density, temperature).  We’ll make a few difference density + temperature choices.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[(</span><span class="n">comp</span><span class="p">,</span> <span class="mf">1.e4</span><span class="p">,</span> <span class="mf">1.e8</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="mf">1.e5</span><span class="p">,</span> <span class="mf">2.e8</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="mf">1.e5</span><span class="p">,</span> <span class="mf">1.e9</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="mf">5.e5</span><span class="p">,</span> <span class="mf">2.e9</span><span class="p">)]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Next we create a list of target nuclei that we care about.  This can be a list of names or <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects.  If you definitely want a nucleus in your network, then you should include it here.  We’ll add (hot-)CNO, some rp-breakout, and a basic alpha chain.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
-           <span class="s2">"n13"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span>
-           <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span>
-           <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">,</span> <span class="s2">"o17"</span><span class="p">,</span> <span class="s2">"o18"</span><span class="p">,</span>
-           <span class="s2">"f18"</span><span class="p">,</span> <span class="s2">"f19"</span><span class="p">,</span>
-           <span class="s2">"ne18"</span><span class="p">,</span> <span class="s2">"ne19"</span><span class="p">,</span> <span class="s2">"ne20"</span><span class="p">,</span>
-           <span class="s2">"na22"</span><span class="p">,</span> <span class="s2">"na23"</span><span class="p">,</span>
-           <span class="s2">"mg24"</span><span class="p">,</span> <span class="s2">"si28"</span><span class="p">,</span> <span class="s2">"s32"</span><span class="p">,</span> <span class="s2">"ar36"</span><span class="p">,</span> <span class="s2">"ca40"</span><span class="p">,</span> <span class="s2">"ti44"</span><span class="p">,</span> <span class="s2">"cr48"</span><span class="p">,</span> <span class="s2">"fe52"</span><span class="p">,</span> <span class="s2">"ni56"</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Finally we need a tolerance (or list of tolerances) for each nucleus.  The higher the tolerance, the fewer nuclei will remain in the network.  We’ll pick a single value for all nuclei here.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="mf">0.9</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can now run the DRGEP algorithm via <a class="reference internal" href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep" title="pynucastro.reduction.drgep_module.drgep"><code class="xref py py-meth docutils literal notranslate"><span class="pre">drgep</span></code></a>.
-It will return a new network (of the same class) by default.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reduced_net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">drgep</span><span class="p">(</span><span class="n">net</span><span class="o">=</span><span class="n">net</span><span class="p">,</span> <span class="n">conds</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">tols</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reduced_net</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
----------------
-  explicitly carried nuclei: 57
-  approximated-out nuclei: 0
-  inert nuclei (included in carried): 0
-
-  NSE compatible? False
-
-  total number of rates: 344
-
-  rates explicitly connecting nuclei: 344
-  hidden rates: 0
-
-  reaclib rates: 312
-  starlib rates: 0
-  temperature tabular rates: 0
-  weak tabular rates: 32
-  approximate rates: 0
-  derived rates: 0
-  branched rates: 0
-  modified rates: 0
-  custom rates: 0
-</pre></div>
-</div>
-</div>
-</div>
-<p>We see that we reduced the size of the network from &gt; 600 to &lt; 60 nuclei.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">reduced_net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">node_size</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">node_font_size</span><span class="o">=</span><span class="s2">"9"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">800</span><span class="p">),</span>
-                       <span class="n">rotated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/6109c693224f85f3e79b4f765c0866caa0f23eef85768acb684b79772125993f.png" src="_images/6109c693224f85f3e79b4f765c0866caa0f23eef85768acb684b79772125993f.png" />
-</div>
-</div>
+</section>
 </section>
 
 
@@ -813,20 +700,20 @@ It will return a new network (of the same class) by default.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="stiffness.html"
+       href="adding-rates.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Assessing the Stiffness of a Network</p>
+        <p class="prev-next-title">Adding Rates from the Literature</p>
       </div>
     </a>
     <a class="right-next"
-       href="sens_analysis_example.html"
+       href="testing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Sensitivity Analysis</p>
+        <p class="prev-next-title">Testing and Comparing Backends</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -836,6 +723,25 @@ It will return a new network (of the same class) by default.</p>
             </div>
             
             
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rate-lists">Rate lists</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-the-network-meta-data">Updating the network meta-data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering-in-which-we-fill-rates">Ordering in which we fill rates</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
