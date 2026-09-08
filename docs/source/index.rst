@@ -95,6 +95,7 @@ and interactively exploring nuclear reaction networks.
    nse-protons.ipynb
    unimportant-rates.ipynb
    network-cycles.ipynb
+   most-probable-path.ipynb
    stiffness.ipynb
    reduction.ipynb
    sens_analysis_example.ipynb
@@ -167,6 +168,7 @@ and interactively exploring nuclear reaction networks.
    examples/hot-CNO-breakout-example.ipynb
    examples/triple_alpha_eval.ipynb
    examples/he-burning.ipynb
+   examples/c-burning-products.ipynb
    examples/supernova-lightcurve.ipynb
 
 .. toctree::
@@ -176,6 +178,7 @@ and interactively exploring nuclear reaction networks.
 
    rates-devel
    adding-rates
+   nets-devel
    testing
 
 .. toctree::
