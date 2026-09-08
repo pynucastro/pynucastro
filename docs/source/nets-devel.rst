@@ -28,10 +28,10 @@ These are the most important:
   when integrating the network, including those that are *hidden* (i.e., part of ``ApproximateRate``, ``ModifiedRate``, or ``BranchedRate``).
 
   The rates that are *hidden*, and therefore do not appear in ``RateCollection.rates``
-  are identified by ``RateCollection._classify_hidden_rate``, and they is given the 
+  are identified by ``RateCollection._classify_hidden_rate``, and they are given the 
   ``Rate.removed = True`` attribute.
 
-  It is always that case that:
+  It is always the case that:
 
   .. code:: python
 
