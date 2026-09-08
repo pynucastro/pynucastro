@@ -1873,7 +1873,8 @@ class RateCollection:
     def create_network_graph(self, node_nuclei, *,
                              nuclei_custom_labels=None,
                              rotated=False,
-                             rate_ydots=None, ydot_cutoff_value=None,
+                             rate_ydots=None, use_branching_ratios=False,
+                             ydot_cutoff_value=None,
                              use_net_rate=False,
                              normalize_net_rate=False,
                              consuming_rate_threshold=None,
@@ -1899,6 +1900,11 @@ class RateCollection:
         rate_ydots : dict(Rate)
             the contribution of each rate to a nuclei's dY/dt evolution.
             This can be obtained from :py:meth:`.evaluate_rates`
+        use_branching_ratios : bool
+            If rate_ydots is present, then we normalize the weight
+            (rate leaving nucleus N) by the sum of all rates that
+            consume nucleus N, giving branching probability p.  We
+            then store -log(p) as the weight.
         ydot_cutoff_value : float
             rate threshold below which we do not add an edge connecting
             nuclei.
@@ -1943,6 +1949,13 @@ class RateCollection:
 
         if nuclei_custom_labels is None:
             nuclei_custom_labels = {}
+
+        if use_branching_ratios:
+            branching_normalization = {}
+            for n in node_nuclei:
+                branching_normalization[n] = sum(rate_ydots[r]
+                                                 for r in self.rates
+                                                 if n in r.reactants)
 
         for n in node_nuclei:
             G.add_node(n)
@@ -2031,13 +2044,23 @@ class RateCollection:
                                          real=1, highlight=highlight)
                         continue
 
-                    try:
-                        rate_weight = math.log10(rate_ydots[r])
-                    except ValueError:
+                    if use_branching_ratios:
+                        # the probabitiy of taking the current edge
+                        # leaving from nucleus n
+                        prob = rate_ydots[r] / branching_normalization[n]
+
+                        # path minimization will use the sum of the
+                        # weights, but we want the product of
+                        # probabilities, so we do
+                        #   log(Π_k p_k) = Σ log(p_k).
+                        # We add a "-" so the minimization of the sum
+                        # of weights gives the highest total probabiliy.
+                        rate_weight = -np.log(max(1.e-300, prob))
+                    else:
                         # if rate_ydots[r] is zero, then set the
                         # weight to roughly the minimum exponent
                         # possible for python floats
-                        rate_weight = -308
+                        rate_weight = math.log10(max(1.e-308, rate_ydots[r]))
 
                     if r in invisible_rates:
                         if show_small_ydot:
