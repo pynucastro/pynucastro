@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post39+g3d9979209 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post40+g0e7a9e632 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a59aa546"></script>
+    <script src="../../../_static/documentation_options.js?v=5087cc3a"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -212,6 +212,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../reduction.html">Network Reduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../sens_analysis_example.html">Sensitivity Analysis</a></li>
@@ -2518,7 +2519,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">create_network_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_nuclei</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                              <span class="n">nuclei_custom_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">rotated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                             <span class="n">rate_ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">rate_ydots</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_branching_ratios</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                             <span class="n">ydot_cutoff_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">use_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">normalize_net_rate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">consuming_rate_threshold</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -2544,6 +2546,11 @@
 <span class="sd">        rate_ydots : dict(Rate)</span>
 <span class="sd">            the contribution of each rate to a nuclei's dY/dt evolution.</span>
 <span class="sd">            This can be obtained from :py:meth:`.evaluate_rates`</span>
+<span class="sd">        use_branching_ratios : bool</span>
+<span class="sd">            If rate_ydots is present, then we normalize the weight</span>
+<span class="sd">            (rate leaving nucleus N) by the sum of all rates that</span>
+<span class="sd">            consume nucleus N, giving branching probability p.  We</span>
+<span class="sd">            then store -log(p) as the weight.</span>
 <span class="sd">        ydot_cutoff_value : float</span>
 <span class="sd">            rate threshold below which we do not add an edge connecting</span>
 <span class="sd">            nuclei.</span>
@@ -2588,6 +2595,13 @@
 
         <span class="k">if</span> <span class="n">nuclei_custom_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nuclei_custom_labels</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">use_branching_ratios</span><span class="p">:</span>
+            <span class="n">branching_normalization</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
+                <span class="n">branching_normalization</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span>
+                                                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span>
+                                                 <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node_nuclei</span><span class="p">:</span>
             <span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -2676,13 +2690,23 @@
                                          <span class="n">real</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">highlight</span><span class="o">=</span><span class="n">highlight</span><span class="p">)</span>
                         <span class="k">continue</span>
 
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
-                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">use_branching_ratios</span><span class="p">:</span>
+                        <span class="c1"># the probabitiy of taking the current edge</span>
+                        <span class="c1"># leaving from nucleus n</span>
+                        <span class="n">prob</span> <span class="o">=</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">/</span> <span class="n">branching_normalization</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+                        <span class="c1"># path minimization will use the sum of the</span>
+                        <span class="c1"># weights, but we want the product of</span>
+                        <span class="c1"># probabilities, so we do</span>
+                        <span class="c1">#   log(Π_k p_k) = Σ log(p_k).</span>
+                        <span class="c1"># We add a "-" so the minimization of the sum</span>
+                        <span class="c1"># of weights gives the highest total probabiliy.</span>
+                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.e-300</span><span class="p">,</span> <span class="n">prob</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># if rate_ydots[r] is zero, then set the</span>
                         <span class="c1"># weight to roughly the minimum exponent</span>
                         <span class="c1"># possible for python floats</span>
-                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">308</span>
+                        <span class="n">rate_weight</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.e-308</span><span class="p">,</span> <span class="n">rate_ydots</span><span class="p">[</span><span class="n">r</span><span class="p">]))</span>
 
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">invisible_rates</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">show_small_ydot</span><span class="p">:</span>

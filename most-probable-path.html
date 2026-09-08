@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.network_compare module &#8212; pynucastro 3.0.0.post40+g0e7a9e632 documentation</title>
+    <title>Finding the Likely Path Between Nuclei (with NetworkX) &#8212; pynucastro 3.0.0.post40+g0e7a9e632 documentation</title>
   
   
   
@@ -48,12 +48,14 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.networks.network_compare';</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'most-probable-path';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.networks.nse_network module" href="pynucastro.networks.nse_network.html" />
-    <link rel="prev" title="pynucastro.networks.helper module" href="pynucastro.networks.helper.html" />
+    <link rel="next" title="Assessing the Stiffness of a Network" href="stiffness.html" />
+    <link rel="prev" title="Finding Cycles (with NetworkX)" href="network-cycles.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="3.0" />
@@ -209,11 +211,11 @@
 <li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
@@ -279,11 +281,11 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -298,13 +300,13 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 current active has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.common_networks.html">pynucastro.networks.common_networks module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
-<li class="toctree-l4 current active"><a class="current reference internal" href="#">pynucastro.networks.network_compare module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
@@ -445,7 +447,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.networks.network_compare.rst?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/most-probable-path.ipynb?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -462,7 +464,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.networks.network_compare.rst" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/most-probable-path.ipynb" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -479,7 +481,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.networks.network_compare.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fmost-probable-path.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -509,7 +511,7 @@
       
       
       
-      <li><a href="_sources/pynucastro.networks.network_compare.rst" target="_blank"
+      <li><a href="_sources/most-probable-path.ipynb" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -519,7 +521,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.rst</span>
+<span class="btn__text-container">.ipynb</span>
 </a>
 </li>
       
@@ -592,7 +594,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>pynucastro.networks.network_compare module</h1>
+    <h1>Finding the Likely Path Between Nuclei (with NetworkX)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -602,25 +604,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare"><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.T_eval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rho_eval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.evaluate()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.print_summary()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-cno-example">A CNO example</a></li>
 </ul>
             </nav>
         </div>
@@ -632,221 +616,178 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.networks.network_compare">
-<span id="pynucastro-networks-network-compare-module"></span><h1>pynucastro.networks.network_compare module<a class="headerlink" href="#module-pynucastro.networks.network_compare" title="Link to this heading">#</a></h1>
-<p>Helper functions for comparing the output of different backends
-(python, C++) for the same network.  This will build and run each net
-and return the ydots.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.networks.network_compare.</span></span><span class="sig-name descname"><span class="pre">NetworkCompare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lib</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_screening</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_amrex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_simple_cxx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">python_module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'compare_net.py'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amrex_test_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cxx_test_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A simple class to manage building a network with different
-backends to facilitate comparisons.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lib</strong> (<a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><em>Library</em></a>) – pynucastro Library containing the rates</p></li>
-<li><p><strong>use_screening</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we include screening in the comparison (Chugunov 2007)</p></li>
-<li><p><strong>include_amrex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we build and evaluate an AmrexAstroCxxNetwork?</p></li>
-<li><p><strong>include_simple_cxx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we build and evaluate a SimpleCxxNetwork?</p></li>
-<li><p><strong>python_module_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the name of the module file to output the python net to</p></li>
-<li><p><strong>amrex_test_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>) – the Path to output the AMReX C++ source files and build in</p></li>
-<li><p><strong>cxx_test_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a>) – the Path to output the C++ source files and build in</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline">
-<span class="sig-name descname"><span class="pre">ydots_py_inline</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline" title="Link to this definition">#</a></dt>
-<dd><p>The dY/dt terms from the python inline network
-(<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots" title="pynucastro.networks.rate_collection.RateCollection.evaluate_ydots"><code class="xref py py-func docutils literal notranslate"><span class="pre">RateCollection.evaluate_ydots</span></code></a>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_py_module">
-<span class="sig-name descname"><span class="pre">ydots_py_module</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module" title="Link to this definition">#</a></dt>
-<dd><p>The dYdt terms from a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> module.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_amrex">
-<span class="sig-name descname"><span class="pre">ydots_amrex</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex" title="Link to this definition">#</a></dt>
-<dd><p>The dYdt terms parsed from a build of an
-<a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.ydots_cxx">
-<span class="sig-name descname"><span class="pre">ydots_cxx</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx" title="Link to this definition">#</a></dt>
-<dd><p>The dYdt terms parsed from a build of a
-<a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_py_inline">
-<span class="sig-name descname"><span class="pre">rates_py_inline</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline" title="Link to this definition">#</a></dt>
-<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) from the python inline network
-(computed via <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval" title="pynucastro.rates.rate.Rate.eval"><code class="xref py py-func docutils literal notranslate"><span class="pre">Rate.eval</span></code></a>).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_py_module">
-<span class="sig-name descname"><span class="pre">rates_py_module</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module" title="Link to this definition">#</a></dt>
-<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) from a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> module.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_amrex">
-<span class="sig-name descname"><span class="pre">rates_amrex</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex" title="Link to this definition">#</a></dt>
-<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) parsed from a build of an
-<a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rates_cxx">
-<span class="sig-name descname"><span class="pre">rates_cxx</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx" title="Link to this definition">#</a></dt>
-<dd><p>The raw rates (e.g. N_A &lt;σv&gt;) parsed from a build of a
-<a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.enuc_py_inline">
-<span class="sig-name descname"><span class="pre">enuc_py_inline</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_inline" title="Link to this definition">#</a></dt>
-<dd><p>The total energy generation rate from the mass changes (just
-strong reactions) in erg/g/s computed via
-<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation" title="pynucastro.networks.rate_collection.RateCollection.evaluate_energy_generation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_energy_generation</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.enuc_py_module">
-<span class="sig-name descname"><span class="pre">enuc_py_module</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_module" title="Link to this definition">#</a></dt>
-<dd><p>The total energy generation rate from the mass changes (just
-strong reactions) in erg/g/s evaluated from a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> module.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.enuc_amrex">
-<span class="sig-name descname"><span class="pre">enuc_amrex</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_amrex" title="Link to this definition">#</a></dt>
-<dd><p>The total energy generation rate from the mass changes (just
-strong reactions) in erg/g/s parsed from a build of an
-<a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.enuc_cxx">
-<span class="sig-name descname"><span class="pre">enuc_cxx</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_cxx" title="Link to this definition">#</a></dt>
-<dd><p>The total energy generation rate from the mass changes (just
-strong reactions) in erg/g/s parsed from a build of a
-<a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.T_eval">
-<span class="sig-name descname"><span class="pre">T_eval</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval" title="Link to this definition">#</a></dt>
-<dd><p>The temperature used in the evaluation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.rho_eval">
-<span class="sig-name descname"><span class="pre">rho_eval</span></span><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval" title="Link to this definition">#</a></dt>
-<dd><p>The density used in the evaluation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.evaluate">
-<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000000.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare.evaluate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate" title="Link to this definition">#</a></dt>
-<dd><p>Evaluate the ydots from all the backends we are
-considering</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – density to evaluate rates at (CGS)</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – temperature to evaluate rates at (K)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pynucastro.networks.network_compare.NetworkCompare.print_summary">
-<span class="sig-name descname"><span class="pre">print_summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/network_compare.html#NetworkCompare.print_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.network_compare.NetworkCompare.print_summary" title="Link to this definition">#</a></dt>
-<dd><p>Print a summary of the dY/dt comparison and errors for each
-network type run.</p>
-</dd></dl>
-
-</dd></dl>
-
+  <section class="tex2jax_ignore mathjax_ignore" id="finding-the-likely-path-between-nuclei-with-networkx">
+<h1>Finding the Likely Path Between Nuclei (with NetworkX)<a class="headerlink" href="#finding-the-likely-path-between-nuclei-with-networkx" title="Link to this heading">#</a></h1>
+<p>We can also use NetworkX to find the most probable path between two nuclei in the network.</p>
+<p>Consider the reaction <span class="math notranslate nohighlight">\(X(a,b)Z\)</span>.  This will compete with all of the other reactions that consume nucleus <span class="math notranslate nohighlight">\(X\)</span>, so
+we can compute the probability (or branching ratio) of <span class="math notranslate nohighlight">\(X(a,b)Z\)</span> being taken as:</p>
+<div class="math notranslate nohighlight">
+\[p_{X(a,b)Z} = \frac{{\dot Y}_{X(a,b)Z}}{\sum {\dot Y}_\mbox{reactions consuming X}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{Y}\)</span> is the full expression for the rates contribution to the <span class="math notranslate nohighlight">\(dY/dt\)</span> evolution (i.e., includes density and molar fraction terms).</p>
+<p>Now, if we want to compute the probability of taking a path from nucleus <span class="math notranslate nohighlight">\(A\)</span> to <span class="math notranslate nohighlight">\(B\)</span> in a network, we would compute</p>
+<div class="math notranslate nohighlight">
+\[P_\mathrm{path} = \prod_{\lambda \in \mbox{path}} p_\lambda\]</div>
+<p>and if we want to find the most likely path, then we want to find the path that has the maximum <span class="math notranslate nohighlight">\(P_\mathrm{path}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In our <span class="math notranslate nohighlight">\(p_{X(a,b)Z}\)</span>, the molar fraction of the reactant, <span class="math notranslate nohighlight">\(Y(X)\)</span>, cancels out.  This is what we want, since a path may be probably even if the abundance of the reactant is small because it is not a waiting-point, i.e., there is a lot of flow through that nucleus.</p>
+</div>
+<p>In NetworkX, the graph algorithms can minimize the distance through a network, so we need to express our <span class="math notranslate nohighlight">\(P_\mathrm{path}\)</span> in a way that is compatible with this.  We observe that:</p>
+<div class="math notranslate nohighlight">
+\[\log P_\mathrm{path} = \log \left ( \prod_{\lambda \in \mbox{path}} p_\lambda \right ) = \sum_{\lambda \in \mbox{path}} \log p_\lambda\]</div>
+<p>Since NetworkX will find the minimum distance, if we set the edge weights in our network to be</p>
+<div class="math notranslate nohighlight">
+\[w_\lambda = -\log p_\lambda\]</div>
+<p>then we can find the most probably path by asking NetworkX to find the shortest path.</p>
+<p>The method <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.create_network_graph" title="pynucastro.networks.rate_collection.RateCollection.create_network_graph"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_network_graph</span></code></a> can assign
+this weighting to the exported NetworkX graph by setting <code class="docutils literal notranslate"><span class="pre">use_branching_ratios</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="a-cno-example">
+<h2>A CNO example<a class="headerlink" href="#a-cno-example" title="Link to this heading">#</a></h2>
+<p>We’ll start with a CNO + breaking network</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span>
+          <span class="s2">"c12-13"</span><span class="p">,</span> <span class="s2">"n13-15"</span><span class="p">,</span> <span class="s2">"o14-18"</span><span class="p">,</span>
+          <span class="s2">"f17-19"</span><span class="p">,</span> <span class="s2">"ne18-20"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s pick a thermodynamic state this is hot enough to expect breakout from hot-CNO</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.e4</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">5.e8</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">"solar"</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we evaluate the rates (using <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate_rates</span></code></a>—this gives us a <code class="docutils literal notranslate"><span class="pre">dict</span></code> of the <span class="math notranslate nohighlight">\(\dot{Y}\)</span> terms:</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N14 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N15 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here’s a visual representation of the network at this state</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">use_net_rate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: C13 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N14 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:125: UserWarning: N15 partition function is not supported by tables: set log_pf = 0.0 by default
+  warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
+</pre></div>
+</div>
+<img alt="_images/0e98117b8f02701eb0c60e4ab569ff030532675c3ab110083ae77448dc6e902d.png" src="_images/0e98117b8f02701eb0c60e4ab569ff030532675c3ab110083ae77448dc6e902d.png" />
+</div>
+</div>
+<p>Now we can create the network graph.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Note that by default, we don’t include edges connecting <span class="math notranslate nohighlight">\({}^4\mathrm{He}\)</span> to its products directly (this is controlled by <code class="docutils literal notranslate"><span class="pre">hide_xalpha=True</span></code>).  This is the behavior we want—we only want to consider the edges connecting the heavy nuclei, since <span class="math notranslate nohighlight">\(\alpha\)</span> are involved in a lot of reactions.  Put another way, we only want each reaction to map to a single edge in the network, not multiple edges connecting different nuclei.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">create_network_graph</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span>
+                             <span class="n">rate_ydots</span><span class="o">=</span><span class="n">rates</span><span class="p">,</span> <span class="n">use_branching_ratios</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, we can use the NetworkX <code class="docutils literal notranslate"><span class="pre">shortest_path</span></code> function.  Let’s find the path between <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{18}\mathrm{F}\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">weighted_path</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path</span><span class="p">(</span><span class="n">G</span><span class="p">,</span>
+                                 <span class="n">source</span><span class="o">=</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">),</span>
+                                 <span class="n">target</span><span class="o">=</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"f18"</span><span class="p">),</span>
+                                 <span class="n">weight</span><span class="o">=</span><span class="s2">"weight"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>we see the most probably path is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">weighted_path</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[C12, N13, O14, F17, Ne18, F18]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Looking at the figure showing the rates, we see that the two rates leaving <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}\)</span> are very close in magnitude.  We can see the branching probabilities from the graph:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o14"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">u</span><span class="si">!s:</span><span class="s2">4</span><span class="si">}</span><span class="s2">-&gt; </span><span class="si">{</span><span class="n">v</span><span class="si">!s:</span><span class="s2">4</span><span class="si">}</span><span class="s2">: p = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">data</span><span class="p">[</span><span class="s2">"weight"</span><span class="p">])</span><span class="si">:</span><span class="s2">8.3g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>O14 -&gt; N14 : p =    0.413
+O14 -&gt; Ne18: p = 2.95e-06
+O14 -&gt; F17 : p =    0.587
+O14 -&gt; N13 : p = 1.04e-34
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see that the path to <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> is almost as likely as the path to <span class="math notranslate nohighlight">\({}^{17}\mathrm{F}\)</span></p>
+</section>
 </section>
 
 
@@ -861,20 +802,20 @@ network type run.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro.networks.helper.html"
+       href="network-cycles.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pynucastro.networks.helper module</p>
+        <p class="prev-next-title">Finding Cycles (with NetworkX)</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.networks.nse_network.html"
+       href="stiffness.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.networks.nse_network module</p>
+        <p class="prev-next-title">Assessing the Stiffness of a Network</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -896,25 +837,7 @@ network type run.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare"><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.ydots_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.ydots_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rates_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rates_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_inline"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_py_inline</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_py_module"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_py_module</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_amrex"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_amrex</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.enuc_cxx"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.enuc_cxx</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.T_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.T_eval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.rho_eval"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.rho_eval</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.evaluate()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="docutils literal notranslate"><span class="pre">NetworkCompare.print_summary()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-cno-example">A CNO example</a></li>
 </ul>
   </nav></div>
 
