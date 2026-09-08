@@ -60,6 +60,8 @@
     * add developer documentation on networks (#1495)
     * add an example on finding the most probable path between
       nuclei (#1492)
+    * don't link check on ADS (#1507)
+    * add an example of C-burning products (#1509)
 
   * testing:
 
