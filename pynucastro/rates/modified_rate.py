@@ -259,11 +259,17 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors",
+        if dtype == "amrex::Real":
+            array_type = "amrex::Array1D"
+        else:
+            array_type = "Array1D"
+
+        args = ["const tf_t& tfactors", "const T& rate_eval",
+                f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
                 f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
                 f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
@@ -272,7 +278,14 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
+        if not isinstance(self.original_rate, BetaLimitedRate):
+            templates = "<do_T_derivatives>"
+            args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        else:
+            templates = ""
+            args = ["rate_eval", "rho", "Y", "rate", "drate_dT"]
+
+        fstring += f"    rate_{self.original_rate.fname}{templates}({', '.join(args)});\n"
 
         if not leave_open:
             fstring += "}\n\n"

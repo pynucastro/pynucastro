@@ -225,3 +225,65 @@ class BetaLimitedRate(Rate):
         fstring += f"    limited_rate = min(r0, lambda_beta_tot / (rho * Y[j{self.limiter_nucleus.raw}]))\n"
         fstring += f"    rate_eval.{self.fname} = limited_rate\n\n"
         return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the approximate rate
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list(str)
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
+        """
+
+        if extra_args is None:
+            extra_args = ()
+
+        if dtype == "amrex::Real":
+            array_type = "amrex::Array1D"
+        else:
+            array_type = "Array1D"
+
+        args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
+                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+
+        fstring = ""
+        fstring = "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += "    // get the molar fraction of the species we care about\n"
+        fstring += f"    {dtype} Y_limiter = Y(Species::{self.limiter_nucleus.cindex()});\n"
+
+        # get the main rate and compute the beta limiting timescale
+        fstring += f"    {dtype} r0 = rate_eval.screened_rates(k_{self.underlying_rate.fname});\n"
+        fstring += f"    {dtype} lambda_beta_tot = 0.0_rt;\n"
+        for lam in self.beta_limiting_rates:
+            fstring += f"    lambda_beta_tot += 1.0_rt / rate_eval.screened_rates(k_{lam.fname});\n"
+        fstring += f"    lambda_beta_tot = 1.0_rt / lambda_beta_tot;\n"
+
+        fstring += "    rate = std::min(r0, lambda_beta_tot / (rho * Y_limiter));\n"
+
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += "    }\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring
