@@ -951,12 +951,12 @@ class ApproximateRate(Rate):
             for arg in extra_args:
                 args.append(arg)
 
-        if self.approx_type == "ap_pg":
+        fstring = ""
+        fstring = "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        if self.approx_type == "ap_pg":
 
             fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.rates['X(p,g)B'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)A'].fname});\n"
@@ -1015,10 +1015,6 @@ class ApproximateRate(Rate):
 
         if self.approx_type == "nn_g":
 
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
             fstring += f"    {dtype} Yn = Y(N);\n"
 
             if not self.is_reverse:
@@ -1064,11 +1060,6 @@ class ApproximateRate(Rate):
             # we are approximating A(Y,p)X(p,g)B with an alternate
             # branch from X, X(p,a)C, and possibly a direct path
             # between A and B, A(Y,g)B
-
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)C'].fname});\n"
@@ -1135,11 +1126,6 @@ class ApproximateRate(Rate):
 
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
-
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)B'].fname});\n"
