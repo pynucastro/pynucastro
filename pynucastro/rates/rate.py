@@ -64,6 +64,8 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
         if r.screening_pairs:
             args.append(f"const {dtype} log_scor")
             args.append(f"const {dtype} dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("part_fun::pf_cache_t& pf_cache")
         args.append(f"{dtype}& rate")
         args.append(f"{dtype}& drate_dT")
 
@@ -80,6 +82,8 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
         if r.screening_pairs:
             args.append("log_scor")
             args.append("dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("pf_cache")
         args.append("rate")
         args.append("drate_dT")
 
@@ -393,6 +397,7 @@ class Rate:
         self.rate_eval_needs_temp = False
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
+        self.rate_eval_needs_pfcache = False
 
     def __repr__(self):
         return self.string

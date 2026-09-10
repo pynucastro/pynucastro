@@ -732,10 +732,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                          None, template_args)
 
     def _fill_branched_rates(self, n_indent, of):
-        args = ["rate_eval", "rate", "drate_dT"]
         template_args = None
         self._fill_rates(n_indent, of, self.branched_rates,
-                         args, template_args, do_screening=False)
+                         None, template_args, do_screening=False)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
@@ -745,10 +744,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
                 of.write("\n")
 
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT", "rate_eval", "pf_cache"]
-        template_args = ["do_T_derivatives", "T"]
+        template_args = []
         self._fill_rates(n_indent, of, self.derived_rates,
-                         args, template_args)
+                         None, template_args)
 
     def _fill_approx_rates(self, n_indent, of):
         template_args = None
