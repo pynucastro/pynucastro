@@ -11,7 +11,8 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import cxx_rate_func_args, Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args)
 
 
 class SingleSet:  # noqa: PLW1641 (not hashable)

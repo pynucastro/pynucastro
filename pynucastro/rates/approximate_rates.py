@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import cxx_rate_func_args, Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 
 
 def _assert_rate_prop(rate, *,

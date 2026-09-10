@@ -12,7 +12,8 @@ import numpy as np
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
-from pynucastro.rates.rate import cxx_rate_func_args, Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args)
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularWeakRate
