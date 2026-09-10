@@ -4,6 +4,7 @@ uncertainties as per the StarLib Library
 
 """
 
+from pynucastro.rates.rate import cxx_rate_func_args
 from pynucastro.rates.temperature_tabular_rate import (TemperatureTabularRate,
                                                        TempTableInterpolator)
 
@@ -131,13 +132,11 @@ class StarLibRate(TemperatureTabularRate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"

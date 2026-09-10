@@ -710,16 +710,14 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_temp_tabular_rates(self, n_indent, of):
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.temperature_tabular_rates,
-                         args, template_args)
+                         None, template_args)
 
     def _fill_starlib_rates(self, n_indent, of):
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.starlib_rates,
-                         args, template_args)
+                         None, template_args)
 
     def _fill_reaclib_rates(self, n_indent, of):
         template_args = ["do_T_derivatives"]

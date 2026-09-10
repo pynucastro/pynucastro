@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import cxx_rate_func_args, Rate, ThermoState
 
 
 @jitclass([
@@ -317,13 +317,11 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring += "template <int do_T_derivatives>\n"
         fstring += f"{specifiers}\n"

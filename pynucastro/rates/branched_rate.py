@@ -100,7 +100,7 @@ class BranchedRate(Rate):
 
         # we work directly from the evaluated rates, so there is no
         # screening applied to this
-        self.screening_pair = []
+        self.screening_pairs = []
 
         # for the moment, we only work if both branches have the same
         # reactants.  If they don't then we need to weight by (rho Y)

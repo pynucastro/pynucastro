@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import cxx_rate_func_args, Rate
 
 
 def _assert_rate_prop(rate, *,
@@ -946,17 +946,13 @@ class ApproximateRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
-
-        if dtype == "amrex::Real":
-            array_type = "amrex::Array1D"
-        else:
-            array_type = "Array1D"
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
         if self.approx_type == "ap_pg":
 
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
             fstring = ""
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"
@@ -1019,8 +1015,6 @@ class ApproximateRate(Rate):
 
         if self.approx_type == "nn_g":
 
-            args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
-                    f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
             fstring = ""
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"
@@ -1071,7 +1065,6 @@ class ApproximateRate(Rate):
             # branch from X, X(p,a)C, and possibly a direct path
             # between A and B, A(Y,g)B
 
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
             fstring = ""
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"
@@ -1143,7 +1136,6 @@ class ApproximateRate(Rate):
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
 
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
             fstring = ""
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"

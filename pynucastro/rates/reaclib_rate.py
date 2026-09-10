@@ -694,7 +694,7 @@ class ReacLibRate(Rate):
         if extra_args:
             for arg in extra_args:
                 args.append(arg)
- 
+
         fstring = ""
         fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
