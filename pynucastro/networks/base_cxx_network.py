@@ -540,7 +540,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         # Call different rate functions to evaluate the rates.
         if len(weak_rates) > 0:
 
-            args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
             of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
 
             # there can be many different types and each type is in a
@@ -548,13 +547,13 @@ class BaseCxxNetwork(ABC, RateCollection):
             names = {type(r).__name__ for r in weak_rates}
             for nm in names:
                 self._fill_rates(n_indent, of, [r for r in weak_rates if type(r).__name__ == nm],
-                                 args, do_T_derivatives=False,
+                                 do_T_derivatives=False,
                                  namespace=namespaces[nm])
 
         if len(weak_branched_rates) > 0:
-            args = ["rate_eval", "rate", "drate_dT"]
+            template_args = None
             self._fill_rates(n_indent, of, weak_branched_rates,
-                             args, do_T_derivatives=False, do_screening=False,
+                             do_T_derivatives=False, do_screening=False,
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
@@ -676,7 +675,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write("#endif\n")
 
     def _fill_rates(self, n_indent, of, rates,
-                    args, *, template_args=None,
+                    *, template_args=None,
                     do_T_derivatives=True, do_screening=True,
                     namespace=None):
         """Fill in the rates by calling the appropriate rate functions
@@ -685,7 +684,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         """
 
         for r in rates:
-            call_args = cxx_rate_func_args(r, mode="call") if args is None else args
+            call_args = cxx_rate_func_args(r, mode="call")
 
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
@@ -708,24 +707,19 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_temp_tabular_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.temperature_tabular_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.temperature_tabular_rates)
 
     def _fill_starlib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.starlib_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.starlib_rates)
 
     def _fill_reaclib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.reaclib_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.reaclib_rates)
 
     def _fill_modified_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.modified_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.modified_rates)
 
     def _fill_branched_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.branched_rates,
-                         None, do_screening=False)
+        self._fill_rates(n_indent, of, self.branched_rates, do_screening=False)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
@@ -735,12 +729,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
                 of.write("\n")
 
-        self._fill_rates(n_indent, of, self.derived_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.derived_rates)
 
     def _fill_approx_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.approx_rates,
-                         None)
+        self._fill_rates(n_indent, of, self.approx_rates)
 
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
