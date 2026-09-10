@@ -751,19 +751,9 @@ class BaseCxxNetwork(ABC, RateCollection):
                          args, template_args)
 
     def _fill_approx_rates(self, n_indent, of):
-        for r in self.approx_rates:
-            args = ["rate_eval"]
-            if r.rate_eval_needs_rho:
-                args.append("rho")
-            if r.rate_eval_needs_comp:
-                args.append("Y")
-            args += ["rate", "drate_dT"]
-
-            of.write(f"{self.indent*n_indent}rate_{r.fname}<T>({', '.join(args)});\n")
-            of.write(f"{self.indent*n_indent}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-            of.write(f"{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-            of.write(f"{self.indent*n_indent}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-            of.write(f"{self.indent*n_indent}}}\n\n")
+        template_args = None
+        self._fill_rates(n_indent, of, self.approx_rates,
+                         None, template_args)
 
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
