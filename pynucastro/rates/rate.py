@@ -33,7 +33,7 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
     r : Rate
         The rate whose function we are working with.
     mode : str
-        "definition" if it is for writing the funciton,
+        "definition" if it is for writing the function,
         "call" if it is for calling the function
     dtype : str
         the data type for floating point quantities
