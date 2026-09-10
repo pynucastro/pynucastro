@@ -346,8 +346,6 @@ namespace derived_rates {
         {
             // O16_to_He4_C12_derived
 
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
             rate_O16_to_He4_C12_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -358,8 +356,6 @@ namespace derived_rates {
         {
             // Mg24_to_He4_Ne20_derived
 
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
             rate_Mg24_to_He4_Ne20_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Mg24_to_He4_Ne20_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -370,8 +366,6 @@ namespace derived_rates {
         {
             // Mg24_to_n_Mg23_derived
 
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
             rate_Mg24_to_n_Mg23_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Mg24_to_n_Mg23_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {

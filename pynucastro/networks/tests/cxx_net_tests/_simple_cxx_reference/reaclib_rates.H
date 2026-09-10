@@ -295,8 +295,6 @@ namespace reaclib_rates {
         {
             // n_to_p_beta_neg_reaclib
 
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
             rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors, rate, drate_dT);
             rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {

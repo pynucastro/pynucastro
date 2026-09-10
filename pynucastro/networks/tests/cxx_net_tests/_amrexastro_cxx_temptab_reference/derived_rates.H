@@ -84,8 +84,6 @@ namespace derived_rates {
         {
             // F17_to_O16_p_derived
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {

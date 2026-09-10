@@ -195,8 +195,6 @@ void get_ydot_weak(const burn_t& state,
     {
         // n_to_p_beta_neg_reaclib
 
-        amrex::Real log_scor {0.0_rt};
-        amrex::Real dlog_scor_dT {0.0_rt};
         reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors, rate, drate_dT);
         rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
     }

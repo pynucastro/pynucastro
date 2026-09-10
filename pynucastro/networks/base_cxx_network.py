@@ -281,27 +281,20 @@ class BaseCxxNetwork(ABC, RateCollection):
             nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
             nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'
 
-            if not self.do_screening:
-                # Set log_scor terms to be 0 if not doing screening
-                of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
-                of.write(f'{self.indent*(n_indent)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = 0.0_rt;\n')
-                of.write(f'{self.indent*(n_indent)}}}\n\n')
-            else:
-                # Scope the screening calculation to avoid multiple definitions of scn_fac.
-                of.write(f'{self.indent*n_indent}' + '{\n')
-                of.write(f'{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
+            # Scope the screening calculation to avoid multiple definitions of scn_fac.
+            of.write(f'{self.indent*n_indent}' + '{\n')
+            of.write(f'{self.indent*(n_indent+1)}constexpr auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
 
-                # Insert a static assert (which will always pass) to require the
-                # compiler to evaluate the screen factor at compile time.
-                of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
-                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
-                if do_T_derivatives:
-                    of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
-                    of.write(f'{self.indent*(n_indent+1)}}}\n')
-                of.write(f'{self.indent*n_indent}' + '}\n\n')
+            # Insert a static assert (which will always pass) to require the
+            # compiler to evaluate the screen factor at compile time.
+            of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
+            of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+            of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
+            if do_T_derivatives:
+                of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
+                of.write(f'{self.indent*(n_indent+1)}}}\n')
+            of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _compute_screening_factors(self, n_indent, of):
         """Compose the screening factors string for all rates.
@@ -551,9 +544,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                                  namespace=namespaces[nm])
 
         if len(weak_branched_rates) > 0:
-            template_args = None
             self._fill_rates(n_indent, of, weak_branched_rates,
-                             do_T_derivatives=False, do_screening=False,
+                             do_T_derivatives=False,
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
@@ -676,7 +668,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_rates(self, n_indent, of, rates,
                     *, template_args=None,
-                    do_T_derivatives=True, do_screening=True,
+                    do_T_derivatives=True,
                     namespace=None):
         """Fill in the rates by calling the appropriate rate functions
         given a list of rates.
@@ -688,7 +680,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
-            if do_screening:
+            if r.screening_pairs:
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"
             if namespace:
@@ -719,7 +711,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self._fill_rates(n_indent, of, self.modified_rates)
 
     def _fill_branched_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.branched_rates, do_screening=False)
+        self._fill_rates(n_indent, of, self.branched_rates)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
