@@ -263,6 +263,7 @@ class DerivedRate(Rate):
 
         return fstring
 
+    # pylint: disable=duplicate-code
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=None):
         """Return a string containing the C++ function that computes
