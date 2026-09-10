@@ -323,7 +323,7 @@ class TemperatureTabularRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
