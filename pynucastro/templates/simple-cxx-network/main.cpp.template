@@ -91,14 +91,21 @@ int main(int argc, char* argv[]) {
     // get the rates -- this is just the N_A<σv>
 
     std::cout << "Reaction rate values" << std::endl;
-    rate_t rate_eval;
+    rate_derivs_t rate_eval;
 
-    constexpr int do_T_derivatives{0};
+    constexpr int do_T_derivatives{1};
     evaluate_rates<do_T_derivatives>(state, rate_eval);
 
     for (int n = 1; n <= Rates::NumRates; ++n) {
         std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
                   << rate_eval.screened_rates(n) << std::endl;
+    }
+    std::cout << std::endl;
+
+    std::cout << "Reaction rate temperature values" << std::endl;
+    for (int n = 1; n <= Rates::NumRates; ++n) {
+        std::cout << "d/dT rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+                  << rate_eval.dscreened_rates_dT(n) << std::endl;
     }
     std::cout << std::endl;
 
