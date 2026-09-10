@@ -11,7 +11,7 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import cxx_rate_func_args, Rate, Tfactors, ThermoState
 
 
 class SingleSet:  # noqa: PLW1641 (not hashable)
@@ -690,15 +690,13 @@ class ReacLibRate(Rate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
-
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+ 
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"

@@ -239,11 +239,6 @@ class TemperatureTabularRate(Rate):
 
         super().__init__(label=label, rate_source=rate_source, **kwargs)
 
-        # we interpolate directly, so we don't need TFactors in our
-        # function argument list
-        self.rate_eval_needs_tfactors = False
-        self.rate_eval_needs_temp = True
-
         self.tabular = True
 
         self.log_t9_data = log_t9_data
@@ -286,9 +281,10 @@ class TemperatureTabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, log_scor=0.0):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
+        fstring += "    T = tf.T9 * 1.e9\n"
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
         fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 

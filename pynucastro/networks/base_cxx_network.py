@@ -18,17 +18,19 @@ import sympy
 from pynucastro.constants import constants
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.networks.sympy_network_support import SympyRates
+from pynucastro.rates.rate import cxx_rate_func_args
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TableIndex
 from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
 # dict to convert rate type to the C++ namespace
-namespaces = {"ModifiedRate": "modified_rates",
+namespaces = {"BranchedRate": "branched_rates",
+              "DerivedRate": "derived_rates",
+              "ModifiedRate": "modified_rates",
               "ReacLibRate": "reaclib_rates",
               "StarLibRate": "temp_tabular",
-              "TemperatureTabularRate": "temp_tabular",
-              "DerivedRate": "derived_rates"}
+              "TemperatureTabularRate": "temp_tabular"}
 
 
 def _rate_dtype(nrxn):
@@ -685,6 +687,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         """
 
         for r in rates:
+            if args is None:
+                args = cxx_rate_func_args(r, mode="call")
+
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
             if do_screening:
@@ -721,7 +726,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.reaclib_rates,
-                         args, template_args)
+                         None, template_args)
 
     def _fill_modified_rates(self, n_indent, of):
         args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
