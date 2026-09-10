@@ -174,16 +174,19 @@ class BaseCxxNetwork(ABC, RateCollection):
         if not self.solved_jacobian:
             self.compose_jacobian()
 
+        # Prepare the output directory
+        if odir is not None:
+            odir = Path(odir)
+            if not odir.is_dir():
+                try:
+                    odir.mkdir()
+                except OSError:
+                    sys.exit(f"unable to create directory {odir}")
+
         # Process template files
         for tfile in self.template_files:
             outfile = tfile.name.replace('.template', '')
             if odir is not None:
-                odir = Path(odir)
-                if not odir.is_dir():
-                    try:
-                        odir.mkdir()
-                    except OSError:
-                        sys.exit(f"unable to create directory {odir}")
                 outfile = odir/outfile
 
             with open(tfile) as ifile, open(outfile, "w") as of:
@@ -435,18 +438,6 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write("}\n\n")
 
-    def _temp_tabular_rate_functions(self, n_indent, of):
-        # the TemperatureTabularRate and StarLibRate functions are in
-        # the same header, so we can just do them together here
-
-        for r in self.temperature_tabular_rates + self.starlib_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            for line in fstr.split("\n"):
-                if line:
-                    of.write(f"{self.indent*n_indent}{line}\n")
-                else:
-                    of.write("\n")
-
     def _cxxify(self, s):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
         return self.symbol_rates.cxxify(s)
@@ -616,32 +607,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
 
-    def _reaclib_rate_functions(self, n_indent, of):
-        for r in self.reaclib_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _modified_rate_functions(self, n_indent, of):
-        for r in self.modified_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype,
-                                         specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _branched_rate_functions(self, n_indent, of):
-        for r in self.branched_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype,
-                                         specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _derived_rate_functions(self, n_indent, of):
-        for r in self.derived_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
 
@@ -662,11 +627,32 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
 
-    def _approx_rate_functions(self, n_indent, of):
-        for r in self.approx_rates:
+    def _write_rate_functions(self, n_indent, of, rates):
+        """Write C++ rate functions with the network's type, specifiers, and indentation."""
+        for r in rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
             of.write(indented_fstr)
+
+    def _reaclib_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.reaclib_rates)
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+        self._write_rate_functions(n_indent, of, self.temperature_tabular_rates + self.starlib_rates)
+
+    def _modified_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.modified_rates)
+
+    def _branched_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.branched_rates)
+
+    def _derived_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.derived_rates)
+
+    def _approx_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.approx_rates)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
