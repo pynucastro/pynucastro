@@ -89,7 +89,7 @@ class TestDoubleN:
 
         assert rf.function_string_py() == \
 """@numba.njit()
-def Fe52_n_n_to_Fe54_approx(rate_eval, tf, rho=None, Y=None):
+def Fe52_n_n_to_Fe54_approx(rate_eval, rho=None, Y=None):
     Yn = Y[jn]
     r1_ng = rate_eval.Fe52_n_to_Fe53_reaclib
     r2_ng = rate_eval.Fe53_n_to_Fe54_reaclib
