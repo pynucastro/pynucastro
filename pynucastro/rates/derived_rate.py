@@ -379,6 +379,7 @@ class DerivedRate(Rate):
                 fstring += "    }\n\n"
 
         elif isinstance(self.underlying_rate, TemperatureTabularRate):
+            fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
             fstring += "    auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
             fstring += "                                               tfactors.lnT9,\n"
             fstring += f"                                               {self.underlying_rate.fname}_data::log_t9,\n"

@@ -250,7 +250,7 @@ class ModifiedRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring = "template <int do_T_derivatives, typename T>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
@@ -260,7 +260,7 @@ class ModifiedRate(Rate):
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
         cargs = cxx_rate_func_args(self, mode="call")
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>({', '.join(cargs)});\n"
+        fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
 
         if not leave_open:
             fstring += "}\n\n"

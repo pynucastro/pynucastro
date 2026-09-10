@@ -697,7 +697,7 @@ class ReacLibRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <int do_T_derivatives, typename T>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -718,7 +718,7 @@ class ReacLibRate(Rate):
             if self.screening_pairs:
                 fstring += "    ln_set_rate += log_scor;\n\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
@@ -735,7 +735,7 @@ class ReacLibRate(Rate):
 
             fstring += "    rate += set_rate;\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
             fstring += "    }\n\n"
 
