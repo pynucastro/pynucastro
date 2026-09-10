@@ -554,6 +554,9 @@ class ApproximateRate(Rate):
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
+        # an approximate rate works completely on the underlying rates which will
+        # already be screened.  So the function calls here don't need screening.
+
         # update the Q value
         self._set_q()
 

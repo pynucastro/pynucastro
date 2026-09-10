@@ -714,14 +714,16 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor;\n\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor;\n\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
             fstring += "\n"
-            fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+            if self.screening_pairs:
+                fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
 
             fstring += "    }\n"
             fstring += "\n"

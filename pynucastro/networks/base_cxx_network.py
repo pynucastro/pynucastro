@@ -687,8 +687,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         """
 
         for r in rates:
-            if args is None:
-                args = cxx_rate_func_args(r, mode="call")
+            call_args = cxx_rate_func_args(r, mode="call") if args is None else args
 
             of.write(f"{self.indent*n_indent}" + "{\n")
             of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
@@ -698,9 +697,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             if namespace:
                 prefix = f"{namespace}::" + prefix
             if template_args:
-                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(args)});\n")
+                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(call_args)});\n")
             else:
-                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(args)});\n")
+                of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(call_args)});\n")
             of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
 
             if do_T_derivatives:
@@ -723,16 +722,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                          args, template_args)
 
     def _fill_reaclib_rates(self, n_indent, of):
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.reaclib_rates,
                          None, template_args)
 
     def _fill_modified_rates(self, n_indent, of):
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.modified_rates,
-                         args, template_args)
+                         None, template_args)
 
     def _fill_branched_rates(self, n_indent, of):
         args = ["rate_eval", "rate", "drate_dT"]
