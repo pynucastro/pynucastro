@@ -406,46 +406,32 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write('\n')
 
-    def _temp_table_data(self, n_indent, of):
-
+    def _write_temp_table_array(self, n_indent, of, name, data, npts):
+        """Write a temperature-table array with consistent precision and formatting."""
         idnt = self.indent * n_indent
+        data_str = np.array2string(data, max_line_width=70, precision=17, separator=", ")
+        # remove the [ ]
+        data_str = data_str[1:-1]
+
+        of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {npts}> {name} = {{\n')
+        for line in data_str.split("\n"):
+            of.write(f"     {line.strip()}\n")
+        of.write("    };\n\n")
+
+    def _temp_table_data(self, n_indent, of):
 
         for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
             of.write(f"namespace {r.fname}_data {{\n\n")
 
-            log_temp_str = np.array2string(r.log_t9_data,
-                                           max_line_width=70, precision=17, separator=", ")
-            # remove the [ ]
-            log_temp_str = " " + log_temp_str[1:-1]
-
-            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
-            for line in log_temp_str.split("\n"):
-                of.write(f"     {line.strip()}\n")
-            of.write("    };\n\n")
-
-            log_rate_str = np.array2string(r.log_rate_data,
-                                           max_line_width=70, precision=17, separator=", ")
-            # remove the [ ]
-            log_rate_str = " " + log_rate_str[1:-1]
-
-            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
-            for line in log_rate_str.split("\n"):
-                of.write(f"     {line.strip()}\n")
-            of.write("    };\n\n")
+            npts = len(r.log_t9_data)
+            self._write_temp_table_array(n_indent, of, "log_t9", r.log_t9_data, npts)
+            self._write_temp_table_array(n_indent, of, "log_rate", r.log_rate_data, npts)
 
             if isinstance(r, StarLibRate):
                 of.write("    // sigma uncertainty\n")
-                sigma_str = np.array2string(r.sigma_data,
-                                        max_line_width=70, precision=17, separator=", ")
-                # remove the [ ]
-                sigma_str = " " + sigma_str[1:-1]
-
-                of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
-                for line in sigma_str.split("\n"):
-                    of.write(f"     {line.strip()}\n")
-                of.write("    };\n\n")
+                self._write_temp_table_array(n_indent, of, "sigma_rate", r.sigma_data, npts)
 
             of.write("}\n\n")
 
