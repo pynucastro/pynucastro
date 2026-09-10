@@ -354,7 +354,7 @@ class DerivedRate(Rate):
                 fstring += "    ln_set_rate += net_log_pf;\n"
                 if self.screening_pairs:
                     fstring += "    ln_set_rate += log_scor;\n"
-                fstring += "\n";
+                fstring += "\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
