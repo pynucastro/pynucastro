@@ -174,16 +174,19 @@ class BaseCxxNetwork(ABC, RateCollection):
         if not self.solved_jacobian:
             self.compose_jacobian()
 
+        # Prepare the output directory
+        if odir is not None:
+            odir = Path(odir)
+            if not odir.is_dir():
+                try:
+                    odir.mkdir()
+                except OSError:
+                    sys.exit(f"unable to create directory {odir}")
+
         # Process template files
         for tfile in self.template_files:
             outfile = tfile.name.replace('.template', '')
             if odir is not None:
-                odir = Path(odir)
-                if not odir.is_dir():
-                    try:
-                        odir.mkdir()
-                    except OSError:
-                        sys.exit(f"unable to create directory {odir}")
                 outfile = odir/outfile
 
             with open(tfile) as ifile, open(outfile, "w") as of:
@@ -393,8 +396,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             for r in self.tabular_rates:
 
-                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
+                of.write(f'{idnt}// {r.rid}\n\n')
+                of.write(f'{idnt}tabular_evaluate<do_T_derivatives>({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                                    log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
@@ -404,62 +408,36 @@ class BaseCxxNetwork(ABC, RateCollection):
 
                 of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
 
-                of.write('\n')
+                of.write('\n\n')
+
+    def _write_temp_table_array(self, n_indent, of, name, data, npts):
+        """Write a temperature-table array with consistent precision and formatting."""
+        idnt = self.indent * n_indent
+        data_str = np.array2string(data, max_line_width=70, precision=17, separator=", ")
+        # remove the [ ]
+        data_str = data_str[1:-1]
+
+        of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {npts}> {name} = {{\n')
+        for line in data_str.split("\n"):
+            of.write(f"     {line.strip()}\n")
+        of.write("    };\n\n")
 
     def _temp_table_data(self, n_indent, of):
-
-        idnt = self.indent * n_indent
 
         for r in self.temperature_tabular_rates + self.starlib_rates:
 
             of.write(f"// temperature / rate tabulation for {r.rid}\n\n")
             of.write(f"namespace {r.fname}_data {{\n\n")
 
-            log_temp_str = np.array2string(r.log_t9_data,
-                                           max_line_width=70, precision=17, separator=", ")
-            # remove the [ ]
-            log_temp_str = " " + log_temp_str[1:-1]
-
-            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_t9 = {{\n')
-            for line in log_temp_str.split("\n"):
-                of.write(f"     {line.strip()}\n")
-            of.write("    };\n\n")
-
-            log_rate_str = np.array2string(r.log_rate_data,
-                                           max_line_width=70, precision=17, separator=", ")
-            # remove the [ ]
-            log_rate_str = " " + log_rate_str[1:-1]
-
-            of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> log_rate = {{\n')
-            for line in log_rate_str.split("\n"):
-                of.write(f"     {line.strip()}\n")
-            of.write("    };\n\n")
+            npts = len(r.log_t9_data)
+            self._write_temp_table_array(n_indent, of, "log_t9", r.log_t9_data, npts)
+            self._write_temp_table_array(n_indent, of, "log_rate", r.log_rate_data, npts)
 
             if isinstance(r, StarLibRate):
                 of.write("    // sigma uncertainty\n")
-                sigma_str = np.array2string(r.sigma_data,
-                                        max_line_width=70, precision=17, separator=", ")
-                # remove the [ ]
-                sigma_str = " " + sigma_str[1:-1]
-
-                of.write(f'{idnt}    inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {len(r.log_t9_data)}> sigma_rate = {{\n')
-                for line in sigma_str.split("\n"):
-                    of.write(f"     {line.strip()}\n")
-                of.write("    };\n\n")
+                self._write_temp_table_array(n_indent, of, "sigma_rate", r.sigma_data, npts)
 
             of.write("}\n\n")
-
-    def _temp_tabular_rate_functions(self, n_indent, of):
-        # the TemperatureTabularRate and StarLibRate functions are in
-        # the same header, so we can just do them together here
-
-        for r in self.temperature_tabular_rates + self.starlib_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            for line in fstr.split("\n"):
-                if line:
-                    of.write(f"{self.indent*n_indent}{line}\n")
-                else:
-                    of.write("\n")
 
     def _cxxify(self, s):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
@@ -580,7 +558,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -630,32 +608,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
 
-    def _reaclib_rate_functions(self, n_indent, of):
-        for r in self.reaclib_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _modified_rate_functions(self, n_indent, of):
-        for r in self.modified_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype,
-                                         specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _branched_rate_functions(self, n_indent, of):
-        for r in self.branched_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype,
-                                         specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
-    def _derived_rate_functions(self, n_indent, of):
-        for r in self.derived_rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
-            indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
-            of.write(indented_fstr)
-
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
 
@@ -676,11 +628,32 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
 
-    def _approx_rate_functions(self, n_indent, of):
-        for r in self.approx_rates:
+    def _write_rate_functions(self, n_indent, of, rates):
+        """Write C++ rate functions with the network's type, specifiers, and indentation."""
+        for r in rates:
             fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
             indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
             of.write(indented_fstr)
+
+    def _reaclib_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.reaclib_rates)
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+        self._write_rate_functions(n_indent, of, self.temperature_tabular_rates + self.starlib_rates)
+
+    def _modified_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.modified_rates)
+
+    def _branched_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.branched_rates)
+
+    def _derived_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.derived_rates)
+
+    def _approx_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.approx_rates)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
@@ -915,7 +888,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
 namespace starlib {{
 
-    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    constexpr {_rate_dtype(len(self.starlib_rates))} NumStarLibRates = {num_sl};
     inline {self.gpu_managed_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
 }}"""
 
@@ -945,7 +918,7 @@ namespace starlib {{
 
     def _fill_starlib_func(self, n_indent, of):
 
-        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+        header = [f"template<{_rate_dtype(len(self.all_rates))} rate>",
                   f"{self.function_specifier}",
                   f"constexpr {self.dtype} get_p_random() {{"]
 

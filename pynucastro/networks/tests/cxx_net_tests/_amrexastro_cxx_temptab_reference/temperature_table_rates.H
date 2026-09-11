@@ -79,7 +79,6 @@ namespace temp_tabular {
     }
 
 
-
     template <int do_T_derivatives, typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
