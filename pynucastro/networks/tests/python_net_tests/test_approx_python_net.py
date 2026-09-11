@@ -47,7 +47,7 @@ class TestPythonNetwork:
 
         ostr = \
 """@numba.njit()
-def Mg24_He4_to_Si28_approx(rate_eval, tf):
+def Mg24_He4_to_Si28_approx(rate_eval):
     r_pg = rate_eval.Al27_p_to_Si28_reaclib
     r_pa = rate_eval.Al27_p_to_He4_Mg24_reaclib
     r_pY = 0.0

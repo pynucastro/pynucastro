@@ -231,6 +231,10 @@ class ApproximateRate(Rate):
                                  self.rates["B(g,p)X"],
                                  self.rates["X(p,a)A"]]
 
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
+
         elif self.approx_type == "nn_g":
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
@@ -317,6 +321,9 @@ class ApproximateRate(Rate):
 
             self.rate_eval_needs_rho = True
             self.rate_eval_needs_comp = True
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         elif self.approx_type == "Yp_pg":
 
@@ -412,6 +419,7 @@ class ApproximateRate(Rate):
                                  products=[self.primary_product],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
+
                 self.hidden_rates = [self.rates["A(Y,p)X"],
                                      self.rates["X(p,g)B"],
                                      self.rates["X(p,Y)A"],
@@ -427,6 +435,10 @@ class ApproximateRate(Rate):
                                      self.rates["B(g,p)X"],
                                      self.rates["X(p,Y)A"],
                                      self.rates["X(p,a)C"]]
+
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         elif self.approx_type == "Yp_pa":
 
@@ -534,6 +546,10 @@ class ApproximateRate(Rate):
                                      self.rates["X(p,a)B"],
                                      self.rates["X(p,Y)A"],
                                      self.rates["X(p,g)C"]]
+
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
@@ -755,7 +771,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
@@ -791,7 +807,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf, rho=None, Y=None):\n"
+            string += f"def {self.fname}(rate_eval, rho=None, Y=None):\n"
 
             string += "    Yn = Y[jn]\n"
 
@@ -826,7 +842,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)C'].fname}\n"
@@ -869,7 +885,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)B'].fname}\n"

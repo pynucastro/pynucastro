@@ -236,7 +236,13 @@ class TemperatureTabularRate(Rate):
 
     def __init__(self, log_t9_data, log_rate_data, rate_source=None,
                  label="temptab", **kwargs):
+
         super().__init__(label=label, rate_source=rate_source, **kwargs)
+
+        # we interpolate directly, so we don't need TFactors in our
+        # function argument list
+        self.rate_eval_needs_tfactors = False
+        self.rate_eval_needs_temp = True
 
         self.tabular = True
 
