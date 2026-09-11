@@ -915,7 +915,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
 namespace starlib {{
 
-    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    constexpr {_rate_dtype(len(self.starlib_rates))} NumStarLibRates = {num_sl};
     inline {self.gpu_managed_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
 }}"""
 
@@ -945,7 +945,7 @@ namespace starlib {{
 
     def _fill_starlib_func(self, n_indent, of):
 
-        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+        header = [f"template<{_rate_dtype(len(self.all_rates))} rate>",
                   f"{self.function_specifier}",
                   f"constexpr {self.dtype} get_p_random() {{"]
 
