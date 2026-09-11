@@ -372,14 +372,10 @@ class TabularWeakRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, rho, Y):\n"
+        fstring += f"def {self.fname}(rate_eval, T, log_T, log_rhoY, Y):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += "    rhoY = rho * ye(Y)\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
-
-        fstring += "    log_rhoY = np.log10(rhoY)\n"
-        fstring += "    log_T = np.log10(T)\n\n"
 
         fstring += f"    r = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)\n"
         fstring += f"    enu = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)\n"

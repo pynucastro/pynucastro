@@ -920,8 +920,12 @@ class PythonNetwork(RateCollection):
                 args.append("tf")
             elif r.rate_eval_needs_temp:
                 args.append("T")
+            if r.rate_eval_needs_logtemp:
+                args.append("logT=log_T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
+            if r.rate_eval_needs_logrhoye:
+                args.append("log_rhoy=log_rhoY")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
             if r.screening_pairs:
@@ -934,6 +938,11 @@ class PythonNetwork(RateCollection):
         # Precompute screening terms. Note here we compute log_screening
         ostr += self.screening_string(indent=indent)
         ostr += "\n"
+
+        ostr += f"{indent}rhoY = rho * ye(Y)\n"
+        ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
+        ostr += f"{indent}log_T = np.log10(T)\n\n"
+
 
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
