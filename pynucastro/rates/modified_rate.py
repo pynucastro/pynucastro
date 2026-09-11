@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -94,6 +94,12 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry,
                          not_in_ydot_term=not_in_ydot_term,
                          rate_source=rate_source)
+
+        # set the function string args to be those of the original rate
+        self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
+        self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
+        self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
 
         self._set_print_representation()
 
@@ -238,11 +244,13 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
@@ -251,7 +259,8 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
+        cargs = cxx_rate_func_args(self, mode="call")
+        fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
 
         if not leave_open:
             fstring += "}\n\n"

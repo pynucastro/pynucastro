@@ -15,7 +15,7 @@ namespace approximate_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Mg24_He4_to_Si28_approx(const T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Mg24_He4_to_Si28_approx(T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
 
         amrex::Real r_pg = rate_eval.screened_rates(k_Al27_p_to_Si28_reaclib);
         amrex::Real r_pa = rate_eval.screened_rates(k_Al27_p_to_He4_Mg24_reaclib);
@@ -36,7 +36,7 @@ namespace approximate_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_to_Mg24_He4_approx(const T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_to_Mg24_He4_approx(T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
 
         amrex::Real r_pg = rate_eval.screened_rates(k_Al27_p_to_Si28_reaclib);
         amrex::Real r_pa = rate_eval.screened_rates(k_Al27_p_to_He4_Mg24_reaclib);
@@ -57,7 +57,7 @@ namespace approximate_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_He4_to_S32_approx(const T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_He4_to_S32_approx(T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
 
         amrex::Real r_pg = rate_eval.screened_rates(k_P31_p_to_S32_reaclib);
         amrex::Real r_pa = rate_eval.screened_rates(k_P31_p_to_He4_Si28_reaclib);
@@ -78,7 +78,7 @@ namespace approximate_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_S32_to_Si28_He4_approx(const T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_S32_to_Si28_He4_approx(T& rate_eval, amrex::Real& rate, amrex::Real& drate_dT) {
 
         amrex::Real r_pg = rate_eval.screened_rates(k_P31_p_to_S32_reaclib);
         amrex::Real r_pa = rate_eval.screened_rates(k_P31_p_to_He4_Si28_reaclib);
@@ -111,28 +111,44 @@ namespace approximate_rates {
         [[maybe_unused]] amrex::Real rate{};
         [[maybe_unused]] amrex::Real drate_dT{};
 
-        rate_Mg24_He4_to_Si28_approx<T>(rate_eval, rate, drate_dT);
-        rate_eval.screened_rates(k_Mg24_He4_to_Si28_approx) = rate;
-        if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_Mg24_He4_to_Si28_approx) = drate_dT;
+        {
+            // Mg24_He4_to_Si28_approx
+
+            rate_Mg24_He4_to_Si28_approx(rate_eval, rate, drate_dT);
+            rate_eval.screened_rates(k_Mg24_He4_to_Si28_approx) = rate;
+            if constexpr (std::is_same_v<T, rate_derivs_t>) {
+                rate_eval.dscreened_rates_dT(k_Mg24_He4_to_Si28_approx) = drate_dT;
+            }
         }
 
-        rate_Si28_to_Mg24_He4_approx<T>(rate_eval, rate, drate_dT);
-        rate_eval.screened_rates(k_Si28_to_Mg24_He4_approx) = rate;
-        if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_Si28_to_Mg24_He4_approx) = drate_dT;
+        {
+            // Si28_to_Mg24_He4_approx
+
+            rate_Si28_to_Mg24_He4_approx(rate_eval, rate, drate_dT);
+            rate_eval.screened_rates(k_Si28_to_Mg24_He4_approx) = rate;
+            if constexpr (std::is_same_v<T, rate_derivs_t>) {
+                rate_eval.dscreened_rates_dT(k_Si28_to_Mg24_He4_approx) = drate_dT;
+            }
         }
 
-        rate_Si28_He4_to_S32_approx<T>(rate_eval, rate, drate_dT);
-        rate_eval.screened_rates(k_Si28_He4_to_S32_approx) = rate;
-        if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_Si28_He4_to_S32_approx) = drate_dT;
+        {
+            // Si28_He4_to_S32_approx
+
+            rate_Si28_He4_to_S32_approx(rate_eval, rate, drate_dT);
+            rate_eval.screened_rates(k_Si28_He4_to_S32_approx) = rate;
+            if constexpr (std::is_same_v<T, rate_derivs_t>) {
+                rate_eval.dscreened_rates_dT(k_Si28_He4_to_S32_approx) = drate_dT;
+            }
         }
 
-        rate_S32_to_Si28_He4_approx<T>(rate_eval, rate, drate_dT);
-        rate_eval.screened_rates(k_S32_to_Si28_He4_approx) = rate;
-        if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_S32_to_Si28_He4_approx) = drate_dT;
+        {
+            // S32_to_Si28_He4_approx
+
+            rate_S32_to_Si28_He4_approx(rate_eval, rate, drate_dT);
+            rate_eval.screened_rates(k_S32_to_Si28_He4_approx) = rate;
+            if constexpr (std::is_same_v<T, rate_derivs_t>) {
+                rate_eval.dscreened_rates_dT(k_S32_to_Si28_He4_approx) = drate_dT;
+            }
         }
 
 

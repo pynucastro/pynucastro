@@ -245,13 +245,9 @@ def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.He4_He4_He4_to_C12_reaclib = rate
 
 @numba.njit()
-def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, rho, Y):
+def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T, log_rhoY, Y):
     # Na23 --> Ne23
-    rhoY = rho * ye(Y)
     Na23_to_Ne23_electron_capture_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_electron_capture_weaktab_info)
-    log_rhoY = np.log10(rhoY)
-    log_T = np.log10(T)
-
     r = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
     enu = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
     egamma = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
@@ -262,13 +258,9 @@ def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, rho, Y):
     rate_eval.enuc_weak += N_A * Y[jna23] * (edot_nu + edot_gamma)
 
 @numba.njit()
-def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, rho, Y):
+def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T, log_rhoY, Y):
     # Ne23 --> Na23
-    rhoY = rho * ye(Y)
     Ne23_to_Na23_beta_neg_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_beta_neg_weaktab_info)
-    log_rhoY = np.log10(rhoY)
-    log_T = np.log10(T)
-
     r = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
     enu = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
     egamma = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
@@ -304,6 +296,10 @@ def do_rate_eval(t, Y, rho, T, screen_func):
         scn_fac = ScreenFactors(6, 12, 6, 12)
         log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
 
+    rhoY = rho * ye(Y)
+    log_rhoY = np.log10(rhoY)
+    log_T = np.log10(T)
+
     # reaclib rates
     C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
@@ -313,8 +309,8 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
-    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, rho=rho, Y=Y)
-    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, rho=rho, Y=Y)
+    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
+    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
 
     return rate_eval
 

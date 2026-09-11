@@ -914,14 +914,18 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, use_tf=True):
+        def format_rate_call(r):
             args = ["rate_eval"]
-            if use_tf:
+            if r.rate_eval_needs_tfactors:
                 args.append("tf")
-            else:
+            elif r.rate_eval_needs_temp:
                 args.append("T")
+            if r.rate_eval_needs_logtemp:
+                args.append("log_T=log_T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
+            if r.rate_eval_needs_logrhoye:
+                args.append("log_rhoY=log_rhoY")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
             if r.screening_pairs:
@@ -935,6 +939,10 @@ class PythonNetwork(RateCollection):
         ostr += self.screening_string(indent=indent)
         ostr += "\n"
 
+        ostr += f"{indent}rhoY = rho * ye(Y)\n"
+        ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
+        ostr += f"{indent}log_T = np.log10(T)\n\n"
+
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
@@ -942,17 +950,17 @@ class PythonNetwork(RateCollection):
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
