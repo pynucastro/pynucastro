@@ -1,5 +1,81 @@
 # Changelog
 
+## 3.1.0
+
+  * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
+    `BaseCxxNetwork` :
+
+    * move rate evals into namespaces (#1459, #1500)
+    * silence unused vars (#1487)
+    * evaluate the rates in the same order as `PythonNetwork` (#1497)
+    * sync the rate headers in `SimpleCxxNetwork` with
+      `AmrexAstroCxxNetwork` (#1499)
+    * optimize C++ tabular rate interpolation (#1516)
+    * some cleaning of duplicate code in `base_cxx_network.py` (#1518)
+    * fix the size of the int used for `StarLibRate` random numbers in
+      C++ (#1524)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * address the case where a nucleus is both a reactant and a
+      product (#959)
+    * add `stopping_condition` to `integrate_network` (#1474)
+    * cache the Numpy-compiled network (#1475, #1481)
+    * sync `RateCollection.get_rate_by_name` with the `Library`
+      version (#1488)
+    * remove an outdated comment on working with `ModifiedRatres` (#1496)
+    * simplify `make_ap_pg_approx` (#1498)
+    * add `add_inert_nucleus` to `RateCollection` (#1501)
+    * simplify the loop over rates that writes out functions (#1513)
+
+  * `ApproximateRate` / `ModifiedRate` :
+
+    * move and rename `create_double_neutron_capture` (#1458)
+    * allow `ModifiedRate` to set `rate_source` (#1470)
+    * sync up the interfaces of the aprox-family rate helpers (#1472)
+
+  * general rate changes:
+
+    * make `Rate.fname` more descriptive (#1463)
+    * add `not_in_ydot_term` functionality (#1467)
+    * `__eq__` now also compares `weak_type` (#1473)
+
+  * git / project infrastructure:
+
+    * add `pytest-random` test (#1300, #1477)
+    * update ruff config (#1456)
+    * add an `AGENTS.md` (#1504)
+
+  * documentation:
+
+    * create MESA's `basic.net` (#1452)
+    * remove `.nojekyll` on `main` branch (#1457)
+    * add `BranchedRate` to the docs intro (#1460)
+    * add missing network compare test to testing docs (#1464)
+    * improve `Rate` developer documentation (#1479)
+    * fix function display in `BranchedRate` notebook (#1482)
+    * move rate approximations into their own section (#1484)
+    * cite some cites rendering (#1486)
+    * add a CNO network example (#1489)
+    * add an example of working with MESA data (#1490)
+    * add an example on finding the most probable path between
+      nuclei (#1492)
+    * add developer documentation on networks (#1495)
+    * fix some docs typos (#1503)
+    * don't link check on ADS (#1507)
+    * add an example of C-burning products (#1509)
+
+  * testing:
+
+    * add energy to `network_compare` (#1465)
+
+  * helper functionality:
+
+    * allow `network_helper` to take ranges of nuclei (#1483)
+    * create the `common_networks` module (#1485)
+    * `MesaModel` now has `num_zones` property and an `__iter__`
+      method (#1506)
+
 ## 3.0.0
 
   * `AmrexAstroCxxNetwork` :
