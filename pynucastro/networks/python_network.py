@@ -943,7 +943,6 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
         ostr += f"{indent}log_T = np.log10(T)\n\n"
 
-
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
