@@ -1,8 +1,14 @@
 #ifndef TABULAR_WEAK_RATES_H
 #define TABULAR_WEAK_RATES_H
 
+#include <cmath>
+
 #include <AMReX.H>
 
+#include <actual_network.H>
+#include <fundamental_constants.H>
+#include <network_properties.H>
+#include <rate_type.H>
 #include <table_rates.H>
 
 namespace tabular_weak_rates {
@@ -30,6 +36,8 @@ namespace tabular_weak_rates {
         const amrex::Real log_temp = std::log10(temp);
         const amrex::Real log_rhoy = std::log10(rhoy);
 
+        // Na23 --> Ne23
+
         tabular_evaluate<do_T_derivatives>(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
                                             log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);
         rate_eval.screened_rates(k_Na23_to_Ne23_electron_capture_weaktab) = rate;
@@ -38,6 +46,9 @@ namespace tabular_weak_rates {
         }
         rate_eval.enuc_weak += C::n_A * Y(Na23) * (edot_nu + edot_gamma);
 
+
+        // Ne23 --> Na23
+
         tabular_evaluate<do_T_derivatives>(j_Ne23_Na23_meta, j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data,
                                             log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);
         rate_eval.screened_rates(k_Ne23_to_Na23_beta_neg_weaktab) = rate;
@@ -45,6 +56,7 @@ namespace tabular_weak_rates {
             rate_eval.dscreened_rates_dT(k_Ne23_to_Na23_beta_neg_weaktab) = drate_dt;
         }
         rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
+
 
     }
 
