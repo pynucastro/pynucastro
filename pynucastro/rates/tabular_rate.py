@@ -15,7 +15,7 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, need_state
+from pynucastro.rates.rate import cxx_rate_func_args, Rate, need_state
 
 
 class TableIndex(Enum):
@@ -235,12 +235,16 @@ class TabularWeakRate(Rate):
                          rate_source=self.rfile_path.parent.name,
                          label="weaktab")
 
-        self.rate_eval_needs_rho = True
-        self.rate_eval_needs_comp = True
+        self.rate_eval_needs_logrhoye = True
 
         # we work from T not TFactors
         self.rate_eval_needs_tfactors = False
+        self.rate_eval_needs_logtemp = True
         self.rate_eval_needs_temp = True
+
+        self.rate_eval_needs_comp = True
+
+        self.rate_eval_uses_rate_args = False
 
         self.tabular = True
 
@@ -385,6 +389,62 @@ class TabularWeakRate(Rate):
         fstring += "    edot_nu = -10.0**enu\n"
         fstring += "    edot_gamma = 10.0**egamma\n"
         fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
+
+        return fstring
+
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the rate
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list, tuple
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
+        """
+
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
+        fstring = ""
+        fstring += "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+
+        fstring += f"    {dtype} rate{{}}, drate_dt{{}}, edot_nu{{}}, edot_gamma{{}};\n"
+        fstring += f"    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
+        fstring += f"    tabular_evaluate<do_T_derivatives>({self.table_index_name}_meta, {self.table_index_name}_rhoy, {self.table_index_name}_temp, {self.table_index_name}_data,\n"
+        fstring += "                                        log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dt;\n"
+        fstring += "    }\n\n"
+
+        fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
 
         return fstring
 

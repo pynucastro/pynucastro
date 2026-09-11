@@ -16,7 +16,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Mg24_He4_to_p_Al27_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Mg24_He4_to_p_Al27_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Mg24 + He4 --> p + Al27
 
@@ -94,7 +94,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Mg24_He4_to_Si28_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Mg24_He4_to_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Mg24 + He4 --> Si28
 
@@ -151,7 +151,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Al27_p_to_He4_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Al27_p_to_He4_Mg24_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Al27 + p --> He4 + Mg24
 
@@ -229,7 +229,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Al27_p_to_Si28_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Al27_p_to_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Al27 + p --> Si28
 
@@ -307,7 +307,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_to_He4_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_to_He4_Mg24_reaclib(T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 --> He4 + Mg24
 
@@ -356,7 +356,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_to_p_Al27_reaclib(const T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_to_p_Al27_reaclib(T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 --> p + Al27
 
@@ -425,7 +425,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_He4_to_p_P31_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_He4_to_p_P31_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 + He4 --> p + P31
 
@@ -503,7 +503,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Si28_He4_to_S32_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Si28_He4_to_S32_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Si28 + He4 --> S32
 
@@ -539,7 +539,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_P31_p_to_He4_Si28_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_P31_p_to_He4_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // P31 + p --> He4 + Si28
 
@@ -617,7 +617,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_P31_p_to_S32_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_P31_p_to_S32_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // P31 + p --> S32
 
@@ -695,7 +695,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_S32_to_He4_Si28_reaclib(const T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_S32_to_He4_Si28_reaclib(T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // S32 --> He4 + Si28
 
@@ -728,7 +728,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_S32_to_p_P31_reaclib(const T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_S32_to_p_P31_reaclib(T& rate_eval, const tf_t& tfactors, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // S32 --> p + P31
 

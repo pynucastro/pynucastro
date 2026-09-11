@@ -105,26 +105,26 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
-        self.ftags['<table_init_meta>'] = self._table_init_meta
-        self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<temp_table_data>'] = self._temp_table_data
-        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
-        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
-        self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
-        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
-        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
-        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
-        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
-        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
-        self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
-        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
-        self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
+        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
+        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
+        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
+        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
+        self.ftags['<fill_tabular_rates>'] = self._fill_tabular_rates
+        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
+        self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
+        self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
+        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
+        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<tabular_rate_functions>'] = self._tabular_rate_functions
+        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
@@ -374,37 +374,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}     }};\n')
             of.write('\n')
 
-    def _table_init_meta(self, n_indent, of):
-        for r in self.tabular_rates:
-            idnt = self.indent*n_indent
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
-
-            of.write('\n')
-
-    def _compute_tabular_rates(self, n_indent, of):
-        if len(self.tabular_rates) > 0:
-
-            idnt = self.indent*n_indent
-
-            of.write(f'{idnt}const {self.dtype} log_temp = std::log10(temp);\n')
-            of.write(f'{idnt}const {self.dtype} log_rhoy = std::log10(rhoy);\n\n')
-
-            for r in self.tabular_rates:
-
-                of.write(f'{idnt}// {r.rid}\n\n')
-                of.write(f'{idnt}tabular_evaluate<do_T_derivatives>({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                                    log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
-
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-
-                of.write(f'{idnt}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
-                of.write(f'{idnt}}}\n')
-
-                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-
-                of.write('\n\n')
-
     def _write_temp_table_array(self, n_indent, of, name, data, npts):
         """Write a temperature-table array with consistent precision and formatting."""
         idnt = self.indent * n_indent
@@ -620,22 +589,17 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("};\n\n")
 
     def _write_rate_functions(self, n_indent, of, rates):
-        """Write C++ rate functions with the network's type, specifiers, and indentation."""
+        """Write C++ rate functions with the network's type,
+        specifiers, and indentation."""
+
         for r in rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            fstr = r.function_string_cxx(dtype=self.dtype,
+                                         specifiers=self.function_specifier)
             indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
             of.write(indented_fstr)
 
-    def _reaclib_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.reaclib_rates)
-
-    def _temp_tabular_rate_functions(self, n_indent, of):
-        # the TemperatureTabularRate and StarLibRate functions are in
-        # the same header, so we can just do them together here
-        self._write_rate_functions(n_indent, of, self.temperature_tabular_rates + self.starlib_rates)
-
-    def _modified_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.modified_rates)
+    def _approx_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.approx_rates)
 
     def _branched_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.branched_rates)
@@ -643,8 +607,20 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _derived_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.derived_rates)
 
-    def _approx_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.approx_rates)
+    def _modified_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.modified_rates)
+
+    def _reaclib_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.reaclib_rates)
+
+    def _tabular_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.tabular_rates)
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+        self._write_rate_functions(n_indent, of,
+                                   self.temperature_tabular_rates + self.starlib_rates)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
@@ -689,12 +665,14 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(call_args)});\n")
             else:
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(call_args)});\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
 
-            if do_T_derivatives:
-                of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-                of.write(f"{self.indent*(n_indent+1)}}}\n")
+            if r.rate_eval_uses_rate_args:
+                of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
+
+                if do_T_derivatives:
+                    of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
+                    of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
+                    of.write(f"{self.indent*(n_indent+1)}}}\n")
 
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
@@ -706,6 +684,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_reaclib_rates(self, n_indent, of):
         self._fill_rates(n_indent, of, self.reaclib_rates)
+
+    def _fill_tabular_rates(self, n_indent, of):
+        self._fill_rates(n_indent, of, self.tabular_rates)
 
     def _fill_modified_rates(self, n_indent, of):
         self._fill_rates(n_indent, of, self.modified_rates)
