@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.0.0.post46+gf8fc1bb2e documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.0.0.post47+g945ffda83 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=47d95b1a"></script>
+    <script src="../../../_static/documentation_options.js?v=af89d437"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1455,7 +1455,7 @@
 
 <span class="s2">namespace starlib </span><span class="se">{{</span>
 
-<span class="s2">    constexpr std::uint8_t NumStarLibRates = </span><span class="si">{</span><span class="n">num_sl</span><span class="si">}</span><span class="s2">;</span>
+<span class="s2">    constexpr </span><span class="si">{</span><span class="n">_rate_dtype</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">))</span><span class="si">}</span><span class="s2"> NumStarLibRates = </span><span class="si">{</span><span class="n">num_sl</span><span class="si">}</span><span class="s2">;</span>
 <span class="s2">    inline </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">gpu_managed_specifier</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s2">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, NumStarLibRates&gt; prand</span><span class="se">{{}}</span><span class="s2">;</span>
 <span class="se">}}</span><span class="s2">"""</span>
 
@@ -1485,7 +1485,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_starlib_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
 
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"template&lt;</span><span class="si">{</span><span class="n">_rate_dtype</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">))</span><span class="si">}</span><span class="s2"> rate&gt;"</span><span class="p">,</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"template&lt;</span><span class="si">{</span><span class="n">_rate_dtype</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">))</span><span class="si">}</span><span class="s2"> rate&gt;"</span><span class="p">,</span>
                   <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">function_specifier</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                   <span class="sa">f</span><span class="s2">"constexpr </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> get_p_random() </span><span class="se">{{</span><span class="s2">"</span><span class="p">]</span>
 
