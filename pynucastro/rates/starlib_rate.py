@@ -156,10 +156,16 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "                                                 tfactors.lnT9,\n"
         fstring += f"                                                 {self.fname}_data::log_t9,\n"
         fstring += f"                                                 {self.fname}_data::sigma_rate);\n"
-        fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        if self.screening_pairs:
+            fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        else:
+            fstring += "    rate = std::exp(_mu + p * _sigma);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
+        if self.screening_pairs:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
+        else:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9);\n"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 
