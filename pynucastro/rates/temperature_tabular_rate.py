@@ -333,10 +333,16 @@ class TemperatureTabularRate(Rate):
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
         fstring += f"                                               {self.fname}_data::log_rate);\n"
-        fstring += "    rate = std::exp(_log_rate + log_scor);\n"
+        if self.screening_pairs:
+            fstring += "    rate = std::exp(_log_rate + log_scor);\n"
+        else:
+            fstring += "    rate = std::exp(_log_rate);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
+        if self.screening_pairs:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
+        else:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt\n;"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 
