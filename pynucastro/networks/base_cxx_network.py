@@ -399,8 +399,8 @@ class BaseCxxNetwork(ABC, RateCollection):
             for r in self.tabular_rates:
 
                 of.write(f'{idnt}// {r.rid}\n\n')
-                of.write(f'{idnt}tabular_evaluate({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                 log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
+                of.write(f'{idnt}tabular_evaluate<do_T_derivatives>({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
+                of.write(f'{idnt}                                    log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
 
                 of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
 
@@ -558,7 +558,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -874,7 +874,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
 namespace starlib {{
 
-    constexpr std::uint8_t NumStarLibRates = {num_sl};
+    constexpr {_rate_dtype(len(self.starlib_rates))} NumStarLibRates = {num_sl};
     inline {self.gpu_managed_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, NumStarLibRates> prand{{}};
 }}"""
 
@@ -904,7 +904,7 @@ namespace starlib {{
 
     def _fill_starlib_func(self, n_indent, of):
 
-        header = [f"template<{_rate_dtype(len(self.starlib_rates))} rate>",
+        header = [f"template<{_rate_dtype(len(self.all_rates))} rate>",
                   f"{self.function_specifier}",
                   f"constexpr {self.dtype} get_p_random() {{"]
 

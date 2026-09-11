@@ -18,7 +18,7 @@ namespace tabular_weak_rates {
 
     using namespace rate_tables;
 
-    template <typename T>
+    template <int do_T_derivatives, typename T>
     inline
     void
     fill_rates([[maybe_unused]] const Real temp,
