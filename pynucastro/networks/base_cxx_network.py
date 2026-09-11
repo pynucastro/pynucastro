@@ -518,7 +518,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);\n")
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -590,7 +590,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _write_rate_functions(self, n_indent, of, rates):
         """Write C++ rate functions with the network's type,
-        specifiers, and indentation."""
+        specifiers, and indentation.
+
+        """
 
         for r in rates:
             fstr = r.function_string_cxx(dtype=self.dtype,
