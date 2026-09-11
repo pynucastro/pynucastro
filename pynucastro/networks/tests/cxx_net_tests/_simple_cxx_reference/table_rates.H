@@ -76,26 +76,15 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
 {
     // This is the 2-D linear interpolator, as an extension of evaluate_linear_1d.
 
-    Real f;
-    Real dx = xhi - xlo;
-    Real dxinv = 1.0_rt / dx;
-    Real dy = yhi - ylo;
-    Real dyinv = 1.0_rt / dy;
+    const Real u = (amrex::Clamp(x, xlo, xhi) - xlo) / (xhi - xlo);
+    const Real v = (amrex::Clamp(y, ylo, yhi) - ylo) / (yhi - ylo);
 
-    Real E =  fij;
-    Real C = (fijp1 - fij) * dyinv;
-    Real B = (fip1j - fij) * dxinv;
-    Real A = (fip1jp1 - B * dx - C * dy - E) * (dxinv * dyinv);
+    const Real E = fij;
+    const Real C = fijp1 - fij;
+    const Real B = fip1j - fij;
+    const Real A = fip1jp1 - fip1j - fijp1 + fij;
 
-    Real xx = amrex::Clamp(x, xlo, xhi);
-    Real yy = amrex::Clamp(y, ylo, yhi);
-
-    f =  A * (xx - xlo) * (yy - ylo) +
-         B * (xx - xlo) +
-         C * (yy - ylo) +
-         E;
-
-    return f;
+    return A * u * v + B * u + C * v + E;
 }
 
 
@@ -272,7 +261,7 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
 }
 
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 inline
 void
 get_entries(const int irhoy_lo, const int jtemp_lo,
@@ -294,13 +283,15 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                                         log_rhoy_table, log_temp_table, data,
                                         log_rhoy, log_temp, jtab_gamma);
 
-    entries(k_index_dlogr_dlogt) =
-        evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
-                          table_meta, log_rhoy_table, log_temp_table, data,
-                          log_rhoy, log_temp);
+    if constexpr (do_T_derivatives) {
+        entries(k_index_dlogr_dlogt) =
+            evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
+                              table_meta, log_rhoy_table, log_temp_table, data,
+                              log_rhoy, log_temp);
+    }
 }
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 inline
 void
 tabular_evaluate(const table_t& table_meta,
@@ -318,15 +309,19 @@ tabular_evaluate(const table_t& table_meta,
     const int irhoy_lo = interp_net::find_index_extrap(log_rhoy, log_rhoy_table);
     const int jtemp_lo = interp_net::find_index_extrap(log_temp, log_temp_table);
 
-    get_entries(irhoy_lo, jtemp_lo,
-                table_meta, log_rhoy_table, log_temp_table, data,
-                log_rhoy, log_temp, entries);
+    get_entries<do_T_derivatives>(irhoy_lo, jtemp_lo,
+                                  table_meta, log_rhoy_table, log_temp_table, data,
+                                  log_rhoy, log_temp, entries);
 
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
     rate       = std::pow(10.0_rt, entries(jtab_rate));
-    drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+    if constexpr (do_T_derivatives) {
+        drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+    } else {
+        drate_dt = 0.0;
+    }
     edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
     edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
 }
