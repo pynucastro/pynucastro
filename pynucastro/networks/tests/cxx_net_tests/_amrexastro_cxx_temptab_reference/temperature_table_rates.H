@@ -60,9 +60,9 @@ namespace temp_tabular {
 
     using namespace Rates;
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_O16_p_to_F17_iliadis(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_O16_p_to_F17_iliadis(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // O16 + p --> F17
 
@@ -100,7 +100,7 @@ namespace temp_tabular {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_O16);
             }
 #endif
-            rate_O16_p_to_F17_iliadis<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_O16_p_to_F17_iliadis<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_O16_p_to_F17_iliadis) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_O16_p_to_F17_iliadis) = drate_dT;

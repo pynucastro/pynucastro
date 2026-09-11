@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -93,6 +93,14 @@ class BranchedRate(Rate):
                          weak_type=self.underlying_rate.weak_type,
                          stoichiometry=stoichiometry,
                          label="branched")
+
+        # we work on already-evaluated rates, so we don't need TFactors
+        # in our function argument list
+        self.rate_eval_needs_tfactors = False
+
+        # we work directly from the evaluated rates, so there is no
+        # screening applied to this
+        self.screening_pairs = []
 
         # for the moment, we only work if both branches have the same
         # reactants.  If they don't then we need to weight by (rho Y)
@@ -214,7 +222,7 @@ class BranchedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}(rate_eval, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
@@ -253,7 +261,11 @@ class BranchedRate(Rate):
 
         """
 
-        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"

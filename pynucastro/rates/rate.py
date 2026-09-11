@@ -24,6 +24,72 @@ class BaryonConservationError(Exception):
     """
 
 
+def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
+    """Given a rate, give the list of arguments that are needed to
+    define the function arguments or call the function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+    dtype : str
+        the data type for floating point quantities
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if dtype == "amrex::Real":
+        array_type = "amrex::Array1D"
+    else:
+        array_type = "Array1D"
+
+    if mode == "definition":
+        args = ["const T& rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("const tf_t& tfactors")
+        elif r.rate_eval_needs_temp:
+            args.append(f"const {dtype} T")
+        if r.rate_eval_needs_rho:
+            args.append(f"const {dtype} rho")
+        if r.rate_eval_needs_comp:
+            args.append(f"const {array_type}<{dtype}, 1, NumSpec>& Y")
+        if r.screening_pairs:
+            args.append(f"const {dtype} log_scor")
+            args.append(f"const {dtype} dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("part_fun::pf_cache_t& pf_cache")
+        args.append(f"{dtype}& rate")
+        args.append(f"{dtype}& drate_dT")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tfactors")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_rho:
+            args.append("rho")
+        if r.rate_eval_needs_comp:
+            args.append("Y")
+        if r.screening_pairs:
+            args.append("log_scor")
+            args.append("dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("pf_cache")
+        args.append("rate")
+        args.append("drate_dT")
+
+    return args
+
+
 @jitclass([
     ('T9', numba.float64),
     ('T9i', numba.float64),
@@ -327,8 +393,11 @@ class Rate:
 
         # these apply to the argument list for the function that evaluates
         # the just the N_A <σv> part of the rate
+        self.rate_eval_needs_tfactors = True
+        self.rate_eval_needs_temp = False
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
+        self.rate_eval_needs_pfcache = False
 
     def __repr__(self):
         return self.string

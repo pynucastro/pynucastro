@@ -8,7 +8,7 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 
 
 @jitclass([
@@ -236,6 +236,7 @@ class TemperatureTabularRate(Rate):
 
     def __init__(self, log_t9_data, log_rate_data, rate_source=None,
                  label="temptab", **kwargs):
+
         super().__init__(label=label, rate_source=rate_source, **kwargs)
 
         self.tabular = True
@@ -280,9 +281,10 @@ class TemperatureTabularRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, log_scor=0.0):\n"
+        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
+        fstring += "    T = tf.T9 * 1.e9\n"
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
         fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
 
@@ -315,15 +317,13 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -333,10 +333,16 @@ class TemperatureTabularRate(Rate):
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
         fstring += f"                                               {self.fname}_data::log_rate);\n"
-        fstring += "    rate = std::exp(_log_rate + log_scor);\n"
+        if self.screening_pairs:
+            fstring += "    rate = std::exp(_log_rate + log_scor);\n"
+        else:
+            fstring += "    rate = std::exp(_log_rate);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
+        if self.screening_pairs:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
+        else:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt\n;"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 

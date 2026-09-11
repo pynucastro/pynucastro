@@ -11,7 +11,8 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args)
 
 
 class SingleSet:  # noqa: PLW1641 (not hashable)
@@ -690,15 +691,13 @@ class ReacLibRate(Rate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -716,14 +715,16 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor;\n\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor;\n\n"
 
             fstring += "    if constexpr (do_T_derivatives) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
             fstring += "\n"
-            fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+            if self.screening_pairs:
+                fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
 
             fstring += "    }\n"
             fstring += "\n"
