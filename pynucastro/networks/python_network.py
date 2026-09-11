@@ -925,7 +925,7 @@ class PythonNetwork(RateCollection):
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
             if r.rate_eval_needs_logrhoye:
-                args.append("log_rhoy=log_rhoY")
+                args.append("log_rhoY=log_rhoY")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
             if r.screening_pairs:
