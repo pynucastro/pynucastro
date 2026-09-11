@@ -921,7 +921,7 @@ class PythonNetwork(RateCollection):
             elif r.rate_eval_needs_temp:
                 args.append("T")
             if r.rate_eval_needs_logtemp:
-                args.append("logT=log_T")
+                args.append("log_T=log_T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
             if r.rate_eval_needs_logrhoye:

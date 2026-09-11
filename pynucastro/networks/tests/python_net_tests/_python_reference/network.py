@@ -309,8 +309,8 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
-    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, logT=log_T, log_rhoY=log_rhoY, Y=Y)
-    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, logT=log_T, log_rhoY=log_rhoY, Y=Y)
+    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
+    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
 
     return rate_eval
 
