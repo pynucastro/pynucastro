@@ -11,9 +11,9 @@ namespace derived_rates {
 
     using namespace Rates;
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_F17_to_O16_p_derived(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_F17_to_O16_p_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // F17 --> O16 + p
 
@@ -41,6 +41,7 @@ namespace derived_rates {
         amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
         [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
 
+        constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
@@ -49,7 +50,7 @@ namespace derived_rates {
         // Apply Equilibrium Ratio
         constexpr amrex::Real Q_kBGK = -0.6002689639985703 * 1.0e-9_rt / C::k_MeV;
         amrex::Real Q_kBT = Q_kBGK * tfactors.T9i;
-        _rate += 21.841444037879352 + Q_kBT + net_log_pf + log_scor;
+        _rate += 21.841444037879352 + Q_kBT + net_log_pf;
         _rate += 1.5 * tfactors.lnT9;
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -59,7 +60,7 @@ namespace derived_rates {
         // we found dlog(rate)/dlog(T9)
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             // Convert to dlog(rate)/dT9 first
-            _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            _drate_dT = (_drate_dT + 1.5 - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9;
             drate_dT = rate * _drate_dT * 1.0e-9_rt;
         }
 
@@ -83,9 +84,7 @@ namespace derived_rates {
         {
             // F17_to_O16_p_derived
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
-            rate_F17_to_O16_p_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_F17_to_O16_p_derived) = drate_dT;
