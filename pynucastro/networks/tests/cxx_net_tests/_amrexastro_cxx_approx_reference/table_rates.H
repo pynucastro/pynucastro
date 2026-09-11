@@ -78,26 +78,15 @@ evaluate_linear_2d(const amrex::Real fip1jp1, const amrex::Real fip1j, const amr
 {
     // This is the 2-D linear interpolator, as an extension of evaluate_linear_1d.
 
-    amrex::Real f;
-    amrex::Real dx = xhi - xlo;
-    amrex::Real dxinv = 1.0_rt / dx;
-    amrex::Real dy = yhi - ylo;
-    amrex::Real dyinv = 1.0_rt / dy;
+    const amrex::Real u = (amrex::Clamp(x, xlo, xhi) - xlo) / (xhi - xlo);
+    const amrex::Real v = (amrex::Clamp(y, ylo, yhi) - ylo) / (yhi - ylo);
 
-    amrex::Real E =  fij;
-    amrex::Real C = (fijp1 - fij) * dyinv;
-    amrex::Real B = (fip1j - fij) * dxinv;
-    amrex::Real A = (fip1jp1 - B * dx - C * dy - E) * (dxinv * dyinv);
+    const amrex::Real E = fij;
+    const amrex::Real C = fijp1 - fij;
+    const amrex::Real B = fip1j - fij;
+    const amrex::Real A = fip1jp1 - fip1j - fijp1 + fij;
 
-    amrex::Real xx = amrex::Clamp(x, xlo, xhi);
-    amrex::Real yy = amrex::Clamp(y, ylo, yhi);
-
-    f =  A * (xx - xlo) * (yy - ylo) +
-         B * (xx - xlo) +
-         C * (yy - ylo) +
-         E;
-
-    return f;
+    return A * u * v + B * u + C * v + E;
 }
 
 
@@ -274,7 +263,7 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
 }
 
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_DEVICE
 void
 get_entries(const int irhoy_lo, const int jtemp_lo,
@@ -296,13 +285,15 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                                         log_rhoy_table, log_temp_table, data,
                                         log_rhoy, log_temp, jtab_gamma);
 
-    entries(k_index_dlogr_dlogt) =
-        evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
-                          table_meta, log_rhoy_table, log_temp_table, data,
-                          log_rhoy, log_temp);
+    if constexpr (do_T_derivatives) {
+        entries(k_index_dlogr_dlogt) =
+            evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
+                              table_meta, log_rhoy_table, log_temp_table, data,
+                              log_rhoy, log_temp);
+    }
 }
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 AMREX_INLINE AMREX_GPU_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
@@ -320,15 +311,19 @@ tabular_evaluate(const table_t& table_meta,
     const int irhoy_lo = interp_net::find_index_extrap(log_rhoy, log_rhoy_table);
     const int jtemp_lo = interp_net::find_index_extrap(log_temp, log_temp_table);
 
-    get_entries(irhoy_lo, jtemp_lo,
-                table_meta, log_rhoy_table, log_temp_table, data,
-                log_rhoy, log_temp, entries);
+    get_entries<do_T_derivatives>(irhoy_lo, jtemp_lo,
+                                  table_meta, log_rhoy_table, log_temp_table, data,
+                                  log_rhoy, log_temp, entries);
 
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
     rate       = amrex::Math::exp10(entries(jtab_rate));
-    drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+    if constexpr (do_T_derivatives) {
+        drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+    } else {
+        drate_dt = 0.0;
+    }
     edot_nu    = -amrex::Math::exp10(entries(jtab_nuloss));
     edot_gamma = amrex::Math::exp10(entries(jtab_gamma));
 }
