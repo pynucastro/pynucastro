@@ -1,5 +1,5 @@
-Initializing AMReX (26.01-40-gbac24575699e)...
-AMReX (26.01-40-gbac24575699e) initialized
+Initializing AMReX (26.09-11-gae079342654b)...
+AMReX (26.09-11-gae079342654b) initialized
 starting the single zone burn...
 Maximum Time (s): 0.01
 State Density (g/cm^3): 100000000
@@ -29,32 +29,32 @@ RHS at t = 0
    S32 1323519.174
 ------------------------------------
 successful? 1
- - Hnuc = 4.397923975e+19
- - added e = 4.397923975e+17
- - final T = 6656299012
+ - Hnuc = 4.397923993e+19
+ - added e = 4.397923993e+17
+ - final T = 6656299021
 ------------------------------------
 e initial = 5.995956082e+17
-e final =   1.039388006e+18
+e final =   1.039388008e+18
 ------------------------------------
 new mass fractions: 
 H1 0.00930704898
-He4 3.598626434e-13
-O16 6.943251473e-07
+He4 3.598624891e-13
+O16 6.943241327e-07
 O20 0.009997687151
 F20 0.009996314385
-Ne20 1.027875355e-13
+Ne20 1.02787534e-13
 Mg24 1.168433215e-06
-Al27 1.542488749e-18
+Al27 1.54248815e-18
 Si28 0.326205294
-P31 8.174124805e-14
+P31 8.174121329e-14
 S32 0.6444917927
 ------------------------------------
 species creation rates: 
-omegadot(H1): -0.06929510197
+omegadot(H1): -0.06929510196
 omegadot(He4): -3
 omegadot(O16): -49.99993057
-omegadot(O20): -0.0002312849373
-omegadot(F20): -0.000368561525
+omegadot(O20): -0.0002312849381
+omegadot(F20): -0.0003685615293
 omegadot(Ne20): -30
 omegadot(Mg24): -9.999883157
 omegadot(Al27): -1
@@ -62,4 +62,4 @@ omegadot(Si28): 31.6205294
 omegadot(P31): -1
 omegadot(S32): 63.44917927
 number of steps taken: 635
-AMReX (26.01-40-gbac24575699e) finalized
+AMReX (26.09-11-gae079342654b) finalized
