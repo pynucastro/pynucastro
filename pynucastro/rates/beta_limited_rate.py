@@ -276,7 +276,7 @@ class BetaLimitedRate(Rate):
         fstring += f"    {dtype} lambda_beta_tot = 0.0_rt;\n"
         for lam in self.beta_limiting_rates:
             fstring += f"    lambda_beta_tot += 1.0_rt / rate_eval.screened_rates(k_{lam.fname});\n"
-        fstring += f"    lambda_beta_tot = 1.0_rt / lambda_beta_tot;\n"
+        fstring += "    lambda_beta_tot = 1.0_rt / lambda_beta_tot;\n"
 
         fstring += "    rate = std::min(r0, lambda_beta_tot / (rho * Y_limiter));\n"
 
