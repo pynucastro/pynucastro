@@ -2111,6 +2111,7 @@ class RateCollection:
              curved_edges=False, curved_edge_radius=0.2,
              N_range=None, Z_range=None, rotated=False,
              always_show_p=False, always_show_alpha=False,
+             rate_color_min=None, rate_color_max=None,
              hide_xp=True, hide_xalpha=True,
              edge_labels=None, edge_label_size=12,
              highlight_filter_function=None,
@@ -2205,6 +2206,10 @@ class RateCollection:
             a dictionary of the form {(n1, n2): "label"}
             that gives labels for the edges in the network connecting
             nucleus n1 to n2.
+        rate_color_min : float
+            minimum value used for rate colorscale
+        rate_color_max : float
+            minimum value used for rate colorscale
         edge_label_size : float
             size of the font used to write the edge labels.
         highlight_filter_function : Callable
@@ -2413,6 +2418,14 @@ class RateCollection:
         else:
             edge_color = real_weights
 
+        log_rate_color_min = None
+        if rate_color_min is not None:
+            log_rate_color_min = np.log10(rate_color_min)
+
+        log_rate_color_max = None
+        if rate_color_max is not None:
+            log_rate_color_max = np.log10(rate_color_max)
+
         real_edges_lc = None
         if len(real_weights) > 0:
             ww = np.array(real_weights)
@@ -2431,6 +2444,7 @@ class RateCollection:
                                                    edgelist=real_edges, edge_color=edge_color,
                                                    connectionstyle=connectionstyle,
                                                    node_size=node_size,
+                                                   edge_vmin=log_rate_color_min, edge_vmax=log_rate_color_max,
                                                    edge_cmap=plt.cm.viridis, ax=ax)
 
         # highlight edges -- this is basically overplotting the edges we already drew
@@ -2485,6 +2499,7 @@ class RateCollection:
         if rate_ydots is not None and real_edges_lc is not None:
             pc = mpl.collections.PatchCollection(real_edges_lc, cmap=plt.cm.viridis)
             pc.set_array(real_weights)
+            pc.set_clim(log_rate_color_min, log_rate_color_max)
             label = r"$\log_{10}(\mathrm{rate})$"
             if use_net_rate:
                 if normalize_net_rate:
