@@ -7,6 +7,7 @@ import copy
 
 import numpy as np
 
+from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import Rate, ThermoState
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
@@ -76,7 +77,8 @@ class ModifiedRate(Rate):
         # important in the C++ code generation the we fill modified
         # rates only after the original rate is filled.
         assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
+                          (ReacLibRate, StarLibRate,
+                           TemperatureTabularRate, BetaLimitedRate))
 
         if new_reactants is not None:
             reactants = new_reactants
@@ -94,6 +96,11 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry,
                          not_in_ydot_term=not_in_ydot_term,
                          rate_source=rate_source)
+
+        # if the underlying rate needs density and composition, then
+        # this does too
+        self.rate_eval_needs_rho = original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = original_rate.rate_eval_needs_comp
 
         self._set_print_representation()
 
@@ -202,11 +209,25 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=None")
+        if self.rate_eval_needs_comp:
+            args.append("Y=None")
+        args.append("log_scor=0.0")
+        fstring += f"def {self.fname}(rate_eval, {', '.join(args)}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
+
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if self.rate_eval_needs_comp:
+            args.append("Y=Y")
+        args.append("log_scor=log_scor")
+
+        fstring += f"    {self.original_rate.fname}(rate_eval, {', '.join(args)})\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
@@ -238,11 +259,17 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors",
+        if dtype == "amrex::Real":
+            array_type = "amrex::Array1D"
+        else:
+            array_type = "Array1D"
+
+        args = ["const tf_t& tfactors", "const T& rate_eval",
+                f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
                 f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
                 f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
@@ -251,7 +278,14 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
+        if not isinstance(self.original_rate, BetaLimitedRate):
+            templates = "<do_T_derivatives>"
+            args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        else:
+            templates = ""
+            args = ["rate_eval", "rho", "Y", "rate", "drate_dT"]
+
+        fstring += f"    rate_{self.original_rate.fname}{templates}({', '.join(args)});\n"
 
         if not leave_open:
             fstring += "}\n\n"

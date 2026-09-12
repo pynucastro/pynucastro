@@ -7,6 +7,7 @@ import copy
 
 import numpy as np
 
+from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
@@ -75,7 +76,8 @@ class BranchedRate(Rate):
         # only after the other rates are filled and screened.
 
         assert isinstance(underlying_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
+                          (ReacLibRate, StarLibRate,
+                           TemperatureTabularRate, BetaLimitedRate))
 
         assert isinstance(primary_branch,
                           (ReacLibRate, StarLibRate, TemperatureTabularRate))

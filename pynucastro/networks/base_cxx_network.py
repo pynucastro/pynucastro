@@ -27,6 +27,7 @@ from pynucastro.utils import pynucastro_version
 namespaces = {"ModifiedRate": "modified_rates",
               "ReacLibRate": "reaclib_rates",
               "StarLibRate": "temp_tabular",
+              "BetaLimitedRate": "beta_limited_rates",
               "TemperatureTabularRate": "temp_tabular",
               "DerivedRate": "derived_rates"}
 
@@ -113,10 +114,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
         self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
         self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
+        self.ftags['<beta_limited_rate_functions>'] = self._beta_limited_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
         self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
         self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
+        self.ftags['<fill_beta_limited_rates>'] = self._fill_beta_limited_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
         self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
@@ -649,6 +652,9 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _branched_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.branched_rates)
 
+    def _beta_limited_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.beta_limited_rates)
+
     def _derived_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.derived_rates)
 
@@ -724,7 +730,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                          args, template_args)
 
     def _fill_modified_rates(self, n_indent, of):
-        args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
+        args = ["tfactors", "rate_eval", "rho", "Y", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
         template_args = ["do_T_derivatives"]
         self._fill_rates(n_indent, of, self.modified_rates,
                          args, template_args)
@@ -733,6 +739,12 @@ class BaseCxxNetwork(ABC, RateCollection):
         args = ["rate_eval", "rate", "drate_dT"]
         template_args = None
         self._fill_rates(n_indent, of, self.branched_rates,
+                         args, template_args, do_screening=False)
+
+    def _fill_beta_limited_rates(self, n_indent, of):
+        args = ["rate_eval", "rho", "Y", "rate", "drate_dT"]
+        template_args = None
+        self._fill_rates(n_indent, of, self.beta_limited_rates,
                          args, template_args, do_screening=False)
 
     def _fill_derived_rates(self, n_indent, of):

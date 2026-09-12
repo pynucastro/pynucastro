@@ -1,6 +1,7 @@
 """Some helper functions for determining which rates need screening"""
 
 from pynucastro.rates.approximate_rates import ApproximateRate
+from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.branched_rate import BranchedRate
 
 
@@ -19,14 +20,12 @@ def get_screening_pair_set(rates):
     """
 
     # we need to consider the child rates that come with
-    # ApproximateRate
+    # ApproximateRate, BetaLimitedRate, BranchedRate
     all_rates = []
     for r in rates:
         # check if rate is an ApproximateRate
-        if isinstance(r, ApproximateRate):
+        if isinstance(r, (ApproximateRate, BetaLimitedRate, BranchedRate)):
             all_rates += r.get_child_rates()
-        elif isinstance(r, BranchedRate):
-            all_rates += [r.underlying_rate, r.primary_branch, r.other_branch]
         else:
             all_rates.append(r)
 

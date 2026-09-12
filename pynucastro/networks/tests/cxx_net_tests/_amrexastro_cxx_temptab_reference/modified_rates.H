@@ -9,6 +9,7 @@
 #include <rate_type.H>
 #include <temperature_table_rates.H>
 #include <reaclib_rates.H>
+#include <beta_limited_rates.H>
 
 namespace modified_rates {
 
@@ -16,12 +17,15 @@ namespace modified_rates {
 
     using namespace reaclib_rates;
     using namespace temp_tabular;
+    using namespace beta_limited_rates;
 
 
     template <int do_T_derivatives, typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] const amrex::Real rho,
+               [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                [[maybe_unused]] T& rate_eval)
     {
 
