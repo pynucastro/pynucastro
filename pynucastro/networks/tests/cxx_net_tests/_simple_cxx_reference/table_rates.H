@@ -119,11 +119,11 @@ evaluate_vars(const int irhoy_lo, const int jtemp_lo,
 
 
 template<typename R, typename T, typename D>
-AMREX_INLINE AMREX_GPU_DEVICE
-amrex::Real
+inline
+Real
 evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
                   [[maybe_unused]] const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                  const amrex::Real log_rhoy, const amrex::Real log_temp)
+                  const Real log_rhoy, const Real log_temp)
 {
 
     // Differentiate the same bilinear log-rate interpolant as evaluate_vars.
@@ -133,27 +133,27 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
     const int irhoy_hi = irhoy_lo + 1;
     const int jtemp_hi = jtemp_lo + 1;
 
-    const amrex::Real log_temp_lo = log_temp_table(jtemp_lo);
-    const amrex::Real log_temp_hi = log_temp_table(jtemp_hi);
+    const Real log_temp_lo = log_temp_table(jtemp_lo);
+    const Real log_temp_hi = log_temp_table(jtemp_hi);
 
     // The interpolated rate is constant outside the temperature table.
     if (log_temp < log_temp_lo || log_temp > log_temp_hi) {
         return 0.0_rt;
     }
 
-    const amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
-    const amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
+    const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+    const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
-    const amrex::Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-    const amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-    const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-    const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+    const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+    const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+    const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+    const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
 
     // compute the gradients in the T direction: dr/dT |_i and dr/dT |_{i+1}
 
-    const amrex::Real dlogT = log_temp_hi - log_temp_lo;
-    const amrex::Real dlogr_dlogT_i = (fijp1 - fij) / dlogT;
-    const amrex::Real dlogr_dlogT_ip1 = (fip1jp1 - fip1j) / dlogT;
+    const Real dlogT = log_temp_hi - log_temp_lo;
+    const Real dlogr_dlogT_i = (fijp1 - fij) / dlogT;
+    const Real dlogr_dlogT_ip1 = (fip1jp1 - fip1j) / dlogT;
 
     return evaluate_linear_1d(dlogr_dlogT_ip1, dlogr_dlogT_i,
                               log_rhoy_hi, log_rhoy_lo, log_rhoy);
