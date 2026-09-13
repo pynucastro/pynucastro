@@ -78,6 +78,8 @@ class DerivedRate(Rate):
         # C++ functions need the partition function cache
         self.rate_eval_needs_pfcache = True
 
+        self.rate_eval_uses_rate_args = False
+
         # Compute temperature-independent prefactor of the equilibrium ratio
         # We will work in log space for convenience
         F = 1.0
@@ -301,8 +303,7 @@ class DerivedRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
-        fstring += "    rate = 0.0;\n"
-        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         # Evaluate partition function terms
 
@@ -443,6 +444,11 @@ class DerivedRate(Rate):
             fstring += "        drate_dT = ratio * (drate_dT + rate * dlogratio_dT9 * 1.0e-9_rt);\n"
             fstring += "    }\n"
             fstring += "    rate *= ratio;\n\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"

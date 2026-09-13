@@ -101,6 +101,8 @@ class ModifiedRate(Rate):
         self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
         self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
 
+        self.rate_eval_uses_rate_args = False
+
         self._set_print_representation()
 
     def __copy__(self):
@@ -261,6 +263,11 @@ class ModifiedRate(Rate):
 
         cargs = cxx_rate_func_args(self, mode="call")
         fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate_eval.screened_rates(k_{self.original_rate.fname});\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = rate_eval.dscreened_rates_dT(k_{self.original_rate.fname});\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"

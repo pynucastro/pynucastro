@@ -657,7 +657,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             call_args = cxx_rate_func_args(r, mode="call")
 
             of.write(f"{self.indent*n_indent}" + "{\n")
-            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n")
             if r.screening_pairs:
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"

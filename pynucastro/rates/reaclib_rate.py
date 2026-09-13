@@ -323,6 +323,8 @@ class ReacLibRate(Rate):
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
+        self.rate_eval_uses_rate_args = False
+
     def __hash__(self):
         return hash(self.__repr__())
 
@@ -703,8 +705,7 @@ class ReacLibRate(Rate):
         fstring += f"    // {self.rid}\n\n"
         # pylint: enable=duplicate-code
 
-        fstring += "    rate = 0.0;\n"
-        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
         fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
         fstring += f"    {dtype} set_rate{{0.0}};\n\n"
@@ -738,6 +739,11 @@ class ReacLibRate(Rate):
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
             fstring += "    }\n\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"
