@@ -691,6 +691,7 @@ class ReacLibRate(Rate):
 
         """
 
+        # pylint: disable=duplicate-code
         args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
         if extra_args:
             for arg in extra_args:

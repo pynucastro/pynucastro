@@ -110,7 +110,6 @@ class ApproximateRate(Rate):
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 
-
         if self.approx_type == "ap_pg":
 
             # an ap_pg approximate rate combines A(a,g)B and
