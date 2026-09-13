@@ -668,14 +668,6 @@ class BaseCxxNetwork(ABC, RateCollection):
             else:
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(call_args)});\n")
 
-            if r.rate_eval_uses_rate_args:
-                of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-
-                if do_T_derivatives:
-                    of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                    of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-                    of.write(f"{self.indent*(n_indent+1)}}}\n")
-
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
     def _fill_temp_tabular_rates(self, n_indent, of):

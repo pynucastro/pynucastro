@@ -256,8 +256,6 @@ class TemperatureTabularRate(Rate):
 
         self.interpolator = TempTableInterpolator(self.log_t9_data, self.log_rate_data)
 
-        self.rate_eval_uses_rate_args = False
-
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
         equal if they contain identical reactants and products.

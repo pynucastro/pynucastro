@@ -98,8 +98,6 @@ class BranchedRate(Rate):
         # in our function argument list
         self.rate_eval_needs_tfactors = False
 
-        self.rate_eval_uses_rate_args = False
-
         # we work directly from the evaluated rates, so there is no
         # screening applied to this
         self.screening_pairs = []

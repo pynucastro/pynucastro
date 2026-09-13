@@ -323,8 +323,6 @@ class ReacLibRate(Rate):
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
-        self.rate_eval_uses_rate_args = False
-
     def __hash__(self):
         return hash(self.__repr__())
 

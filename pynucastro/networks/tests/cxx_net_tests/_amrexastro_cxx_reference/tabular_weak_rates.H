@@ -75,13 +75,11 @@ namespace tabular_weak_rates {
 
         {
             // Na23_to_Ne23_electron_capture_weaktab
-
             rate_Na23_to_Ne23_electron_capture_weaktab(rate_eval, temp, log_temp, log_rhoy, Y);
         }
 
         {
             // Ne23_to_Na23_beta_neg_weaktab
-
             rate_Ne23_to_Na23_beta_neg_weaktab(rate_eval, temp, log_temp, log_rhoy, Y);
         }
 

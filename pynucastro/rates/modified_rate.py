@@ -101,8 +101,6 @@ class ModifiedRate(Rate):
         self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
         self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
 
-        self.rate_eval_uses_rate_args = False
-
         self._set_print_representation()
 
     def __copy__(self):

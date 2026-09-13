@@ -559,8 +559,6 @@ class ApproximateRate(Rate):
         # already be screened.  So the function calls here don't need screening.
         self.screening_pairs = []
 
-        self.rate_eval_uses_rate_args = False
-
         # update the Q value
         self._set_q()
 

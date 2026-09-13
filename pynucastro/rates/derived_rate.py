@@ -78,8 +78,6 @@ class DerivedRate(Rate):
         # C++ functions need the partition function cache
         self.rate_eval_needs_pfcache = True
 
-        self.rate_eval_uses_rate_args = False
-
         # Compute temperature-independent prefactor of the equilibrium ratio
         # We will work in log space for convenience
         F = 1.0

@@ -244,8 +244,6 @@ class TabularWeakRate(Rate):
 
         self.rate_eval_needs_comp = True
 
-        self.rate_eval_uses_rate_args = False
-
         self.tabular = True
 
         # store the extrema of the thermodynamics
