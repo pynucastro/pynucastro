@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 3.0.0.post47+g945ffda83 documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 3.0.0.post49+gfe09b6c5b documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=af89d437"></script>
+    <script src="_static/documentation_options.js?v=ce0d0b9c"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -862,7 +862,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses â€
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/8fc95be46a68f801a3d9d3d30a57169c02ce16e90e1a71431e95b888426db130.png" src="_images/8fc95be46a68f801a3d9d3d30a57169c02ce16e90e1a71431e95b888426db130.png" />
+<img alt="_images/10be4e6a179c855f4bec7a9979dc64a05bd9124c206098906f949632e618a1c0.png" src="_images/10be4e6a179c855f4bec7a9979dc64a05bd9124c206098906f949632e618a1c0.png" />
 </div>
 </div>
 </section>
@@ -930,7 +930,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses â€
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d72eebf78d12fbefe77a0485503ce299748c42a757763493fe00c3a6e03bd8a7.png" src="_images/d72eebf78d12fbefe77a0485503ce299748c42a757763493fe00c3a6e03bd8a7.png" />
+<img alt="_images/ff797572384f0f2dad3c35acdb1cbf2a1438d09c21c742a5384a8811e1f80077.png" src="_images/ff797572384f0f2dad3c35acdb1cbf2a1438d09c21c742a5384a8811e1f80077.png" />
 </div>
 </div>
 <p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -966,7 +966,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4faa2d27d11071db0988cd85730517cd9bf4d8953240bcc541874cc527befcdb.png" src="_images/4faa2d27d11071db0988cd85730517cd9bf4d8953240bcc541874cc527befcdb.png" />
+<img alt="_images/3b917a037c774e6bd1c6b293fce097856767a76b9224f554be5d3dd40e6f5161.png" src="_images/3b917a037c774e6bd1c6b293fce097856767a76b9224f554be5d3dd40e6f5161.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
@@ -1029,8 +1029,8 @@ But letâ€™s verify it by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/68808e2a58d77480934b8ff4bd12e7993e279e43f67c8d8ef260a21adb25c53c.png" src="_images/68808e2a58d77480934b8ff4bd12e7993e279e43f67c8d8ef260a21adb25c53c.png" />
-<img alt="_images/5859998a3a31b861d6dc51e1b530bc37462632d8d1013268bf8f9dc3cea60aa6.png" src="_images/5859998a3a31b861d6dc51e1b530bc37462632d8d1013268bf8f9dc3cea60aa6.png" />
+<img alt="_images/3d3232c8569ad8a730409796af60eafb45890691a8f2d0164d45d111f50d308e.png" src="_images/3d3232c8569ad8a730409796af60eafb45890691a8f2d0164d45d111f50d308e.png" />
+<img alt="_images/b543456754974a572c6e52e956ee445267dda00ef4d594e788991eca91cea811.png" src="_images/b543456754974a572c6e52e956ee445267dda00ef4d594e788991eca91cea811.png" />
 </div>
 </div>
 <p>We see that the mass abundance computed from NSE is indeed different from integrating the network to equilibrium,
@@ -1114,8 +1114,8 @@ Letâ€™s verify its prediction by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/d2b931c806fe55ba41f11d9b40c7d42ce37951dace031ed710c912bc1e216867.png" src="_images/d2b931c806fe55ba41f11d9b40c7d42ce37951dace031ed710c912bc1e216867.png" />
-<img alt="_images/4dd9c89f246a0ec6861c14a6b9777159bc72cc1a147fae182f66fdff02712003.png" src="_images/4dd9c89f246a0ec6861c14a6b9777159bc72cc1a147fae182f66fdff02712003.png" />
+<img alt="_images/a1b75b7a8d8ab928be4b04012acf3e4c33d63e64a139ef677f3a60d3bfdb7293.png" src="_images/a1b75b7a8d8ab928be4b04012acf3e4c33d63e64a139ef677f3a60d3bfdb7293.png" />
+<img alt="_images/58e19ac8665ecb5883f806fd472556e33451fc734d63ec0436a78e4df9d37b1a.png" src="_images/58e19ac8665ecb5883f806fd472556e33451fc734d63ec0436a78e4df9d37b1a.png" />
 </div>
 </div>
 <p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Using NSE Protons &#8212; pynucastro 3.0.0.post47+g945ffda83 documentation</title>
+    <title>Using NSE Protons &#8212; pynucastro 3.0.0.post49+gfe09b6c5b documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=af89d437"></script>
+    <script src="_static/documentation_options.js?v=ce0d0b9c"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -684,7 +684,7 @@ and network integration easier.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cf875107c59084a5732e972b1f20c636c207afc4ab430d8f34cd5bd3d48356e7.png" src="_images/cf875107c59084a5732e972b1f20c636c207afc4ab430d8f34cd5bd3d48356e7.png" />
+<img alt="_images/6c4fe02801b3e30eb4edd1823079c2c1caef6c88ca80ca49378a7a34482cc945.png" src="_images/6c4fe02801b3e30eb4edd1823079c2c1caef6c88ca80ca49378a7a34482cc945.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -716,11 +716,11 @@ and network integration easier.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3829/2895805150.py:1: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3499/2895805150.py:1: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_jacobian(rho, T, comp, rate_scaling=1.e16)
 </pre></div>
 </div>
-<img alt="_images/8c7bd16f609f1d20815d53eaf35f045ae9b73e8c9fb93c38f16ac09415c6d281.png" src="_images/8c7bd16f609f1d20815d53eaf35f045ae9b73e8c9fb93c38f16ac09415c6d281.png" />
+<img alt="_images/07c9b253fe7e97fb207e786dc8fe522aa98fd917645e18170e0ea45e017db97f.png" src="_images/07c9b253fe7e97fb207e786dc8fe522aa98fd917645e18170e0ea45e017db97f.png" />
 </div>
 </div>
 <p>From the Jacobian, we can see that the protons are split into two groups, those participating in reactions with <span class="math notranslate nohighlight">\(A \le 32\)</span> and those participating in reactions with <span class="math notranslate nohighlight">\(A \ge 51\)</span>.</p>
@@ -816,11 +816,11 @@ in the network (<code class="docutils literal notranslate"><span class="pre">p_n
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3829/2184551706.py:1: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3499/2184551706.py:1: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_jacobian(rho, T, comp_new, rate_scaling=1.e16)
 </pre></div>
 </div>
-<img alt="_images/41c4590cce75a1eb6ec33ef3caa182d72f9d3eb3356337c08c466159bd9d7b98.png" src="_images/41c4590cce75a1eb6ec33ef3caa182d72f9d3eb3356337c08c466159bd9d7b98.png" />
+<img alt="_images/078c49ba8ba4f7930181b281b26cbc94dff3b674e36e3f7aa3684ee062b870b7.png" src="_images/078c49ba8ba4f7930181b281b26cbc94dff3b674e36e3f7aa3684ee062b870b7.png" />
 </div>
 </div>
 <p>The Jacobian now shows that the reactions involving heavy nuclei are using <code class="docutils literal notranslate"><span class="pre">p_nse</span></code> protons, decoupling them from the lower mass nuclei.</p>
