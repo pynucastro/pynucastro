@@ -432,22 +432,6 @@ class TestWeakRates:
         assert math.log10(rate6.eval(1.e9, rho=2.e11, comp=comp)) == approx(-99.69797)
 
 
-class TestModify:
-    @pytest.fixture(scope="function")
-    @classmethod
-    def rate(cls, reaclib_library):
-        return copy.deepcopy(reaclib_library.get_rate_by_name("c12(c12,n)mg23"))
-
-    def test_modify(self, rate):
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            rate.modify_products("mg24")
-
-        assert rate.Q == approx(13.933578000000125)
-        assert rate.products == [Nucleus("mg24")]
-
-
 class TestModifiedRate:
     @pytest.fixture(scope="function")
     @classmethod

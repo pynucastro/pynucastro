@@ -793,35 +793,6 @@ class Rate:
             return self.stoichiometry.get(n, c_prod)
         return c_prod
 
-    def modify_products(self, new_products):
-        """Change the products of the rate to new_products.  This will
-        recompute the Q value and update the print representation.
-
-        .. deprecated:: 3.0 ``modify_products`` has been deprecated.
-           Use ``ModifiedRate`` instead.  ``modify_products`` will be
-           removed in version 3.1.
-
-        Parameters
-        ----------
-        new_products : list(Nucleus)
-            the new products to use with the rate.
-
-        """
-
-        warnings.warn(
-            "modified_products is deprecated; use ModifiedRate instead.",
-            DeprecationWarning,
-            stacklevel=2
-        )
-
-        self.products = Nucleus.cast_list(new_products, allow_single=True)
-
-        # we need to update the Q value and the print string for the rate
-
-        self._set_q()
-        self._set_screening()
-        self._set_print_representation()
-
     @need_state
     def evaluate_screening(self, state, screen_func):
         """Evaluate the screening correction for this rate.
