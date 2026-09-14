@@ -1,6 +1,7 @@
 # Test the topological sorting of rates by setting up a network with
 # different rates types that carry dependencies.
 
+import copy
 import random
 
 import pytest
@@ -8,7 +9,7 @@ import pytest
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates import BranchedRate, ModifiedRate, aprox_family_rates
-from pynucastro.sort_utils import topo_sort
+from pynucastro.sort_utils import CircularRateDependency, topo_sort
 
 
 class TestTopoSort:
@@ -59,18 +60,51 @@ class TestTopoSort:
 
     def test_dependencies(self, net):
 
+        all_rates = list(net.all_rates)
+
         # randomly sort the rates in the network and then do a
         # topological sort and check to make sure all dependencies
         # come before the rates that depend on them.
-
-        all_rates = list(net.all_rates)
 
         random.seed(1234)
         random.shuffle(all_rates)
 
         sorted_rates = topo_sort(all_rates)
 
+        # now check that there for each rate in the list
+        # their dependencies come before them
+
         for i, r in enumerate(sorted_rates):
             if crates := r.get_child_rates():
                 for cr in crates:
                     assert cr in sorted_rates[:i]
+
+    def test_circular_dependency(self, reaclib_library, net):
+
+        all_rates = list(net.all_rates)
+
+        # we will fake a circular dependency by hacking get_child_rates in an instance
+        rn14pg = reaclib_library.get_rate_by_name("n14(p,g)o15")
+        all_rates.remove(rn14pg)
+
+        rn14pg_new = copy.copy(rn14pg)
+
+        rn14_2p_c12 = [r for r in all_rates
+                       if r.reactants == [Nucleus("p"), Nucleus("n14")] and
+                          r.products == [Nucleus("he4"), Nucleus("c12")]][0]
+
+        rn14pg_new.get_child_rates = lambda: [rn14_2p_c12]
+
+        all_rates.append(rn14pg_new)
+
+        # randomly sort the rates in the network and then do a
+        # topological sort and check to make sure all dependencies
+        # come before the rates that depend on them.
+
+        random.seed(1234)
+        random.shuffle(all_rates)
+
+        # this will fail with a circular dependency
+
+        with pytest.raises(CircularRateDependency):
+            sorted_rates = topo_sort(all_rates)
