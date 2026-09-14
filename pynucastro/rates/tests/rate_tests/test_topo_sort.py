@@ -107,4 +107,4 @@ class TestTopoSort:
         # this will fail with a circular dependency
 
         with pytest.raises(CircularRateDependency):
-            sorted_rates = topo_sort(all_rates)
+            _ = topo_sort(all_rates)
