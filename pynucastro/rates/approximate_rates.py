@@ -46,6 +46,11 @@ class ApproximateRate(Rate):
 
       An example of this is combining Fe52(n,γ)Fe53(n,γ)Fe54
 
+    * "pp_g" : replace the sequence A(p,γ)X(p,γ)B with an
+      effective A(pp,γ)B rate.
+
+      An example of this is combining Fe54(p,γ)Co55(p,γ)Ni56
+
     * "Yp_pg" : combine A(Y,γ)B and A(Y,p)X(p,γ)B sequences into a
       single, effective A(Y,γ)B rate.  Note: the original A(Y,γ)B does
       not need to be included, in which case just A(Y,p)X(p,γ)B is
@@ -78,7 +83,7 @@ class ApproximateRate(Rate):
         Are we creating the effective A(x,y)B or B(y,x)A?
     approx_type : str
         The type of approximation to do.  Currently supported are
-        "ap_pg", "nn_g", "Yp_pg", and "Yp_pa"
+        "ap_pg", "nn_g", "pp_g", "Yp_pg", and "Yp_pa"
     use_identical_particle_factor : bool
         Usually if a rate has 2 reactants of the same type, we
         divide by 2, since the order doesn't matter.  However, for
@@ -231,34 +236,38 @@ class ApproximateRate(Rate):
                                  self.rates["B(g,p)X"],
                                  self.rates["X(p,a)A"]]
 
-        elif self.approx_type == "nn_g":
+        elif self.approx_type in ("nn_g", "pp_g"):
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
             # single effective rate by assuming equilibrium of X.
+            # pp_g does the same with protons.
 
             assert len(self.rates) == 4
+
+            # to handle both nn_g and pp_g, we'll store the capture nucleus
+            self.cnuc = "n" if self.approx_type == "nn_g" else "p"
 
             # make sure that the pair of forward rates makes sense
 
             try:
-                # the first forward rate should be A(n,g)X
-                forward1 = self.rates["A(n,g)X"]
+                # the first forward rate should be A(n,g)X / A(p,g)X
+                forward1 = self.rates[f"A({self.cnuc},g)X"]
             except KeyError:
                 print("first forward rate not found")
                 raise
 
             _assert_rate_prop(forward1,
-                              reactants=[Nucleus("n")], num_products=1)
+                              reactants=[Nucleus(self.cnuc)], num_products=1)
 
             try:
-                # the second forward rate should be X(n,g)B
-                forward2 = self.rates["X(n,g)B"]
+                # the second forward rate should be X(n,g)B / X(p,g)B
+                forward2 = self.rates[f"X({self.cnuc},g)B"]
             except KeyError:
                 print("second forward rate not found")
                 raise
 
             _assert_rate_prop(forward2,
-                              reactants=[Nucleus("n")], num_products=1)
+                              reactants=[Nucleus(self.cnuc)], num_products=1)
 
             # make sure that the intermediate nucleus matches
             assert forward1.products[0] == max(forward2.reactants)
@@ -276,37 +285,37 @@ class ApproximateRate(Rate):
             # now ensure that the reverse rates makes sense
 
             try:
-                # the first reverse rate should be B(g,n)X
-                reverse1 = self.rates["B(g,n)X"]
+                # the first reverse rate should be B(g,n)X / B(g,p)X
+                reverse1 = self.rates[f"B(g,{self.cnuc})X"]
             except KeyError:
                 print("first reverse rate not found")
                 raise
 
             _assert_rate_prop(reverse1,
                               reactants=[self.primary_product], num_reactants=1,
-                              products=[self.intermediate_nucleus, Nucleus("n")])
+                              products=[self.intermediate_nucleus, Nucleus(self.cnuc)])
 
             try:
-                # the second reverse rate should be X(g,n)A
-                reverse2 = self.rates["X(g,n)A"]
+                # the second reverse rate should be X(g,n)A / X(g,p)A
+                reverse2 = self.rates[f"X(g,{self.cnuc})A"]
             except KeyError:
                 print("second reverse rate not found")
                 raise
 
             _assert_rate_prop(reverse2,
                               reactants=[self.intermediate_nucleus], num_reactants=1,
-                              products=[self.primary_reactant, Nucleus("n")])
+                              products=[self.primary_reactant, Nucleus(self.cnuc)])
 
             # now initialize the super class with these reactants and products
 
             if not self.is_reverse:
-                super().__init__(reactants=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                super().__init__(reactants=[self.primary_reactant, Nucleus(self.cnuc), Nucleus(self.cnuc)],
                                  products=[self.primary_product],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
             else:
                 super().__init__(reactants=[self.primary_product],
-                                 products=[self.primary_reactant, Nucleus("n"), Nucleus("n")],
+                                 products=[self.primary_reactant, Nucleus(self.cnuc), Nucleus(self.cnuc)],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
 
@@ -637,28 +646,28 @@ class ApproximateRate(Rate):
                                                   screen_func=screen_func)
                 return r_ga + r_pa * r_gp / denom
 
-        elif self.approx_type == "nn_g":
+        elif self.approx_type in ("nn_g", "pp_g"):
 
-            # we are approximating A(n,g)X(n,g)B
+            # we are approximating A(n,g)X(n,g)B or A(p,g)X(p,g)B
 
-            Yn = comp.get_molar()[Nucleus("n")]
-            X_ng_B = self.rates["X(n,g)B"].eval(T, rho=rho, comp=comp,
-                                                screen_func=screen_func)
-            X_gn_A = self.rates["X(g,n)A"].eval(T, rho=rho, comp=comp,
-                                                screen_func=screen_func)
-            denom = rho * Yn * X_ng_B + X_gn_A
+            Ycap = comp.get_molar()[Nucleus(self.cnuc)]
+            X_cg_B = self.rates[f"X({self.cnuc},g)B"].eval(T, rho=rho, comp=comp,
+                                                           screen_func=screen_func)
+            X_gc_A = self.rates[f"X(g,{self.cnuc})A"].eval(T, rho=rho, comp=comp,
+                                                           screen_func=screen_func)
+            denom = rho * Ycap * X_cg_B + X_gc_A
 
             if not self.is_reverse:  # pylint: disable=no-else-return
                 # the forward rate
-                A_ng_X = self.rates["A(n,g)X"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
-                return 2.0 * A_ng_X * X_ng_B / denom
+                A_cg_X = self.rates[f"A({self.cnuc},g)X"].eval(T, rho=rho, comp=comp,
+                                                               screen_func=screen_func)
+                return 2.0 * A_cg_X * X_cg_B / denom
 
             else:
                 # the reverse rate
-                B_gn_X = self.rates["B(g,n)X"].eval(T, rho=rho, comp=comp,
-                                                    screen_func=screen_func)
-                return B_gn_X * X_gn_A / denom
+                B_gc_X = self.rates[f"B(g,{self.cnuc})X"].eval(T, rho=rho, comp=comp,
+                                                               screen_func=screen_func)
+                return B_gc_X * X_gc_A / denom
 
         elif self.approx_type == "Yp_pg":
 
@@ -785,35 +794,45 @@ class ApproximateRate(Rate):
             string += f"    rate_eval.{self.fname} = rate\n\n"
             return string
 
-        if self.approx_type == "nn_g":
+        if self.approx_type in ("nn_g", "pp_g"):
 
-            # we are approximating A(n,g)X(n,g)B
+            # we are approximating A(n,g)X(n,g)B or A(p,g)X(p,g)B
 
             string = ""
             string += "@numba.njit()\n"
             string += f"def {self.fname}(rate_eval, tf, rho=None, Y=None):\n"
 
-            string += "    Yn = Y[jn]\n"
+            string += f"    Y{self.cnuc} = Y[j{self.cnuc}]\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r1_ng = rate_eval.{self.rates['A(n,g)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
+                key = f"A({self.cnuc},g)X"
+                string += f"    r1_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X({self.cnuc},g)B"
+                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X(g,{self.cnuc})A"
+                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
 
                 # now the approximation
-                string += "    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)\n"
+                string += f"    rate = 2.0 * r1_{self.cnuc}g * r2_{self.cnuc}g / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc})\n"
 
             else:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
-                string += f"    r2_gn = rate_eval.{self.rates['B(g,n)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
+                key = f"X(g,{self.cnuc})A"
+                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"B(g,{self.cnuc})X"
+                string += f"    r2_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X({self.cnuc},g)B"
+                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
 
                 # now the approximation
-                string += "    rate = r1_gn * r2_gn / (rho * Yn * r2_ng + r1_gn)\n"
+                string += f"    rate = r1_g{self.cnuc} * r2_g{self.cnuc} / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc})\n"
 
             string += f"    rate_eval.{self.fname} = rate\n\n"
             return string
@@ -997,7 +1016,7 @@ class ApproximateRate(Rate):
 
             return fstring
 
-        if self.approx_type == "nn_g":
+        if self.approx_type in ("nn_g", "pp_g"):
 
             args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
                     f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
@@ -1005,39 +1024,66 @@ class ApproximateRate(Rate):
             fstring = "template <typename T>\n"
             fstring += f"{specifiers}\n"
             fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
-            fstring += f"    {dtype} Yn = Y(N);\n"
+            if self.cnuc == "n":
+                fstring += f"    {dtype} Yn = Y(N);\n"
+            elif self.cnuc == "p":
+                fstring += f"    {dtype} Yp = Y(H1);\n"
+            else:
+                raise ValueError(f"invalid value for {self.cnuc=}")
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_ng = rate_eval.screened_rates(k_{self.rates['A(n,g)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
+                key = f"A({self.cnuc},g)X"
+                fstring += f"    {dtype} r1_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
-                fstring += "    rate = 2.0_rt * r1_ng * r2_ng * dd;\n"
+                fstring += f"    {dtype} dd = 1.0_rt / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc});\n"
+                fstring += f"    rate = 2.0_rt * r1_{self.cnuc}g * r2_{self.cnuc}g * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += f"        {dtype} dr1dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['A(n,g)X'].fname});\n"
-                fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
-                fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
-                fstring += "        drate_dT = 2.0_rt * (dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn));\n"
+
+                key = f"A({self.cnuc},g)X"
+                fstring += f"        {dtype} dr1dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+                fstring += f"        drate_dT = 2.0_rt * (dr1dT_{self.cnuc}g * r2_{self.cnuc}g * dd + r1_{self.cnuc}g * dr2dT_{self.cnuc}g * dd - r1_{self.cnuc}g * r2_{self.cnuc}g * dd * dd * (rho * Y{self.cnuc} * dr2dT_{self.cnuc}g + dr1dT_g{self.cnuc}));\n"
                 fstring += "    }\n"
             else:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
-                fstring += f"    {dtype} r2_gn = rate_eval.screened_rates(k_{self.rates['B(g,n)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"B(g,{self.cnuc})X"
+                fstring += f"    {dtype} r2_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
-                fstring += "    rate = r1_gn * r2_gn * dd;\n"
+                fstring += f"    {dtype} dd = 1.0_rt / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc});\n"
+                fstring += f"    rate = r1_g{self.cnuc} * r2_g{self.cnuc} * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
-                fstring += f"        {dtype} dr2dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['B(g,n)X'].fname});\n"
-                fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
-                fstring += "        drate_dT = dr1dT_gn * r2_gn * dd + r1_gn * dr2dT_gn * dd - r1_gn * r2_gn * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"B(g,{self.cnuc})X"
+                fstring += f"        {dtype} dr2dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+                fstring += f"        drate_dT = dr1dT_g{self.cnuc} * r2_g{self.cnuc} * dd + r1_g{self.cnuc} * dr2dT_g{self.cnuc} * dd - r1_g{self.cnuc} * r2_g{self.cnuc} * dd * dd * (rho * Y{self.cnuc} * dr2dT_{self.cnuc}g + dr1dT_g{self.cnuc});\n"
                 fstring += "    }\n"
 
             if not leave_open:
