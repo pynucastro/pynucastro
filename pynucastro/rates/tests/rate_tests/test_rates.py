@@ -2,7 +2,6 @@
 
 import copy
 import math
-import warnings
 
 import pytest
 from pytest import approx
