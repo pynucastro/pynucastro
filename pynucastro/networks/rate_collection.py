@@ -185,23 +185,19 @@ class RateCollection:
             cr.removed = False
 
         # child rates may be ReacLibRates, StarLibRates,
-        # ModifiedRates, or DerivedRates.  Make sure we don't double
+        # or DerivedRates.  Make sure we don't double
         # count
         if isinstance(cr, DerivedRate):
             if cr not in self.derived_rates:
                 self.derived_rates.append(cr)
-        elif isinstance(cr, ModifiedRate):
-            if cr not in self.modified_rates:
-                self.modified_rates.append(cr)
-        elif isinstance(cr, BranchedRate):
-            if cr not in self.branched_rates:
-                self.branched_rates.append(cr)
         elif isinstance(cr, StarLibRate):
             if cr not in self.starlib_rates:
                 self.starlib_rates.append(cr)
-        else:
+        elif isinstance(cr, ReacLibRate):
             if cr not in self.reaclib_rates:
                 self.reaclib_rates.append(cr)
+        else:
+            raise ValueError(f"unable to classify child rate {cr}")
 
     def _build_collection(self):
 
