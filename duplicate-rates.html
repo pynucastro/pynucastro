@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Dealing with Duplicate Rates &#8212; pynucastro 3.0.0.post49+gfe09b6c5b documentation</title>
+    <title>Dealing with Duplicate Rates &#8212; pynucastro 3.1.0.post1+ga50a4ed0d documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ce0d0b9c"></script>
+    <script src="_static/documentation_options.js?v=a62b3ab0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -58,7 +58,7 @@
     <link rel="prev" title="Tabulated Weak Rate Sources" href="tabulated-weak-rates.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0" />
+  <meta name="docsearch:version" content="3.1" />
   
     
     <script src="_static/searchtools.js"></script>
@@ -147,7 +147,7 @@
     <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
   
   
-    <p class="title logo__title">pynucastro 3.0</p>
+    <p class="title logo__title">pynucastro 3.1</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -676,10 +676,10 @@ warning: Mg24 was not able to be linked in TabularWeakLibrary
 <span class="g g-Whitespace">    </span><span class="mi">172</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(</span><span class="n">as_copies</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">174</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:314,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">312</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
-<span class="g g-Whitespace">    </span><span class="mi">313</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">314</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">"Duplicate rates found"</span><span class="p">)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:310,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">308</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">309</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">310</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">"Duplicate rates found"</span><span class="p">)</span>
 
 <span class="ne">RateDuplicationError</span>: Duplicate rates found
 </pre></div>

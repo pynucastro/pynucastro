@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.0.0.post49+gfe09b6c5b documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post1+ga50a4ed0d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=ce0d0b9c"></script>
+    <script src="../../../_static/documentation_options.js?v=a62b3ab0"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,7 +53,7 @@
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="3.0" />
+  <meta name="docsearch:version" content="3.1" />
   
     
     <script src="../../../_static/searchtools.js"></script>
@@ -144,7 +144,7 @@
     <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
   
   
-    <p class="title logo__title">pynucastro 3.0</p>
+    <p class="title logo__title">pynucastro 3.1</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -716,23 +716,19 @@
             <span class="n">cr</span><span class="o">.</span><span class="n">removed</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># child rates may be ReacLibRates, StarLibRates,</span>
-        <span class="c1"># ModifiedRates, or DerivedRates.  Make sure we don't double</span>
+        <span class="c1"># or DerivedRates.  Make sure we don't double</span>
         <span class="c1"># count</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">DerivedRate</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">ModifiedRate</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">modified_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">BranchedRate</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">starlib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cr</span><span class="p">,</span> <span class="n">ReacLibRate</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">cr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"unable to classify child rate </span><span class="si">{</span><span class="n">cr</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_build_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
