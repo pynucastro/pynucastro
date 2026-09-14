@@ -1,5 +1,6 @@
 """Functions used for sorting rates"""
 
+
 def topo_sort(rates):
     """Perform a topological sort on a list of rates.
 

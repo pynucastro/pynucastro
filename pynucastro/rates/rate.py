@@ -671,7 +671,7 @@ class Rate:
 
     def get_child_rates(self):
         """Return any rates that this rate depends on."""
-        return None
+        return
 
     def get_rate_id(self):
         """Get an identifying string for this rate.
