@@ -807,9 +807,14 @@ class ApproximateRate(Rate):
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r1_{self.cnuc}g = rate_eval.{self.rates['A({self.cnuc},g)X'].fname}\n"
-                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates['X({self.cnuc},g)B'].fname}\n"
-                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates['X(g,{self.cnuc})A'].fname}\n"
+                key = f"A({self.cnuc},g)X"
+                string += f"    r1_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X({self.cnuc},g)B"
+                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X(g,{self.cnuc})A"
+                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
 
                 # now the approximation
                 string += f"    rate = 2.0 * r1_{self.cnuc}g * r2_{self.cnuc}g / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc})\n"
@@ -817,12 +822,17 @@ class ApproximateRate(Rate):
             else:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates['X(g,{self.cnuc})A'].fname}\n"
-                string += f"    r2_g{self.cnuc} = rate_eval.{self.rates['B(g,{self.cnuc})X'].fname}\n"
-                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates['X({self.cnuc},g)B'].fname}\n"
+                key = f"X(g,{self.cnuc})A"
+                string += f"    r1_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"B(g,{self.cnuc})X"
+                string += f"    r2_g{self.cnuc} = rate_eval.{self.rates[key].fname}\n"
+
+                key = f"X({self.cnuc},g)B"
+                string += f"    r2_{self.cnuc}g = rate_eval.{self.rates[key].fname}\n"
 
                 # now the approximation
-                string += "    rate = r1_g{self.cnuc} * r2_g{self.cnuc} / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc})\n"
+                string += f"    rate = r1_g{self.cnuc} * r2_g{self.cnuc} / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc})\n"
 
             string += f"    rate_eval.{self.fname} = rate\n\n"
             return string
@@ -1024,33 +1034,55 @@ class ApproximateRate(Rate):
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['A({self.cnuc},g)X'].fname});\n"
-                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['X({self.cnuc},g)B'].fname});\n"
-                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates['X(g,{self.cnuc})A'].fname});\n"
+                key = f"A({self.cnuc},g)X"
+                fstring += f"    {dtype} r1_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
 
                 # now the approximation
                 fstring += f"    {dtype} dd = 1.0_rt / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc});\n"
                 fstring += f"    rate = 2.0_rt * r1_{self.cnuc}g * r2_{self.cnuc}g * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += f"        {dtype} dr1dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates['A({self.cnuc},g)X'].fname});\n"
-                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates['X({self.cnuc},g)B'].fname});\n"
-                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,{self.cnuc})A'].fname});\n"
+
+                key = f"A({self.cnuc},g)X"
+                fstring += f"        {dtype} dr1dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
                 fstring += f"        drate_dT = 2.0_rt * (dr1dT_{self.cnuc}g * r2_{self.cnuc}g * dd + r1_{self.cnuc}g * dr2dT_{self.cnuc}g * dd - r1_{self.cnuc}g * r2_{self.cnuc}g * dd * dd * (rho * Y{self.cnuc} * dr2dT_{self.cnuc}g + dr1dT_g{self.cnuc}));\n"
                 fstring += "    }\n"
             else:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates['X(g,{self.cnuc})A'].fname});\n"
-                fstring += f"    {dtype} r2_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates['B(g,{self.cnuc})X'].fname});\n"
-                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['X({self.cnuc},g)B'].fname});\n"
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"B(g,{self.cnuc})X"
+                fstring += f"    {dtype} r2_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates[key].fname});\n"
 
                 # now the approximation
                 fstring += f"    {dtype} dd = 1.0_rt / (rho * Y{self.cnuc} * r2_{self.cnuc}g + r1_g{self.cnuc});\n"
                 fstring += f"    rate = r1_g{self.cnuc} * r2_g{self.cnuc} * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,{self.cnuc})A'].fname});\n"
-                fstring += f"        {dtype} dr2dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates['B(g,{self.cnuc})X'].fname});\n"
-                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates['X({self.cnuc},g)B'].fname});\n"
+
+                key = f"X(g,{self.cnuc})A"
+                fstring += f"        {dtype} dr1dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"B(g,{self.cnuc})X"
+                fstring += f"        {dtype} dr2dT_g{self.cnuc} = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
+
+                key = f"X({self.cnuc},g)B"
+                fstring += f"        {dtype} dr2dT_{self.cnuc}g = rate_eval.dscreened_rates_dT(k_{self.rates[key].fname});\n"
                 fstring += f"        drate_dT = dr1dT_g{self.cnuc} * r2_g{self.cnuc} * dd + r1_g{self.cnuc} * dr2dT_g{self.cnuc} * dd - r1_g{self.cnuc} * r2_g{self.cnuc} * dd * dd * (rho * Y{self.cnuc} * dr2dT_{self.cnuc}g + dr1dT_g{self.cnuc});\n"
                 fstring += "    }\n"
 
