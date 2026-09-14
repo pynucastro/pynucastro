@@ -25,7 +25,7 @@ def topo_sort(rates):
         if rate in visited:
             return
 
-        visited.add(rate.name)
+        visited.add(rate)
 
         if rate.get_child_rates():
             for child_rate in rate.get_child_rates():
