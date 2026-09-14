@@ -1024,7 +1024,7 @@ class ApproximateRate(Rate):
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['A({self.cnus},g)X'].fname});\n"
+                fstring += f"    {dtype} r1_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['A({self.cnuc},g)X'].fname});\n"
                 fstring += f"    {dtype} r2_{self.cnuc}g = rate_eval.screened_rates(k_{self.rates['X({self.cnuc},g)B'].fname});\n"
                 fstring += f"    {dtype} r1_g{self.cnuc} = rate_eval.screened_rates(k_{self.rates['X(g,{self.cnuc})A'].fname});\n"
 
