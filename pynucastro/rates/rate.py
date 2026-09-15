@@ -327,6 +327,8 @@ class Rate:
 
         # these apply to the argument list for the function that evaluates
         # the just the N_A <σv> part of the rate
+        self.rate_eval_needs_tfactors = True
+        self.rate_eval_needs_temp = False
         self.rate_eval_needs_rho = False
         self.rate_eval_needs_comp = False
 

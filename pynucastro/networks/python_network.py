@@ -914,11 +914,11 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, use_tf=True):
+        def format_rate_call(r):
             args = ["rate_eval"]
-            if use_tf:
+            if r.rate_eval_needs_tfactors:
                 args.append("tf")
-            else:
+            elif r.rate_eval_needs_temp:
                 args.append("T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
@@ -942,17 +942,17 @@ class PythonNetwork(RateCollection):
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"

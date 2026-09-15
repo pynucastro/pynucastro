@@ -94,6 +94,10 @@ class BranchedRate(Rate):
                          stoichiometry=stoichiometry,
                          label="branched")
 
+        # we work on already-evaluated rates, so we don't need TFactors
+        # in our function argument list
+        self.rate_eval_needs_tfactors = False
+
         # for the moment, we only work if both branches have the same
         # reactants.  If they don't then we need to weight by (rho Y)
         # for each nucleus they don't have in common.  We'll also
@@ -214,7 +218,7 @@ class BranchedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}(rate_eval, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"

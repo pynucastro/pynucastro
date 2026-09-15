@@ -238,6 +238,10 @@ class TabularWeakRate(Rate):
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
 
+        # we work from T not TFactors
+        self.rate_eval_needs_tfactors = False
+        self.rate_eval_needs_temp = True
+
         self.tabular = True
 
         # store the extrema of the thermodynamics
