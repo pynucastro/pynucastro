@@ -914,17 +914,17 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, *, use_tf=True, do_screening=True):
+        def format_rate_call(r):
             args = ["rate_eval"]
-            if use_tf:
+            if r.rate_eval_needs_tfactors:
                 args.append("tf")
-            else:
+            elif r.rate_eval_needs_temp:
                 args.append("T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
-            if do_screening and r.screening_pairs:
+            if r.screening_pairs:
                 screen_terms = [f"log_scor_{r1}_{r2}" for r1, r2 in r.screening_pairs]
                 args.append("log_scor=" + " + ".join(screen_terms))
             return f"{indent}{r.fname}({', '.join(args)})\n"
@@ -942,17 +942,17 @@ class PythonNetwork(RateCollection):
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
@@ -965,7 +965,7 @@ class PythonNetwork(RateCollection):
             # a beta-limited rate simply compares two (or more)
             # existing rates.  It assumes that they have already been
             # evaluated and screened.
-            ostr += format_rate_call(r, do_screening=False)
+            ostr += format_rate_call(r)
 
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"

@@ -205,7 +205,7 @@ class RateCollection:
             if cr not in self.reaclib_rates:
                 self.reaclib_rates.append(cr)
         else:
-            raise ValueError(f"unable to classify rate {cr}")
+            raise ValueError(f"unable to classify child rate {cr}")
 
     def _build_collection(self):
 
