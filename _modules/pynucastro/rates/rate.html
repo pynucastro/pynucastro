@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post2+g321688ece documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post3+g9dc1d64ca documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=185b65fb"></script>
+    <script src="../../../_static/documentation_options.js?v=3b0a4c46"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1354,38 +1354,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span> <span class="ow">and</span> <span class="n">c_prod</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stoichiometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">c_prod</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">c_prod</span></div>
-
-
-<div class="viewcode-block" id="Rate.modify_products">
-<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.modify_products">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">modify_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_products</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Change the products of the rate to new_products.  This will</span>
-<span class="sd">        recompute the Q value and update the print representation.</span>
-
-<span class="sd">        .. deprecated:: 3.0 ``modify_products`` has been deprecated.</span>
-<span class="sd">           Use ``ModifiedRate`` instead.  ``modify_products`` will be</span>
-<span class="sd">           removed in version 3.1.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_products : list(Nucleus)</span>
-<span class="sd">            the new products to use with the rate.</span>
-
-<span class="sd">        """</span>
-
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">"modified_products is deprecated; use ModifiedRate instead."</span><span class="p">,</span>
-            <span class="ne">DeprecationWarning</span><span class="p">,</span>
-            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">products</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="o">.</span><span class="n">cast_list</span><span class="p">(</span><span class="n">new_products</span><span class="p">,</span> <span class="n">allow_single</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># we need to update the Q value and the print string for the rate</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_q</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_screening</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_print_representation</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Rate.evaluate_screening">
