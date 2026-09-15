@@ -36,6 +36,13 @@ namespace tabular_weak_rates {
 
         rate_eval.enuc_weak = 0.0_rt;
 
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.denuc_weak_dT = 0.0_rt;
+            for (int n = 1; n <= NumSpec; ++n) {
+                rate_eval.denuc_weak_dY(n) = 0.0_rt;
+            }
+        }
+
         <fill_tabular_rates>(2)
     }
 
