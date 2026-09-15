@@ -586,8 +586,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
-        if len(self.tabular_rates) > 0:
-            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
         of.write(f"    {self.dtype} denuc_weak_dT;\n")
         of.write("};\n\n")
 

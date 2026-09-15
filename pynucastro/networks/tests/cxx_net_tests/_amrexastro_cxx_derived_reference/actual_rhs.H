@@ -413,11 +413,9 @@ void actual_jac(const burn_t& state, MatrixType& jac)
         jac(net_ienuc,j) = tmp;
     }
 
-    if constexpr (num_tables > 0) {
-        // Account for the weak rate neutrino losses
-        for (int j = 1; j <= NumSpec; ++j) {
-            jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
-        }
+    // Account for the weak rate neutrino losses
+    for (int j = 1; j <= NumSpec; ++j) {
+        jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
     }
 
     // Account for the thermal neutrino losses
@@ -461,10 +459,8 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     ener_gener_rate(yderivs, jac_e_T);
 
-    if constexpr (num_tables > 0) {
-        // Account for the weak rate neutrino losses
-        jac_e_T += rate_eval.denuc_weak_dT;
-    }
+    // Account for the weak rate neutrino losses
+    jac_e_T += rate_eval.denuc_weak_dT;
 
     // and the thermal neutrino contribution
 
