@@ -38,16 +38,18 @@ struct table_t
     int nheader;
 };
 
-// we add an additional index, k_index_dlogr_dlogt used for computing
-// the derivative of Log(rate) with respect of Log(temperature) by
-// using the table values. It isn't an index into the table but into
-// the 'entries' array. Is important to mention that although we
-// compute dlogr/dlogT as the computed quantity in 'entries', we
-// pursue ultimately dr/dt as the final desired quantity to be
-// computed for this index.
+// we add two additional indices:
+//    k_index_dlogr_dlogT : d Log(rate) / d Log(temperature)
+//    k_index_dlogenuc_dlogT : d Log(nuloss) / d Log(temperature)
+//
+// These are not indices nto the table but into the 'entries'
+// array. Is important to mention that although we compute dlogr/dlogT
+// as the computed quantity in 'entries', we pursue ultimately dr/dt
+// as the final desired quantity to be computed for this index.
 
-constexpr int k_index_dlogr_dlogt = num_vars + 1;
-constexpr int add_vars = 1;  // 1 Additional Var in entries
+constexpr int k_index_dlogr_dlogT = num_vars + 1;
+constexpr int k_index_dlognu_dlogT = num_vars + 2;
+constexpr int add_vars = 2;  // 1 Additional Var in entries
 
 
 namespace rate_tables
@@ -123,9 +125,9 @@ inline
 Real
 evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
                   const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                  const Real log_rhoy, const Real log_temp)
+                  const Real log_rhoy, const Real log_temp, const int component)
 {
-    // The main objective of this function is compute dlogr_dlogt.
+    // The main objective of this function is compute dlogr_dlogT.
 
     const int irhoy_hi = irhoy_lo + 1;
     const int jtemp_hi = jtemp_lo + 1;
@@ -165,10 +167,10 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
         const Real log_temp_lo = log_temp_table(jtemp_lo);
         const Real log_temp_hi = log_temp_table(jtemp_hi);
 
-        const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+        const Real fij     = data(jtemp_lo, irhoy_lo, component);
+        const Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+        const Real fijp1   = data(jtemp_hi, irhoy_lo, component);
+        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
         const Real dlogr_dlogt_i   = (fijp1 - fij) / (log_temp_hi - log_temp_lo);
         const Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (log_temp_hi - log_temp_lo);
@@ -235,15 +237,15 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
         const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
         const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
-        const Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
-        const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        const Real fijp2   = data(jtemp_hi+1, irhoy_lo, jtab_rate);
+        const Real fijm1   = data(jtemp_lo-1, irhoy_lo, component);
+        const Real fij     = data(jtemp_lo, irhoy_lo, component);
+        const Real fijp1   = data(jtemp_hi, irhoy_lo, component);
+        const Real fijp2   = data(jtemp_hi+1, irhoy_lo, component);
 
-        const Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, jtab_rate);
-        const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
-        const Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
+        const Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, component);
+        const Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
+        const Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, component);
 
         const Real dlogTinv1 = 1.0_rt / (log_temp_jp1 - log_temp_jm1);
         const Real dlogTinv2 = 1.0_rt / (log_temp_jp2 - log_temp_j);
@@ -284,10 +286,15 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                                         log_rhoy, log_temp, jtab_gamma);
 
     if constexpr (do_T_derivatives) {
-        entries(k_index_dlogr_dlogt) =
+        entries(k_index_dlogr_dlogT) =
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
-                              log_rhoy, log_temp);
+                              log_rhoy, log_temp, jtab_rate);
+
+        entries(k_index_dlognu_dlogT) =
+            evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
+                              table_meta, log_rhoy_table, log_temp_table, data,
+                              log_rhoy, log_temp, jtab_nuloss);
     }
 }
 
@@ -297,7 +304,8 @@ void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
                  const Real log_rhoy, const Real log_temp, const Real temp,
-                 Real& rate, Real& drate_dt, Real& edot_nu, Real& edot_gamma)
+                 Real& rate, Real& drate_dT,
+                 Real& enu, Real& denu_dT, Real& edot_gamma)
 {
     Array1D<Real, 1, num_vars+add_vars> entries;
 
@@ -316,13 +324,18 @@ tabular_evaluate(const table_t& table_meta,
     // Fill outputs: rate, d(rate)/d(temperature), and
     // (negative) neutrino loss contribution to energy generation
 
-    rate       = std::pow(10.0_rt, entries(jtab_rate));
+    rate = std::pow(10.0_rt, entries(jtab_rate));
     if constexpr (do_T_derivatives) {
-        drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+        drate_dT = rate * entries(k_index_dlogr_dlogT) / temp;
     } else {
-        drate_dt = 0.0;
+        drate_dT = 0.0;
     }
-    edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
+    enu = -std::pow(10.0_rt, entries(jtab_nuloss));
+    if constexpr (do_T_derivatives) {
+        denu_dT = enu * entries(k_index_dlognu_dlogT) / temp;
+    } else {
+        denu_dT = 0.0;
+    }
     edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
 }
 
