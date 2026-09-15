@@ -19,7 +19,7 @@
 // Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
 //
 
-const int num_tables = 0;
+constexpr int num_tables = 0;
 
 enum TableVars : std::uint8_t
 {
