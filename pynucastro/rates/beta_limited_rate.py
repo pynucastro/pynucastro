@@ -86,6 +86,9 @@ class BetaLimitedRate(Rate):
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
 
+        # we use the rates that are already screened
+        self.screening_pairs = []
+
         self._set_print_representation()
 
     def __copy__(self):
