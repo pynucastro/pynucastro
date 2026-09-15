@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.1.0.post1+ga50a4ed0d documentation</title>
+    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.1.0.post2+g321688ece documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a62b3ab0"></script>
+    <script src="../../../_static/documentation_options.js?v=185b65fb"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -622,6 +622,10 @@
                          <span class="n">stoichiometry</span><span class="o">=</span><span class="n">stoichiometry</span><span class="p">,</span>
                          <span class="n">label</span><span class="o">=</span><span class="s2">"branched"</span><span class="p">)</span>
 
+        <span class="c1"># we work on already-evaluated rates, so we don't need TFactors</span>
+        <span class="c1"># in our function argument list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="c1"># for the moment, we only work if both branches have the same</span>
         <span class="c1"># reactants.  If they don't then we need to weight by (rho Y)</span>
         <span class="c1"># for each nucleus they don't have in common.  We'll also</span>
@@ -753,7 +757,7 @@
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, log_scor=0.0):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # represents the sequence: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>

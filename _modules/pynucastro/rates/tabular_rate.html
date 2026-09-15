@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post1+ga50a4ed0d documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post2+g321688ece documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a62b3ab0"></script>
+    <script src="../../../_static/documentation_options.js?v=185b65fb"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -771,6 +771,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># we work from T not TFactors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">True</span>
 

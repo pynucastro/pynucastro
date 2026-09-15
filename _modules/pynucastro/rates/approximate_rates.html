@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 3.1.0.post1+ga50a4ed0d documentation</title>
+    <title>pynucastro.rates.approximate_rates &#8212; pynucastro 3.1.0.post2+g321688ece documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a62b3ab0"></script>
+    <script src="../../../_static/documentation_options.js?v=185b65fb"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -759,6 +759,10 @@
                                  <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"B(g,p)X"</span><span class="p">],</span>
                                  <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)A"</span><span class="p">]]</span>
 
+            <span class="c1"># we work on already-evaluated rates, so we don't need TFactors</span>
+            <span class="c1"># in our function argument list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">"nn_g"</span><span class="p">:</span>
 
             <span class="c1"># a nn_g approximate rate combines A(n,g)X(n,g)B into a</span>
@@ -845,6 +849,9 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="c1"># we work on already-evaluated rates, so we don't need TFactors</span>
+            <span class="c1"># in our function argument list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">"Yp_pg"</span><span class="p">:</span>
 
@@ -940,6 +947,7 @@
                                  <span class="n">products</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_product</span><span class="p">],</span>
                                  <span class="n">label</span><span class="o">=</span><span class="s2">"approx"</span><span class="p">,</span>
                                  <span class="n">use_identical_particle_factor</span><span class="o">=</span><span class="n">use_identical_particle_factor</span><span class="p">)</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">hidden_rates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"A(Y,p)X"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,g)B"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,Y)A"</span><span class="p">],</span>
@@ -955,6 +963,10 @@
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"B(g,p)X"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,Y)A"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)C"</span><span class="p">]]</span>
+
+            <span class="c1"># we work on already-evaluated rates, so we don't need TFactors</span>
+            <span class="c1"># in our function argument list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span> <span class="o">==</span> <span class="s2">"Yp_pa"</span><span class="p">:</span>
 
@@ -1062,6 +1074,10 @@
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,a)B"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,Y)A"</span><span class="p">],</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s2">"X(p,g)C"</span><span class="p">]]</span>
+
+            <span class="c1"># we work on already-evaluated rates, so we don't need TFactors</span>
+            <span class="c1"># in our function argument list</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"approximation type </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">approx_type</span><span class="si">}</span><span class="s2"> not supported"</span><span class="p">)</span>
@@ -1294,7 +1310,7 @@
 
             <span class="n">string</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval):</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pg = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,g)B'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,a)A'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
@@ -1330,7 +1346,7 @@
 
             <span class="n">string</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, rho=None, Y=None):</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, rho=None, Y=None):</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">"    Yn = Y[jn]</span><span class="se">\n</span><span class="s2">"</span>
 
@@ -1365,7 +1381,7 @@
 
             <span class="n">string</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval):</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,Y)A'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,a)C'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
@@ -1408,7 +1424,7 @@
 
             <span class="n">string</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval):</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pY = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,Y)A'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_pa = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="s1">'X(p,a)B'</span><span class="p">]</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
