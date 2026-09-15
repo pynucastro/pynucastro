@@ -345,7 +345,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}{nuc.A_nuc * constants.m_u_C18}_rt,  // {nuc!s}\n')
 
     def _table_num(self, n_indent, of):
-        of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
+        of.write(f'{self.indent*n_indent}constexpr int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
         for r in self.tabular_rates:
