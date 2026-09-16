@@ -50,8 +50,8 @@ struct table_t
 // as the final desired quantity to be computed for this index.
 
 constexpr int k_index_dlogr_dlogT = num_vars + 1;
-constexpr int k_index_dlognu_dlogT = num_vars + 1;
-constexpr int add_vars = 1;  // 1 Additional Var in entries
+constexpr int k_index_dlognu_dlogT = num_vars + 2;
+constexpr int add_vars = 2;  // 1 Additional Var in entries
 
 
 namespace rate_tables

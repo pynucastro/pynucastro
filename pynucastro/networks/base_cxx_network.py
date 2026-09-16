@@ -345,7 +345,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}{nuc.A_nuc * constants.m_u_C18}_rt,  // {nuc!s}\n')
 
     def _table_num(self, n_indent, of):
-        of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
+        of.write(f'{self.indent*n_indent}constexpr int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
         for r in self.tabular_rates:
@@ -586,8 +586,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
-        if len(self.tabular_rates) > 0:
-            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
         of.write(f"    {self.dtype} denuc_weak_dT;\n")
         of.write("};\n\n")
 
