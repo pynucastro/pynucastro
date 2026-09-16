@@ -309,7 +309,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
         """
-        self._compute_screening_factors_helper(n_indent, of, self.get_rates(),
+        self._compute_screening_factors_helper(n_indent, of, self.all_rates,
                                                do_T_derivatives=True)
 
     def _nrxn(self, n_indent, of):
@@ -323,7 +323,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}{dtype}\n')
 
     def _screen_pair(self, n_indent, of):
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
         NumScreenPairs = len(screening_pair_set)
         for i, (n1, n2) in enumerate(screening_pair_set, start=1):
             of.write(f"{self.indent*n_indent}k_{n1}_{n2} = {i},\n")
@@ -331,7 +331,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*n_indent}NumScreenPairs = k_{n1}_{n2}\n')
 
     def _screen_pair_enum_type(self, n_indent, of):
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
         NumScreenPairs = len(screening_pair_set)
         dtype = _rate_dtype(NumScreenPairs)
         of.write(f'{self.indent*n_indent}{dtype}\n')
