@@ -301,20 +301,24 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
 
+    const auto& screened_rates = rate_eval.screened_rates;
+
     amrex::Real scratch;
 
-    scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
+    scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho
+              - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(He4, He4, scratch);
 
     scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*state.rho;
     jac.set(He4, Mg24, scratch);
 
-    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx);
+    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho
+              + screened_rates(k_Si28_to_Mg24_He4_approx);
     jac.set(He4, Si28, scratch);
 
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
@@ -331,13 +335,15 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Mg24, S32, 0.0);
 
-    scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
+    scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho
+              - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(Si28, He4, scratch);
 
     scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*state.rho;
     jac.set(Si28, Mg24, scratch);
 
-    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho - screened_rates(k_Si28_to_Mg24_He4_approx);
+    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho
+              - screened_rates(k_Si28_to_Mg24_He4_approx);
     jac.set(Si28, Si28, scratch);
 
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
@@ -380,7 +386,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
     // Energy generation rate Jacobian elements with respect to species
     // J_{ienuc,j} = ∂(ε_nuc)/∂Y_j

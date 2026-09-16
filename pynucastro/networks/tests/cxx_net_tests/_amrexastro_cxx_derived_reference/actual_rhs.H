@@ -289,14 +289,17 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
 
+    const auto& screened_rates = rate_eval.screened_rates;
+
     amrex::Real scratch;
 
-    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*state.rho;
+    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho
+              - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*state.rho;
     jac.set(H1, H1, scratch);
 
     scratch = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
@@ -305,7 +308,8 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
     jac.set(H1, Fe52, scratch);
 
-    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(H1)*state.rho;
+    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho
+              - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(H1)*state.rho;
     jac.set(H1, Co55, scratch);
 
     scratch = screened_rates(k_Ni56_to_p_Co55_derived);
@@ -314,10 +318,12 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho;
     jac.set(He4, H1, scratch);
 
-    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*state.rho - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
+    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*state.rho
+              - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
     jac.set(He4, He4, scratch);
 
-    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(He4)*state.rho - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
+    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(He4)*state.rho
+              - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
     jac.set(He4, Fe52, scratch);
 
     scratch = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho;
@@ -329,10 +335,12 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho;
     jac.set(Fe52, H1, scratch);
 
-    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*state.rho - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
+    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*state.rho
+              - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
     jac.set(Fe52, He4, scratch);
 
-    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(He4)*state.rho - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
+    scratch = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(He4)*state.rho
+              - screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
     jac.set(Fe52, Fe52, scratch);
 
     scratch = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho;
@@ -341,7 +349,8 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Ni56_to_He4_Fe52_derived);
     jac.set(Fe52, Ni56, scratch);
 
-    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*state.rho;
+    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*state.rho
+              - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*state.rho;
     jac.set(Co55, H1, scratch);
 
     scratch = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*state.rho;
@@ -350,7 +359,8 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(He4)*state.rho;
     jac.set(Co55, Fe52, scratch);
 
-    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(H1)*state.rho;
+    scratch = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(H1)*state.rho
+              - screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(H1)*state.rho;
     jac.set(Co55, Co55, scratch);
 
     scratch = screened_rates(k_Ni56_to_p_Co55_derived);
@@ -368,7 +378,8 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(H1)*state.rho;
     jac.set(Ni56, Co55, scratch);
 
-    scratch = -screened_rates(k_Ni56_to_He4_Fe52_derived) - screened_rates(k_Ni56_to_p_Co55_derived);
+    scratch = -screened_rates(k_Ni56_to_He4_Fe52_derived)
+              - screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(Ni56, Ni56, scratch);
 
 
@@ -397,7 +408,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
     // Energy generation rate Jacobian elements with respect to species
     // J_{ienuc,j} = ∂(ε_nuc)/∂Y_j

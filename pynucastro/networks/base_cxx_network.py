@@ -572,8 +572,17 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self._cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
-                                                                     standard="c++11"))
+                    terms = self.jac_out_result[jac_idx].as_ordered_terms()
+                    jvalues = []
+                    for i, term in enumerate(terms):
+                        sign = ""
+                        if i > 0:
+                            sign = "- " if term.could_extract_minus_sign() else "+ "
+                        if sign == "- ":
+                            term = -term
+                        jvalues.append(sign + self._cxxify(sympy.cxxcode(term, precision=15,
+                                                                       standard="c++11")))
+                    jvalue = ("\n" + self.indent*n_indent + " "*len("scratch = ")).join(jvalues)
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
