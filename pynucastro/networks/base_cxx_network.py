@@ -261,6 +261,17 @@ class BaseCxxNetwork(ABC, RateCollection):
                         continue
                     seen_rate_ids.add(id(r))
                     rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
+                    if r.rate_comp_dependence and ni in r.rate_comp_dependence:
+                        # Product rule: retain the full abundance and density
+                        # factors and replace lambda with its Y_i derivative.
+                        ydot_term = self.symbol_rates.ydot_term_symbol(r, nj)
+                        if ydot_term is not None:
+                            rate_sym = sympy.Symbol(f'NRD__k_{r.fname}__')
+                            deriv_name = f'drate_{r.fname}_dY{ni.cindex()}'
+                            deriv_sym = sympy.Symbol(deriv_name)
+                            self.symbol_rates.symbol_ludict[deriv_name] = f'rate_eval.{deriv_name}'
+                            rsym_add += ydot_term.subs(rate_sym, deriv_sym)
+                            rsym_add_null = rsym_add.equals(0)
                     rsym = rsym + rsym_add
                     rsym_is_null = rsym_is_null and rsym_add_null
                 jac_sym.append(rsym)
