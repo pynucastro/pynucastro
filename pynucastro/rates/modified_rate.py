@@ -150,6 +150,17 @@ class ModifiedRate(Rate):
         self.screening_pairs = []
         self._set_screening_pairs()
 
+    def get_child_rates(self):
+        """Return the rate that this ModifiedRate depends on
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+
+        return [self.original_rate]
+
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
         """Evaluate natural log of reaction rates for the modified rate.

@@ -1,8 +1,5 @@
 """Some helper functions for determining which rates need screening"""
 
-from pynucastro.rates.approximate_rates import ApproximateRate
-from pynucastro.rates.branched_rate import BranchedRate
-
 
 def get_screening_pair_set(rates):
     """Create a set of unique screening pairs for a list of rates.
@@ -10,7 +7,9 @@ def get_screening_pair_set(rates):
     Parameters
     ----------
     rates : Iterable(Rate)
-        A list of the rates in our network.
+        A list of the rates in our network.  We expect this to be the
+        complete list of rates (including any child rates of composite
+        rate types), e.g., ``RateCollection.all_rates``
 
     Returns
     -------
@@ -18,21 +17,9 @@ def get_screening_pair_set(rates):
 
     """
 
-    # we need to consider the child rates that come with
-    # ApproximateRate
-    all_rates = []
-    for r in rates:
-        # check if rate is an ApproximateRate
-        if isinstance(r, ApproximateRate):
-            all_rates += r.get_child_rates()
-        elif isinstance(r, BranchedRate):
-            all_rates += [r.underlying_rate, r.primary_branch, r.other_branch]
-        else:
-            all_rates.append(r)
-
     # Create a full set of unique screening pairs across all rates
     unique_pairs = set()
-    for r in all_rates:
+    for r in rates:
         for scn_pair in r.screening_pairs:
             unique_pairs.add(scn_pair)
 
