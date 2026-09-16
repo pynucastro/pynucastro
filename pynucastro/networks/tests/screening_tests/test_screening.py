@@ -24,7 +24,7 @@ class TestScreening:
 
     def test_screening_pair_set(self, rc):
 
-        screening_pair_set = get_screening_pair_set(rc.get_rates())
+        screening_pair_set = get_screening_pair_set(rc.all_rates)
         assert len(screening_pair_set) == 4
 
     def test_screening_chugunov_2007(self, rc):

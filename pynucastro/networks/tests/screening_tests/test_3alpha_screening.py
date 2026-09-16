@@ -51,7 +51,7 @@ class Test3alphaScreening:
                    (pyna.Nucleus("p"), pyna.Nucleus("Be9")),
                    (pyna.Nucleus("p"), pyna.Nucleus("B11"))])
 
-        assert ans == get_screening_pair_set(net.get_rates())
+        assert ans == get_screening_pair_set(net.all_rates)
 
     def test_python_network(self, net):
         assert isinstance(net, pyna.PythonNetwork)
