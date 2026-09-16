@@ -871,7 +871,7 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
 
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
 
         # Initialize log_scor to 0.0
         for n1, n2 in screening_pair_set:
