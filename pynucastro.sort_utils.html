@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Networks with StarLib rates &#8212; pynucastro 3.1.0.post5+gb1a16c08c documentation</title>
+    <title>pynucastro.sort_utils module &#8212; pynucastro 3.1.0.post5+gb1a16c08c documentation</title>
   
   
   
@@ -48,12 +48,12 @@
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'starlib';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.sort_utils';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Finding Available Rates" href="finding-rates.html" />
-    <link rel="prev" title="Integrating a Network" href="pynucastro-integration.html" />
+    <link rel="next" title="pynucastro.utils module" href="pynucastro.utils.html" />
+    <link rel="prev" title="pynucastro.numba_util module" href="pynucastro.numba_util.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="3.1" />
@@ -171,12 +171,12 @@
 <li class="toctree-l1"><a class="reference internal" href="solar_composition.html">Solar Composition</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Networks with StarLib rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Networks with StarLib rates</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
 <ul class="nav bd-sidenav">
@@ -281,11 +281,11 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -359,7 +359,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.mesa_utils.html">pynucastro.mesa_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pynucastro.sort_utils.html">pynucastro.sort_utils module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">pynucastro.sort_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
 </ul>
@@ -448,7 +448,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/starlib.ipynb?plain=1" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/pynucastro.sort_utils.rst?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -465,7 +465,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/starlib.ipynb" target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/pynucastro.sort_utils.rst" target="_blank"
    class="btn btn-sm btn-source-edit-button dropdown-item"
    title="Suggest edit"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -482,7 +482,7 @@
       
       
       
-      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fstarlib.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fpynucastro.sort_utils.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -512,7 +512,7 @@
       
       
       
-      <li><a href="_sources/starlib.ipynb" target="_blank"
+      <li><a href="_sources/pynucastro.sort_utils.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -522,7 +522,7 @@
 <span class="btn__icon-container">
   <i class="fas fa-file"></i>
   </span>
-<span class="btn__text-container">.ipynb</span>
+<span class="btn__text-container">.rst</span>
 </a>
 </li>
       
@@ -595,7 +595,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Networks with StarLib rates</h1>
+    <h1>pynucastro.sort_utils module</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -605,13 +605,8 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-median-rates-integration">StarLib median rates integration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-starlib-uncertainties-integrations">Sampling StarLib uncertainties integrations</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reaclib-comparison-integration">ReacLib comparison integration</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.sort_utils.CircularRateDependency"><code class="docutils literal notranslate"><span class="pre">CircularRateDependency</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.sort_utils.topo_sort"><code class="docutils literal notranslate"><span class="pre">topo_sort()</span></code></a></li>
 </ul>
             </nav>
         </div>
@@ -623,194 +618,33 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="networks-with-starlib-rates">
-<h1>Networks with StarLib rates<a class="headerlink" href="#networks-with-starlib-rates" title="Link to this heading">#</a></h1>
-<p>StarLib is a library of thermonuclear reaction rates and weak laboratory interaction rates tabulated as a function of temperature. Its key distinction from other sources is that it provides factor uncertainties for each tabulated rate. Here, we elaborate upon its current implementation within pynucastro and provide examples to illustrate its usage.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>The intended way to access StarLib rates in pynucastro is through a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.StarLibLibrary" title="pynucastro.rates.library.StarLibLibrary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibLibrary</span></code></a>. When an instance of <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is created without an argument, it returns a <a class="reference internal" href="pynucastro.rates.library.html#pynucastro.rates.library.Library" title="pynucastro.rates.library.Library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Library</span></code></a> holding instances of <a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a> at their respective median values, i.e., no sampling is performed.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">StarLibLibrary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span>  <span class="p">[</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"c13"</span><span class="p">,</span> <span class="s2">"n13"</span><span class="p">,</span>
-           <span class="s2">"n14"</span><span class="p">,</span> <span class="s2">"n15"</span><span class="p">,</span> <span class="s2">"o14"</span><span class="p">,</span> <span class="s2">"o15"</span> <span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<section id="integrating-networks-with-sampled-rates">
-<h2>Integrating Networks with sampled rates<a class="headerlink" href="#integrating-networks-with-sampled-rates" title="Link to this heading">#</a></h2>
-<p>First we’ll create a network with the median rates</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">smrates</span> <span class="o">=</span> <span class="n">sl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="n">smnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">smrates</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>and set the thermodynamic conditions (roughly corresponding to the center of the Sun)</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">150</span>
-<span class="n">T</span> <span class="o">=</span> <span class="mf">1.5e7</span>
+  <section id="module-pynucastro.sort_utils">
+<span id="pynucastro-sort-utils-module"></span><h1>pynucastro.sort_utils module<a class="headerlink" href="#module-pynucastro.sort_utils" title="Link to this heading">#</a></h1>
+<p>Functions used for sorting rates</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="pynucastro.sort_utils.CircularRateDependency">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.sort_utils.</span></span><span class="sig-name descname"><span class="pre">CircularRateDependency</span></span><a class="reference internal" href="_modules/pynucastro/sort_utils.html#CircularRateDependency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.sort_utils.CircularRateDependency" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>A circular dependency is detected in a sequence of rates</p>
+</dd></dl>
 
-<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">smnet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.7</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.28</span>
-<span class="n">comp</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.02</span>
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.sort_utils.topo_sort">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.sort_utils.</span></span><span class="sig-name descname"><span class="pre">topo_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/sort_utils.html#topo_sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.sort_utils.topo_sort" title="Link to this definition">#</a></dt>
+<dd><p>Perform a topological sort on a list of rates.</p>
+<p><code class="docutils literal notranslate"><span class="pre">topo_sort</span></code> takes a list of <code class="docutils literal notranslate"><span class="pre">Rate</span></code> objects and does a
+depth-first search using the child rates as dependencies to
+produce a topologically-sorted ordering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rates</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – The collection of rates to sort</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)">list</a>(<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate">Rate</a>)</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="n">Y0</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<section id="starlib-median-rates-integration">
-<h3>StarLib median rates integration<a class="headerlink" href="#starlib-median-rates-integration" title="Link to this heading">#</a></h3>
-<p>Now we’ll integrate the median network</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sl_sol</span> <span class="o">=</span> <span class="n">smnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="sampling-starlib-uncertainties-integrations">
-<h3>Sampling StarLib uncertainties integrations<a class="headerlink" href="#sampling-starlib-uncertainties-integrations" title="Link to this heading">#</a></h3>
-<p>Now we’ll do a suite of integrations with different random rate samplings.</p>
-<p>To enable sampling, we must pass a seed. This seed can be passed when a <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code> is initialized or we can resample an existing <code class="docutils literal notranslate"><span class="pre">StarLibLibrary</span></code>. We can also resample an existing <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or any network object.  Here, we demonstrate the latter by creating several variants of our network with different samplings, integrating them, and storing the solution for plotting later.</p>
-<p>Note that we seed the numpy random number generator to ensure reproducibility here</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nsamples</span> <span class="o">=</span> <span class="mi">15</span>
-<span class="k">for</span> <span class="n">seed</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">):</span>
-    <span class="n">smnet</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">sol</span> <span class="o">=</span> <span class="n">smnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
-    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="reaclib-comparison-integration">
-<h3>ReacLib comparison integration<a class="headerlink" href="#reaclib-comparison-integration" title="Link to this heading">#</a></h3>
-<p>We can compare the integration of networks with sampled and median starlib rates against that for ReacLib rates.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rrates</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">linking_nuclei</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
-<span class="n">rrnet</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="n">rrates</span><span class="p">)</span>
-<span class="n">rl_sol</span> <span class="o">=</span> <span class="n">rrnet</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Y0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="plotting-solutions">
-<h2>Plotting Solutions<a class="headerlink" href="#plotting-solutions" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Given that we are comparing network integration across three kinds of rates: sampled StarLib rates, median StarLib rates and ReacLib rates, we can setup color maps to best visualize mass fractions over time.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">col_map_light</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'lightsalmon'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'lightsteelblue'</span><span class="p">,</span>
-                 <span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'lightgray'</span><span class="p">,</span> <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'thistle'</span><span class="p">,</span>
-                 <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'paleturquoise'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'palegreen'</span><span class="p">,</span>
-                 <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'pink'</span><span class="p">,</span> <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'peachpuff'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'khaki'</span><span class="p">}</span>
-
-<span class="n">col_map_med</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'red'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'royalblue'</span><span class="p">,</span><span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'dimgray'</span><span class="p">,</span> 
-               <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'mediumorchid'</span><span class="p">,</span> <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'darkturquoise'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'green'</span><span class="p">,</span>
-               <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'deeppink'</span><span class="p">,</span> <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'peru'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'gold'</span><span class="p">}</span>
-
-<span class="n">col_map_dark</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'p'</span><span class="p">:</span><span class="s1">'maroon'</span><span class="p">,</span> <span class="s1">'He4'</span><span class="p">:</span><span class="s1">'navy'</span><span class="p">,</span><span class="s1">'C12'</span><span class="p">:</span> <span class="s1">'black'</span><span class="p">,</span> <span class="s1">'C13'</span><span class="p">:</span> <span class="s1">'darkorchid'</span><span class="p">,</span> 
-               <span class="s1">'N13'</span><span class="p">:</span> <span class="s1">'teal'</span><span class="p">,</span> <span class="s1">'N14'</span><span class="p">:</span> <span class="s1">'darkgreen'</span><span class="p">,</span> <span class="s1">'N15'</span><span class="p">:</span> <span class="s1">'mediumvioletred'</span><span class="p">,</span>
-               <span class="s1">'O14'</span><span class="p">:</span> <span class="s1">'saddlebrown'</span><span class="p">,</span> <span class="s1">'O15'</span><span class="p">:</span> <span class="s1">'goldenrod'</span><span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-
-<span class="c1"># sampled StarLib rates</span>
-<span class="k">for</span> <span class="n">sol</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-                  <span class="n">color</span><span class="o">=</span><span class="n">col_map_light</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">])</span>
-
-<span class="c1"># median StarLib rates</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">color</span><span class="o">=</span><span class="n">col_map_med</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">],</span>
-              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"X($</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">$)"</span><span class="p">)</span>
-
-<span class="c1"># Reaclib rates</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">rl_sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">rl_sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
-              <span class="n">color</span><span class="o">=</span><span class="n">col_map_dark</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">caps_name</span><span class="si">}</span><span class="s2">"</span><span class="p">],</span> <span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">1.e10</span><span class="p">,</span> <span class="mf">1.e20</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="s2">"small"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"t (s)"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/f96b0cddb20b73dc63c2af67ebb407b706f1b828cd0da26d674fef38f1a6c26d.png" src="_images/f96b0cddb20b73dc63c2af67ebb407b706f1b828cd0da26d674fef38f1a6c26d.png" />
-</div>
-</div>
-<p>Here the dotted lines depict the evolution of mass fractions over time given ReacLib rates, the solid lines depict that for median StarLib rates and the faint lines depict that for each sampled StarLib rates.</p>
-</section>
 </section>
 
 
@@ -825,20 +659,20 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pynucastro-integration.html"
+       href="pynucastro.numba_util.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Integrating a Network</p>
+        <p class="prev-next-title">pynucastro.numba_util module</p>
       </div>
     </a>
     <a class="right-next"
-       href="finding-rates.html"
+       href="pynucastro.utils.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Finding Available Rates</p>
+        <p class="prev-next-title">pynucastro.utils module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -860,13 +694,8 @@
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-networks-with-sampled-rates">Integrating Networks with sampled rates</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starlib-median-rates-integration">StarLib median rates integration</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-starlib-uncertainties-integrations">Sampling StarLib uncertainties integrations</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reaclib-comparison-integration">ReacLib comparison integration</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting-solutions">Plotting Solutions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.sort_utils.CircularRateDependency"><code class="docutils literal notranslate"><span class="pre">CircularRateDependency</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.sort_utils.topo_sort"><code class="docutils literal notranslate"><span class="pre">topo_sort()</span></code></a></li>
 </ul>
   </nav></div>
 
