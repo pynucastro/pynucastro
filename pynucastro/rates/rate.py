@@ -408,6 +408,12 @@ class Rate:
         self.rate_eval_needs_comp = False
         self.rate_eval_needs_pfcache = False
 
+        # if a nucleus appears explicitly in the rate (likely because
+        # of a rate approximation), we will provide a function to
+        # give the derivative
+
+        self.rate_comp_dependence = None
+
     def __repr__(self):
         return self.string
 

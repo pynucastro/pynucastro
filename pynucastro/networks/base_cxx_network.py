@@ -578,6 +578,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
+
         of.write("struct rate_derivs_t {\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
@@ -588,6 +589,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
         of.write(f"    {self.dtype} denuc_weak_dT;\n")
+
+        # some rates have explicit composition dependencies, so we
+        # want to store their derivatives.  We expect these to be few,
+        # so we will have an explicit entry for each case.
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f"    {self.dtype} drate_{r.fname}_dY{n.cindex()}{{}};\n")
+
         of.write("};\n\n")
 
     def _write_rate_functions(self, n_indent, of, rates):
