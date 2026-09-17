@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.starlib_rate &#8212; pynucastro 3.1.0.post6+gcc01fea56 documentation</title>
+    <title>pynucastro.rates.starlib_rate &#8212; pynucastro 3.1.0.post7+gda714e528 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=639ffd1c"></script>
+    <script src="../../../_static/documentation_options.js?v=33497d12"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -531,6 +531,7 @@
 
 <span class="sd">"""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">cxx_rate_func_args</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.temperature_tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">TemperatureTabularRate</span><span class="p">,</span>
                                                        <span class="n">TempTableInterpolator</span><span class="p">)</span>
 
@@ -665,15 +666,13 @@
 
 <span class="sd">        """</span>
 
-        <span class="c1"># pylint: disable=duplicate-code</span>
-        <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">extra_args</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">cxx_rate_func_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">extra_args</span><span class="p">:</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"const tf_t&amp; tfactors"</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_scor"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT"</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT"</span><span class="p">,</span> <span class="o">*</span><span class="n">extra_args</span><span class="p">]</span>
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;int do_T_derivatives&gt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;int do_T_derivatives, typename T&gt;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
@@ -690,10 +689,16 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"                                                 tfactors.lnT9,</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"                                                 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"                                                 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::sigma_rate);</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = std::exp(_mu + p * _sigma + log_scor);</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = std::exp(_mu + p * _sigma + log_scor);</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = std::exp(_mu + p * _sigma);</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    // we found dlog(rate)/dlog(T9)</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9);</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        drate_dT = rate * dlog_rate_dT;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n</span><span class="s2">"</span>
 
