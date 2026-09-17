@@ -558,6 +558,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         # now make the Jacobian
         n_unique_nuclei = len(self.unique_nuclei)
         for jnj, nj in enumerate(self.unique_nuclei):
+
+            of.write(f"{self.indent*n_indent}// {nj!s} row\n\n")
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
@@ -567,6 +569,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
+            of.write("\n")
 
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -578,6 +581,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
+
         of.write("struct rate_derivs_t {\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
@@ -585,6 +589,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec>  dweak_ydot_dYe;\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
 
