@@ -4,6 +4,7 @@ uncertainties as per the StarLib Library
 
 """
 
+from pynucastro.rates.rate import cxx_rate_func_args
 from pynucastro.rates.temperature_tabular_rate import (TemperatureTabularRate,
                                                        TempTableInterpolator)
 
@@ -131,15 +132,13 @@ class StarLibRate(TemperatureTabularRate):
 
         """
 
-        # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -156,10 +155,16 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "                                                 tfactors.lnT9,\n"
         fstring += f"                                                 {self.fname}_data::log_t9,\n"
         fstring += f"                                                 {self.fname}_data::sigma_rate);\n"
-        fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        if self.screening_pairs:
+            fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        else:
+            fstring += "    rate = std::exp(_mu + p * _sigma);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
         fstring += "    if constexpr (do_T_derivatives) {\n"
-        fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
+        if self.screening_pairs:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
+        else:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9);\n"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
         fstring += "    }\n"
 

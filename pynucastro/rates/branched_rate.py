@@ -8,7 +8,7 @@ import copy
 import numpy as np
 
 from pynucastro.rates.beta_limited_rate import BetaLimitedRate
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -107,6 +107,11 @@ class BranchedRate(Rate):
         assert self.primary_branch.reactants == self.other_branch.reactants
 
         self._set_print_representation()
+
+    def _set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        self.ion_screen = []
+        self.screening_pairs = []
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -259,7 +264,11 @@ class BranchedRate(Rate):
 
         """
 
-        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"

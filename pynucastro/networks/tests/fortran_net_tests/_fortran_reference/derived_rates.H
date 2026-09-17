@@ -11,9 +11,9 @@ namespace derived_rates {
 
     using namespace Rates;
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
-    void rate_Ne20_He4_to_C12_C12_derived(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_Ne20_He4_to_C12_C12_derived(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
 
         // Ne20 + He4 --> C12 + C12
 
@@ -32,13 +32,15 @@ namespace derived_rates {
         ln_set_rate =  61.474151468919175 + -53.57824966896331 * tfactors.T9i + -84.165 * tfactors.T913i + -1.56627 * tfactors.T913
                              + -0.0736084 * tfactors.T9 + -0.072797 * tfactors.T953 + -0.666667 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
+        ln_set_rate += log_scor;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  53.57824966896331 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * -84.165 * tfactors.T943i + (1.0/3.0) * -1.56627 * tfactors.T923i
                                       + -0.0736084 + (5.0/3.0) * -0.072797 * tfactors.T923 + -0.666667 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
+            dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -51,9 +53,9 @@ namespace derived_rates {
 
     }
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
-    void rate_Na23_p_to_C12_C12_derived(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_Na23_p_to_C12_C12_derived(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
 
         // Na23 + p --> C12 + C12
 
@@ -72,13 +74,15 @@ namespace derived_rates {
         ln_set_rate =  60.92541574740554 + -26.004360836807496 * tfactors.T9i + -84.165 * tfactors.T913i + -1.4191 * tfactors.T913
                              + -0.114619 * tfactors.T9 + -0.070307 * tfactors.T953 + -0.666667 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
+        ln_set_rate += log_scor;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  26.004360836807496 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * -84.165 * tfactors.T943i + (1.0/3.0) * -1.4191 * tfactors.T923i
                                       + -0.114619 + (5.0/3.0) * -0.070307 * tfactors.T923 + -0.666667 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
+            dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -91,9 +95,9 @@ namespace derived_rates {
 
     }
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
-    void rate_O16_to_He4_C12_derived(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_O16_to_He4_C12_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
 
         // O16 --> He4 + C12
 
@@ -112,13 +116,13 @@ namespace derived_rates {
         ln_set_rate =  279.29694929711803 + -84.95157686791683 * tfactors.T9i + 103.411 * tfactors.T913i + -420.567 * tfactors.T913
                              + 64.0874 * tfactors.T9 + -12.4624 * tfactors.T953 + 138.803 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  84.95157686791683 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * 103.411 * tfactors.T943i + (1.0/3.0) * -420.567 * tfactors.T923i
                                       + 64.0874 + (5.0/3.0) * -12.4624 * tfactors.T923 + 138.803 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -133,13 +137,13 @@ namespace derived_rates {
         ln_set_rate =  94.31554929711803 + -84.50314686791683 * tfactors.T9i + 58.9128 * tfactors.T913i + -148.273 * tfactors.T913
                              + 9.08324 * tfactors.T9 + -0.541041 * tfactors.T953 + 71.8554 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  84.50314686791683 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * 58.9128 * tfactors.T943i + (1.0/3.0) * -148.273 * tfactors.T923i
                                       + 9.08324 + (5.0/3.0) * -0.541041 * tfactors.T923 + 71.8554 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -152,9 +156,9 @@ namespace derived_rates {
 
     }
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
-    void rate_Mg24_to_He4_Ne20_derived(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_Mg24_to_He4_Ne20_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
 
         // Mg24 --> He4 + Ne20
 
@@ -173,13 +177,13 @@ namespace derived_rates {
         ln_set_rate =  16.022538839949377 + -120.89510873006793 * tfactors.T9i + 16.9229 * tfactors.T913
                              + -2.57325 * tfactors.T9 + 0.208997 * tfactors.T953;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  120.89510873006793 * tfactors.T9i * tfactors.T9i + (1.0/3.0) * 16.9229 * tfactors.T923i
                                       + -2.57325 + (5.0/3.0) * 0.208997 * tfactors.T923;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -193,12 +197,12 @@ namespace derived_rates {
         // ReacLib set derived from il10r
         ln_set_rate =  26.803878839949377 + -117.33446873006793 * tfactors.T9i;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  117.33446873006793 * tfactors.T9i * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -212,12 +216,12 @@ namespace derived_rates {
         // ReacLib set derived from il10r
         ln_set_rate =  -13.884691160050625 + -110.62025873006793 * tfactors.T9i;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  110.62025873006793 * tfactors.T9i * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -232,13 +236,13 @@ namespace derived_rates {
         ln_set_rate =  49.32660883994937 + -108.11420873006793 * tfactors.T9i + -46.2525 * tfactors.T913i + 5.58901 * tfactors.T913
                              + 7.61843 * tfactors.T9 + -3.683 * tfactors.T953 + 0.833333 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  108.11420873006793 * tfactors.T9i * tfactors.T9i + -(1.0/3.0) * -46.2525 * tfactors.T943i + (1.0/3.0) * 5.58901 * tfactors.T923i
                                       + 7.61843 + (5.0/3.0) * -3.683 * tfactors.T923 + 0.833333 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -251,9 +255,9 @@ namespace derived_rates {
 
     }
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
-    void rate_Mg24_to_n_Mg23_derived(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT, [[maybe_unused]] const T& rate_eval, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
+    void rate_Mg24_to_n_Mg23_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
 
         // Mg24 --> n + Mg23
 
@@ -272,13 +276,13 @@ namespace derived_rates {
         ln_set_rate =  32.05683058133977 + -191.83691284889673 * tfactors.T9i + 2.66964 * tfactors.T913
                              + -0.448904 * tfactors.T9 + 0.0326505 * tfactors.T953 + 1.5 * tfactors.lnT9;
 
-        ln_set_rate += net_log_pf + log_scor;
+        ln_set_rate += net_log_pf;
 
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             dln_set_rate_dT9 =  191.83691284889673 * tfactors.T9i * tfactors.T9i + (1.0/3.0) * 2.66964 * tfactors.T923i
                                       + -0.448904 + (5.0/3.0) * 0.0326505 * tfactors.T923 + 1.5 * tfactors.T9i;
 
-            dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;
+            dln_set_rate_dT9 += net_dlog_pf_dT9;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -314,7 +318,7 @@ namespace derived_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Ne20);
             }
 #endif
-            rate_Ne20_He4_to_C12_C12_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_Ne20_He4_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Ne20_He4_to_C12_C12_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Ne20_He4_to_C12_C12_derived) = drate_dT;
@@ -332,7 +336,7 @@ namespace derived_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Na23);
             }
 #endif
-            rate_Na23_p_to_C12_C12_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_Na23_p_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Na23_p_to_C12_C12_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Na23_p_to_C12_C12_derived) = drate_dT;
@@ -344,7 +348,7 @@ namespace derived_rates {
 
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
-            rate_O16_to_He4_C12_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_O16_to_He4_C12_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_O16_to_He4_C12_derived) = drate_dT;
@@ -356,7 +360,7 @@ namespace derived_rates {
 
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
-            rate_Mg24_to_He4_Ne20_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_Mg24_to_He4_Ne20_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Mg24_to_He4_Ne20_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Mg24_to_He4_Ne20_derived) = drate_dT;
@@ -368,7 +372,7 @@ namespace derived_rates {
 
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
-            rate_Mg24_to_n_Mg23_derived<do_T_derivatives, T>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT, rate_eval, pf_cache);
+            rate_Mg24_to_n_Mg23_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Mg24_to_n_Mg23_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Mg24_to_n_Mg23_derived) = drate_dT;

@@ -8,7 +8,7 @@ import copy
 import numpy as np
 
 from pynucastro.rates.beta_limited_rate import BetaLimitedRate
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -97,10 +97,11 @@ class ModifiedRate(Rate):
                          not_in_ydot_term=not_in_ydot_term,
                          rate_source=rate_source)
 
-        # if the underlying rate needs density and composition, then
-        # this does too
-        self.rate_eval_needs_rho = original_rate.rate_eval_needs_rho
-        self.rate_eval_needs_comp = original_rate.rate_eval_needs_comp
+        # set the function string args to be those of the original rate
+        self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
+        self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
+        self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
 
         self._set_print_representation()
 
@@ -270,15 +271,11 @@ class ModifiedRate(Rate):
 
         """
 
-        if dtype == "amrex::Real":
-            array_type = "amrex::Array1D"
-        else:
-            array_type = "Array1D"
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors", "const T& rate_eval",
-                f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
         fstring = "template <int do_T_derivatives, typename T>\n"
         fstring += f"{specifiers}\n"
@@ -289,14 +286,8 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        if not isinstance(self.original_rate, BetaLimitedRate):
-            templates = "<do_T_derivatives>"
-            args = ["tfactors", "log_scor", "dlog_scor_dT", "rate", "drate_dT"]
-        else:
-            templates = ""
-            args = ["rate_eval", "rho", "Y", "rate", "drate_dT"]
-
-        fstring += f"    rate_{self.original_rate.fname}{templates}({', '.join(args)});\n"
+        cargs = cxx_rate_func_args(self, mode="call")
+        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>({', '.join(cargs)});\n"
 
         if not leave_open:
             fstring += "}\n\n"
