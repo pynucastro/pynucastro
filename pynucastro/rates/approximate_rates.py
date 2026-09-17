@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 
 
 def _assert_rate_prop(rate, *,
@@ -942,21 +942,17 @@ class ApproximateRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        if dtype == "amrex::Real":
-            array_type = "amrex::Array1D"
-        else:
-            array_type = "Array1D"
+        fstring = ""
+        fstring = "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         if self.approx_type == "ap_pg":
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.rates['X(p,g)B'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)A'].fname});\n"
@@ -1015,12 +1011,6 @@ class ApproximateRate(Rate):
 
         if self.approx_type == "nn_g":
 
-            args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
-                    f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
             fstring += f"    {dtype} Yn = Y(N);\n"
 
             if not self.is_reverse:
@@ -1066,12 +1056,6 @@ class ApproximateRate(Rate):
             # we are approximating A(Y,p)X(p,g)B with an alternate
             # branch from X, X(p,a)C, and possibly a direct path
             # between A and B, A(Y,g)B
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)C'].fname});\n"
@@ -1138,12 +1122,6 @@ class ApproximateRate(Rate):
 
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)B'].fname});\n"

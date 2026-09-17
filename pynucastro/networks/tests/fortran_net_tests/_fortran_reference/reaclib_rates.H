@@ -12,9 +12,9 @@ namespace reaclib_rates {
     using namespace Rates;
     using namespace Species;
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_C12_C12_to_He4_Ne20_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_He4_Ne20_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> He4 + Ne20
 
@@ -48,9 +48,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_C12_C12_to_n_Mg23_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_n_Mg23_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> n + Mg23
 
@@ -84,9 +84,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_C12_C12_to_p_Na23_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_p_Na23_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> p + Na23
 
@@ -120,9 +120,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_C12_He4_to_O16_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_He4_to_O16_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + He4 --> O16
 
@@ -177,9 +177,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_Ne20_He4_to_Mg24_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_Ne20_He4_to_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // Ne20 + He4 --> Mg24
 
@@ -276,9 +276,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_Mg23_n_to_Mg24_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_Mg23_n_to_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
         // Mg23 + n --> Mg24
 
@@ -293,13 +293,10 @@ namespace reaclib_rates {
         ln_set_rate =  7.00613 + 2.66964 * tfactors.T913
                              + -0.448904 * tfactors.T9 + 0.0326505 * tfactors.T953;
 
-        ln_set_rate += log_scor;
-
         if constexpr (do_T_derivatives) {
             dln_set_rate_dT9 =  + (1.0/3.0) * 2.66964 * tfactors.T923i
                                       + -0.448904 + (5.0/3.0) * 0.0326505 * tfactors.T923;
 
-            dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -312,9 +309,9 @@ namespace reaclib_rates {
 
     }
 
-    template <int do_T_derivatives>
+    template <int do_T_derivatives, typename T>
     inline
-    void rate_n_to_p_beta_neg_reaclib(const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_n_to_p_beta_neg_reaclib(const T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
         // n --> p
 
@@ -329,12 +326,9 @@ namespace reaclib_rates {
         ln_set_rate =  -6.78161;
         amrex::ignore_unused(tfactors);
 
-        ln_set_rate += log_scor;
-
         if constexpr (do_T_derivatives) {
             dln_set_rate_dT9 = 0.0;
 
-            dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
@@ -369,7 +363,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_C12_C12);
             }
 #endif
-            rate_C12_C12_to_He4_Ne20_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_C12_C12_to_He4_Ne20_reaclib<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_C12_C12_to_He4_Ne20_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_C12_C12_to_He4_Ne20_reaclib) = drate_dT;
@@ -387,7 +381,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_C12_C12);
             }
 #endif
-            rate_C12_C12_to_n_Mg23_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_C12_C12_to_n_Mg23_reaclib<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_C12_C12_to_n_Mg23_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_C12_C12_to_n_Mg23_reaclib) = drate_dT;
@@ -405,7 +399,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_C12_C12);
             }
 #endif
-            rate_C12_C12_to_p_Na23_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_C12_C12_to_p_Na23_reaclib<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_C12_C12_to_p_Na23_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_C12_C12_to_p_Na23_reaclib) = drate_dT;
@@ -423,7 +417,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_C12);
             }
 #endif
-            rate_C12_He4_to_O16_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_C12_He4_to_O16_reaclib<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_C12_He4_to_O16_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_C12_He4_to_O16_reaclib) = drate_dT;
@@ -441,7 +435,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Ne20);
             }
 #endif
-            rate_Ne20_He4_to_Mg24_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_Ne20_He4_to_Mg24_reaclib<do_T_derivatives>(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_Ne20_He4_to_Mg24_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Ne20_He4_to_Mg24_reaclib) = drate_dT;
@@ -453,7 +447,7 @@ namespace reaclib_rates {
 
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
-            rate_Mg23_n_to_Mg24_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_Mg23_n_to_Mg24_reaclib<do_T_derivatives>(rate_eval, tfactors, rate, drate_dT);
             rate_eval.screened_rates(k_Mg23_n_to_Mg24_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_Mg23_n_to_Mg24_reaclib) = drate_dT;
@@ -465,7 +459,7 @@ namespace reaclib_rates {
 
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
-            rate_n_to_p_beta_neg_reaclib<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_n_to_p_beta_neg_reaclib<do_T_derivatives>(rate_eval, tfactors, rate, drate_dT);
             rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_n_to_p_beta_neg_reaclib) = drate_dT;
