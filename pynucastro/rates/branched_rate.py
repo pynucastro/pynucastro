@@ -98,10 +98,6 @@ class BranchedRate(Rate):
         # in our function argument list
         self.rate_eval_needs_tfactors = False
 
-        # we work directly from the evaluated rates, so there is no
-        # screening applied to this
-        self.screening_pairs = []
-
         # for the moment, we only work if both branches have the same
         # reactants.  If they don't then we need to weight by (rho Y)
         # for each nucleus they don't have in common.  We'll also
@@ -109,6 +105,11 @@ class BranchedRate(Rate):
         assert self.primary_branch.reactants == self.other_branch.reactants
 
         self._set_print_representation()
+
+    def _set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        self.ion_screen = []
+        self.screening_pairs = []
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
