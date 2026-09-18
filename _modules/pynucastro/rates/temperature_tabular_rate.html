@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 3.1.0.post7+gda714e528 documentation</title>
+    <title>pynucastro.rates.temperature_tabular_rate &#8212; pynucastro 3.1.0.post8+g7767deda9 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=33497d12"></script>
+    <script src="../../../_static/documentation_options.js?v=d751444d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -860,12 +860,13 @@
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;int do_T_derivatives, typename T&gt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="c1"># pylint: enable=duplicate-code</span>
 
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    constexpr int do_T_derivatives = std::is_same_v&lt;T, rate_derivs_t&gt;;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp&lt;do_T_derivatives&gt;(</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"                                               tfactors.lnT9,</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"                                               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_data::log_t9,</span><span class="se">\n</span><span class="s2">"</span>
@@ -875,7 +876,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate = std::exp(_log_rate);</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    // we found dlog(rate)/dlog(T9)</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (do_T_derivatives) {</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT</span><span class="se">\n</span><span class="s2">;"</span>
         <span class="k">else</span><span class="p">:</span>
