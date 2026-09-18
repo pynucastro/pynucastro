@@ -107,7 +107,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -180,7 +180,7 @@ void get_ydot_weak(const burn_t& state,
 
     // Compute all weak rates and get ydot_weak
 
-    tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     ydot_nuc(H1) = 0.0_rt;
 
@@ -264,10 +264,12 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
+
+    const auto& screened_rates = rate_eval.screened_rates;
 
     amrex::Real scratch;
 
@@ -322,16 +324,27 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     evaluate_rates<do_T_derivatives, rate_derivs_t>(state, Y, rate_eval);
 
     // Species Jacobian elements with respect to other species
+    // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
     // Energy generation rate Jacobian elements with respect to species
+    // J_{ienuc,j} = ∂(ε_nuc)/∂Y_j
+    //
+    // we compute this as ∂(ε_nuc)/∂Y_j = -N_A Σ_i ∂(Ydot_i)/∂Y_j m_i c²
 
     for (int j = 1; j <= NumSpec; ++j) {
+        // create a function that gives us jac(i) for the column j
         auto jac_slice_2 = [&](int i) -> amrex::Real { return jac.get(i, j); };
+
         amrex::Real tmp{};
         ener_gener_rate(jac_slice_2, tmp);
         jac(net_ienuc,j) = tmp;
+    }
+
+    // Account for the weak rate neutrino losses
+    for (int j = 1; j <= NumSpec; ++j) {
+        jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
     }
 
     // Account for the thermal neutrino losses
@@ -349,24 +362,41 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 #endif
 
+    // strong-reaction terms, J_{i,ienuc} = ∂(Ydot_i)/∂T for rows i =
+    // 1, ..., NumSpec
+
+    amrex::Array1D<amrex::Real, 1, neqs> yderivs;
+
     // Evaluate the Jacobian elements with respect to energy by
     // calling the RHS using d(rate) / dT and then transform them
     // to our energy integration variable.
 
-    amrex::Array1D<amrex::Real, 1, neqs>  yderivs;
-
     rhs_nuc(state, yderivs, Y, rate_eval.dscreened_rates_dT);
 
+    // convert the derivatives in this column from ∂/∂T to ∂/∂e
     for (int k = 1; k <= NumSpec; k++) {
         jac.set(k, net_ienuc, temperature_to_energy_jacobian(state, yderivs(k)));
     }
 
+    // now the last element, J_{ienuc, ienuc} = ∂(edot)/∂e.  We start
+    // by doing the derivatives as ∂/∂T.
 
-    // finally, d(de/dt)/de
+    // first the contribution from the strong rates, ∂(ε_nuc)/∂T,
+    // which we compute as ∂(ε_nuc)/∂T = -N_A Σ ∂(Ydot_i)/T m_i c²
 
-    amrex::Real jac_e_T;
+    amrex::Real jac_e_T{};
+
     ener_gener_rate(yderivs, jac_e_T);
+
+    // Account for the weak rate neutrino losses
+    jac_e_T += rate_eval.denuc_weak_dT;
+
+    // and the thermal neutrino contribution
+
     jac_e_T -= dsneutdt;
+
+    // finally, convert d(de/dt)/dT to d(de/dt)/de
+
     jac.set(net_ienuc, net_ienuc, temperature_to_energy_jacobian(state, jac_e_T));
 
 }

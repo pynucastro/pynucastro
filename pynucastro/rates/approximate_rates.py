@@ -325,6 +325,9 @@ class ApproximateRate(Rate):
             # in our function argument list
             self.rate_eval_needs_tfactors = False
 
+            # the approximate rate has an explicit n dependence
+            self.rate_comp_dependence = [Nucleus("n")]
+
         elif self.approx_type == "Yp_pg":
 
             try:
@@ -951,6 +954,7 @@ class ApproximateRate(Rate):
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         if self.approx_type == "ap_pg":
 
@@ -1004,54 +1008,49 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa + drdT_pY);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
+        elif self.approx_type == "nn_g":
 
-            return fstring
-
-        if self.approx_type == "nn_g":
-
+            fstring += f"    {dtype} drate_dYN{{}};\n"
             fstring += f"    {dtype} Yn = Y(N);\n"
+
+            fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
+            fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
+            fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
                 fstring += f"    {dtype} r1_ng = rate_eval.screened_rates(k_{self.rates['A(n,g)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
                 fstring += "    rate = 2.0_rt * r1_ng * r2_ng * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 fstring += f"        {dtype} dr1dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['A(n,g)X'].fname});\n"
                 fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
                 fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += "        drate_dT = 2.0_rt * (dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn));\n"
+                fstring += "        drate_dYN = -rate * dd * rho * r2_ng;\n"
                 fstring += "    }\n"
             else:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += f"    {dtype} r2_gn = rate_eval.screened_rates(k_{self.rates['B(g,n)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
                 fstring += "    rate = r1_gn * r2_gn * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += f"        {dtype} dr2dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['B(g,n)X'].fname});\n"
                 fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
                 fstring += "        drate_dT = dr1dT_gn * r2_gn * dd + r1_gn * dr2dT_gn * dd - r1_gn * r2_gn * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);\n"
+                fstring += "        drate_dYN = -rate * dd * rho * r2_ng;\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+            fstring += f"        rate_eval.drate_{self.fname}_dYN = drate_dYN;\n"
+            fstring += "    }\n"
 
-            return fstring
-
-        if self.approx_type == "Yp_pg":
+        elif self.approx_type == "Yp_pg":
 
             # we are approximating A(Y,p)X(p,g)B with an alternate
             # branch from X, X(p,a)C, and possibly a direct path
@@ -1113,12 +1112,7 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_gY + drdT_pY * r_gp * dd + r_pY * drdT_gp * dd - r_pY * r_gp * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "Yp_pa":
+        elif self.approx_type == "Yp_pa":
 
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
@@ -1164,9 +1158,15 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_aY + drdT_pY * r_ap * dd + r_pY * drdT_ap * dd - r_pY * r_ap * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
+        else:
+            raise NotImplementedError("don't know how to work with this approximation")
 
-            return fstring
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
-        raise NotImplementedError("don't know how to work with this approximation")
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring

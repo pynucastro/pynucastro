@@ -327,6 +327,8 @@ class TemperatureTabularRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
+
         # pylint: enable=duplicate-code
 
         fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
@@ -345,6 +347,11 @@ class TemperatureTabularRate(Rate):
         else:
             fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt\n;"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
+        fstring += "    }\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:

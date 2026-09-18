@@ -13,13 +13,11 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_Ne20_He4_to_C12_C12_derived(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
+    void rate_Ne20_He4_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache) {
 
         // Ne20 + He4 --> C12 + C12
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        Real rate{}, drate_dT{};
         // Assume no partition function effects
         Real net_log_pf{0.0};
         [[maybe_unused]] Real net_dlog_pf_dT9{0.0};
@@ -51,17 +49,19 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_Ne20_He4_to_C12_C12_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Ne20_He4_to_C12_C12_derived) = drate_dT;
+        }
     }
 
     template <typename T>
     inline
-    void rate_Na23_p_to_C12_C12_derived(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
+    void rate_Na23_p_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache) {
 
         // Na23 + p --> C12 + C12
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        Real rate{}, drate_dT{};
         // Assume no partition function effects
         Real net_log_pf{0.0};
         [[maybe_unused]] Real net_dlog_pf_dT9{0.0};
@@ -93,17 +93,19 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_Na23_p_to_C12_C12_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Na23_p_to_C12_C12_derived) = drate_dT;
+        }
     }
 
     template <typename T>
     inline
-    void rate_O16_to_He4_C12_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, Real& rate, Real& drate_dT) {
+    void rate_O16_to_He4_C12_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
 
         // O16 --> He4 + C12
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        Real rate{}, drate_dT{};
         // Assume no partition function effects
         Real net_log_pf{0.0};
         [[maybe_unused]] Real net_dlog_pf_dT9{0.0};
@@ -154,6 +156,10 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_O16_to_He4_C12_derived) = drate_dT;
+        }
     }
 
 
@@ -170,7 +176,6 @@ namespace derived_rates {
 
         {
             // Ne20_He4_to_C12_C12_derived
-
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -179,16 +184,11 @@ namespace derived_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Ne20);
             }
 #endif
-            rate_Ne20_He4_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_Ne20_He4_to_C12_C12_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Ne20_He4_to_C12_C12_derived) = drate_dT;
-            }
+            rate_Ne20_He4_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
         }
 
         {
             // Na23_p_to_C12_C12_derived
-
             Real log_scor {0.0_rt};
             Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -197,21 +197,12 @@ namespace derived_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Na23);
             }
 #endif
-            rate_Na23_p_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_Na23_p_to_C12_C12_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Na23_p_to_C12_C12_derived) = drate_dT;
-            }
+            rate_Na23_p_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
         }
 
         {
             // O16_to_He4_C12_derived
-
-            rate_O16_to_He4_C12_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_O16_to_He4_C12_derived) = drate_dT;
-            }
+            rate_O16_to_He4_C12_derived(rate_eval, tfactors, pf_cache);
         }
 
 

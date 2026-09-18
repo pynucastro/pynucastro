@@ -87,7 +87,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // Calculate tabular rates
-    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
@@ -159,11 +159,13 @@ inline
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const Array1D<Real, 1, NumSpec>& Y,
-             const Array1D<Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
     using namespace Species;
+
+    const auto& screened_rates = rate_eval.screened_rates;
 
     Real scratch;
 
@@ -196,7 +198,7 @@ void actual_jac(burn_t& state, MatrixType& jac)
 
     // Species Jacobian elements with respect to other species
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
 }
 

@@ -105,26 +105,26 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<compute_screening_factors>'] = self._compute_screening_factors
         self.ftags['<table_num>'] = self._table_num
         self.ftags['<declare_tables>'] = self._declare_tables
-        self.ftags['<table_init_meta>'] = self._table_init_meta
-        self.ftags['<compute_tabular_rates>'] = self._compute_tabular_rates
         self.ftags['<temp_table_data>'] = self._temp_table_data
-        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<ydot>'] = self._ydot
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
-        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
-        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
-        self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<rate_struct>'] = self._rate_struct
-        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
-        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
-        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
-        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
-        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
-        self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
-        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
-        self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
+        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
+        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
+        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
+        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
+        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
+        self.ftags['<fill_tabular_rates>'] = self._fill_tabular_rates
+        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
+        self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
+        self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
+        self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
+        self.ftags['<reaclib_rate_functions>'] = self._reaclib_rate_functions
+        self.ftags['<tabular_rate_functions>'] = self._tabular_rate_functions
+        self.ftags['<temp_tabular_rate_functions>'] = self._temp_tabular_rate_functions
         self.ftags['<part_fun_data>'] = self._fill_partition_function_data
         self.ftags['<part_fun_cases>'] = self._fill_partition_function_cases
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
@@ -261,6 +261,17 @@ class BaseCxxNetwork(ABC, RateCollection):
                         continue
                     seen_rate_ids.add(id(r))
                     rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
+                    if r.rate_comp_dependence and ni in r.rate_comp_dependence:
+                        # Product rule: retain the full abundance and density
+                        # factors and replace lambda with its Y_i derivative.
+                        ydot_term = self.symbol_rates.ydot_term_symbol(r, nj)
+                        if ydot_term is not None:
+                            rate_sym = sympy.Symbol(f'NRD__k_{r.fname}__')
+                            deriv_name = f'drate_{r.fname}_dY{ni.cindex()}'
+                            deriv_sym = sympy.Symbol(deriv_name)
+                            self.symbol_rates.symbol_ludict[deriv_name] = f'rate_eval.{deriv_name}'
+                            rsym_add += ydot_term.subs(rate_sym, deriv_sym)
+                            rsym_add_null = rsym_add.equals(0)
                     rsym = rsym + rsym_add
                     rsym_is_null = rsym_is_null and rsym_add_null
                 jac_sym.append(rsym)
@@ -345,7 +356,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*n_indent}{nuc.A_nuc * constants.m_u_C18}_rt,  // {nuc!s}\n')
 
     def _table_num(self, n_indent, of):
-        of.write(f'{self.indent*n_indent}const int num_tables = {len(self.tabular_rates)};\n')
+        of.write(f'{self.indent*n_indent}constexpr int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
         for r in self.tabular_rates:
@@ -373,37 +384,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f'{line.strip()}\n')
             of.write(f'{idnt}     }};\n')
             of.write('\n')
-
-    def _table_init_meta(self, n_indent, of):
-        for r in self.tabular_rates:
-            idnt = self.indent*n_indent
-            of.write(f'{idnt}init_tab_info({r.table_index_name}_meta, "{r.rfile}", {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data);\n\n')
-
-            of.write('\n')
-
-    def _compute_tabular_rates(self, n_indent, of):
-        if len(self.tabular_rates) > 0:
-
-            idnt = self.indent*n_indent
-
-            of.write(f'{idnt}const {self.dtype} log_temp = std::log10(temp);\n')
-            of.write(f'{idnt}const {self.dtype} log_rhoy = std::log10(rhoy);\n\n')
-
-            for r in self.tabular_rates:
-
-                of.write(f'{idnt}// {r.rid}\n\n')
-                of.write(f'{idnt}tabular_evaluate<do_T_derivatives>({r.table_index_name}_meta, {r.table_index_name}_rhoy, {r.table_index_name}_temp, {r.table_index_name}_data,\n')
-                of.write(f'{idnt}                                    log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n')
-
-                of.write(f'{idnt}rate_eval.screened_rates(k_{r.fname}) = rate;\n')
-
-                of.write(f'{idnt}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                of.write(f'{idnt}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dt;\n')
-                of.write(f'{idnt}}}\n')
-
-                of.write(f'{idnt}rate_eval.enuc_weak += C::n_A * {self.symbol_rates.name_y}({r.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n')
-
-                of.write('\n\n')
 
     def _write_temp_table_array(self, n_indent, of, name, data, npts):
         """Write a temperature-table array with consistent precision and formatting."""
@@ -549,7 +529,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                              namespace="branched_rates")
 
         # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);\n")
+        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);\n")
         of.write('\n')
 
         # Compose and write ydot for all weak reactions
@@ -592,8 +572,17 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self._cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
-                                                                     standard="c++11"))
+                    terms = self.jac_out_result[jac_idx].as_ordered_terms()
+                    jvalues = []
+                    for i, term in enumerate(terms):
+                        sign = ""
+                        if i > 0:
+                            sign = "- " if term.could_extract_minus_sign() else "+ "
+                        if sign == "- ":
+                            term = -term
+                        jvalues.append(sign + self._cxxify(sympy.cxxcode(term, precision=15,
+                                                                       standard="c++11")))
+                    jvalue = ("\n" + self.indent*n_indent + " "*len("scratch = ")).join(jvalues)
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
@@ -609,6 +598,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
+
         of.write("struct rate_derivs_t {\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
@@ -617,25 +607,33 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
+        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
+        of.write(f"    {self.dtype} denuc_weak_dT;\n")
+
+        # some rates have explicit composition dependencies, so we
+        # want to store their derivatives.  We expect these to be few,
+        # so we will have an explicit entry for each case.
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f"    {self.dtype} drate_{r.fname}_dY{n.cindex()}{{}};\n")
+
         of.write("};\n\n")
 
     def _write_rate_functions(self, n_indent, of, rates):
-        """Write C++ rate functions with the network's type, specifiers, and indentation."""
+        """Write C++ rate functions with the network's type,
+        specifiers, and indentation.
+
+        """
+
         for r in rates:
-            fstr = r.function_string_cxx(dtype=self.dtype, specifiers=self.function_specifier)
+            fstr = r.function_string_cxx(dtype=self.dtype,
+                                         specifiers=self.function_specifier)
             indented_fstr = textwrap.indent(fstr, self.indent * n_indent)
             of.write(indented_fstr)
 
-    def _reaclib_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.reaclib_rates)
-
-    def _temp_tabular_rate_functions(self, n_indent, of):
-        # the TemperatureTabularRate and StarLibRate functions are in
-        # the same header, so we can just do them together here
-        self._write_rate_functions(n_indent, of, self.temperature_tabular_rates + self.starlib_rates)
-
-    def _modified_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.modified_rates)
+    def _approx_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.approx_rates)
 
     def _branched_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.branched_rates)
@@ -643,8 +641,20 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _derived_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.derived_rates)
 
-    def _approx_rate_functions(self, n_indent, of):
-        self._write_rate_functions(n_indent, of, self.approx_rates)
+    def _modified_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.modified_rates)
+
+    def _reaclib_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.reaclib_rates)
+
+    def _tabular_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.tabular_rates)
+
+    def _temp_tabular_rate_functions(self, n_indent, of):
+        # the TemperatureTabularRate and StarLibRate functions are in
+        # the same header, so we can just do them together here
+        self._write_rate_functions(n_indent, of,
+                                   self.temperature_tabular_rates + self.starlib_rates)
 
     def write_screen_var(self, n_indent, of, rate, do_T_derivatives=True):
         """Return the string that composes the screening variable for a rate."""
@@ -679,7 +689,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             call_args = cxx_rate_func_args(r, mode="call")
 
             of.write(f"{self.indent*n_indent}" + "{\n")
-            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n")
             if r.screening_pairs:
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"
@@ -689,12 +699,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(call_args)});\n")
             else:
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(call_args)});\n")
-            of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-
-            if do_T_derivatives:
-                of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-                of.write(f"{self.indent*(n_indent+1)}}}\n")
 
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
@@ -706,6 +710,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_reaclib_rates(self, n_indent, of):
         self._fill_rates(n_indent, of, self.reaclib_rates)
+
+    def _fill_tabular_rates(self, n_indent, of):
+        self._fill_rates(n_indent, of, self.tabular_rates)
 
     def _fill_modified_rates(self, n_indent, of):
         self._fill_rates(n_indent, of, self.modified_rates)
