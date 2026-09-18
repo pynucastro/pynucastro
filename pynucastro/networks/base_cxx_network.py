@@ -720,10 +720,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self._fill_rates(n_indent, of, self.branched_rates)
 
     def _fill_beta_limited_rates(self, n_indent, of):
-        args = ["rate_eval", "rho", "Y", "rate", "drate_dT"]
-        template_args = None
-        self._fill_rates(n_indent, of, self.beta_limited_rates,
-                         args, template_args, do_screening=False)
+        self._fill_rates(n_indent, of, self.beta_limited_rates)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:

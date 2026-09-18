@@ -8,7 +8,7 @@ import copy
 import numpy as np
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -86,10 +86,12 @@ class BetaLimitedRate(Rate):
         self.rate_eval_needs_rho = True
         self.rate_eval_needs_comp = True
 
-        # we use the rates that are already screened
-        self.screening_pairs = []
-
         self._set_print_representation()
+
+    def _set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        self.ion_screen = []
+        self.screening_pairs = []
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -256,16 +258,10 @@ class BetaLimitedRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
-
-        if dtype == "amrex::Real":
-            array_type = "amrex::Array1D"
-        else:
-            array_type = "Array1D"
-
-        args = ["const T& rate_eval", f"const {dtype} rho", f"const {array_type}<{dtype}, 1, NumSpec>& Y",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
         fstring = ""
         fstring = "template <typename T>\n"
