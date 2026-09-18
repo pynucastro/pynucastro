@@ -117,7 +117,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -194,12 +194,10 @@ void get_ydot_weak(const burn_t& state,
 
     {
         // n_to_p_beta_neg_reaclib
-
-        reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors, rate, drate_dT);
-        rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
+        reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors);
     }
 
-    tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     const auto& screened_rates = rate_eval.screened_rates;
 

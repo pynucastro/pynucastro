@@ -951,6 +951,7 @@ class ApproximateRate(Rate):
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         if self.approx_type == "ap_pg":
 
@@ -1004,12 +1005,7 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa + drdT_pY);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "nn_g":
+        elif self.approx_type == "nn_g":
 
             fstring += f"    {dtype} Yn = Y(N);\n"
 
@@ -1046,12 +1042,7 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = dr1dT_gn * r2_gn * dd + r1_gn * dr2dT_gn * dd - r1_gn * r2_gn * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "Yp_pg":
+        elif self.approx_type == "Yp_pg":
 
             # we are approximating A(Y,p)X(p,g)B with an alternate
             # branch from X, X(p,a)C, and possibly a direct path
@@ -1113,12 +1104,7 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_gY + drdT_pY * r_gp * dd + r_pY * drdT_gp * dd - r_pY * r_gp * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "Yp_pa":
+        elif self.approx_type == "Yp_pa":
 
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
@@ -1164,9 +1150,15 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_aY + drdT_pY * r_ap * dd + r_pY * drdT_ap * dd - r_pY * r_ap * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
+        else:
+            raise NotImplementedError("don't know how to work with this approximation")
 
-            return fstring
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
-        raise NotImplementedError("don't know how to work with this approximation")
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring
