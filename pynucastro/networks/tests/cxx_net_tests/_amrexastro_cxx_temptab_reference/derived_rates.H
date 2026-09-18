@@ -41,6 +41,7 @@ namespace derived_rates {
         amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
         [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
 
+        constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
@@ -83,8 +84,6 @@ namespace derived_rates {
         {
             // F17_to_O16_p_derived
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
