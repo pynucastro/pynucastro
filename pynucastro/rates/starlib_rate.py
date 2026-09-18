@@ -138,7 +138,7 @@ class StarLibRate(TemperatureTabularRate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <int do_T_derivatives, typename T>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -146,6 +146,7 @@ class StarLibRate(TemperatureTabularRate):
         fstring += "    // our rate is exp(μ + pσ + h)\n"
         fstring += "    // where μ = median rate, p = Gaussian random #,\n"
         fstring += "    //       σ = uncertainty, h = screening potential\n"
+        fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
         fstring += "    auto [_mu, _dmu_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
         fstring += "                                          tfactors.lnT9,\n"
         fstring += f"                                          {self.fname}_data::log_t9,\n"
@@ -160,7 +161,7 @@ class StarLibRate(TemperatureTabularRate):
         else:
             fstring += "    rate = std::exp(_mu + p * _sigma);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
-        fstring += "    if constexpr (do_T_derivatives) {\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
         if self.screening_pairs:
             fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
         else:

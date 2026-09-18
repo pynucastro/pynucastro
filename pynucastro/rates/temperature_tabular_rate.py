@@ -323,12 +323,13 @@ class TemperatureTabularRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <int do_T_derivatives, typename T>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         # pylint: enable=duplicate-code
 
+        fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
         fstring += "    auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
         fstring += "                                               tfactors.lnT9,\n"
         fstring += f"                                               {self.fname}_data::log_t9,\n"
@@ -338,7 +339,7 @@ class TemperatureTabularRate(Rate):
         else:
             fstring += "    rate = std::exp(_log_rate);\n"
         fstring += "    // we found dlog(rate)/dlog(T9)\n"
-        fstring += "    if constexpr (do_T_derivatives) {\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
         if self.screening_pairs:
             fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT\n;"
         else:

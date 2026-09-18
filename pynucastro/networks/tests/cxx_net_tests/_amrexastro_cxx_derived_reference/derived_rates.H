@@ -208,8 +208,6 @@ namespace derived_rates {
         {
             // Ni56_to_He4_Fe52_derived
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_Ni56_to_He4_Fe52_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Ni56_to_He4_Fe52_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -220,8 +218,6 @@ namespace derived_rates {
         {
             // Ni56_to_p_Co55_derived
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_Ni56_to_p_Co55_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
             rate_eval.screened_rates(k_Ni56_to_p_Co55_derived) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {

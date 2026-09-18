@@ -98,7 +98,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 2.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_He4_He4) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_He4) = dlog_scor_dT;
     }
 }
@@ -108,7 +108,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 2.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_He4_Be9) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_Be9) = dlog_scor_dT;
     }
 }
@@ -118,7 +118,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 1.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_p_Be9) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_Be9) = dlog_scor_dT;
     }
 }
@@ -128,7 +128,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 1.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_p_B11) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_B11) = dlog_scor_dT;
     }
 }
@@ -138,7 +138,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 2.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_He4_Be8) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_Be8) = dlog_scor_dT;
     }
 }
@@ -148,7 +148,7 @@ if screen_func is not None:
     static_assert(scn_fac.z1 == 1.0_rt);
     actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
     rate_eval.log_screen(k_p_Be8) = log_scor;
-    if constexpr (do_T_derivatives) {
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_Be8) = dlog_scor_dT;
     }
 }

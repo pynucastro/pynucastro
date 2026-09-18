@@ -114,8 +114,6 @@ namespace approximate_rates {
         {
             // Mg24_He4_to_Si28_approx
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_Mg24_He4_to_Si28_approx(rate_eval, rate, drate_dT);
             rate_eval.screened_rates(k_Mg24_He4_to_Si28_approx) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -126,8 +124,6 @@ namespace approximate_rates {
         {
             // Si28_to_Mg24_He4_approx
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_Si28_to_Mg24_He4_approx(rate_eval, rate, drate_dT);
             rate_eval.screened_rates(k_Si28_to_Mg24_He4_approx) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -138,8 +134,6 @@ namespace approximate_rates {
         {
             // Si28_He4_to_S32_approx
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_Si28_He4_to_S32_approx(rate_eval, rate, drate_dT);
             rate_eval.screened_rates(k_Si28_He4_to_S32_approx) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
@@ -150,8 +144,6 @@ namespace approximate_rates {
         {
             // S32_to_Si28_He4_approx
 
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
             rate_S32_to_Si28_He4_approx(rate_eval, rate, drate_dT);
             rate_eval.screened_rates(k_S32_to_Si28_He4_approx) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
