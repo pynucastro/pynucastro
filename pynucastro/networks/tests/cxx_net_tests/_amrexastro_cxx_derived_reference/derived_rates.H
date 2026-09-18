@@ -13,13 +13,11 @@ namespace derived_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Ni56_to_He4_Fe52_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Ni56_to_He4_Fe52_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
 
         // Ni56 --> He4 + Fe52
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         // Evaluate partition function terms
 
         amrex::Real Ni56_log_pf, dNi56_log_pf_dT9;
@@ -66,17 +64,19 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_Ni56_to_He4_Fe52_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Ni56_to_He4_Fe52_derived) = drate_dT;
+        }
     }
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Ni56_to_p_Co55_derived(const T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Ni56_to_p_Co55_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
 
         // Ni56 --> p + Co55
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         // Evaluate partition function terms
 
         amrex::Real Ni56_log_pf, dNi56_log_pf_dT9;
@@ -123,17 +123,19 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_Ni56_to_p_Co55_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Ni56_to_p_Co55_derived) = drate_dT;
+        }
     }
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Co55_p_to_He4_Fe52_derived(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Co55_p_to_He4_Fe52_derived(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache) {
 
         // Co55 + p --> He4 + Fe52
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         // Evaluate partition function terms
 
         amrex::Real p_log_pf, dp_log_pf_dT9;
@@ -188,6 +190,10 @@ namespace derived_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_Co55_p_to_He4_Fe52_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Co55_p_to_He4_Fe52_derived) = drate_dT;
+        }
     }
 
 
@@ -207,27 +213,16 @@ namespace derived_rates {
 
         {
             // Ni56_to_He4_Fe52_derived
-
-            rate_Ni56_to_He4_Fe52_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_Ni56_to_He4_Fe52_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Ni56_to_He4_Fe52_derived) = drate_dT;
-            }
+            rate_Ni56_to_He4_Fe52_derived(rate_eval, tfactors, pf_cache);
         }
 
         {
             // Ni56_to_p_Co55_derived
-
-            rate_Ni56_to_p_Co55_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_Ni56_to_p_Co55_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Ni56_to_p_Co55_derived) = drate_dT;
-            }
+            rate_Ni56_to_p_Co55_derived(rate_eval, tfactors, pf_cache);
         }
 
         {
             // Co55_p_to_He4_Fe52_derived
-
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -236,11 +231,7 @@ namespace derived_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Co55);
             }
 #endif
-            rate_Co55_p_to_He4_Fe52_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_Co55_p_to_He4_Fe52_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Co55_p_to_He4_Fe52_derived) = drate_dT;
-            }
+            rate_Co55_p_to_He4_Fe52_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
         }
 
 

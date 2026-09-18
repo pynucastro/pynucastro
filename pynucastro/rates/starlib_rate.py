@@ -142,6 +142,8 @@ class StarLibRate(TemperatureTabularRate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
+
         # pylint: enable=duplicate-code
         fstring += "    // our rate is exp(μ + pσ + h)\n"
         fstring += "    // where μ = median rate, p = Gaussian random #,\n"
@@ -167,6 +169,11 @@ class StarLibRate(TemperatureTabularRate):
         else:
             fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9);\n"
         fstring += "        drate_dT = rate * dlog_rate_dT;\n"
+        fstring += "    }\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:
