@@ -285,9 +285,9 @@ class BetaLimitedRate(Rate):
         fstring += "        } else {\n"
         fstring += "            drate_dT = 0.0_rt;\n"
         for lam in self.beta_limiting_rates:
-            fstring += f"            drate_dT += rate_eval.dscreened_rates_dT(k_{lam.fname}) / amrex::powi<2>(rate_eval.screened_rates(k_{lam.fname}));\n"
+            fstring += f"            drate_dT += rate_eval.dscreened_rates_dT(k_{lam.fname}) / amrex::Math::powi<2>(rate_eval.screened_rates(k_{lam.fname}));\n"
         fstring += "            // note: rbeta already has a 1 / (ρY) scaling, so multiplying by rbeta to get the lambda_beta_tot brings in one too many\n"
-        fstring += "            drate_dT *= amrex::powi<2>(rbeta) * (rho * Y_limiter);\n"
+        fstring += "            drate_dT *= amrex::Math::powi<2>(rbeta) * (rho * Y_limiter);\n"
         fstring += "        }\n"
         fstring += "    }\n"
 
