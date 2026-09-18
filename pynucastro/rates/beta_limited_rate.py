@@ -276,10 +276,19 @@ class BetaLimitedRate(Rate):
         for lam in self.beta_limiting_rates:
             fstring += f"    lambda_beta_tot += 1.0_rt / rate_eval.screened_rates(k_{lam.fname});\n"
         fstring += "    lambda_beta_tot = 1.0_rt / lambda_beta_tot;\n"
-
-        fstring += "    rate = std::min(r0, lambda_beta_tot / (rho * Y_limiter));\n"
+        fstring += f"    {dtype} rbeta = lambda_beta_tot / (rho * Y_limiter);\n"
+        fstring += "    rate = std::min(r0, rbeta);\n"
 
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += "        if (r0 < rbeta) {\n"
+        fstring += f"            drate_dT = rate_eval.dscreened_rates_dT(k_{self.underlying_rate.fname});\n"
+        fstring += "        } else {\n"
+        fstring += "            drate_dT = 0.0_rt;\n"
+        for lam in self.beta_limiting_rates:
+            fstring += f"            drate_dT += rate_eval.dscreened_rates_dT(k_{lam.fname}) / amrex::powi<2>(rate_eval.screened_rates(k_{lam.fname}));\n"
+        fstring += "            // note: rbeta already has a 1 / (ρY) scaling, so multiplying by rbeta to get the lambda_beta_tot brings in one too many\n"
+        fstring += "            drate_dT *= amrex::powi<2>(rbeta) * (rho * Y_limiter);\n"
+        fstring += "        }\n"
         fstring += "    }\n"
 
         if not leave_open:
