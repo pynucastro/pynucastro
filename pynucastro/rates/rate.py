@@ -52,13 +52,19 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
         array_type = "Array1D"
 
     if mode == "definition":
-        args = ["const T& rate_eval"]
+        args = ["T& rate_eval"]
         if r.rate_eval_needs_tfactors:
             args.append("const tf_t& tfactors")
-        elif r.rate_eval_needs_temp:
-            args.append(f"const {dtype} T")
+        if r.rate_eval_needs_temp:
+            args.append(f"const {dtype} temp")
+        if r.rate_eval_needs_logtemp:
+            args.append(f"const {dtype} log_temp")
         if r.rate_eval_needs_rho:
             args.append(f"const {dtype} rho")
+        if r.rate_eval_needs_rhoye:
+            args.append(f"const {dtype} rhoy")
+        if r.rate_eval_needs_logrhoye:
+            args.append(f"const {dtype} log_rhoy")
         if r.rate_eval_needs_comp:
             args.append(f"const {array_type}<{dtype}, 1, NumSpec>& Y")
         if r.screening_pairs:
@@ -66,17 +72,21 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append(f"const {dtype} dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("part_fun::pf_cache_t& pf_cache")
-        args.append(f"{dtype}& rate")
-        args.append(f"{dtype}& drate_dT")
 
     else:
         args = ["rate_eval"]
         if r.rate_eval_needs_tfactors:
             args.append("tfactors")
-        elif r.rate_eval_needs_temp:
-            args.append("T")
+        if r.rate_eval_needs_temp:
+            args.append("temp")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_temp")
         if r.rate_eval_needs_rho:
             args.append("rho")
+        if r.rate_eval_needs_rhoye:
+            args.append("rhoy")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoy")
         if r.rate_eval_needs_comp:
             args.append("Y")
         if r.screening_pairs:
@@ -84,8 +94,6 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append("dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("pf_cache")
-        args.append("rate")
-        args.append("drate_dT")
 
     return args
 
@@ -393,9 +401,15 @@ class Rate:
 
         # these apply to the argument list for the function that evaluates
         # the just the N_A <σv> part of the rate
+
         self.rate_eval_needs_tfactors = True
         self.rate_eval_needs_temp = False
+        self.rate_eval_needs_logtemp = False
+
         self.rate_eval_needs_rho = False
+        self.rate_eval_needs_rhoye = False
+        self.rate_eval_needs_logrhoye = False
+
         self.rate_eval_needs_comp = False
         self.rate_eval_needs_pfcache = False
 

@@ -16,13 +16,11 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Fe52_He4_to_Ni56_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Fe52_He4_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
         // Fe52 + He4 --> Ni56
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};
         amrex::Real set_rate{0.0};
@@ -48,17 +46,19 @@ namespace reaclib_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
         }
 
+        rate_eval.screened_rates(k_Fe52_He4_to_Ni56_reaclib) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Fe52_He4_to_Ni56_reaclib) = drate_dT;
+        }
     }
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Co55_p_to_Ni56_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Co55_p_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
         // Co55 + p --> Ni56
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};
         amrex::Real set_rate{0.0};
@@ -84,17 +84,19 @@ namespace reaclib_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
         }
 
+        rate_eval.screened_rates(k_Co55_p_to_Ni56_reaclib) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Co55_p_to_Ni56_reaclib) = drate_dT;
+        }
     }
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Fe52_He4_to_p_Co55_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Fe52_He4_to_p_Co55_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
         // Fe52 + He4 --> p + Co55
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};
         amrex::Real set_rate{0.0};
@@ -120,6 +122,10 @@ namespace reaclib_rates {
             drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
         }
 
+        rate_eval.screened_rates(k_Fe52_He4_to_p_Co55_reaclib) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_Fe52_He4_to_p_Co55_reaclib) = drate_dT;
+        }
     }
 
 
@@ -135,7 +141,6 @@ namespace reaclib_rates {
 
         {
             // Fe52_He4_to_Ni56_reaclib
-
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -144,16 +149,11 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Fe52);
             }
 #endif
-            rate_Fe52_He4_to_Ni56_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_Fe52_He4_to_Ni56_reaclib) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Fe52_He4_to_Ni56_reaclib) = drate_dT;
-            }
+            rate_Fe52_He4_to_Ni56_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT);
         }
 
         {
             // Co55_p_to_Ni56_reaclib
-
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -162,16 +162,11 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Co55);
             }
 #endif
-            rate_Co55_p_to_Ni56_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_Co55_p_to_Ni56_reaclib) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Co55_p_to_Ni56_reaclib) = drate_dT;
-            }
+            rate_Co55_p_to_Ni56_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT);
         }
 
         {
             // Fe52_He4_to_p_Co55_reaclib
-
             amrex::Real log_scor {0.0_rt};
             amrex::Real dlog_scor_dT {0.0_rt};
 #ifdef SCREENING
@@ -180,11 +175,7 @@ namespace reaclib_rates {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Fe52);
             }
 #endif
-            rate_Fe52_He4_to_p_Co55_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
-            rate_eval.screened_rates(k_Fe52_He4_to_p_Co55_reaclib) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_Fe52_He4_to_p_Co55_reaclib) = drate_dT;
-            }
+            rate_Fe52_He4_to_p_Co55_reaclib(rate_eval, tfactors, log_scor, dlog_scor_dT);
         }
 
 
