@@ -40,16 +40,14 @@ struct table_t
     int nheader;
 };
 
-// we add an additional index, k_index_dlogr_dlogt used for computing
-// the derivative of Log(rate) with respect of Log(temperature) by
-// using the table values. It isn't an index into the table but into
-// the 'entries' array. Is important to mention that although we
-// compute dlogr/dlogT as the computed quantity in 'entries', we
-// pursue ultimately dr/dt as the final desired quantity to be
-// computed for this index.
 
-constexpr int k_index_dlogr_dlogt = num_vars + 1;
-constexpr int add_vars = 1;  // 1 Additional Var in entries
+struct weak_rate_t
+{
+    amrex::Real rate;
+    amrex::Real drate_dT;
+    amrex::Real enu;
+    amrex::Real gamma;
+};
 
 
 namespace rate_tables
@@ -167,25 +165,26 @@ AMREX_INLINE AMREX_GPU_DEVICE
 void
 get_entries(const int irhoy_lo, const int jtemp_lo,
             const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-            const amrex::Real log_rhoy, const amrex::Real log_temp, amrex::Array1D<amrex::Real, 1, num_vars+add_vars>& entries)
+            const amrex::Real log_rhoy, const amrex::Real log_temp,
+            weak_rate_t& entries)
 {
 
     // only interpolate the quantities we currently use
 
-    entries(jtab_rate) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                       log_rhoy_table, log_temp_table, data,
-                                       log_rhoy, log_temp, jtab_rate);
+    entries.rate = evaluate_vars(irhoy_lo, jtemp_lo,
+                                 log_rhoy_table, log_temp_table, data,
+                                 log_rhoy, log_temp, jtab_rate);
 
-    entries(jtab_nuloss) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                         log_rhoy_table, log_temp_table, data,
-                                         log_rhoy, log_temp, jtab_nuloss);
+    entries.enu = evaluate_vars(irhoy_lo, jtemp_lo,
+                                log_rhoy_table, log_temp_table, data,
+                                log_rhoy, log_temp, jtab_nuloss);
 
-    entries(jtab_gamma) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                        log_rhoy_table, log_temp_table, data,
-                                        log_rhoy, log_temp, jtab_gamma);
+    entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
+                                  log_rhoy_table, log_temp_table, data,
+                                  log_rhoy, log_temp, jtab_gamma);
 
     if constexpr (do_T_derivatives) {
-        entries(k_index_dlogr_dlogt) =
+        entries.drate_dT =
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp);
@@ -198,9 +197,8 @@ void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
                  const amrex::Real log_rhoy, const amrex::Real log_temp, const amrex::Real temp,
-                 amrex::Real& rate, amrex::Real& drate_dt, amrex::Real& edot_nu, amrex::Real& edot_gamma)
+                 weak_rate_t& entries)
 {
-    amrex::Array1D<amrex::Real, 1, num_vars+add_vars> entries;
 
     // Get the table entries at this rhoy, temp
 
@@ -214,17 +212,17 @@ tabular_evaluate(const table_t& table_meta,
                                   table_meta, log_rhoy_table, log_temp_table, data,
                                   log_rhoy, log_temp, entries);
 
-    // Fill outputs: rate, d(rate)/d(temperature), and
-    // (negative) neutrino loss contribution to energy generation
+    // Fill outputs: rate, d(rate)/dT, and (negative) neutrino loss
+    // contribution to energy generation
 
-    rate       = amrex::Math::exp10(entries(jtab_rate));
+    entries.rate = amrex::Math::exp10(entries.rate);
     if constexpr (do_T_derivatives) {
-        drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
+        entries.drate_dT = entries.rate * entries.drate_dT / temp;
     } else {
-        drate_dt = 0.0;
+        entries.drate_dT = 0.0;
     }
-    edot_nu    = -amrex::Math::exp10(entries(jtab_nuloss));
-    edot_gamma = amrex::Math::exp10(entries(jtab_gamma));
+    entries.enu = -amrex::Math::exp10(entries.enu);
+    entries.gamma = amrex::Math::exp10(entries.gamma);
 }
 
 #endif
