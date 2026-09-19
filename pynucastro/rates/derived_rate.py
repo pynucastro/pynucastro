@@ -12,7 +12,8 @@ import numpy as np
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
-from pynucastro.rates.rate import Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args)
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularWeakRate
@@ -73,6 +74,9 @@ class DerivedRate(Rate):
                          products=self.source_rate.reactants,
                          label="derived", rate_source=self.source_rate.src,
                          stoichiometry=self.source_rate.stoichiometry)
+
+        # C++ functions need the partition function cache
+        self.rate_eval_needs_pfcache = True
 
         # Compute temperature-independent prefactor of the equilibrium ratio
         # We will work in log space for convenience
@@ -259,6 +263,7 @@ class DerivedRate(Rate):
 
         return fstring
 
+    # pylint: disable=duplicate-code
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=None):
         """Return a string containing the C++ function that computes
@@ -286,17 +291,13 @@ class DerivedRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
-
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT",
-                "[[maybe_unused]] const T& rate_eval",
-                "[[maybe_unused]] part_fun::pf_cache_t& pf_cache", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
         fstring = ""
-        fstring += "template <int do_T_derivatives, typename T>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -351,14 +352,19 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    ln_set_rate += net_log_pf + log_scor;\n\n"
+                fstring += "    ln_set_rate += net_log_pf;\n"
+                if self.screening_pairs:
+                    fstring += "    ln_set_rate += log_scor;\n"
+                fstring += "\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
                 for t in dln_set_string_dT9.split("\n"):
                     fstring += "        " + t + "\n"
                 fstring += "\n"
-                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;\n"
+                fstring += "        dln_set_rate_dT9 += net_dlog_pf_dT9;\n"
+                if self.screening_pairs:
+                    fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
 
                 fstring += "    }\n"
                 fstring += "\n"
@@ -374,6 +380,7 @@ class DerivedRate(Rate):
                 fstring += "    }\n\n"
 
         elif isinstance(self.underlying_rate, TemperatureTabularRate):
+            fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
             fstring += "    auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
             fstring += "                                               tfactors.lnT9,\n"
             fstring += f"                                               {self.underlying_rate.fname}_data::log_t9,\n"
@@ -392,7 +399,9 @@ class DerivedRate(Rate):
             fstring += "    // Apply Equilibrium Ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    _rate += {self.ratio_factor} + Q_kBT + net_log_pf + log_scor;\n"
+            fstring += f"    _rate += {self.ratio_factor} + Q_kBT + net_log_pf;\n"
+            if self.screening_pairs:
+                fstring += "    _rate += log_scor;\n"
             if self.net_stoich != 0:
                 fstring += f"    _rate += {1.5 * self.net_stoich} * tfactors.lnT9;\n\n"
 
@@ -408,7 +417,9 @@ class DerivedRate(Rate):
                 fstring += "        _drate_dT += p * _dsigma_dlogT9;\n\n"
 
             fstring += "        // Convert to dlog(rate)/dT9 first\n"
-            fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9 + dlog_scor_dT * 1.0e9_rt;\n"
+            fstring += f"        _drate_dT = (_drate_dT + {1.5 * self.net_stoich} - Q_kBT) * tfactors.T9i + net_dlog_pf_dT9;\n"
+            if self.screening_pairs:
+                fstring += "        _drate_dT += dlog_scor_dT * 1.0e9_rt;\n"
             fstring += "        drate_dT = rate * _drate_dT * 1.0e-9_rt;\n"
             fstring += "    }\n\n"
 
@@ -416,7 +427,9 @@ class DerivedRate(Rate):
             fstring += "    // Evaluate the equilibrium ratio\n"
             fstring += f"    constexpr {dtype} Q_kBGK = {self.Q} * 1.0e-9_rt / C::k_MeV;\n"
             fstring += f"    {dtype} Q_kBT = Q_kBGK * tfactors.T9i;\n"
-            fstring += f"    {dtype} ratio = std::exp({self.ratio_factor} + Q_kBT + net_log_pf + log_scor"
+            fstring += f"    {dtype} ratio = std::exp({self.ratio_factor} + Q_kBT + net_log_pf"
+            if self.screening_pairs:
+                fstring += "    + log_scor"
             if self.net_stoich != 0:
                 fstring += f"    + {1.5 * self.net_stoich} * tfactors.lnT9"
             fstring += ");\n\n"

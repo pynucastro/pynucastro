@@ -1,9 +1,9 @@
-**************************************
-Notes on Working with ``Rate`` Objects
-**************************************
+*****************************
+Working with ``Rate`` Objects
+*****************************
 
-Attributes
-==========
+Descriptive attributes
+======================
 
 There are several different attributes that refer to the name /
 properties of the rate in some way.  Consider the rate for
@@ -114,7 +114,7 @@ The following rate attributes are defined:
 Copying
 =======
 
-A ``Rate`` is not immutable.  This can be an issue when we we do:
+A ``Rate`` is not immutable.  This can be an issue when we do:
 
 .. code:: python
 

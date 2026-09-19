@@ -53,6 +53,8 @@ void evaluate_screening(const burn_t& state,
                         const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                         T& rate_eval) {
 
+    using namespace Rates;
+
     // Evaluate screening terms
 
     using number_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
@@ -72,7 +74,7 @@ void evaluate_screening(const burn_t& state,
         static_assert(scn_fac.z1 == 1.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_p_O16) = log_scor;
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_p_O16) = dlog_scor_dT;
         }
     }
@@ -86,6 +88,8 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void evaluate_rates(const burn_t& state,
                     const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
                     T& rate_eval) {
+
+    using namespace Rates;
 
     // here Y is consistent with state.xn
 
@@ -103,7 +107,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -176,7 +180,7 @@ void get_ydot_weak(const burn_t& state,
 
     // Compute all weak rates and get ydot_weak
 
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);
 
     ydot_nuc(H1) = 0.0_rt;
 
@@ -193,7 +197,7 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void rhs_nuc(const burn_t& state,
              amrex::Array1D<amrex::Real, 1, neqs>& ydot_nuc,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates) {
+             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates) {
 
     using namespace Rates;
 
@@ -260,8 +264,10 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, NumRates>& screened_rates)
+             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
 {
+
+    using namespace Rates;
 
     amrex::Real scratch;
 

@@ -15,7 +15,6 @@ from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition, Nucleus
-from pynucastro.rates import ApproximateRate, BranchedRate, ModifiedRate
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
@@ -872,7 +871,7 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
 
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
 
         # Initialize log_scor to 0.0
         for n1, n2 in screening_pair_set:
@@ -915,11 +914,11 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, use_tf=True):
+        def format_rate_call(r):
             args = ["rate_eval"]
-            if use_tf:
+            if r.rate_eval_needs_tfactors:
                 args.append("tf")
-            else:
+            elif r.rate_eval_needs_temp:
                 args.append("T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
@@ -943,17 +942,17 @@ class PythonNetwork(RateCollection):
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
@@ -1150,53 +1149,11 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
-        # the functions to evaluate the temperature dependence of the rates
+        # the functions to evaluate the T dependence (strong) or ρ-T
+        # dependence (weak) of the rates
 
-        _rate_func_written = []
-        for r in self.rates:
-            if isinstance(r, ApproximateRate):
-                # write out the function string for all of the rates we depend on
-                for cr in r.get_child_rates():
-                    if cr in _rate_func_written:
-                        continue
-                    of.write(cr.function_string_py())
-                    _rate_func_written.append(cr)
-
-                # now write out the function that computes the
-                # approximate rate
-                of.write(r.function_string_py())
-            elif isinstance(r, BranchedRate):
-                # we need to write out the function string
-                # of all the rates we depend on
-                rates_needed = [r.underlying_rate,
-                                r.primary_branch,
-                                r.other_branch]
-                for mr in rates_needed:
-                    if mr in _rate_func_written:
-                        continue
-                    of.write(mr.function_string_py())
-                    _rate_func_written.append(mr)
-
-                # now write out the function that computes the
-                # branched rate
-                of.write(r.function_string_py())
-
-            elif isinstance(r, ModifiedRate):
-                orig_rate = r.original_rate
-                if orig_rate in _rate_func_written:
-                    continue
-                of.write(orig_rate.function_string_py())
-                _rate_func_written.append(orig_rate)
-
-                # now write out the function that computes the
-                # modified rate
-                of.write(r.function_string_py())
-                _rate_func_written.append(r)
-            else:
-                if r in _rate_func_written:
-                    continue
-                of.write(r.function_string_py())
-                _rate_func_written.append(r)
+        for r in self.all_rates:
+            of.write(r.function_string_py())
 
         # the rhs() function
 

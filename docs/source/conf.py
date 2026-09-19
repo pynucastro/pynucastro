@@ -55,6 +55,7 @@ linkcheck_ignore = [r"https://doi.org",
                     r"https://link.aps.org",
                     r"https://www-nds.iaea.org",
                     r"https://www.sciencedirect.com",
+                    r"https://ui.adsabs.harvard.edu",
                     r"https://oxfordre.com/planetaryscience/view/10.1093/acrefore/9780190647926.001.0001/acrefore-9780190647926-e-145"]
 
 linkcheck_retries = 3

@@ -167,7 +167,7 @@ Runtime parameters
 ==================
 
 If any ``StarLibRate`` rates are included in the network,
-the the runtime parameter ``network.starlib_seed`` and be
+then the runtime parameter ``network.starlib_seed`` can be
 used to seed the random numbers used for sampling the rate
 uncertainty.
 

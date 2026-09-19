@@ -9,8 +9,6 @@
 
 using namespace amrex::literals;
 
-using namespace Rates;
-
 // temperature / rate tabulation for O16 + p --> F17
 
 namespace O16_p_to_F17_iliadis_data {
@@ -60,34 +58,34 @@ namespace O16_p_to_F17_iliadis_data {
 
 namespace temp_tabular {
 
-    template <int do_T_derivatives>
+    using namespace Rates;
+
+    template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_O16_p_to_F17_iliadis(const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_O16_p_to_F17_iliadis(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // O16 + p --> F17
 
+        constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         auto [_log_rate, _dlog_rate_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(
                                                    tfactors.lnT9,
                                                    O16_p_to_F17_iliadis_data::log_t9,
                                                    O16_p_to_F17_iliadis_data::log_rate);
         rate = std::exp(_log_rate + log_scor);
         // we found dlog(rate)/dlog(T9)
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             amrex::Real dlog_rate_dT = tfactors.T9i * _dlog_rate_dlogT9 * 1.0e-9_rt + dlog_scor_dT
     ;        drate_dT = rate * dlog_rate_dT;
         }
     }
 
 
-
     template <int do_T_derivatives, typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
-    fill_rates(const tf_t& tfactors, T& rate_eval)
+    fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] T& rate_eval)
     {
-
-        amrex::ignore_unused(tfactors);
-        amrex::ignore_unused(rate_eval);
 
         [[maybe_unused]] amrex::Real rate;
         [[maybe_unused]] amrex::Real drate_dT;
@@ -103,7 +101,7 @@ namespace temp_tabular {
                 dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_O16);
             }
 #endif
-            rate_O16_p_to_F17_iliadis<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
+            rate_O16_p_to_F17_iliadis(rate_eval, tfactors, log_scor, dlog_scor_dT, rate, drate_dT);
             rate_eval.screened_rates(k_O16_p_to_F17_iliadis) = rate;
             if constexpr (std::is_same_v<T, rate_derivs_t>) {
                 rate_eval.dscreened_rates_dT(k_O16_p_to_F17_iliadis) = drate_dT;
@@ -113,7 +111,6 @@ namespace temp_tabular {
 
 
     }
-
 
 }
 #endif

@@ -110,7 +110,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
     // Calculate tabular rates
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
