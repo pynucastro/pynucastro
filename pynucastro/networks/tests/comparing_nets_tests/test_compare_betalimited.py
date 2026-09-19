@@ -81,7 +81,7 @@ class TestNetworkCompare:
 
         nc = NetworkCompare(lib,
                             include_amrex=True,
-                            include_simple_cxx=False,
+                            include_simple_cxx=True,
                             python_module_name="beta_limited_compare.py",
                             amrex_test_path=amrex_test_path,
                             cxx_test_path=cxx_test_path)
@@ -108,7 +108,7 @@ class TestNetworkCompare:
         # compare the AMReX, and python module nets to the
         # python inline version
 
-        for other in [eval_cond1.ydots_amrex, eval_cond1.ydots_py_module]:
+        for other in [eval_cond1.ydots_cxx, eval_cond1.ydots_amrex, eval_cond1.ydots_py_module]:
             for nuc in eval_cond1.ydots_py_inline:
                 assert other[nuc] == approx(eval_cond1.ydots_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
@@ -120,7 +120,7 @@ class TestNetworkCompare:
         # compare the AMReX, and python module nets to the
         # python inline version
 
-        for other in [eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
+        for other in [eval_cond1.rates_amrex, eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
             for nuc in eval_cond1.rates_py_inline:
                 assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
@@ -131,10 +131,10 @@ class TestNetworkCompare:
 
         # we use a relaxed tolerance here because of differences
         # in constants in simple C++ nets (N_A)
-        for other in [eval_cond1.enuc_amrex, eval_cond1.enuc_py_module]:
+        for other in [eval_cond1.enuc_cxx, eval_cond1.enuc_amrex, eval_cond1.enuc_py_module]:
             assert other == approx(eval_cond1.enuc_py_inline,
                                    rel=1.e-7, abs=1.e-30)
-        for other in [eval_cond1.enu_weak_amrex, eval_cond1.enu_weak_py_module]:
+        for other in [eval_cond1.enu_weak_cxx, eval_cond1.enu_weak_amrex, eval_cond1.enu_weak_py_module]:
             assert other == approx(eval_cond1.enu_weak_py_inline,
                                    rel=1.e-7, abs=1.e-30)
 
