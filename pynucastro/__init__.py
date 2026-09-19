@@ -124,6 +124,10 @@ reaction rates.  The core rate classes are:
   a container that holds a rate and allows for modifications to the
   reactants, products, or stoichiometry.
 
+* :py:obj:`BetaLimitedRate <pynucastro.rates.beta_limited_rate.BetaLimitedRate>` :
+  a container that holds an underlying rate and limits it based on
+  one of more beta-decays that are part of a rate sequence.
+
 * :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>` :
   a container that holds an underlying rate and rates that affect the
   endpoint branching.

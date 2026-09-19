@@ -7,6 +7,7 @@ import copy
 
 import numpy as np
 
+from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
@@ -76,7 +77,8 @@ class ModifiedRate(Rate):
         # important in the C++ code generation the we fill modified
         # rates only after the original rate is filled.
         assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
+                          (ReacLibRate, StarLibRate,
+                           TemperatureTabularRate, BetaLimitedRate))
 
         if new_reactants is not None:
             reactants = new_reactants
@@ -219,11 +221,25 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=None")
+        if self.rate_eval_needs_comp:
+            args.append("Y=None")
+        args.append("log_scor=0.0")
+        fstring += f"def {self.fname}(rate_eval, {', '.join(args)}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
+
+        args = ["tf"]
+        if self.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if self.rate_eval_needs_comp:
+            args.append("Y=Y")
+        args.append("log_scor=log_scor")
+
+        fstring += f"    {self.original_rate.fname}(rate_eval, {', '.join(args)})\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
@@ -270,7 +286,7 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        cargs = cxx_rate_func_args(self, mode="call")
+        cargs = cxx_rate_func_args(self.original_rate, mode="call")
         fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
 
         if not leave_open:
