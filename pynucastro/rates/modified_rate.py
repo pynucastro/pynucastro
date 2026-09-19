@@ -286,7 +286,7 @@ class ModifiedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
-        cargs = cxx_rate_func_args(self, mode="call")
+        cargs = cxx_rate_func_args(self.original_rate, mode="call")
         fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
 
         if not leave_open:
