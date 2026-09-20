@@ -14,7 +14,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_C12_C12_to_He4_Ne20_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_He4_Ne20_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> He4 + Ne20
 
@@ -50,7 +50,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_C12_C12_to_n_Mg23_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_n_Mg23_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> n + Mg23
 
@@ -86,7 +86,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_C12_C12_to_p_Na23_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_C12_to_p_Na23_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + C12 --> p + Na23
 
@@ -122,7 +122,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_C12_He4_to_O16_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_C12_He4_to_O16_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // C12 + He4 --> O16
 
@@ -179,7 +179,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_Ne20_He4_to_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
+    void rate_Ne20_He4_to_Mg24_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, Real& rate, Real& drate_dT) {
 
         // Ne20 + He4 --> Mg24
 
@@ -278,7 +278,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_Mg23_n_to_Mg24_reaclib(const T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
+    void rate_Mg23_n_to_Mg24_reaclib(T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
         // Mg23 + n --> Mg24
 
@@ -311,7 +311,7 @@ namespace reaclib_rates {
 
     template <typename T>
     inline
-    void rate_n_to_p_beta_neg_reaclib(const T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
+    void rate_n_to_p_beta_neg_reaclib(T& rate_eval, const tf_t& tfactors, Real& rate, Real& drate_dT) {
 
         // n --> p
 
