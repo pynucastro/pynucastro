@@ -441,9 +441,11 @@ class TabularWeakRate(Rate):
         fstring += f"        //                           ∂Y({self.products[0]!s})/∂t = +Y({self.reactants[0]!s}) λ\n"
         fstring += f"        rate_eval.dweak_ydot_dYe({self.reactants[0].cindex()}) -= rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n"
         fstring += f"        rate_eval.dweak_ydot_dYe({self.products[0].cindex()}) += rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n\n"
-        fstring += "        // also accumulate the derivatives of ε_{ν,weak} on T and Y"
+        fstring += "        // also accumulate the derivatives of ε_{ν,weak} with respect to T and Y\n"
         fstring += f"        rate_eval.denuc_weak_dY({self.reactants[0].cindex()}) += C::n_A * (table_values.enu + table_values.gamma);\n"
         fstring += f"        rate_eval.denuc_weak_dT += C::n_A * Y({self.reactants[0].cindex()}) * table_values.denu_dT;\n"
+        fstring += "        // finally the derivatives of ε_{ν,weak} with respect to Ye\n"
+        fstring += f"        rate_eval.denuc_weak_dYe += C::n_A * rho * ({self.reactants[0].cindex()}) += C::n_A * (table_values.enu + table_values.gamma);\n"
 
         fstring += "    }\n\n"
 
