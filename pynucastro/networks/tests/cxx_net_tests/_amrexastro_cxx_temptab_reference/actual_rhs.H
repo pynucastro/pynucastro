@@ -347,7 +347,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     //                    |
     //   -----------------+---------------
     //                    |
-    //   2) ∂edot//∂Y_j   | 4) ∂edot/∂e
+    //   2) ∂edot/∂Y_j    | 4) ∂edot/∂e
     //                    |
 
 
