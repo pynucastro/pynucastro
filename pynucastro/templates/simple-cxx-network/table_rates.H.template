@@ -189,7 +189,7 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp, jtab_rate);
 
-        entries(k_index_dlognu_dlogT) =
+        entries.denu_dT =
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp, jtab_nuloss);
