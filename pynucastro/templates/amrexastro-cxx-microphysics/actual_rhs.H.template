@@ -318,8 +318,12 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 
     // Account for the weak rate neutrino losses
-    for (int j = 1; j <= NumSpec; ++j) {
-        jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
+    // There are two contributions here:
+    // ∂(ε_{ν,weak})/∂Y_j and ∂(ε_{ν,weak})/∂Y_e ∂Y_e/∂Y_j
+    for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+        jac.add(net_ienuc, jcol,
+                rate_eval.denuc_weak_dY(jcol) +
+                rate_eval.denuc_weak_dYe * NetworkProperties::zion(jcol));
     }
 
     // Account for the thermal neutrino losses

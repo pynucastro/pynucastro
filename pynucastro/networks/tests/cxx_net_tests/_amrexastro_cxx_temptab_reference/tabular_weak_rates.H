@@ -42,6 +42,7 @@ namespace tabular_weak_rates {
                 rate_eval.denuc_weak_dY(n) = 0.0_rt;
             }
             rate_eval.denuc_weak_dT = 0.0_rt;
+            rate_eval.denuc_weak_dYe = 0.0_rt;
 
         }
 

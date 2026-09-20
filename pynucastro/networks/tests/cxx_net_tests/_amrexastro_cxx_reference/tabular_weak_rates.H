@@ -39,9 +39,11 @@ namespace tabular_weak_rates {
             rate_eval.dweak_ydot_dYe(Na23) -= rho * Y(Na23) * table_values.drate_drhoye;
             rate_eval.dweak_ydot_dYe(Ne23) += rho * Y(Na23) * table_values.drate_drhoye;
 
-            // also accumulate the derivatives of ε_{ν,weak} on T and Y
+            // also accumulate the derivatives of ε_{ν,weak} with respect to T and Y
             rate_eval.denuc_weak_dY(Na23) += C::n_A * (table_values.enu + table_values.gamma);
             rate_eval.denuc_weak_dT += C::n_A * Y(Na23) * table_values.denu_dT;
+            // finally the derivatives of ε_{ν,weak} with respect to Ye
+            rate_eval.denuc_weak_dYe += C::n_A * rho * Y(Na23) * table_values.denu_drhoye;
         }
 
         rate_eval.enuc_weak += C::n_A * Y(Na23) * (table_values.enu + table_values.gamma);
@@ -68,9 +70,11 @@ namespace tabular_weak_rates {
             rate_eval.dweak_ydot_dYe(Ne23) -= rho * Y(Ne23) * table_values.drate_drhoye;
             rate_eval.dweak_ydot_dYe(Na23) += rho * Y(Ne23) * table_values.drate_drhoye;
 
-            // also accumulate the derivatives of ε_{ν,weak} on T and Y
+            // also accumulate the derivatives of ε_{ν,weak} with respect to T and Y
             rate_eval.denuc_weak_dY(Ne23) += C::n_A * (table_values.enu + table_values.gamma);
             rate_eval.denuc_weak_dT += C::n_A * Y(Ne23) * table_values.denu_dT;
+            // finally the derivatives of ε_{ν,weak} with respect to Ye
+            rate_eval.denuc_weak_dYe += C::n_A * rho * Y(Ne23) * table_values.denu_drhoye;
         }
 
         rate_eval.enuc_weak += C::n_A * Y(Ne23) * (table_values.enu + table_values.gamma);
@@ -100,6 +104,7 @@ namespace tabular_weak_rates {
                 rate_eval.denuc_weak_dY(n) = 0.0_rt;
             }
             rate_eval.denuc_weak_dT = 0.0_rt;
+            rate_eval.denuc_weak_dYe = 0.0_rt;
 
         }
 

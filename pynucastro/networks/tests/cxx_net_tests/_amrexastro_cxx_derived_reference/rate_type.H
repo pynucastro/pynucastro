@@ -22,6 +22,7 @@ struct rate_derivs_t {
     amrex::Real enuc_weak;
     amrex::Array1D<amrex::Real, 1, NumSpec> denuc_weak_dY;
     amrex::Real denuc_weak_dT;
+    amrex::Real denuc_weak_dYe;
 };
 
 

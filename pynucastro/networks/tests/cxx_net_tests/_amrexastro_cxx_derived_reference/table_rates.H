@@ -48,6 +48,7 @@ struct weak_rate_t
     amrex::Real drate_drhoye;
     amrex::Real enu;
     amrex::Real denu_dT;
+    amrex::Real denu_drhoye;
     amrex::Real gamma;
 };
 
@@ -245,6 +246,12 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp, jtab_nuloss);
+
+        entries.denu_drhoye =
+            evaluate_dr_drhoYe(irhoy_lo, jtemp_lo,
+                               table_meta, log_rhoy_table, log_temp_table, data,
+                               log_rhoy, log_temp, jtab_nuloss);
+
     }
 }
 
@@ -284,8 +291,10 @@ tabular_evaluate(const table_t& table_meta,
     entries.enu = -amrex::Math::exp10(entries.enu);
     if constexpr (do_T_derivatives) {
         entries.denu_dT = entries.enu * entries.denu_dT / temp;
+        entries.denu_drhoye = entries.enu * entries.denu_drhoye / rhoy;
     } else {
         entries.denu_dT = 0.0;
+        entries.denu_drhoye = 0.0;
     }
     entries.gamma = amrex::Math::exp10(entries.gamma);
 }

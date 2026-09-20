@@ -22,6 +22,7 @@ struct rate_derivs_t {
     Real enuc_weak;
     Array1D<Real, 1, NumSpec> denuc_weak_dY;
     Real denuc_weak_dT;
+    Real denuc_weak_dYe;
 };
 
 
