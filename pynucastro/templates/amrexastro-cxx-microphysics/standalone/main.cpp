@@ -61,9 +61,9 @@ int main(int argc, char *argv[]) {
         Y(n) = burn_state.xn[n-1] * aion_inv[n-1];
     }
 
-    rate_t rate_eval;
+    rate_derivs_t rate_eval;
 
-    constexpr int do_T_derivatives{0};
+    constexpr int do_T_derivatives{1};
     evaluate_rates<do_T_derivatives>(burn_state, Y, rate_eval);
 
     // compute and output energy generation rates
@@ -78,9 +78,20 @@ int main(int argc, char *argv[]) {
 
     // output reaction rates
 
+    std::cout << "rates" << std::endl;
     for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+        std::cout << "rate(" << std::setw(40) << Rates::rate_names[n] << ") = "
                   << rate_eval.screened_rates(n) << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    // output reaction rates T derivatives
+
+    std::cout << "d(rates)/dT" << std::endl;
+    for (int n = 1; n <= Rates::NumRates; ++n) {
+        std::cout << "d/dT rate(" << std::setw(40) << Rates::rate_names[n] << ") = "
+                  << rate_eval.dscreened_rates_dT(n) << std::endl;
     }
 
     std::cout << std::endl;
