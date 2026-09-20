@@ -429,7 +429,7 @@ class TabularWeakRate(Rate):
         fstring += "    weak_rate_t table_values{};\n"
         fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
         fstring += f"    tabular_evaluate<do_T_derivatives>({self.table_index_name}_meta, {self.table_index_name}_rhoy, {self.table_index_name}_temp, {self.table_index_name}_data,\n"
-        fstring += "                                        log_rhoy, log_temp, temp, table_values);\n\n"
+        fstring += "                                        log_rhoy, rhoy, log_temp, temp, table_values);\n\n"
 
         fstring += f"    rate_eval.screened_rates(k_{self.fname}) = table_values.rate;\n"
 

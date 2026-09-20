@@ -107,7 +107,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, state.rho, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -264,12 +264,16 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
 
+    auto& screened_rates = rate_eval.screened_rates;
+
     amrex::Real scratch;
+
+    // p row
 
     scratch = -screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*state.rho;
     jac.set(H1, H1, scratch);
@@ -280,6 +284,9 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_F17_to_O16_p_derived);
     jac.set(H1, F17, scratch);
 
+
+    // O16 row
+
     scratch = -screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*state.rho;
     jac.set(O16, H1, scratch);
 
@@ -288,6 +295,9 @@ void jac_nuc(const burn_t& state,
 
     scratch = screened_rates(k_F17_to_O16_p_derived);
     jac.set(O16, F17, scratch);
+
+
+    // F17 row
 
     scratch = screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*state.rho;
     jac.set(F17, H1, scratch);
@@ -298,6 +308,15 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_F17_to_O16_p_derived);
     jac.set(F17, F17, scratch);
 
+
+
+    // add ∂λ_weak / ∂Y_e terms now
+    // this uses ∂Y_e/∂Y_i = Z_i
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            jac.add(irow, jcol, rate_eval.dweak_ydot_dYe(irow) * NetworkProperties::zion(jcol));
+        }
+    }
 
 }
 
@@ -324,7 +343,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
     // Energy generation rate Jacobian elements with respect to species
     // J_{ienuc,j} = ∂(ε_nuc)/∂Y_j

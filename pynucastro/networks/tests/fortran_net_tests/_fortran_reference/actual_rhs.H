@@ -227,6 +227,8 @@ void jac_nuc(const burn_t& state,
 
     Real scratch;
 
+    // n row
+
     scratch = -screened_rates(k_Mg23_n_to_Mg24_reaclib)*Y(Mg23)*state.rho - screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(N, N, scratch);
 
@@ -248,6 +250,9 @@ void jac_nuc(const burn_t& state,
 
     scratch = screened_rates(k_Mg24_to_n_Mg23_derived);
     jac.set(N, Mg24, scratch);
+
+
+    // p row
 
     scratch = screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(H1, N, scratch);
@@ -271,6 +276,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(H1, Mg24, 0.0);
 
+
+    // He4 row
+
     jac.set(He4, N, 0.0);
 
     jac.set(He4, H1, 0.0);
@@ -293,6 +301,9 @@ void jac_nuc(const burn_t& state,
 
     scratch = screened_rates(k_Mg24_to_He4_Ne20_derived);
     jac.set(He4, Mg24, scratch);
+
+
+    // C12 row
 
     jac.set(C12, N, 0.0);
 
@@ -318,6 +329,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(C12, Mg24, 0.0);
 
+
+    // O16 row
+
     jac.set(O16, N, 0.0);
 
     jac.set(O16, H1, 0.0);
@@ -338,6 +352,9 @@ void jac_nuc(const burn_t& state,
     jac.set(O16, Mg23, 0.0);
 
     jac.set(O16, Mg24, 0.0);
+
+
+    // Ne20 row
 
     jac.set(Ne20, N, 0.0);
 
@@ -361,6 +378,9 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Mg24_to_He4_Ne20_derived);
     jac.set(Ne20, Mg24, scratch);
 
+
+    // Na23 row
+
     jac.set(Na23, N, 0.0);
 
     scratch = -screened_rates(k_Na23_p_to_C12_C12_derived)*Y(Na23)*state.rho;
@@ -381,6 +401,9 @@ void jac_nuc(const burn_t& state,
     jac.set(Na23, Mg23, 0.0);
 
     jac.set(Na23, Mg24, 0.0);
+
+
+    // Mg23 row
 
     scratch = -screened_rates(k_Mg23_n_to_Mg24_reaclib)*Y(Mg23)*state.rho;
     jac.set(Mg23, N, scratch);
@@ -404,6 +427,9 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Mg24_to_n_Mg23_derived);
     jac.set(Mg23, Mg24, scratch);
 
+
+    // Mg24 row
+
     scratch = screened_rates(k_Mg23_n_to_Mg24_reaclib)*Y(Mg23)*state.rho;
     jac.set(Mg24, N, scratch);
 
@@ -426,6 +452,7 @@ void jac_nuc(const burn_t& state,
 
     scratch = -screened_rates(k_Mg24_to_He4_Ne20_derived) - screened_rates(k_Mg24_to_n_Mg23_derived);
     jac.set(Mg24, Mg24, scratch);
+
 
 
 }

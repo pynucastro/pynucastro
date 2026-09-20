@@ -254,7 +254,8 @@ AMREX_INLINE AMREX_GPU_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                 const amrex::Real log_rhoy, const amrex::Real log_temp, const amrex::Real temp,
+                 const amrex::Real log_rhoy, const amrex::Real rhoy,
+                 const amrex::Real log_temp, const amrex::Real temp,
                  weak_rate_t& entries)
 {
 
@@ -276,7 +277,7 @@ tabular_evaluate(const table_t& table_meta,
     entries.rate = amrex::Math::exp10(entries.rate);
     if constexpr (do_T_derivatives) {
         entries.drate_dT = entries.rate * entries.drate_dT / temp;
-        entries.drate_drhoye = rate * entries.drate_drhoye / rhoy;
+        entries.drate_drhoye = entries.rate * entries.drate_drhoye / rhoy;
     } else {
         entries.drate_dT = 0.0;
         entries.drate_drhoye = 0.0;
