@@ -267,6 +267,9 @@ class BetaLimitedRate(Rate):
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    // {self.rid} (beta-limited rate rate)\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
+
         fstring += "    // get the molar fraction of the species we care about\n"
         fstring += f"    {dtype} Y_limiter = Y(Species::{self.limiter_nucleus.cindex()});\n"
 
@@ -289,6 +292,10 @@ class BetaLimitedRate(Rate):
         fstring += "            // note: rbeta already has a 1 / (ρY) scaling, so multiplying by rbeta to get the lambda_beta_tot brings in one too many\n"
         fstring += "            drate_dT *= amrex::Math::powi<2>(rbeta) * (rho * Y_limiter);\n"
         fstring += "        }\n"
+        fstring += "    }\n"
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:
