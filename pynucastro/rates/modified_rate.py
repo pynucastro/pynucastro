@@ -289,6 +289,11 @@ class ModifiedRate(Rate):
         cargs = cxx_rate_func_args(self.original_rate, mode="call")
         fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
 
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate_eval.screened_rates(k_{self.original_rate.fname});\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = rate_eval.dscreened_rates_dT(k_{self.original_rate.fname});\n"
+        fstring += "    }\n"
+
         if not leave_open:
             fstring += "}\n\n"
 

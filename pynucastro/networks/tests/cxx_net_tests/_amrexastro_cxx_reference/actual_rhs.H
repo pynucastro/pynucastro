@@ -200,9 +200,7 @@ void get_ydot_weak(const burn_t& state,
 
     {
         // n_to_p_beta_neg_reaclib
-
-        reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors, rate, drate_dT);
-        rate_eval.screened_rates(k_n_to_p_beta_neg_reaclib) = rate;
+        reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors);
     }
 
     tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);

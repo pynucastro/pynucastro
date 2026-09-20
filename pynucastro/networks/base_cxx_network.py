@@ -663,7 +663,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             call_args = cxx_rate_func_args(r, mode="call")
 
             of.write(f"{self.indent*n_indent}" + "{\n")
-            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n\n")
+            of.write(f"{self.indent*(n_indent+1)}// {r.fname}\n")
             if r.screening_pairs:
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"
@@ -673,14 +673,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(call_args)});\n")
             else:
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}({', '.join(call_args)});\n")
-
-            if r.rate_eval_uses_rate_args:
-                of.write(f"{self.indent*(n_indent+1)}rate_eval.screened_rates(k_{r.fname}) = rate;\n")
-
-                if do_T_derivatives:
-                    of.write(f"{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n")
-                    of.write(f"{self.indent*(n_indent+1)}    rate_eval.dscreened_rates_dT(k_{r.fname}) = drate_dT;\n")
-                    of.write(f"{self.indent*(n_indent+1)}}}\n")
 
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 

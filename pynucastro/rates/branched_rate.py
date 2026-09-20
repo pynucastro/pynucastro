@@ -278,6 +278,8 @@ class BranchedRate(Rate):
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
 
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
+
         fstring += f"    {dtype} r0 = rate_eval.screened_rates(k_{self.underlying_rate.fname});\n"
         fstring += f"    {dtype} r_prim_br = rate_eval.screened_rates(k_{self.primary_branch.fname});\n"
         fstring += f"    {dtype} r_other_br = rate_eval.screened_rates(k_{self.other_branch.fname});\n\n"
@@ -293,6 +295,11 @@ class BranchedRate(Rate):
 
         fstring += f"        {dtype} dfdT = (drdT_prim_br - f * (drdT_prim_br + drdT_other_br)) / (r_prim_br + r_other_br);\n"
         fstring += "        drate_dT = f * drdT_0 + dfdT * r0;\n"
+        fstring += "    }\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:
