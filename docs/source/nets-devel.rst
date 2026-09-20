@@ -70,6 +70,7 @@ the rates in the following order:
 * :py:obj:`TemperatureTabularRate <pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate>`
   and :py:obj:`StarLibRate <pynucastro.rates.starlib_rate.StarLibRate>`
 * custom rates (in python only)
+* :py:obj:`BetaLimitedRate <pynucastro.rates.beta_limited-rate.BetaLimitedRate>`
 * :py:obj:`ModifiedRate <pynucastro.rates.modified_rate.ModifiedRate>`
 * :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>`
 * :py:obj:`DerivedRate <pynucastro.rates.derived_rate.DerivedRate>`
