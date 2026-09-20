@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.1.0.post9+g85c4b67b1 documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.1.0.post10+ga13422fbc documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=31f1dbd4"></script>
+    <script src="../../../_static/documentation_options.js?v=4d617f1f"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -812,6 +812,11 @@
 
         <span class="n">cargs</span> <span class="o">=</span> <span class="n">cxx_rate_func_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"call"</span><span class="p">)</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cargs</span><span class="p">)</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">"</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">);</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"}</span><span class="se">\n\n</span><span class="s2">"</span>
