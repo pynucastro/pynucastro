@@ -16,7 +16,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Fe52_He4_to_Ni56_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Fe52_He4_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Fe52 + He4 --> Ni56
 
@@ -52,7 +52,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Co55_p_to_Ni56_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Co55_p_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Co55 + p --> Ni56
 
@@ -88,7 +88,7 @@ namespace reaclib_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_Fe52_He4_to_p_Co55_reaclib(const T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_Fe52_He4_to_p_Co55_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, amrex::Real& rate, amrex::Real& drate_dT) {
 
         // Fe52 + He4 --> p + Co55
 

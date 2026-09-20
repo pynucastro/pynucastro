@@ -18,7 +18,8 @@ namespace tabular_weak_rates {
 
     using namespace rate_tables;
 
-    template <int do_T_derivatives, typename T>
+
+    template <typename T>
     inline
     void
     fill_rates([[maybe_unused]] const Real temp,
@@ -29,7 +30,8 @@ namespace tabular_weak_rates {
 
         // Calculate tabular weak rates
 
-        [[maybe_unused]] Real rate, drate_dt, edot_nu, edot_gamma;
+        const Real log_temp = std::log10(temp);
+        const Real log_rhoy = std::log10(rhoy);
 
         rate_eval.enuc_weak = 0.0_rt;
 
