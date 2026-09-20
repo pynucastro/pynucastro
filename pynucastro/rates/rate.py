@@ -70,9 +70,6 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append(f"const {dtype} dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("part_fun::pf_cache_t& pf_cache")
-        if r.rate_eval_uses_rate_args:
-            args.append(f"{dtype}& rate")
-            args.append(f"{dtype}& drate_dT")
 
     else:
         args = ["rate_eval"]
@@ -93,9 +90,6 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append("dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("pf_cache")
-        if r.rate_eval_uses_rate_args:
-            args.append("rate")
-            args.append("drate_dT")
 
     return args
 
@@ -413,10 +407,6 @@ class Rate:
 
         self.rate_eval_needs_comp = False
         self.rate_eval_needs_pfcache = False
-
-        # this is for a transition phase where we are moving toward
-        # the functions storing directly into rate_eval
-        self.rate_eval_uses_rate_args = True
 
     def __repr__(self):
         return self.string

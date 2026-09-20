@@ -13,13 +13,11 @@ namespace derived_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_F17_to_O16_p_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache, amrex::Real& rate, amrex::Real& drate_dT) {
+    void rate_F17_to_O16_p_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
 
         // F17 --> O16 + p
 
-        rate = 0.0;
-        drate_dT = 0.0;
-
+        amrex::Real rate{}, drate_dT{};
         // Evaluate partition function terms
 
         amrex::Real p_log_pf, dp_log_pf_dT9;
@@ -64,6 +62,10 @@ namespace derived_rates {
             drate_dT = rate * _drate_dT * 1.0e-9_rt;
         }
 
+        rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.dscreened_rates_dT(k_F17_to_O16_p_derived) = drate_dT;
+        }
     }
 
 
@@ -83,12 +85,7 @@ namespace derived_rates {
 
         {
             // F17_to_O16_p_derived
-
-            rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache, rate, drate_dT);
-            rate_eval.screened_rates(k_F17_to_O16_p_derived) = rate;
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                rate_eval.dscreened_rates_dT(k_F17_to_O16_p_derived) = drate_dT;
-            }
+            rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache);
         }
 
 
