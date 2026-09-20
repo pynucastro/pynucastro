@@ -424,18 +424,18 @@ class TabularWeakRate(Rate):
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
 
-        fstring += f"    {dtype} rate{{}}, drate_dt{{}}, edot_nu{{}}, edot_gamma{{}};\n"
+        fstring += "    weak_rate_t table_values{};\n"
         fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
         fstring += f"    tabular_evaluate<do_T_derivatives>({self.table_index_name}_meta, {self.table_index_name}_rhoy, {self.table_index_name}_temp, {self.table_index_name}_data,\n"
-        fstring += "                                        log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);\n\n"
+        fstring += "                                        log_rhoy, log_temp, temp, table_values);\n\n"
 
-        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = table_values.rate;\n"
 
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dt;\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dT;\n"
         fstring += "    }\n\n"
 
-        fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (edot_nu + edot_gamma);\n"
+        fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (table_values.enu + table_values.gamma);\n"
 
         if not leave_open:
             fstring += "}\n\n"
