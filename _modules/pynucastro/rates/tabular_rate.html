@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post8+g7767deda9 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post9+g85c4b67b1 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d751444d"></script>
+    <script src="../../../_static/documentation_options.js?v=31f1dbd4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -542,7 +542,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span><span class="p">,</span> <span class="n">UnsupportedNucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">jitclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.files</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateFileError</span><span class="p">,</span> <span class="n">_find_rate_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">need_state</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">cxx_rate_func_args</span><span class="p">,</span> <span class="n">need_state</span>
 
 
 <div class="viewcode-block" id="TableIndex">
@@ -770,12 +770,16 @@
                          <span class="n">rate_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                          <span class="n">label</span><span class="o">=</span><span class="s2">"weaktab"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># we work from T not TFactors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_uses_rate_args</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -905,14 +909,10 @@
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, rho, Y):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, log_T, log_rhoY, Y):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rhoY = rho * ye(Y)</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">"</span>
-
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    log_rhoY = np.log10(rhoY)</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    log_T = np.log10(T)</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    enu = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)</span><span class="se">\n</span><span class="s2">"</span>
@@ -922,6 +922,65 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_nu = -10.0**enu</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_gamma = 10.0**egamma</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.enuc_weak += N_A * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * (edot_nu + edot_gamma)</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="k">return</span> <span class="n">fstring</span></div>
+
+
+<div class="viewcode-block" id="TabularWeakRate.function_string_cxx">
+<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_cxx">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">function_string_cxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"double"</span><span class="p">,</span> <span class="n">specifiers</span><span class="o">=</span><span class="s2">"inline"</span><span class="p">,</span>
+                            <span class="n">leave_open</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return a string containing the C++ function that computes</span>
+<span class="sd">        the rate</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dtype : str</span>
+<span class="sd">            The C++ datatype to use for all declarations</span>
+<span class="sd">        specifiers : str</span>
+<span class="sd">            C++ specifiers to add before each function declaration</span>
+<span class="sd">            (i.e. "inline")</span>
+<span class="sd">        leave_open : bool</span>
+<span class="sd">            If ``true``, then we leave the function unclosed (no "}"</span>
+<span class="sd">            at the end).  This can allow additional functions to add</span>
+<span class="sd">            to this output.</span>
+<span class="sd">        extra_args : list, tuple</span>
+<span class="sd">            A list of strings representing additional arguments that</span>
+<span class="sd">            should be appended to the argument list when defining the</span>
+<span class="sd">            function interface.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+
+<span class="sd">        """</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="n">cxx_rate_func_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">extra_args</span><span class="p">:</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+
+        <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"template &lt;typename T&gt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">specifiers</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"void rate_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s2">) </span><span class="se">{{\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    // </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> rate</span><span class="se">{{}}</span><span class="s2">, drate_dt</span><span class="se">{{}}</span><span class="s2">, edot_nu</span><span class="se">{{}}</span><span class="s2">, edot_gamma</span><span class="se">{{}}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    constexpr int do_T_derivatives = std::is_same_v&lt;T, rate_derivs_t&gt;;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    tabular_evaluate&lt;do_T_derivatives&gt;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_meta, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_rhoy, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_temp, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_data,</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"                                        log_rhoy, log_temp, temp, rate, drate_dt, edot_nu, edot_gamma);</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = rate;</span><span class="se">\n</span><span class="s2">"</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = drate_dt;</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n\n</span><span class="s2">"</span>
+
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.enuc_weak += C::n_A * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * (edot_nu + edot_gamma);</span><span class="se">\n</span><span class="s2">"</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">leave_open</span><span class="p">:</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"}</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 

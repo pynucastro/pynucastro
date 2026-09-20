@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post8+g7767deda9 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post9+g85c4b67b1 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d751444d"></script>
+    <script src="../../../_static/documentation_options.js?v=31f1dbd4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1511,8 +1511,12 @@
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"tf"</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span><span class="p">:</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_T=log_T"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rho=rho"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span><span class="p">:</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_rhoY=log_rhoY"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
                 <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y=Y"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
@@ -1525,6 +1529,10 @@
         <span class="c1"># Precompute screening terms. Note here we compute log_screening</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_string</span><span class="p">(</span><span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+
+        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">rhoY = rho * ye(Y)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">log_rhoY = np.log10(rhoY)</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">log_T = np.log10(T)</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2"># reaclib rates</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">reaclib_rates</span><span class="p">:</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post8+g7767deda9 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post9+g85c4b67b1 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d751444d"></script>
+    <script src="../../../_static/documentation_options.js?v=31f1dbd4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -584,13 +584,17 @@
         <span class="n">array_type</span> <span class="o">=</span> <span class="s2">"Array1D"</span>
 
     <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"definition"</span><span class="p">:</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"const T&amp; rate_eval"</span><span class="p">]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"T&amp; rate_eval"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"const tf_t&amp; tfactors"</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> T"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> temp"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_temp"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> rho"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> log_rhoy"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">array_type</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, NumSpec&gt;&amp; Y"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
@@ -598,17 +602,22 @@
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"const </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> dlog_scor_dT"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_pfcache</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"part_fun::pf_cache_t&amp; pf_cache"</span><span class="p">)</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate"</span><span class="p">)</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_uses_rate_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; rate"</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&amp; drate_dT"</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rate_eval"</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"tfactors"</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"temp"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_temp"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rho"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_rhoy"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
@@ -616,8 +625,9 @@
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"dlog_scor_dT"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_pfcache</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"pf_cache"</span><span class="p">)</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rate"</span><span class="p">)</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"drate_dT"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_uses_rate_args</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rate"</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"drate_dT"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">args</span></div>
 
@@ -940,11 +950,20 @@
 
         <span class="c1"># these apply to the argument list for the function that evaluates</span>
         <span class="c1"># the just the N_A &lt;σv&gt; part of the rate</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_pfcache</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># this is for a transition phase where we are moving toward</span>
+        <span class="c1"># the functions storing directly into rate_eval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_uses_rate_args</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
