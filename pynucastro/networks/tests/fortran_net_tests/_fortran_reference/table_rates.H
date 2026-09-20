@@ -227,7 +227,7 @@ tabular_evaluate(const table_t& table_meta,
     }
     entries.enu = -std::pow(10.0_rt, entries.enu);
     if constexpr (do_T_derivatives) {
-        entries.denu_dT = entries.enu * entries.denuc_dT / temp;
+        entries.denu_dT = entries.enu * entries.denu_dT / temp;
     } else {
         entries.denu_dT = 0.0;
     }
