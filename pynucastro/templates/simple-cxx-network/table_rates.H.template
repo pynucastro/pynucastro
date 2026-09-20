@@ -41,10 +41,10 @@ struct table_t
 
 struct weak_rate_t
 {
-    amrex::Real rate;
-    amrex::Real drate_dT;
-    amrex::Real enu;
-    amrex::Real gamma;
+    Real rate;
+    Real drate_dT;
+    Real enu;
+    Real gamma;
 };
 
 
