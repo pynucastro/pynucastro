@@ -399,10 +399,26 @@ void actual_jac(const burn_t& state, MatrixType& jac)
 
     evaluate_rates<do_T_derivatives, rate_derivs_t>(state, Y, rate_eval);
 
+    // there are effectively 4 regions in the Jacobian:
+    //
+    //                    |
+    //   1) ∂Ydot_i/∂Y_j  | 3) ∂Ydot/∂e
+    //                    |
+    //   -----------------+---------------
+    //                    |
+    //   2) ∂Ydot_i/∂e    | 4) ∂edot/∂e
+    //                    |
+
+
+    // region 1
+
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
     jac_nuc(state, jac, Y, rate_eval);
+
+
+    // region 2
 
     // Energy generation rate Jacobian elements with respect to species
     // J_{ienuc,j} = ∂(ε_nuc)/∂Y_j
@@ -438,8 +454,10 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 #endif
 
-    // strong-reaction terms, J_{i,ienuc} = ∂(Ydot_i)/∂T for rows i =
-    // 1, ..., NumSpec
+
+    // region 3
+
+    // J_{i,ienuc} = ∂(Ydot_i)/∂T for rows i = 1, ..., NumSpec
 
     amrex::Array1D<amrex::Real, 1, neqs> yderivs;
 
@@ -454,8 +472,11 @@ void actual_jac(const burn_t& state, MatrixType& jac)
         jac.set(k, net_ienuc, temperature_to_energy_jacobian(state, yderivs(k)));
     }
 
-    // now the last element, J_{ienuc, ienuc} = ∂(edot)/∂e.  We start
-    // by doing the derivatives as ∂/∂T.
+
+    // region 4
+
+    // J_{ienuc, ienuc} = ∂(edot)/∂e.
+    // We start by doing the derivatives as ∂/∂T.
 
     // first the contribution from the strong rates, ∂(ε_nuc)/∂T,
     // which we compute as ∂(ε_nuc)/∂T = -N_A Σ ∂(Ydot_i)/T m_i c²
