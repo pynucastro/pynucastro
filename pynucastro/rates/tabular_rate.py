@@ -434,12 +434,17 @@ class TabularWeakRate(Rate):
         fstring += f"    rate_eval.screened_rates(k_{self.fname}) = table_values.rate;\n"
 
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dt;\n"
+
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dT;\n\n"
         fstring += f"        // accumulate ∂/∂Y_e contributions to {self.reactants[0]!s} and {self.products[0]!s}\n"
         fstring += f"        // this is the derivative of ∂Y({self.reactants[0]!s})/∂t = -Y({self.reactants[0]!s}) λ and\n"
         fstring += f"        //                           ∂Y({self.products[0]!s})/∂t = +Y({self.reactants[0]!s}) λ\n"
         fstring += f"        rate_eval.dweak_ydot_dYe({self.reactants[0].cindex()}) -= rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n"
-        fstring += f"        rate_eval.dweak_ydot_dYe({self.products[0].cindex()}) += rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n"
+        fstring += f"        rate_eval.dweak_ydot_dYe({self.products[0].cindex()}) += rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n\n"
+        fstring += "        // also accumulate the derivatives of ε_{ν,weak} on T and Y"
+        fstring += f"        rate_eval.denuc_weak_dY({self.reactants[0].cindex()}) += C::n_A * (table_values.enu + table_values.gamma);\n"
+        fstring += f"        rate_eval.denuc_weak_dT += C::n_A * Y({self.reactants[0].cindex()}) * table_values.denu_dT;\n"
+
         fstring += "    }\n\n"
 
         fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (table_values.enu + table_values.gamma);\n"

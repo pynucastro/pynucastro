@@ -32,6 +32,8 @@ namespace tabular_weak_rates {
         rate_eval.screened_rates(k_Na23_to_Ne23_electron_capture_weaktab) = table_values.rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dscreened_rates_dT(k_Na23_to_Ne23_electron_capture_weaktab) = table_values.drate_dT;
+            rate_eval.denuc_weak_dY(Na23) += C::n_A * (table_values.enu + table_values.gamma);
+            rate_eval.denuc_weak_dT += C::n_A * Y(Na23) * table_values.denu_dT;
         }
 
         rate_eval.enuc_weak += C::n_A * Y(Na23) * (table_values.enu + table_values.gamma);
@@ -51,6 +53,8 @@ namespace tabular_weak_rates {
         rate_eval.screened_rates(k_Ne23_to_Na23_beta_neg_weaktab) = table_values.rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dscreened_rates_dT(k_Ne23_to_Na23_beta_neg_weaktab) = table_values.drate_dT;
+            rate_eval.denuc_weak_dY(Ne23) += C::n_A * (table_values.enu + table_values.gamma);
+            rate_eval.denuc_weak_dT += C::n_A * Y(Ne23) * table_values.denu_dT;
         }
 
         rate_eval.enuc_weak += C::n_A * Y(Ne23) * (table_values.enu + table_values.gamma);
@@ -72,6 +76,13 @@ namespace tabular_weak_rates {
         const amrex::Real log_rhoy = std::log10(rhoy);
 
         rate_eval.enuc_weak = 0.0_rt;
+
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.denuc_weak_dT = 0.0_rt;
+            for (int n = 1; n <= NumSpec; ++n) {
+                rate_eval.denuc_weak_dY(n) = 0.0_rt;
+            }
+        }
 
         {
             // Na23_to_Ne23_electron_capture_weaktab
