@@ -17,6 +17,20 @@ methods.  When energy evolution is included, the full form of the Jacobian looks
 
 Here we describe how and where each of these contributions are computed.
 
+.. note::
+
+   For a :py:obj:`RateCollection
+   <pynucastro.networks.rate_collection.RateCollection>`, the Jacobian
+   is only used for visualization, via :py:meth:`plot_jacobian
+   <pynucastro.networks.rate_collection.RateCollection.plot_jacobian>`
+   and for the stiffness assessment in :py:meth:`spectral_radius
+   <pynucastro.networks.rate_collection.RateCollection.spectral_radius>`.
+
+.. note::
+
+   For a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`,
+   temperature is integrated instead of specific internal energy, $e$.
+
 :math:`\partial \dot{Y}_i/\partial Y_j`
 =======================================
 
@@ -68,6 +82,18 @@ the effective rate, $\lambda$.  In this case, we need to also need to
 compute $\partial\lambda/\partial Y_j$.  An example of such a rate is the
 ``ApproximateRate`` for $(nn,\gamma)$.
 
+For this type of rate, the flux is:
+
+$$F_{AB} = \rho Y(A) Y(B) \lambda_{AB}(Y)$$
+
+and the contribution to the Jacobian is then:
+
+.. math::
+
+   \frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) \lambda_{AB} +
+          \rho Y(A) Y(B) \frac{\partial \lambda_{AB}}{\partial Y_j}
+
+
 In a rate class, we set ``Rate.rate_comp_dependence = True`` to indicate that
 we need to compute this derivative.
 
@@ -89,4 +115,77 @@ Status of this term:
 Weak-tabulated rates
 --------------------
 
+:py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` store the rate
+data as functions of $T$ and $\rho Y_e$, where
 
+$$Y_e = \sum_k Z_k Y_k$$
+
+is the electron fraction.  The flux for a tabulated weak-rate decay is:
+
+$$F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}(T, \rho Y_e)$$
+
+this means that in addition to the derivative with respect to the explicit $Y(P)$ composition term,
+we also need to account for the $Y_e$ in the tabulation.  For the parent $P$ and child $C$ of the decay,
+we need to accumulate the contributions due to $Y_e$.  We do this in an array ``dweak_rates_dYe``
+that is part of ``RateEval`` or ``rate_derivs_t``:
+
+.. math::
+
+   \begin{split}
+   \texttt{dweak\_rates\_dYe}(P)&\mathrel{-}=
+       Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)},\\
+   \texttt{dweak\_rates\_dYe}(C)&\mathrel{+}=
+   Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)}
+   \end{split}
+
+After all of the contributions are accumulated, they are added to every species column:
+
+.. math::
+
+   J_{ij}\mathrel{+}=\texttt{dweak\_rates\_dYe}(i)\,Z_j
+
+.. important::
+
+   This contribution affects all species, not just the parent and child.  As a result,
+   the Jacobian with weak rates in it will not be sparse.
+
+Screening
+---------
+
+The screening function applied to rates is a function of composition, through the plasma state.
+This contribution enters as $Y_e$ and $\overline{Z^2}$:
+
+.. math::
+
+   Y_e &= \sum_k Z_k Y_k \\
+   \overline{Z^2} &= \sum_k Z_k^2 Y_k
+
+This means that for each rate flux (where we now explicitly include the screening factor, $f$:
+
+$$F_{AB} = \rho Y(A) Y(B) f_{AB} \lambda_{AB}$$
+
+the contribution to the Jacobian would be:
+
+.. math::
+
+   \frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) f_{AB} \lambda_{AB}
+          + \rho Y(A) Y(B) \frac{\partial f_{AB}}{\partial Y_j} \lambda_{AB}
+
+with
+
+.. math::
+
+   \frac{\partial f_{AB}}{\partial Y_j} = \frac{\partial f_{AB}}{\partial Y_e} Z_j
+      + \frac{\partial f_{AB}}{\partial \overline{Z^2}} Z_j^2
+
+
+
+.. note::
+
+   This contribution affects all composition Jacobian elements, which
+   means that the Jacobian is not sparse.
+
+
+.. important::
+
+   This contribution is not currently implemented.
