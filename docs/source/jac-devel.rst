@@ -31,8 +31,12 @@ Here we describe how and where each of these contributions are computed.
    For a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`,
    temperature is integrated instead of specific internal energy, $e$.
 
-:math:`\partial \dot{Y}_i/\partial Y_j`
-=======================================
+   Furthermore, we presently require a numerical (finite-difference) Jacobian when
+   evolving energy in a ``PythonNetwork``.
+
+
+Region I: :math:`\partial \dot{Y}_i/\partial Y_j`
+=================================================
 
 For most rates, this is simply the derivative of the composition factors that appear explicitly
 in the reactive flux.  There are a few instances where the composition is internal to the rate
@@ -200,3 +204,144 @@ with
 .. important::
 
    This contribution is not currently implemented.
+
+
+Region II: :math:`\partial \dot{e}/\partial Y_j`
+================================================
+
+The energy evolution equation is:
+
+$$\frac{de}{dt} = \epsilon_\mathrm{nuc} - \epsilon_{\nu,\mathrm{weak}} - \epsilon_{\nu,\mathrm{thermal}}$$
+
+Each of these energy terms depends on temperature and composition.
+
+
+Binding energy contribution
+---------------------------
+
+The dominant contribution to energy comes from the mass difference between reactants and products:
+
+$$\epsilon_\mathrm{nuc} = -N_A \sum_i \frac{\partial Y_i}{\partial t} m_i c^2$$
+
+Differentiating with respect to $Y_j$, we get the contribution to each
+column of the $\partial \dot{e}/\partial Y_j$ row:
+
+$$\frac{\partial \epsilon_\mathrm{nuc}}{\partial Y_j} = -N_A \sum_i \frac{\partial \dot{Y}_i}{\partial Y_j} m_i c^2$$
+
+We already computed the elements $\partial \dot{Y}_i/\partial Y_j$ in
+Region I, so we can interpret this sum as simply summing down a
+column, weighting by $m_i c^2$.
+
+Status of this term:
+
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly in
+  the template C++ code.
+
+
+Weak rate energy contribution
+-----------------------------
+
+For a decay $P \rightarrow C$, there is an energy release:
+
+$$\epsilon_{\nu.\mathrm{weak}} = N_A \, Y(P)\, (\dot{e}_\nu + \dot{e}_\gamma)$$
+
+where $\dot{e}_\nu$ is the neutrino energy release rate (erg/s) from the rate table,
+and $\dot{e}_\gamma$ is the gamma energy release rate (erg/s) (note: most rate tabulations
+do not provide this).
+
+There are 2 contributions we need to account for here.
+
+Explicit Y dependence
+^^^^^^^^^^^^^^^^^^^^^
+
+First we account for the explicit dependence on the
+parent nucleus.  We accumulate this in ``rate_derivs_t.denuc_weak_dY``:
+
+.. math::
+
+   \texttt{denuc\_weak\_dY}(P) \mathrel{+}=
+        N_A\, (\dot{e}_\nu + \dot{e}_\gamma)
+
+.. important::
+
+   $\dot{e}_\nu$ is negative, so this quantity represents an energy loss.
+
+This term is then added as $\partial
+\epsilon_{\nu,\mathrm{weak}}/\partial Y_j$ to the respective species
+column in the energy row.
+
+Electron fraction dependence
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The second term reflects the fact that $\dot{e}_\nu = \dot{e}_\nu(T, \rho Y_e)$,
+so we have an additional species contribution through $Y_e$.  We accumulate this
+in ``rate_derivs_t.denuc_weak_dYe``:
+
+.. math::
+
+   \texttt{denuc\_weak\_dYe} \mathrel{+}=
+        N_A\, \rho Y(P) \, \frac{\partial \dot{e}_\nu}{\partial Y_e}
+
+This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial Y_e \, Z_j$
+in the same place as the term above.
+
+Status of these terms:
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : : stored in
+  ``rate_derivs_t`` in the ``TabularWeakRate`` evaluation and explicitly
+  added to the Jacobian during the final construction of the Jacobian
+  in the template C++ code.
+
+Thermal neutrinos
+-----------------
+
+
+Region III: :math:`\partial \dot{Y}_i/\partial e`
+=================================================
+
+All rate objects can compute their temperature derivative, so we can compute
+the temperature derivative of the flux of each rate, e.g., for our 
+2-body strong-mediated reaction rate:
+
+$$F_{AB} = \rho Y(A) Y(B) \lambda_{AB}$$
+
+we have:
+
+$$\frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \frac{\partial \lambda_{AB}}{\partial T}$$
+
+likewise, for tabulate weak rates, we can compute the derivative with
+respect to temperature by differentiating the interpolant.
+
+We take advantage of the fact that each rate's flux contributing to $dY_i/dt$ is linear in
+$\lambda$.
+
+
+
+
+
+
+Region IV: :math:`\partial \dot{e}/\partial e`
+==============================================
+
+Binding energy contribution
+---------------------------
+
+
+Weak-rate neutrino contribution
+-------------------------------
+
+
+Thermal neutrinos
+-----------------
+
+
+
+Final conversion to energy
+==========================
+
+There is one last part of the conversion from $T$ to $e$.  If we take the derivative with respect
+to species, with $e$ and $\rho$ held constant, then $T$ will change.  We need to take into account
+how this affects the reactions.
