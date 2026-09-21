@@ -37,6 +37,18 @@ and the contributions to :math:`\partial \dot{Y}_i/\partial Y_j` would be $\part
 
    \frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) \lambda_{AB}
 
+For weak rates, the explicit composition dependence of the parent nucleus is also computed this way.  E.g.,
+for a decay with a parent nucleus $P$, the flux is:
+
+$$F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}$$
+
+and the contribution to the Jacobian is:
+
+.. math::
+
+   \frac{\partial F_{P,\mathrm{weak}}}{\partial Y_j} = \delta_{Pj} \lambda_{P,\mathrm{weak}}
+
+
 This is computed as:
 
 * ``RateCollection`` : directly via
@@ -50,6 +62,27 @@ This is computed as:
 
 ``ApproximateRate``
 -------------------
+
+For some rate approximations, the composition appears explicitly in
+the effective rate, $\lambda$.  In this case, we need to also need to
+compute $\partial\lambda/\partial Y_j$.  An example of such a rate is the
+``ApproximateRate`` for $(nn,\gamma)$.
+
+In a rate class, we set ``Rate.rate_comp_dependence = True`` to indicate that
+we need to compute this derivative.
+
+The rate class itself will then compute the explicit $\partial\lambda/\partial Y_j$ term
+and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struct.
+
+Status of this term:
+
+* ``RateCollection`` : not currently included
+* ``PythonNetwork`` : included in the string returned via
+  :py:meth:`Rate.jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
+  ``rate_derivs_t`` and used symbolically using the SymPy methods in
+  :py:meth:`SympyRates.jacobian_term_symbol
+  <pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol>`
 
 
 
