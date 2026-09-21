@@ -288,9 +288,10 @@ This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial Y_e \
 in the same place as the term above.
 
 Status of these terms:
+
 * ``RateCollection`` : N/A (energy not considered)
 * ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : : stored in
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
   ``rate_derivs_t`` in the ``TabularWeakRate`` evaluation and explicitly
   added to the Jacobian during the final construction of the Jacobian
   in the template C++ code.
@@ -316,9 +317,43 @@ likewise, for tabulate weak rates, we can compute the derivative with
 respect to temperature by differentiating the interpolant.
 
 We take advantage of the fact that each rate's flux contributing to $dY_i/dt$ is linear in
-$\lambda$.
+$\lambda$, and simply construct the algebraic form of $\partial Y_i/\partial t$ using
+$\partial \lambda/\partial T$ instead of $\lambda$ by calling the ``rhs_nuc`` function
+in ``actual_rhs.H``.  This gives us $\partial \dot{Y}_i/\partial T$.
 
 
+Screening
+---------
+
+There is an additional contribution from the temperature derivative of screening.  Taking into
+account screening $f$, the flux is:
+
+$$F_{AB} = \rho Y(A) Y(B) f_{AB} \lambda_{AB}$$
+
+and the total temperature derivative
+
+.. math::
+
+   \frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \left [ \frac{\partial f_{AB}}{\partial T} \lambda_{AB} + f_{AB} \frac{\lambda_{AB}}{\partial T} \right ]
+
+We store the quantity in $[ \ldots ]$ in ``rate_derivs_t.dscreened_rates_dT`` when we evaluate the rates.
+
+
+As energy derivative
+--------------------
+
+We convert this to an energy derivative as:
+
+.. math::
+
+   \frac{\partial F_{AB}}{\partial e} = \frac{1}{c_v} \frac{\partial F_{AB}}{\partial T}
+
+Status of these terms:
+
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly
+  in the template C++ code using the rate derivatives with respect to $T$.
 
 
 
