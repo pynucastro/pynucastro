@@ -80,7 +80,7 @@ This is computed as:
 For some rate approximations, the composition appears explicitly in
 the effective rate, $\lambda$.  In this case, we need to also need to
 compute $\partial\lambda/\partial Y_j$.  An example of such a rate is the
-``ApproximateRate`` for $(nn,\gamma)$.
+:py:obj:`ApproximateRate <pynucastro.rates.approximate_rates.ApproximateRate>` for $(nn,\gamma)$.
 
 For this type of rate, the flux is:
 
@@ -103,10 +103,11 @@ and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struc
 Status of this term:
 
 * ``RateCollection`` : not currently included
-* ``PythonNetwork`` : included in the string returned via
+* ``PythonNetwork`` : (to be done) included in the string returned via
   :py:meth:`Rate.jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
 * ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
-  ``rate_derivs_t`` and used symbolically using the SymPy methods in
+  ``rate_derivs_t`` in the ``ApproximateRate`` evaluation and used
+  symbolically using the SymPy methods in
   :py:meth:`SympyRates.jacobian_term_symbol
   <pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol>`
 
@@ -148,6 +149,16 @@ After all of the contributions are accumulated, they are added to every species 
 
    This contribution affects all species, not just the parent and child.  As a result,
    the Jacobian with weak rates in it will not be sparse.
+
+Status of this term:
+
+* ``RateCollection`` : not currently included
+* ``PythonNetwork`` : not currently include
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
+  ``rate_derivs_t`` in the ``TabularWeakRate`` evaluation and explicitly
+  added to the Jacobian during the final construction of the Jacobian
+  in the template C++ code.
+
 
 Screening
 ---------
