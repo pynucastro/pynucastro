@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate, cxx_rate_func_args
+from pynucastro.rates.rate import Rate, cxx_rate_func_args, need_state
 
 
 def _assert_rate_prop(rate, *,
@@ -756,6 +756,77 @@ class ApproximateRate(Rate):
                 return r_aY + r_pY * r_ap / denom
 
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
+
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
+                           screen_func=None):
+        """Evaluate drate/d(y_i), the derivative of the rate with
+        respect to ``y_i``.  This rate term has the full composition
+        and density dependence, i.e.:
+
+        rate = c ρ**n Y1**a Y2**b ... λ
+
+        The derivative is only non-zero if this term depends on
+        nucleus ``y_i``.
+
+        For ``ApproximateRate`` we will consider both the explicit
+        molar fraction prefactors and composition dependence that is
+        built into the approximation itself.
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the jacobian_term will include the
+            screening correction.
+
+        Returns
+        -------
+        float
+
+        """
+
+        # get the Jacobian term differentiating with respect to y_i
+        val = super().eval_jacobian_term(state, y_i, screen_func=screen_func)
+
+        if self.rate_comp_dependence is None or y_i not in self.rate_comp_dependence:
+            return val
+
+        # we want the contribution of the form c ρ**n Y1**a Y2**b ... ∂λ/∂Y_i
+        # we will compute this as:
+        #
+        #  (c ρ**n Y1**a Y2**b ... λ) * ∂λ/∂Y_i / λ
+        #
+        # the first term is just the flux, given by
+        # Rate.eval_full_rate.  The λ is just the rate itself, given
+        # by Rate.eval.  We compute the ∂λ/∂Y_i here.
+
+        if self.approx_type == "nn_g":
+            assert y_i == Nucleus("n")
+
+            flux = self.eval_full_rate(state, screen_func=screen_func)
+
+            Yn = state.comp.get_molar()[y_i]
+            r2_ng = self.rates["X(n,g)B"].eval(state.T, rho=state.rho, comp=state.comp,
+                                                screen_func=screen_func)
+            r1_gn = self.rates["X(g,n)A"].eval(state.T, rho=state.rho, comp=state.comp,
+                                                screen_func=screen_func)
+
+            dd = 1.0 / (state.rho * Yn * r2_ng + r1_gn)
+
+            # this form is the same for forward or reverse
+            # note: we analytically cancel the explicit rate factor here
+            # since we divide by the rate in creating our final term.
+            # so this is (∂λ/∂Y_n)/λ
+            dlnrate_dYN = -dd * state.rho * r2_ng
+            return val + flux * dlnrate_dYN
+
+        raise ValueError("invalid rate_comp_dependence")
 
     def function_string_py(self):
         """Return a string containing the python function that
