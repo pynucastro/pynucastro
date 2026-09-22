@@ -91,11 +91,15 @@ class TestDoubleN:
 """@numba.njit()
 def Fe52_n_n_to_Fe54_approx(rate_eval, rho=None, Y=None):
     Yn = Y[jn]
-    r1_ng = rate_eval.Fe52_n_to_Fe53_reaclib
     r2_ng = rate_eval.Fe53_n_to_Fe54_reaclib
     r1_gn = rate_eval.Fe53_to_n_Fe52_reaclib
-    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)
+    dd = 1.0 / (rho * Yn * r2_ng + r1_gn)
+
+    r1_ng = rate_eval.Fe52_n_to_Fe53_reaclib
+    rate = 2.0 * r1_ng * r2_ng * dd
+    drate_dYN = -rate * dd * rho * r2_ng
     rate_eval.Fe52_n_n_to_Fe54_approx = rate
+    rate_eval.drate_Fe52_n_n_to_Fe54_approx_dYN = drate_dYN
 
 """
 
