@@ -789,14 +789,16 @@ class PythonNetwork(RateCollection):
 
     def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
         """Construct a string containing the python code for a single
-        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)
+        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus).
+        This includes implicit rate derivatives stored in ``RateEval``
+        for nuclei listed in a rate's ``rate_comp_dependence``.
 
         Parameters
         ----------
         ydot_i_nucleus: Nucleus
             The nucleus representing the dY/dt term we are differentiating.
             This is the row of the Jacobian.
-        ydot_j_nucleus: Nucleus
+        y_j_nucleus: Nucleus
             The nucleus we are differentiating with respect to.  This
             is the column of the Jacobian.
         indent : str
@@ -820,28 +822,34 @@ class PythonNetwork(RateCollection):
         else:
             ostr += f"{indent}{idx_str} = (\n"
             rate_terms_str = ""
-            for r in self.nuclei_consumed[ydot_i_nucleus]:
-                c = r.reactant_count(ydot_i_nucleus)
-
-                jac_str = r.jacobian_string_py(y_j_nucleus)
-                if jac_str == "":
+            seen_rate_ids = set()
+            for r in self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
+                # A rate appearing in both lists contributes only once,
+                # with its net stoichiometric coefficient.
+                if id(r) in seen_rate_ids:
+                    continue
+                seen_rate_ids.add(id(r))
+                c = r.product_count(ydot_i_nucleus) - r.reactant_count(ydot_i_nucleus)
+                if c == 0:
                     continue
 
-                if c == 1:
-                    rate_terms_str += f"{indent}   -{jac_str}\n"
-                else:
-                    rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
-            for r in self.nuclei_produced[ydot_i_nucleus]:
-                c = r.product_count(ydot_i_nucleus)
+                jac_terms = [r.jacobian_string_py(y_j_nucleus)]
+                if r.rate_comp_dependence and y_j_nucleus in r.rate_comp_dependence:
+                    # Product rule: retain the full abundance and density
+                    # factors and replace the rate with its derivative.
+                    deriv_name = f"drate_{r.fname}_dY{y_j_nucleus.cindex()}"
+                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.{r.fname}",
+                                                              f"rate_eval.{deriv_name}"))
 
-                jac_str = r.jacobian_string_py(y_j_nucleus)
-                if jac_str == "":
-                    continue
-
-                if c == 1:
-                    rate_terms_str += f"{indent}   +{jac_str}\n"
-                else:
-                    rate_terms_str += f"{indent}   +{c}*{jac_str}\n"
+                for jac_str in jac_terms:
+                    if jac_str == "":
+                        continue
+                    if c == 1:
+                        rate_terms_str += f"{indent}   +{jac_str}\n"
+                    elif c == -1:
+                        rate_terms_str += f"{indent}   -{jac_str}\n"
+                    else:
+                        rate_terms_str += f"{indent}   {c:+}*{jac_str}\n"
 
             if rate_terms_str == "":
                 return ""

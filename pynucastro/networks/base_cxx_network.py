@@ -242,13 +242,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         is a molar fraction
 
         The Jacobian is stored as a list with each entry representing
-        a Jacobian element.  We also store whether the entry is null.
+        a Jacobian element in row-major order: i is the Ydot row and
+        j is the abundance column we differentiate with respect to.
+        We also store whether the entry is null.
 
         """
         jac_null = []
         jac_sym = []
-        for nj in self.unique_nuclei:
-            for ni in self.unique_nuclei:
+        for ni in self.unique_nuclei:
+            for nj in self.unique_nuclei:
                 rsym_is_null = True
                 rsym = float(sympy.sympify(0.0))
                 # A rate can be in both lists when a nucleus is both a
@@ -256,18 +258,18 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # accounts for the net stoichiometric coefficient, so it
                 # must be included only once.
                 seen_rate_ids = set()
-                for r in self.nuclei_consumed[nj] + self.nuclei_produced[nj]:
+                for r in self.nuclei_consumed[ni] + self.nuclei_produced[ni]:
                     if id(r) in seen_rate_ids:
                         continue
                     seen_rate_ids.add(id(r))
-                    rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
-                    if r.rate_comp_dependence and ni in r.rate_comp_dependence:
+                    rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, ni, nj)
+                    if r.rate_comp_dependence and nj in r.rate_comp_dependence:
                         # Product rule: retain the full abundance and density
-                        # factors and replace lambda with its Y_i derivative.
-                        ydot_term = self.symbol_rates.ydot_term_symbol(r, nj)
+                        # factors and replace lambda with its Y_j derivative.
+                        ydot_term = self.symbol_rates.ydot_term_symbol(r, ni)
                         if ydot_term is not None:
                             rate_sym = sympy.Symbol(f'NRD__k_{r.fname}__')
-                            deriv_name = f'drate_{r.fname}_dY{ni.cindex()}'
+                            deriv_name = f'drate_{r.fname}_dY{nj.cindex()}'
                             deriv_sym = sympy.Symbol(deriv_name)
                             self.symbol_rates.symbol_ludict[deriv_name] = f'rate_eval.{deriv_name}'
                             rsym_add += ydot_term.subs(rate_sym, deriv_sym)
