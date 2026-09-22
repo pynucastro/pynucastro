@@ -353,7 +353,7 @@ dependence enters through the mean mass number and mean charge:
 
 .. math::
 
-   \bar{A} &= \left (\sum_k Y_k \right )^{-1}
+   \bar{A} &= \left (\sum_k Y_k \right )^{-1} \\
    \bar{Z} &= \bar{A} \sum_k Z_k Y_k = \bar{A} Y_e .
 
 At fixed $T$ and $\rho$, their composition derivatives are:
