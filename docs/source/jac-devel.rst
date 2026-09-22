@@ -1,4 +1,4 @@
-L********************
+********************
 Form of the Jacobian
 ********************
 
@@ -34,6 +34,11 @@ Here we describe how and where each of these contributions are computed.
    Furthermore, we presently require a numerical (finite-difference) Jacobian when
    evolving energy in a ``PythonNetwork``.
 
+.. note::
+
+   A :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
+   does not include the energy evolution terms, so its Jacobian is species-only.
+
 
 Region I: :math:`\partial \dot{Y}_i/\partial Y_j`
 =================================================
@@ -45,7 +50,7 @@ itself that we also need to capture.
 Basic rates
 -----------
 
-For a 2-body strong-mediated reaction rate, the reactive flux has the form:
+For a 2-body strong-mediated reaction rate (with distinct reactants $A$ and $B$), the reactive flux has the form:
 
 $$F_{AB} = \rho Y(A) Y(B) \lambda_{AB}$$
 
@@ -60,11 +65,20 @@ for a decay with a parent nucleus $P$, the flux is:
 
 $$F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}$$
 
-and the contribution to the Jacobian is:
+The composition derivative is:
 
 .. math::
 
    \frac{\partial F_{P,\mathrm{weak}}}{\partial Y_j} = \delta_{Pj} \lambda_{P,\mathrm{weak}}
+
+and the contribution to the Jacobian is:
+
+.. math::
+
+   J_{ij}\mathrel{+}=(n_i^{\mathrm{products}}-n_i^{\mathrm{reactants}})
+     \frac{\partial F}{\partial Y_j}.
+
+where $n_i$ are the stoichiometric coefficients for species $i$.
 
 
 This is computed as:
@@ -98,8 +112,9 @@ and the contribution to the Jacobian is then:
           \rho Y(A) Y(B) \frac{\partial \lambda_{AB}}{\partial Y_j}
 
 
-In a rate class, we set ``Rate.rate_comp_dependence = True`` to indicate that
-we need to compute this derivative.
+In a rate class, we set ``Rate.rate_comp_dependence`` to a list of the
+nucleus that the rate ($\lambda$) depends on internally.  This
+indicates that we need we need to compute this derivative.
 
 The rate class itself will then compute the explicit $\partial\lambda/\partial Y_j$ term
 and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struct.
@@ -114,8 +129,8 @@ Status of this term:
 * ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
   ``rate_derivs_t`` in the ``ApproximateRate`` evaluation and used
   symbolically using the SymPy methods in
-  :py:meth:`SympyRates.jacobian_term_symbol
-  <pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol>`
+  :py:meth:`BaseCxxNetwork.compose_jacobian
+  <pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian>`
 
 
 
@@ -133,7 +148,7 @@ $$F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}(T, \rho Y_e)$$
 
 this means that in addition to the derivative with respect to the explicit $Y(P)$ composition term,
 we also need to account for the $Y_e$ in the tabulation.  For the parent $P$ and child $C$ of the decay,
-we need to accumulate the contributions due to $Y_e$.  We do this in an array ``dweak_rates_dYe``
+we need to accumulate the contributions due to $Y_e$.  We do this in an array ``dweak_ydot_dYe``
 that is part of ``RateEval`` or ``rate_derivs_t``:
 
 .. math::
@@ -215,7 +230,13 @@ Region II: :math:`\partial \dot{e}/\partial Y_j`
 
 The energy evolution equation is:
 
-$$\frac{de}{dt} = \epsilon_\mathrm{nuc} - \epsilon_{\nu,\mathrm{weak}} - \epsilon_{\nu,\mathrm{thermal}}$$
+$$\frac{de}{dt} = \epsilon_\mathrm{nuc} + \epsilon_{\nu,\mathrm{weak}} - \epsilon_{\nu,\mathrm{thermal}}$$
+
+.. important::
+
+   The sign of $\epsilon_{\nu,\mathrm{weak}}$ is constructed to be negative in
+   the table interpolation routines, hence the $+$ in this evolution equation.
+   This term still represents an energy loss.
 
 Each of these energy terms depends on temperature and composition.
 
@@ -240,7 +261,8 @@ Status of this term:
 
 * ``RateCollection`` : N/A (energy not considered)
 * ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly in
+* ``SimpleCxxNetwork`` : N/A (energy not considered)
+* ``AmrexAstroCxxNetwork`` : computed directly in
   the template C++ code.
 
 
@@ -290,7 +312,7 @@ in ``rate_derivs_t.denuc_weak_dYe``:
    \texttt{denuc\_weak\_dYe} \mathrel{+}=
         N_A\, \rho Y(P) \, \frac{\partial \dot{e}_\nu}{\partial Y_e}
 
-This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial Y_e \, Z_j$
+This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial (\rho Y_e) \, Z_j$
 in the same place as the term above.
 
 This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
@@ -300,7 +322,8 @@ Status of these terms
 
 * ``RateCollection`` : N/A (energy not considered)
 * ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
+* ``SimpleCxxNetwork`` : N/A (energy not considered)
+* ``AmrexAstroCxxNetwork`` : stored in
   ``rate_derivs_t`` in the ``TabularWeakRate`` evaluation and explicitly
   added to the Jacobian during the final construction of the Jacobian
   in the template C++ code.
@@ -343,7 +366,7 @@ and the total temperature derivative
 
 .. math::
 
-   \frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \left [ \frac{\partial f_{AB}}{\partial T} \lambda_{AB} + f_{AB} \frac{\lambda_{AB}}{\partial T} \right ]
+   \frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \left [ \frac{\partial f_{AB}}{\partial T} \lambda_{AB} + f_{AB} \frac{\partial \lambda_{AB}}{\partial T} \right ]
 
 We store the quantity in $[ \ldots ]$ in ``rate_derivs_t.dscreened_rates_dT`` when we evaluate the rates.
 
@@ -353,7 +376,8 @@ Status of these terms
 
 * ``RateCollection`` : N/A (energy not considered)
 * ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly
+* ``SimpleCxxNetwork`` : N/A (energy not considered)
+* ``AmrexAstroCxxNetwork`` : computed directly
   in the template C++ code using the rate derivatives with respect to $T$.
 
 
@@ -390,9 +414,10 @@ from these.
 
 This is computed as:
 
-* ``RateCollection`` : N/A
-* ``PythonNetwork`` : N/A
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : directly in the C++ template.
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``SimpleCxxNetwork`` : N/A (energy not considered)
+* ``AmrexAstroCxxNetwork`` : directly in the C++ template.
 
 
 Weak-rate neutrino contribution
@@ -411,7 +436,7 @@ tabular rates as:
 
 .. math::
 
-   \texttt{denuc\_weak\_dT}(P) \mathrel{+}=
+   \texttt{denuc\_weak\_dT} \mathrel{+}=
        N_A\, Y(P)\, \frac{\partial\dot{e}_\nu}{\partial T}
 
 and then add it to the $\partial \dot{e} /\partial T$ term in the Jacobian function.
@@ -420,9 +445,10 @@ This contribution was added in `pynucastro PR #1535 <https://github.com/pynucast
 
 This is computed as:
 
-* ``RateCollection`` : N/A
-* ``PythonNetwork`` : N/A
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : directly in the C++ template.
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``SimpleCxxNetwork`` : N/A (energy not considered)
+* ``AmrexAstroCxxNetwork`` : directly in the C++ template.
 
 
 
