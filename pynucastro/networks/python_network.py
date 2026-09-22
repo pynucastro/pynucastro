@@ -1106,12 +1106,21 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         for r in self.all_rates:
             of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f'{indent}("drate_{r.fname}_dY{n.cindex()}", numba.float64),\n')
+
         of.write("])\n")
         of.write("class RateEval:\n")
         of.write(f"{indent}def __init__(self):\n")
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         for r in self.all_rates:
             of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f"{indent*2}self.drate_{r.fname}_dY{n.cindex()} = np.nan\n")
 
         of.write("\n")
 

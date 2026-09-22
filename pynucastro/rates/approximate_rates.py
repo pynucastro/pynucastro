@@ -814,27 +814,26 @@ class ApproximateRate(Rate):
 
             string += "    Yn = Y[jn]\n"
 
+            # create the normalization
+            string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
+            string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
+            string += "    dd = 1.0 / (rho * Yn * r2_ng + r1_gn)\n\n"
+
             if not self.is_reverse:
-
-                # first we need to get all of the rates that make this up
                 string += f"    r1_ng = rate_eval.{self.rates['A(n,g)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
 
                 # now the approximation
-                string += "    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)\n"
-
+                string += "    rate = 2.0 * r1_ng * r2_ng * dd\n"
+                string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
             else:
-
-                # first we need to get all of the rates that make this up
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
                 string += f"    r2_gn = rate_eval.{self.rates['B(g,n)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
 
                 # now the approximation
-                string += "    rate = r1_gn * r2_gn / (rho * Yn * r2_ng + r1_gn)\n"
+                string += "    rate = r1_gn * r2_gn * dd\n"
+                string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n\n"
+            string += f"    rate_eval.{self.fname} = rate\n"
+            string += f"    rate_eval.drate_{self.fname}_dYN = drate_dYN\n\n"
             return string
 
         if self.approx_type == "Yp_pg":
