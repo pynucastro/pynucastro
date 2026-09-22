@@ -1,4 +1,4 @@
-********************
+L********************
 Form of the Jacobian
 ********************
 
@@ -104,6 +104,8 @@ we need to compute this derivative.
 The rate class itself will then compute the explicit $\partial\lambda/\partial Y_j$ term
 and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struct.
 
+This contribution was added in `pynucastro PR #1537 <https://github.com/pynucastro/pynucastro/pull/1537>`_.
+
 Status of this term:
 
 * ``RateCollection`` : not currently included
@@ -153,6 +155,8 @@ After all of the contributions are accumulated, they are added to every species 
 
    This contribution affects all species, not just the parent and child.  As a result,
    the Jacobian with weak rates in it will not be sparse.
+
+This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
 
 Status of this term:
 
@@ -272,6 +276,8 @@ This term is then added as $\partial
 \epsilon_{\nu,\mathrm{weak}}/\partial Y_j$ to the respective species
 column in the energy row.
 
+This contribution was added in `pynucastro PR #1535 <https://github.com/pynucastro/pynucastro/pull/1535>`_.
+
 Electron fraction dependence
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -287,7 +293,10 @@ in ``rate_derivs_t.denuc_weak_dYe``:
 This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial Y_e \, Z_j$
 in the same place as the term above.
 
-Status of these terms:
+This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
+
+Status of these terms
+^^^^^^^^^^^^^^^^^^^^^
 
 * ``RateCollection`` : N/A (energy not considered)
 * ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
@@ -316,7 +325,7 @@ $$\frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \frac{\partial \lambda_{AB
 likewise, for tabulate weak rates, we can compute the derivative with
 respect to temperature by differentiating the interpolant.
 
-We take advantage of the fact that each rate's flux contributing to $dY_i/dt$ is linear in
+We take advantage of the fact that each rate's flux contributing to $\partial Y_i/\partial t$ is linear in
 $\lambda$, and simply construct the algebraic form of $\partial Y_i/\partial t$ using
 $\partial \lambda/\partial T$ instead of $\lambda$ by calling the ``rhs_nuc`` function
 in ``actual_rhs.H``.  This gives us $\partial \dot{Y}_i/\partial T$.
@@ -339,6 +348,16 @@ and the total temperature derivative
 We store the quantity in $[ \ldots ]$ in ``rate_derivs_t.dscreened_rates_dT`` when we evaluate the rates.
 
 
+Status of these terms
+---------------------
+
+* ``RateCollection`` : N/A (energy not considered)
+* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly
+  in the template C++ code using the rate derivatives with respect to $T$.
+
+
+
 As energy derivative
 --------------------
 
@@ -347,13 +366,6 @@ We convert this to an energy derivative as:
 .. math::
 
    \frac{\partial F_{AB}}{\partial e} = \frac{1}{c_v} \frac{\partial F_{AB}}{\partial T}
-
-Status of these terms:
-
-* ``RateCollection`` : N/A (energy not considered)
-* ``PythonNetwork`` : N/A (numerical Jacobian is used with self-heating networks)
-* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : computed directly
-  in the template C++ code using the rate derivatives with respect to $T$.
 
 
 
@@ -364,14 +376,68 @@ Region IV: :math:`\partial \dot{e}/\partial e`
 Binding energy contribution
 ---------------------------
 
+Starting with
+
+$$\epsilon_\mathrm{nuc} = -N_A \sum_i \frac{\partial Y_i}{\partial t} m_i c^2$$
+
+and differentiating with respect to temperature, we have:
+
+$$\frac{\partial \epsilon_\mathrm{nuc}}{\partial T} = -N_A \sum_i \frac{\partial \dot{Y}_i}{\partial T} m_i c^2$$
+
+we have $\frac{\partial \dot{Y}_i}{\partial T}$ from Region III.  So
+we can just compute \frac{\partial \epsilon_\mathrm{nuc}}{\partial T}
+from these.
+
+This is computed as:
+
+* ``RateCollection`` : N/A
+* ``PythonNetwork`` : N/A
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : directly in the C++ template.
+
 
 Weak-rate neutrino contribution
 -------------------------------
+
+The weak rate energy is:
+
+$$\epsilon_{\nu.\mathrm{weak}} = N_A \, Y(P)\, (\dot{e}_\nu + \dot{e}_\gamma)$$
+
+We can differentiate this with respect to temperature (ignoring $\dot{e}_\gamma$:
+
+$$\frac{\partial\epsilon_{\nu.\mathrm{weak}}}{\partial T} = N_A \, Y(P)\, \frac{\partial \dot{e}_\nu}{\partial T}$$
+
+we accumulate this contribution in ``rate_derivs_t.denuc_weak_T`` when we evaluate the
+tabular rates as:
+
+.. math::
+
+   \texttt{denuc\_weak\_dT}(P) \mathrel{+}=
+       N_A\, Y(P)\, \frac{\partial\dot{e}_\nu}{\partial T}
+
+and then add it to the $\partial \dot{e} /\partial T$ term in the Jacobian function.
+
+This contribution was added in `pynucastro PR #1535 <https://github.com/pynucastro/pynucastro/pull/1535>`_.
+
+This is computed as:
+
+* ``RateCollection`` : N/A
+* ``PythonNetwork`` : N/A
+* ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : directly in the C++ template.
+
 
 
 Thermal neutrinos
 -----------------
 
+
+As energy derivative
+--------------------
+
+We convert this to an energy derivative as:
+
+.. math::
+
+   \frac{\partial \dot{e}}{\partial e} = \frac{1}{c_v} \frac{\partial  \dot{e}}{\partial T}
 
 
 Final conversion to energy
