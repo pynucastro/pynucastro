@@ -113,8 +113,8 @@ and the contribution to the Jacobian is then:
 
 
 In a rate class, we set ``Rate.rate_comp_dependence`` to a list of the
-nucleus that the rate ($\lambda$) depends on internally.  This
-indicates that we need we need to compute this derivative.
+nuclei that the rate ($\lambda$) depends on internally.  This
+indicates that we need to compute this derivative.
 
 The rate class itself will then compute the explicit $\partial\lambda/\partial Y_j$ term
 and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struct.
@@ -154,9 +154,9 @@ that is part of ``RateEval`` or ``rate_derivs_t``:
 .. math::
 
    \begin{split}
-   \texttt{dweak\_rates\_dYe}(P)&\mathrel{-}=
+   \texttt{dweak\_ydot\_dYe}(P)&\mathrel{-}=
        Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)},\\
-   \texttt{dweak\_rates\_dYe}(C)&\mathrel{+}=
+   \texttt{dweak\_ydot\_dYe}(C)&\mathrel{+}=
    Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)}
    \end{split}
 
@@ -164,12 +164,12 @@ After all of the contributions are accumulated, they are added to every species 
 
 .. math::
 
-   J_{ij}\mathrel{+}=\texttt{dweak\_rates\_dYe}(i)\,Z_j
+   J_{ij}\mathrel{+}=\texttt{dweak\_ydot\_dYe}(i)\,Z_j
 
 .. important::
 
-   This contribution affects all species, not just the parent and child.  As a result,
-   the Jacobian with weak rates in it will not be sparse.
+   This contribution affects all charged species, not just the parent and child.  As a result,
+   the Jacobian with weak rates in it will not be nearly as sparse.
 
 This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
 
@@ -187,14 +187,20 @@ Screening
 ---------
 
 The screening function applied to rates is a function of composition, through the plasma state.
-This contribution enters as $Y_e$ and $\overline{Z^2}$:
+This contribution enters as $Y_e$ and $\zeta$:
 
 .. math::
 
    Y_e &= \sum_k Z_k Y_k \\
-   \overline{Z^2} &= \sum_k Z_k^2 Y_k
+   \zeta &= \sum_k Z_k^2 Y_k
 
-This means that for each rate flux (where we now explicitly include the screening factor, $f$:
+.. note::
+
+   $\zeta$ is related to the quantity $\overline{Z^2}$ that the ``plasma_state_t`` calls ``z2bar`` as:
+
+   $$\overline{Z^2} = \bar{A} \zeta$$
+
+This means that for each rate flux (where we now explicitly include the screening factor, $f$):
 
 $$F_{AB} = \rho Y(A) Y(B) f_{AB} \lambda_{AB}$$
 
@@ -210,14 +216,14 @@ with
 .. math::
 
    \frac{\partial f_{AB}}{\partial Y_j} = \frac{\partial f_{AB}}{\partial Y_e} Z_j
-      + \frac{\partial f_{AB}}{\partial \overline{Z^2}} Z_j^2
+      + \frac{\partial f_{AB}}{\partial \zeta} Z_j^2
 
 
 
 .. note::
 
-   This contribution affects all composition Jacobian elements, which
-   means that the Jacobian is not sparse.
+   This contribution affects all composition Jacobian elements for charged species, which
+   means that the Jacobian is no longer really sparse.
 
 
 .. important::
@@ -234,9 +240,10 @@ $$\frac{de}{dt} = \epsilon_\mathrm{nuc} + \epsilon_{\nu,\mathrm{weak}} - \epsilo
 
 .. important::
 
-   The sign of $\epsilon_{\nu,\mathrm{weak}}$ is constructed to be negative in
-   the table interpolation routines, hence the $+$ in this evolution equation.
-   This term still represents an energy loss.
+   The neutrino contribution in $\epsilon_{\nu,\mathrm{weak}}$ is constructed to be negative in
+   the table interpolation routines.  In general, \epsilon_{\nu,\mathrm{weak}} can also include
+   a positive $\gamma$ contribution, hence the $+$ in this evolution equation.
+   This term will represents an energy loss when neutrinos dominate.
 
 Each of these energy terms depends on temperature and composition.
 
@@ -310,9 +317,9 @@ in ``rate_derivs_t.denuc_weak_dYe``:
 .. math::
 
    \texttt{denuc\_weak\_dYe} \mathrel{+}=
-        N_A\, \rho Y(P) \, \frac{\partial \dot{e}_\nu}{\partial Y_e}
+        N_A\, \rho Y(P) \, \frac{\partial \dot{e}_\nu}{\partial \rho Y_e}
 
-This term is then added as $\partial \epsilon_{\nu,\mathrm{weak}}/\partial (\rho Y_e) \, Z_j$
+This term is then added as $\texttt{denuc\_weak\_dYe} \, Z_j$
 in the same place as the term above.
 
 This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
@@ -409,7 +416,7 @@ and differentiating with respect to temperature, we have:
 $$\frac{\partial \epsilon_\mathrm{nuc}}{\partial T} = -N_A \sum_i \frac{\partial \dot{Y}_i}{\partial T} m_i c^2$$
 
 we have $\frac{\partial \dot{Y}_i}{\partial T}$ from Region III.  So
-we can just compute \frac{\partial \epsilon_\mathrm{nuc}}{\partial T}
+we can just compute $\frac{\partial \epsilon_\mathrm{nuc}}{\partial T}$
 from these.
 
 This is computed as:
@@ -431,7 +438,7 @@ We can differentiate this with respect to temperature (ignoring $\dot{e}_\gamma$
 
 $$\frac{\partial\epsilon_{\nu.\mathrm{weak}}}{\partial T} = N_A \, Y(P)\, \frac{\partial \dot{e}_\nu}{\partial T}$$
 
-we accumulate this contribution in ``rate_derivs_t.denuc_weak_T`` when we evaluate the
+we accumulate this contribution in ``rate_derivs_t.denuc_weak_dT`` when we evaluate the
 tabular rates as:
 
 .. math::
