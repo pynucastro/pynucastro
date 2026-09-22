@@ -24,19 +24,19 @@ namespace tabular_weak_rates {
 
         // Na23 --> Ne23
 
-        amrex::Real rate{}, drate_dT{}, edot_nu{}, dedot_nu_dT{}, edot_gamma{};
+        weak_rate_t table_values{};
         constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         tabular_evaluate<do_T_derivatives>(j_Na23_Ne23_meta, j_Na23_Ne23_rhoy, j_Na23_Ne23_temp, j_Na23_Ne23_data,
-                                            log_rhoy, log_temp, temp, rate, drate_dT, edot_nu, dedot_nu_dT, edot_gamma);
+                                            log_rhoy, log_temp, temp, table_values);
 
-        rate_eval.screened_rates(k_Na23_to_Ne23_electron_capture_weaktab) = rate;
-        rate_eval.enuc_weak += C::n_A * Y(Na23) * (edot_nu + edot_gamma);
+        rate_eval.screened_rates(k_Na23_to_Ne23_electron_capture_weaktab) = table_values.rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_Na23_to_Ne23_electron_capture_weaktab) = drate_dT;
-            rate_eval.denuc_weak_dY(Na23) += C::n_A * (edot_nu + edot_gamma);
-            rate_eval.denuc_weak_dT += C::n_A * Y(Na23) * dedot_nu_dT;
+            rate_eval.dscreened_rates_dT(k_Na23_to_Ne23_electron_capture_weaktab) = table_values.drate_dT;
+            rate_eval.denuc_weak_dY(Na23) += C::n_A * (table_values.enu + table_values.gamma);
+            rate_eval.denuc_weak_dT += C::n_A * Y(Na23) * table_values.denu_dT;
         }
 
+        rate_eval.enuc_weak += C::n_A * Y(Na23) * (table_values.enu + table_values.gamma);
     }
 
     template <typename T>
@@ -45,19 +45,19 @@ namespace tabular_weak_rates {
 
         // Ne23 --> Na23
 
-        amrex::Real rate{}, drate_dT{}, edot_nu{}, dedot_nu_dT{}, edot_gamma{};
+        weak_rate_t table_values{};
         constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         tabular_evaluate<do_T_derivatives>(j_Ne23_Na23_meta, j_Ne23_Na23_rhoy, j_Ne23_Na23_temp, j_Ne23_Na23_data,
-                                            log_rhoy, log_temp, temp, rate, drate_dT, edot_nu, dedot_nu_dT, edot_gamma);
+                                            log_rhoy, log_temp, temp, table_values);
 
-        rate_eval.screened_rates(k_Ne23_to_Na23_beta_neg_weaktab) = rate;
-        rate_eval.enuc_weak += C::n_A * Y(Ne23) * (edot_nu + edot_gamma);
+        rate_eval.screened_rates(k_Ne23_to_Na23_beta_neg_weaktab) = table_values.rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            rate_eval.dscreened_rates_dT(k_Ne23_to_Na23_beta_neg_weaktab) = drate_dT;
-            rate_eval.denuc_weak_dY(Ne23) += C::n_A * (edot_nu + edot_gamma);
-            rate_eval.denuc_weak_dT += C::n_A * Y(Ne23) * dedot_nu_dT;
+            rate_eval.dscreened_rates_dT(k_Ne23_to_Na23_beta_neg_weaktab) = table_values.drate_dT;
+            rate_eval.denuc_weak_dY(Ne23) += C::n_A * (table_values.enu + table_values.gamma);
+            rate_eval.denuc_weak_dT += C::n_A * Y(Ne23) * table_values.denu_dT;
         }
 
+        rate_eval.enuc_weak += C::n_A * Y(Ne23) * (table_values.enu + table_values.gamma);
     }
 
 
