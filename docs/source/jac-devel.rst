@@ -15,6 +15,15 @@ methods.  When energy evolution is included, the full form of the Jacobian looks
                      \cdots & \partial \dot{e} /\partial Y_j & \cdots & \partial \dot{e}/\partial e
                      \end{array} \right )
 
+which we note as Regions I through IV:
+
+.. math::
+
+   {\bf J} = \left ( \begin{array}{c|c}
+                   I & III \\
+                  \hline
+                  II & IV \end{array} \right )
+
 Here we describe how and where each of these contributions are computed.
 
 .. note::
@@ -241,7 +250,7 @@ $$\frac{de}{dt} = \epsilon_\mathrm{nuc} + \epsilon_{\nu,\mathrm{weak}} - \epsilo
 .. important::
 
    The neutrino contribution in $\epsilon_{\nu,\mathrm{weak}}$ is constructed to be negative in
-   the table interpolation routines.  In general, \epsilon_{\nu,\mathrm{weak}} can also include
+   the table interpolation routines.  In general, $\epsilon_{\nu,\mathrm{weak}}$ can also include
    a positive $\gamma$ contribution, hence the $+$ in this evolution equation.
    This term will represents an energy loss when neutrinos dominate.
 
@@ -337,6 +346,37 @@ Status of these terms
 
 Thermal neutrinos
 -----------------
+
+The thermal neutrino loss rate, $\epsilon_{\nu,\mathrm{thermal}}$, is a positive
+energy loss per unit mass (erg/g/s).  In ``AmrexAstroCxxNetwork``, its composition
+dependence enters through the mean mass number and mean charge:
+
+.. math::
+
+   \bar{A} &= \left (\sum_k Y_k \right )^{-1}
+   \bar{Z} &= \bar{A} \sum_k Z_k Y_k = \bar{A} Y_e .
+
+At fixed $T$ and $\rho$, their composition derivatives are:
+
+.. math::
+
+   \frac{\partial \bar{A}}{\partial Y_j} &= -\bar{A}^2 \\
+   \frac{\partial \bar{Z}}{\partial Y_j} &= \bar{A}(Z_j - \bar{Z}).
+
+Since the thermal neutrino loss is subtracted in the energy equation, its
+contribution to the energy row is:
+
+.. math::
+
+   J_{e j} \mathrel{+}= -\frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial Y_j}
+     = -\left[-\bar{A}^2
+         \frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial \bar{A}}
+       + \bar{A}(Z_j - \bar{Z})
+         \frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial \bar{Z}}\right].
+
+In ``actual_jac`` in the ``actual_rhs.H`` template, the call to
+``neutrino_cooling<1>`` returns these derivatives as ``dsnuda`` and ``dsnudz``.
+This term is then computed and added to the Jacobian.
 
 
 Region III: :math:`\partial \dot{Y}_i/\partial e`
@@ -462,6 +502,18 @@ This is computed as:
 Thermal neutrinos
 -----------------
 
+At fixed density and composition, the thermal neutrino contribution to the
+temperature derivative of the energy RHS is:
+
+.. math::
+
+   \frac{\partial \dot{e}}{\partial T} \mathrel{+}=
+       -\frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial T}.
+
+The same ``neutrino_cooling<1>`` call in the ``AmrexAstroCxxNetwork`` template
+returns this loss-rate derivative as ``dsneutdt``.  In ``actual_jac``, we subtract
+it from ``jac_e_T``.
+
 
 As energy derivative
 --------------------
@@ -479,3 +531,5 @@ Final conversion to energy
 There is one last part of the conversion from $T$ to $e$.  If we take the derivative with respect
 to species, with $e$ and $\rho$ held constant, then $T$ will change.  We need to take into account
 how this affects the reactions.
+
+This is handled by the integration wrappers in `AMReX Microphysics <https://github.com/amrex-astro/Microphysics>`_.
