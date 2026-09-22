@@ -5,6 +5,12 @@
   * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
     `BaseCxxNetwork` :
 
+    * accumulate forward/reverse pair contributions to the C++ abundance
+      RHS using Kahan summation, reducing roundoff when contributions span
+      a wide range of magnitudes (including the weak-only RHS). AMReX
+      networks require `AMReX_CompensatedSum.H`; standalone C++ and Fortran
+      networks use the equivalent compatibility helper. Floating-point
+      reassociation (e.g., `-ffast-math`) can defeat compensation.
     * move rate evals into namespaces (#1459, #1500)
     * silence unused vars (#1487)
     * evaluate the rates in the same order as `PythonNetwork` (#1497)

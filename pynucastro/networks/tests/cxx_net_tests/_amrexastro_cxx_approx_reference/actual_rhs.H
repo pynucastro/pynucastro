@@ -3,6 +3,7 @@
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
+#include <AMReX_CompensatedSum.H>
 
 #include <extern_parameters.H>
 #include <actual_network.H>
@@ -233,19 +234,37 @@ void rhs_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    ydot_nuc(He4) =
-        (-screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28)) +
-        (-screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    ydot_nuc(He4) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(He4), compensation,
+            -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28));
+        amrex::compensatedAdd(ydot_nuc(He4), compensation,
+            -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    }
 
-    ydot_nuc(Mg24) =
-        (-screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28));
+    ydot_nuc(Mg24) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Mg24), compensation,
+            -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28));
+    }
 
-    ydot_nuc(Si28) =
-        (screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + -screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28)) +
-        (-screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    ydot_nuc(Si28) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Si28), compensation,
+            screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho + -screened_rates(k_Si28_to_Mg24_He4_approx)*Y(Si28));
+        amrex::compensatedAdd(ydot_nuc(Si28), compensation,
+            -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    }
 
-    ydot_nuc(S32) =
-        (screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + -screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    ydot_nuc(S32) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(S32), compensation,
+            screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho + -screened_rates(k_S32_to_Si28_He4_approx)*Y(S32));
+    }
 
 }
 

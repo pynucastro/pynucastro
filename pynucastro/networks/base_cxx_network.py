@@ -407,45 +407,25 @@ class BaseCxxNetwork(ABC, RateCollection):
         # This is a helper function that converts sympy cxxcode to the actual c++ code we use.
         return self.symbol_rates.cxxify(s)
 
-    def _write_ydot_nuc(self, n_indent, of, ydot_nuc):
-        # Helper function to write out ydot of a specific nuclei
-
+    def _write_ydot_nuc(self, n_indent, of, ydot_nuc, target):
+        # Sum the net contributions of forward/reverse pairs with Kahan
+        # compensation. Keep each pair together before accumulating it.
+        idnt = self.indent * n_indent
+        of.write(f"{idnt}{target} = 0.0_rt;\n")
         valid_pairs = [q for q in ydot_nuc if q.count(None) != 2]
-        for j, pair in enumerate(valid_pairs):
-            # pair here is the forward, reverse pair for a single rate as it affects
-            # nucleus n
-            num = 0
-            if pair.count(None) == 0:
-                num = 2
-            elif pair.count(None) == 1:
-                num = 1
+        if not valid_pairs:
+            of.write("\n")
+            return
 
-            of.write(f"{2*self.indent*n_indent}")
-            if num == 2:
-                of.write("(")
-
-            if pair[0] is not None:
-                sol_value = self._cxxify(sympy.cxxcode(pair[0], precision=15,
-                                                       standard="c++11"))
-
-                of.write(f"{sol_value}")
-
-            if num == 2:
-                of.write(" + ")
-
-            if pair[1] is not None:
-                sol_value = self._cxxify(sympy.cxxcode(pair[1], precision=15,
-                                                       standard="c++11"))
-
-                of.write(f"{sol_value}")
-
-            if num == 2:
-                of.write(")")
-
-            if j == len(valid_pairs)-1:
-                of.write(";\n\n")
-            else:
-                of.write(" +\n")
+        of.write(f"{idnt}{{\n")
+        of.write(f"{idnt}{self.indent}{self.dtype} compensation = 0.0_rt;\n")
+        for pair in valid_pairs:
+            terms = [self._cxxify(sympy.cxxcode(term, precision=15, standard="c++11"))
+                     for term in pair if term is not None]
+            value = " + ".join(terms)
+            of.write(f"{idnt}{self.indent}{self.array_namespace}compensatedAdd({target}, compensation,\n")
+            of.write(f"{idnt}{2*self.indent}{value});\n")
+        of.write(f"{idnt}}}\n\n")
 
     def _ydot(self, n_indent, of):
         # Write YDOT
@@ -454,9 +434,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) = 0.0_rt;\n\n")
                 continue
 
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
-
-            self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
+            target = f"{self.symbol_rates.name_ydot_nuc}({n.cindex()})"
+            self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n], target)
 
     def _ydot_weak(self, n_indent, of):
         # Writes ydot for weak reactions and computes corresponding neutrino loss term
@@ -550,9 +529,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                 if (fwd, rvs).count(None) < 2:
                     ydot_sym_terms.append((fwd, rvs))
 
-            of.write(f"{self.indent*n_indent}{self.symbol_rates.name_ydot_nuc}({n.cindex()}) =\n")
-
-            self._write_ydot_nuc(n_indent, of, ydot_sym_terms)
+            target = f"{self.symbol_rates.name_ydot_nuc}({n.cindex()})"
+            self._write_ydot_nuc(n_indent, of, ydot_sym_terms, target)
 
     def _jacnuc(self, n_indent, of):
         # now make the Jacobian

@@ -30,6 +30,21 @@ inline namespace literals {
 } // namespace literals
 
 
+// adapted from AMReX_CompensatedSum.H
+// Keep the rounding-error intermediates materialized, as in AMReX.
+
+template <typename T, typename U>
+inline
+void compensatedAdd (T& sum, T& compensation, U value) noexcept
+{
+    T volatile y = static_cast<T>(value) - compensation;
+    T volatile t = sum + y;
+    T volatile c = t - sum;
+    compensation = c - y;
+    sum = t;
+}
+
+
 // adapted from AMReX_Array.H
 
 template <class T, int XLO, int XHI>

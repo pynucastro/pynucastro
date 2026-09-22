@@ -3,6 +3,7 @@
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
+#include <AMReX_CompensatedSum.H>
 
 #include <extern_parameters.H>
 #include <actual_network.H>
@@ -201,14 +202,26 @@ void rhs_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    ydot_nuc(H1) =
-        (-screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    ydot_nuc(H1) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(H1), compensation,
+            -screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    }
 
-    ydot_nuc(O16) =
-        (-screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    ydot_nuc(O16) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(O16), compensation,
+            -screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    }
 
-    ydot_nuc(F17) =
-        (screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + -screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    ydot_nuc(F17) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(F17), compensation,
+            screened_rates(k_O16_p_to_F17_iliadis)*Y(O16)*Y(H1)*state.rho + -screened_rates(k_F17_to_O16_p_derived)*Y(F17));
+    }
 
 }
 

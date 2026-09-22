@@ -40,13 +40,13 @@ class TestStoichiometry:
         net.compose_ydot()
 
         output = io.StringIO()
-        net._write_ydot_nuc(0, output, net.ydot_out_result[pyna.Nucleus("he4")])  # pylint: disable=protected-access
+        net._write_ydot_nuc(0, output, net.ydot_out_result[pyna.Nucleus("he4")], "ydot")  # pylint: disable=protected-access
         result = output.getvalue()
         output.close()
-        assert result == """-0.5*screened_rates(k_He4_He4_He4_to_C12_reaclib)*std::pow(Y(He4), 3)*std::pow(state.rho, 2) +\n-10.0*screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;\n\n"""
+        assert result == """ydot = 0.0_rt;\n{\n    Real compensation = 0.0_rt;\n    compensatedAdd(ydot, compensation,\n        -0.5*screened_rates(k_He4_He4_He4_to_C12_reaclib)*std::pow(Y(He4), 3)*std::pow(state.rho, 2));\n    compensatedAdd(ydot, compensation,\n        -10.0*screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho);\n}\n\n"""
 
         output = io.StringIO()
-        net._write_ydot_nuc(0, output, net.ydot_out_result[pyna.Nucleus("o16")])  # pylint: disable=protected-access
+        net._write_ydot_nuc(0, output, net.ydot_out_result[pyna.Nucleus("o16")], "ydot")  # pylint: disable=protected-access
         result = output.getvalue()
         output.close()
-        assert result == """40.0*screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;\n\n"""
+        assert result == """ydot = 0.0_rt;\n{\n    Real compensation = 0.0_rt;\n    compensatedAdd(ydot, compensation,\n        40.0*screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho);\n}\n\n"""

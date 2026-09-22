@@ -3,6 +3,7 @@
 
 #include <AMReX_REAL.H>
 #include <AMReX_Array.H>
+#include <AMReX_CompensatedSum.H>
 
 #include <extern_parameters.H>
 #include <actual_network.H>
@@ -201,11 +202,19 @@ void get_ydot_weak(const burn_t& state,
 
     const auto& screened_rates = rate_eval.screened_rates;
 
-    ydot_nuc(N) =
-        -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
+    ydot_nuc(N) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(N), compensation,
+            -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N));
+    }
 
-    ydot_nuc(H1) =
-        screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
+    ydot_nuc(H1) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(H1), compensation,
+            screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N));
+    }
 
     ydot_nuc(He4) = 0.0_rt;
 
@@ -215,11 +224,19 @@ void get_ydot_weak(const burn_t& state,
 
     ydot_nuc(Ne20) = 0.0_rt;
 
-    ydot_nuc(Ne23) =
-        (-screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    ydot_nuc(Ne23) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Ne23), compensation,
+            -screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    }
 
-    ydot_nuc(Na23) =
-        (screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    ydot_nuc(Na23) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Na23), compensation,
+            screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    }
 
     ydot_nuc(Mg23) = 0.0_rt;
 
@@ -236,39 +253,82 @@ void rhs_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    ydot_nuc(N) =
-        -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N) +
-        0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
+    ydot_nuc(N) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(N), compensation,
+            -screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N));
+        amrex::compensatedAdd(ydot_nuc(N), compensation,
+            0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+    }
 
-    ydot_nuc(H1) =
-        0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N);
+    ydot_nuc(H1) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(H1), compensation,
+            0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+        amrex::compensatedAdd(ydot_nuc(H1), compensation,
+            screened_rates(k_n_to_p_beta_neg_reaclib)*Y(N));
+    }
 
-    ydot_nuc(He4) =
-        0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
+    ydot_nuc(He4) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(He4), compensation,
+            0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+        amrex::compensatedAdd(ydot_nuc(He4), compensation,
+            -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho);
+    }
 
-    ydot_nuc(C12) =
-        -screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        -screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho +
-        -screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
+    ydot_nuc(C12) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(C12), compensation,
+            -screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+        amrex::compensatedAdd(ydot_nuc(C12), compensation,
+            -screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+        amrex::compensatedAdd(ydot_nuc(C12), compensation,
+            -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho);
+        amrex::compensatedAdd(ydot_nuc(C12), compensation,
+            -screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+    }
 
-    ydot_nuc(O16) =
-        screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
+    ydot_nuc(O16) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(O16), compensation,
+            screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho);
+    }
 
-    ydot_nuc(Ne20) =
-        0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
+    ydot_nuc(Ne20) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Ne20), compensation,
+            0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+    }
 
-    ydot_nuc(Ne23) =
-        (-screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    ydot_nuc(Ne23) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Ne23), compensation,
+            -screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    }
 
-    ydot_nuc(Na23) =
-        0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho +
-        (screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    ydot_nuc(Na23) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Na23), compensation,
+            0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+        amrex::compensatedAdd(ydot_nuc(Na23), compensation,
+            screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
+    }
 
-    ydot_nuc(Mg23) =
-        0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
+    ydot_nuc(Mg23) = 0.0_rt;
+    {
+        amrex::Real compensation = 0.0_rt;
+        amrex::compensatedAdd(ydot_nuc(Mg23), compensation,
+            0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho);
+    }
 
 }
 
