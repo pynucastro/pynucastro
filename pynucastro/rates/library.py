@@ -288,9 +288,14 @@ class Library:
         objects that match from the Library.  If there are multiple
         inputs, then a list of Rate objects is returned.
 
+        Parameters
+        ----------
+        name : str, Iterable(str)
+            the name of the rate, in the form "A(x,y)B"
+
         Returns
         -------
-        rates : list, Rate
+        rates : list(Rate), Rate
             A single rate or a list of rates
 
         """
@@ -1217,9 +1222,8 @@ class StarLibLibrary(Library):
             an arbitrary seed is used.
         """
         if seed is None:
-            #arbitrarily chosen upper limit for np.random
-            #since it requires one.
-            seed = np.random.randint(10e5)
+            # arbitrarily chosen
+            seed = np.random.default_rng().integers(1.e6)
         self.seed = seed
         rng = np.random.default_rng(seed=self.seed)
 

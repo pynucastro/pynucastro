@@ -1,0 +1,43 @@
+#ifndef TABULAR_WEAK_RATES_H
+#define TABULAR_WEAK_RATES_H
+
+#include <cmath>
+
+#include <amrex_bridge.H>
+
+#include <actual_network.H>
+#include <fundamental_constants.H>
+#include <network_properties.H>
+#include <rate_type.H>
+#include <table_rates.H>
+
+namespace tabular_weak_rates {
+
+    using namespace Rates;
+    using namespace Species;
+
+    using namespace rate_tables;
+
+    <tabular_rate_functions>(1)
+
+    template <typename T>
+    inline
+    void
+    fill_rates([[maybe_unused]] const Real temp,
+               [[maybe_unused]] const Real rhoy,
+               [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
+               [[maybe_unused]] T& rate_eval)
+    {
+
+        // Calculate tabular weak rates
+
+        const Real log_temp = std::log10(temp);
+        const Real log_rhoy = std::log10(rhoy);
+
+        rate_eval.enuc_weak = 0.0_rt;
+
+        <fill_tabular_rates>(2)
+    }
+
+}
+#endif

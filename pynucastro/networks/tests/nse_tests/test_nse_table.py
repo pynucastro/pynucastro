@@ -79,5 +79,4 @@ class TestNSETable:
             for new, ref_1, ref_2 in zip(new_lines, ref_lines_1, ref_lines_2):
                 if new.startswith("#"):
                     continue
-                # pylint: disable-next=consider-using-in
-                assert new == ref_1 or new == ref_2
+                assert new in (ref_1, ref_2)

@@ -57,6 +57,10 @@ Current unit tests comparing networks
   Astro Microphysics ase-iron network
   <https://amrex-astro.github.io/Microphysics/docs/networks.html#ase-iron>`_.
 
+* ``test_compare_branched.py`` : this compares networks that use
+  :py:obj:`BranchedRate <pynucastro.rates.branched_rate.BranchedRate>`
+  for a reduced CNO cycle.
+
 * ``test_compare_co_approx.py`` : this compares the approximate
   rates for carbon and oxygen burning.
 

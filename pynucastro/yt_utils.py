@@ -31,7 +31,7 @@ def get_point(ds, pos):
     """
     # lazy import so we don't add a hard dependency on unyt
     # pylint: disable=import-outside-toplevel
-    import unyt
+    import unyt  # noqa: PLC0415
 
     # for a cylindrical dataset, ds.all_data().argmax(f) returns a tuple of
     # unyt_quantity objects with units (code_length, code_length, dimensionless),

@@ -14,6 +14,8 @@ int main(int argc, char* argv[]) {
     // to pass in the density and temperature.
     // composition will always be uniform.
 
+    // note: all units are CGS
+
     // defaults
     double T{1.e9};
     double rho{2.e8};
@@ -77,14 +79,13 @@ int main(int argc, char* argv[]) {
 
     std::cout << std::endl;
 
+    // just the energy release from the mass change (doesn't include neutrinos)
     Real enuc;
     ener_gener_rate(ydot, enuc);
 
-    // correct for neutrino energy losses
-    enuc += enu_weak;
-
-    std::cout << "Instantaneous energy generation rate (erg/g/s) = " << enuc << std::endl;
-    std::cout << "(that includes weak rate neutrino losses of " << enu_weak << " (erg/g/s))" << std::endl;
+    std::cout << "Instantaneous energy generation rate" << std::endl;
+    std::cout << "ε_nuc = " << enuc << std::endl;
+    std::cout << "ε_{ν,weak} = " << enu_weak << std::endl;
     std::cout << std::endl;
 
     // get the rates -- this is just the N_A<σv>

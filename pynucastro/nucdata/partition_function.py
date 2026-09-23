@@ -8,7 +8,7 @@ import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 
-class PartitionFunction:
+class PartitionFunction:  # noqa: PLW1641  (not hashable)
     """Store the tabulated data for the partition function for a
     specific nucleus, which can be combined with other
     (non-overlapping) partition functions by addition and evaluated

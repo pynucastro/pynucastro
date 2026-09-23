@@ -7,22 +7,26 @@
 #include <actual_network.H>
 #include <rate_type.H>
 
-using namespace Rates;
-using namespace Species;
+namespace reaclib_rates {
 
-<reaclib_rate_functions>(0)
+    using namespace Rates;
+    using namespace Species;
 
-template <int do_T_derivatives, typename T>
-inline
-void
-fill_reaclib_rates(const tf_t& tfactors, T& rate_eval)
-{
+    <reaclib_rate_functions>(1)
 
-    Real rate;
-    Real drate_dT;
+    template <int do_T_derivatives, typename T>
+    inline
+    void
+    fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] T& rate_eval)
+    {
 
-    <fill_reaclib_rates>(1)
+        [[maybe_unused]] Real rate;
+        [[maybe_unused]] Real drate_dT;
+
+        <fill_reaclib_rates>(2)
+
+    }
 
 }
-
 #endif

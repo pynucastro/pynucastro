@@ -1,5 +1,5 @@
-#ifndef actual_network_H
-#define actual_network_H
+#ifndef ACTUAL_NETWORK_H
+#define ACTUAL_NETWORK_H
 
 #include <random>
 #include <string_view>

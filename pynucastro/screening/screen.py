@@ -9,11 +9,22 @@ from pynucastro.numba_util import jitclass, njit
 
 # jit-decorated functions should be listed here so they
 # get documented by sphinx
-__all__ = ["NseState", "PlasmaState", "ScreenFactors",
-           "chugunov_2007", "chugunov_2009", "f0", "debye_huckel",
-           "make_plasma_state", "make_screen_factors",
-           "potekhin_1998", "screen5", "smooth_clip", "screening_check",
-           "get_screening_func"]
+__all__ = [
+    "NseState",
+    "PlasmaState",
+    "ScreenFactors",
+    "chugunov_2007",
+    "chugunov_2009",
+    "debye_huckel",
+    "f0",
+    "get_screening_func",
+    "make_plasma_state",
+    "make_screen_factors",
+    "potekhin_1998",
+    "screen5",
+    "screening_check",
+    "smooth_clip",
+]
 
 
 @jitclass([

@@ -3,7 +3,7 @@ Simple C++ network
 
 A :class:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>` is a very basic C++ network.  It supports
 ReacLib rates, approximate rates, and screening (via
-the method of :cite:`chugunov:2007`).
+the method of :cite:t:`chugunov:2007`).
 
 .. important::
 

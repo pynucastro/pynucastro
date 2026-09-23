@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -23,19 +23,19 @@ class BranchedRate(Rate):
 
     An example application would be the sequences:
 
-       N14(p,γ)O15(,e⁺ν)N15(p,α)C12
-       N14(p,γ)O15(,e⁺ν)N15(p,γ)O16
+    * N14(p,γ)O15(,e⁺ν)N15(p,α)C12
+    * N14(p,γ)O15(,e⁺ν)N15(p,γ)O16
 
     These differ only in the last rate.  We would set the
     underlying_rate to be N14(p,γ)O15, the primary_branch to be
     N15(p,α)C12 and the secondary branch to be N15(p,γ))O16.  It would
     then compute the branching ratio:
 
-       f = λ_{N15(p,α)C12} / (λ_{N15(p,α)C12} + λ_{N15(p,γ)O16)
+    f = λ_{N15(p,α)C12} / (λ_{N15(p,α)C12} + λ_{N15(p,γ)O16))
 
     and the final rate evaluation would be
 
-       λ = f λ_{N14(p,γ)O15}
+    λ = f λ_{N14(p,γ)O15}
 
     Parameters
     ----------
@@ -94,6 +94,10 @@ class BranchedRate(Rate):
                          stoichiometry=stoichiometry,
                          label="branched")
 
+        # we work on already-evaluated rates, so we don't need TFactors
+        # in our function argument list
+        self.rate_eval_needs_tfactors = False
+
         # for the moment, we only work if both branches have the same
         # reactants.  If they don't then we need to weight by (rho Y)
         # for each nucleus they don't have in common.  We'll also
@@ -101,6 +105,11 @@ class BranchedRate(Rate):
         assert self.primary_branch.reactants == self.other_branch.reactants
 
         self._set_print_representation()
+
+    def _set_screening(self):
+        # the individual rates are screened -- we don't screen the combination of them
+        self.ion_screen = []
+        self.screening_pairs = []
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -214,7 +223,7 @@ class BranchedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}(rate_eval, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
@@ -253,7 +262,11 @@ class BranchedRate(Rate):
 
         """
 
-        args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
         fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
@@ -262,6 +275,8 @@ class BranchedRate(Rate):
         fstring += f"    // {self.rid} (branched rate)\n\n"
         if self.description:
             fstring += f"    // represents the sequence: {self.description}\n\n"
+
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         fstring += f"    {dtype} r0 = rate_eval.screened_rates(k_{self.underlying_rate.fname});\n"
         fstring += f"    {dtype} r_prim_br = rate_eval.screened_rates(k_{self.primary_branch.fname});\n"
@@ -278,6 +293,11 @@ class BranchedRate(Rate):
 
         fstring += f"        {dtype} dfdT = (drdT_prim_br - f * (drdT_prim_br + drdT_other_br)) / (r_prim_br + r_other_br);\n"
         fstring += "        drate_dT = f * drdT_0 + dfdT * r0;\n"
+        fstring += "    }\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
         fstring += "    }\n"
 
         if not leave_open:

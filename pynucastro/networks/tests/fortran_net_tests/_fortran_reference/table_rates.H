@@ -38,16 +38,14 @@ struct table_t
     int nheader;
 };
 
-// we add an additional index, k_index_dlogr_dlogt used for computing
-// the derivative of Log(rate) with respect of Log(temperature) by
-// using the table values. It isn't an index into the table but into
-// the 'entries' array. Is important to mention that although we
-// compute dlogr/dlogT as the computed quantity in 'entries', we
-// pursue ultimately dr/dt as the final desired quantity to be
-// computed for this index.
 
-constexpr int k_index_dlogr_dlogt = num_vars + 1;
-constexpr int add_vars = 1;  // 1 Additional Var in entries
+struct weak_rate_t
+{
+    Real rate;
+    Real drate_dT;
+    Real enu;
+    Real gamma;
+};
 
 
 namespace rate_tables
@@ -76,26 +74,15 @@ evaluate_linear_2d(const Real fip1jp1, const Real fip1j, const Real fijp1, const
 {
     // This is the 2-D linear interpolator, as an extension of evaluate_linear_1d.
 
-    Real f;
-    Real dx = xhi - xlo;
-    Real dxinv = 1.0_rt / dx;
-    Real dy = yhi - ylo;
-    Real dyinv = 1.0_rt / dy;
+    const Real u = (amrex::Clamp(x, xlo, xhi) - xlo) / (xhi - xlo);
+    const Real v = (amrex::Clamp(y, ylo, yhi) - ylo) / (yhi - ylo);
 
-    Real E =  fij;
-    Real C = (fijp1 - fij) * dyinv;
-    Real B = (fip1j - fij) * dxinv;
-    Real A = (fip1jp1 - B * dx - C * dy - E) * (dxinv * dyinv);
+    const Real E = fij;
+    const Real C = fijp1 - fij;
+    const Real B = fip1j - fij;
+    const Real A = fip1jp1 - fip1j - fijp1 + fij;
 
-    Real xx = amrex::Clamp(x, xlo, xhi);
-    Real yy = amrex::Clamp(y, ylo, yhi);
-
-    f =  A * (xx - xlo) * (yy - ylo) +
-         B * (xx - xlo) +
-         C * (yy - ylo) +
-         E;
-
-    return f;
+    return A * u * v + B * u + C * v + E;
 }
 
 
@@ -133,182 +120,83 @@ template<typename R, typename T, typename D>
 inline
 Real
 evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
-                  const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
+                  [[maybe_unused]] const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
                   const Real log_rhoy, const Real log_temp)
 {
-    // The main objective of this function is compute dlogr_dlogt.
+
+    // Differentiate the same bilinear log-rate interpolant as evaluate_vars.
+    // At temperature knots, use the cell selected by find_index_extrap:
+    // the cell to the right, except at the upper endpoint (the last cell).
 
     const int irhoy_hi = irhoy_lo + 1;
     const int jtemp_hi = jtemp_lo + 1;
 
-    Real dlogr_dlogt;
+    const Real log_temp_lo = log_temp_table(jtemp_lo);
+    const Real log_temp_hi = log_temp_table(jtemp_hi);
 
-    //Now we compute the forward finite difference on the boundary
-
-    if ((jtemp_lo - 1 < 1) || (jtemp_hi + 1 > table_meta.ntemp)) {
-
-        // In this case we are in the boundaries of the table.
-        // At the boundary, we compute the forward-j finite difference
-        // to compute dlogr_dlogt_i and dlogr_dlogt_ip1, using the
-        // following stencil:
-        //
-        //
-        //             fijp1-----------fip1jp1
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //              |                 |
-        //             fij-------------fip1j
-        //
-        // with the following result:
-        //
-        //            dlogr_dlogt_i --------dlogr_dlogt_ip1
-        //
-        // Finally, we perform a 1d-linear interpolation between dlogr_dlogt_ip1
-        // and dlogr_dlogt_i to compute dlogr_dlogt
-
-        const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
-        const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
-
-        const Real log_temp_lo = log_temp_table(jtemp_lo);
-        const Real log_temp_hi = log_temp_table(jtemp_hi);
-
-        const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
-
-        const Real dlogr_dlogt_i   = (fijp1 - fij) / (log_temp_hi - log_temp_lo);
-        const Real dlogr_dlogt_ip1 = (fip1jp1 - fip1j) / (log_temp_hi - log_temp_lo);
-
-        if ((log_temp < log_temp_lo) || (log_temp > log_temp_hi)) {
-            dlogr_dlogt = 0.0_rt;
-        } else {
-            dlogr_dlogt = evaluate_linear_1d(dlogr_dlogt_ip1, dlogr_dlogt_i, log_rhoy_hi, log_rhoy_lo, log_rhoy);
-        }
-
-    } else {
-
-        // In this case, we use a bigger stencil to reconstruct the
-        // temperature derivatives in the j and j+1 temperature positions,
-        // using the cetral-j finite differences:
-        //
-        //              fijp2 ------------fip1jp2
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //               fijp1------------fip1jp1
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //               fij------------- fip1j
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //               fijm1------------fip1jm1
-        //
-        // with the following result:
-        //
-        //
-        //            dr_dt_ijp1 --------dr_dt_ip1jp1
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //                |                 |
-        //            dr_dt_ij-----------dr_dt_ip1j
-        //
-        // Finally, we perform a 2d-linear interpolation to
-        // compute dlogr_dlogt.
-
-        const Real log_temp_jm1  = log_temp_table(jtemp_lo-1);
-        const Real log_temp_j    = log_temp_table(jtemp_lo);
-        const Real log_temp_jp1  = log_temp_table(jtemp_hi);
-        const Real log_temp_jp2  = log_temp_table(jtemp_hi+1);
-
-        const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
-        const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
-
-        const Real fijm1   = data(jtemp_lo-1, irhoy_lo, jtab_rate);
-        const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-        const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-        const Real fijp2   = data(jtemp_hi+1, irhoy_lo, jtab_rate);
-
-        const Real fip1jm1 = data(jtemp_lo-1, irhoy_hi, jtab_rate);
-        const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-        const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
-        const Real fip1jp2 = data(jtemp_hi+1, irhoy_hi, jtab_rate);
-
-        const Real dlogTinv1 = 1.0_rt / (log_temp_jp1 - log_temp_jm1);
-        const Real dlogTinv2 = 1.0_rt / (log_temp_jp2 - log_temp_j);
-        const Real dlogr_dlogt_ij     = (fijp1 - fijm1) * dlogTinv1;
-        const Real dlogr_dlogt_ijp1   = (fijp2 - fij) * dlogTinv2;
-        const Real dlogr_dlogt_ip1j   = (fip1jp1 - fip1jm1) * dlogTinv1;
-        const Real dlogr_dlogt_ip1jp1 = (fip1jp2 - fip1j) * dlogTinv2;
-
-        dlogr_dlogt = evaluate_linear_2d(dlogr_dlogt_ip1jp1,  dlogr_dlogt_ip1j, dlogr_dlogt_ijp1, dlogr_dlogt_ij,
-                                         log_rhoy_hi, log_rhoy_lo, log_temp_jp1, log_temp_j,
-                                         log_rhoy, log_temp);
-
+    // The interpolated rate is constant outside the temperature table.
+    if (log_temp < log_temp_lo || log_temp > log_temp_hi) {
+        return 0.0_rt;
     }
-    return dlogr_dlogt;
+
+    const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+    const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
+
+    const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
+    const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
+    const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
+    const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+
+    // compute the gradients in the T direction: dr/dT |_i and dr/dT |_{i+1}
+
+    const Real dlogT = log_temp_hi - log_temp_lo;
+    const Real dlogr_dlogT_i = (fijp1 - fij) / dlogT;
+    const Real dlogr_dlogT_ip1 = (fip1jp1 - fip1j) / dlogT;
+
+    return evaluate_linear_1d(dlogr_dlogT_ip1, dlogr_dlogT_i,
+                              log_rhoy_hi, log_rhoy_lo, log_rhoy);
 }
 
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 inline
 void
 get_entries(const int irhoy_lo, const int jtemp_lo,
             const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-            const Real log_rhoy, const Real log_temp, Array1D<Real, 1, num_vars+add_vars>& entries)
+            const Real log_rhoy, const Real log_temp,
+            weak_rate_t& entries)
 {
 
     // only interpolate the quantities we currently use
 
-    entries(jtab_rate) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                       log_rhoy_table, log_temp_table, data,
-                                       log_rhoy, log_temp, jtab_rate);
+    entries.rate = evaluate_vars(irhoy_lo, jtemp_lo,
+                                 log_rhoy_table, log_temp_table, data,
+                                 log_rhoy, log_temp, jtab_rate);
 
-    entries(jtab_nuloss) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                         log_rhoy_table, log_temp_table, data,
-                                         log_rhoy, log_temp, jtab_nuloss);
+    entries.enu = evaluate_vars(irhoy_lo, jtemp_lo,
+                                log_rhoy_table, log_temp_table, data,
+                                log_rhoy, log_temp, jtab_nuloss);
 
-    entries(jtab_gamma) = evaluate_vars(irhoy_lo, jtemp_lo,
-                                        log_rhoy_table, log_temp_table, data,
-                                        log_rhoy, log_temp, jtab_gamma);
+    entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
+                                  log_rhoy_table, log_temp_table, data,
+                                  log_rhoy, log_temp, jtab_gamma);
 
-    entries(k_index_dlogr_dlogt) =
-        evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
-                          table_meta, log_rhoy_table, log_temp_table, data,
-                          log_rhoy, log_temp);
+    if constexpr (do_T_derivatives) {
+        entries.drate_dT =
+            evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
+                              table_meta, log_rhoy_table, log_temp_table, data,
+                              log_rhoy, log_temp);
+    }
 }
 
-template <typename R, typename T, typename D>
+template <int do_T_derivatives, typename R, typename T, typename D>
 inline
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
                  const Real log_rhoy, const Real log_temp, const Real temp,
-                 Real& rate, Real& drate_dt, Real& edot_nu, Real& edot_gamma)
+                 weak_rate_t& entries)
 {
-    Array1D<Real, 1, num_vars+add_vars> entries;
 
     // Get the table entries at this rhoy, temp
 
@@ -318,17 +206,21 @@ tabular_evaluate(const table_t& table_meta,
     const int irhoy_lo = interp_net::find_index_extrap(log_rhoy, log_rhoy_table);
     const int jtemp_lo = interp_net::find_index_extrap(log_temp, log_temp_table);
 
-    get_entries(irhoy_lo, jtemp_lo,
-                table_meta, log_rhoy_table, log_temp_table, data,
-                log_rhoy, log_temp, entries);
+    get_entries<do_T_derivatives>(irhoy_lo, jtemp_lo,
+                                  table_meta, log_rhoy_table, log_temp_table, data,
+                                  log_rhoy, log_temp, entries);
 
-    // Fill outputs: rate, d(rate)/d(temperature), and
-    // (negative) neutrino loss contribution to energy generation
+    // Fill outputs: rate, d(rate)/dT, and (negative) neutrino loss
+    // contribution to energy generation
 
-    rate       = std::pow(10.0_rt, entries(jtab_rate));
-    drate_dt   = rate * entries(k_index_dlogr_dlogt) / temp;
-    edot_nu    = -std::pow(10.0_rt, entries(jtab_nuloss));
-    edot_gamma = std::pow(10.0_rt, entries(jtab_gamma));
+    entries.rate = std::pow(10.0_rt, entries.rate);
+    if constexpr (do_T_derivatives) {
+        entries.drate_dT = entries.rate * entries.drate_dT / temp;
+    } else {
+        entries.drate_dT = 0.0;
+    }
+    entries.enu = -std::pow(10.0_rt, entries.enu);
+    entries.gamma = std::pow(10.0_rt, entries.gamma);
 }
 
 #endif

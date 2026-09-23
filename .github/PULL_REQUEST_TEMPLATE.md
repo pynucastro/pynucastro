@@ -4,7 +4,7 @@ and fill in the following fields as best you can. -->
 <!-- Note: your PR should:
 
     * Target the main branch
-    * Pass the flake8 and pylint checkers -->
+    * Pass the ruff and pylint checkers -->
 
 ## PR summary
 

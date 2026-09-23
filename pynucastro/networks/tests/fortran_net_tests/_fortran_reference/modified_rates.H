@@ -10,6 +10,9 @@
 
 namespace modified_rates {
 
+    using namespace reaclib_rates;
+    using namespace Rates;
+
 
     template <int do_T_derivatives, typename T>
     inline

@@ -52,7 +52,7 @@ class TestFullPythonNetwork:
         test_file = "network2.py"
         fn.write_network(outfile=test_file)
 
-        import network2 as net
+        import network2 as net  # noqa: PLC0415
 
         X = np.zeros(net.nnuc)
         X[:] = 1.0 / net.nnuc

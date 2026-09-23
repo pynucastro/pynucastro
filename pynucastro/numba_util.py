@@ -3,7 +3,7 @@
 try:
     # the linters really don't like this
     # pylint: disable=unused-import, wildcard-import, unused-wildcard-import
-    # flake8: noqa: F401, F403
+    # flake8: noqa: F403
     from numba import jit, njit
     from numba.experimental import jitclass
     from numba.types import *

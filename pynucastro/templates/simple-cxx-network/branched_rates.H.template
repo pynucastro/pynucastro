@@ -10,6 +10,8 @@
 
 namespace branched_rates {
 
+    using namespace Rates;
+
     <branched_rate_functions>(1)
 
     template <int do_T_derivatives, typename T>
