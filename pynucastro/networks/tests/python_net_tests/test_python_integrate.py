@@ -100,4 +100,3 @@ class TestPythonIntegrate:
         idx = sol_thresh.unique_nuclei.index(Nucleus("he4"))
         Xhe_final = sol_thresh.X[idx, -1]
         assert Xhe_final == pytest.approx(1.e-3, rel=1.e-6, abs=1.e-6)
-
