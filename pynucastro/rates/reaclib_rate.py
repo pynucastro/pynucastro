@@ -11,7 +11,8 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors, ThermoState
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args)
 
 
 class SingleSet:  # noqa: PLW1641 (not hashable)
@@ -691,21 +692,19 @@ class ReacLibRate(Rate):
         """
 
         # pylint: disable=duplicate-code
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
         # pylint: enable=duplicate-code
 
-        fstring += "    rate = 0.0;\n"
-        fstring += "    drate_dT = 0.0;\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
         fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
         fstring += f"    {dtype} set_rate{{0.0}};\n\n"
@@ -716,14 +715,16 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor;\n\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor;\n\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
             fstring += "\n"
-            fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+            if self.screening_pairs:
+                fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
 
             fstring += "    }\n"
             fstring += "\n"
@@ -734,9 +735,14 @@ class ReacLibRate(Rate):
 
             fstring += "    rate += set_rate;\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
             fstring += "    }\n\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"

@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate
+from pynucastro.rates.rate import Rate, cxx_rate_func_args
 
 
 def _assert_rate_prop(rate, *,
@@ -236,7 +236,11 @@ class ApproximateRate(Rate):
                                  self.rates["B(g,p)X"],
                                  self.rates["X(p,a)A"]]
 
-        elif self.approx_type in ("nn_g", "pp_g"):
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
+
+        elif self.approx_type in ["nn_g", "pp_g"]:
 
             # a nn_g approximate rate combines A(n,g)X(n,g)B into a
             # single effective rate by assuming equilibrium of X.
@@ -326,6 +330,9 @@ class ApproximateRate(Rate):
 
             self.rate_eval_needs_rho = True
             self.rate_eval_needs_comp = True
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         elif self.approx_type == "Yp_pg":
 
@@ -421,6 +428,7 @@ class ApproximateRate(Rate):
                                  products=[self.primary_product],
                                  label="approx",
                                  use_identical_particle_factor=use_identical_particle_factor)
+
                 self.hidden_rates = [self.rates["A(Y,p)X"],
                                      self.rates["X(p,g)B"],
                                      self.rates["X(p,Y)A"],
@@ -436,6 +444,10 @@ class ApproximateRate(Rate):
                                      self.rates["B(g,p)X"],
                                      self.rates["X(p,Y)A"],
                                      self.rates["X(p,a)C"]]
+
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         elif self.approx_type == "Yp_pa":
 
@@ -543,6 +555,10 @@ class ApproximateRate(Rate):
                                      self.rates["X(p,a)B"],
                                      self.rates["X(p,Y)A"],
                                      self.rates["X(p,g)C"]]
+
+            # we work on already-evaluated rates, so we don't need TFactors
+            # in our function argument list
+            self.rate_eval_needs_tfactors = False
 
         else:
             raise NotImplementedError(f"approximation type {self.approx_type} not supported")
@@ -764,7 +780,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
@@ -800,7 +816,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf, rho=None, Y=None):\n"
+            string += f"def {self.fname}(rate_eval, rho=None, Y=None):\n"
 
             string += f"    Y{self.cnuc} = Y[j{self.cnuc}]\n"
 
@@ -845,7 +861,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)C'].fname}\n"
@@ -888,7 +904,7 @@ class ApproximateRate(Rate):
 
             string = ""
             string += "@numba.njit()\n"
-            string += f"def {self.fname}(rate_eval, tf):\n"
+            string += f"def {self.fname}(rate_eval):\n"
 
             string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
             string += f"    r_pa = rate_eval.{self.rates['X(p,a)B'].fname}\n"
@@ -945,21 +961,18 @@ class ApproximateRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        if dtype == "amrex::Real":
-            array_type = "amrex::Array1D"
-        else:
-            array_type = "Array1D"
+        fstring = ""
+        fstring = "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         if self.approx_type == "ap_pg":
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pg = rate_eval.screened_rates(k_{self.rates['X(p,g)B'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)A'].fname});\n"
@@ -1010,11 +1023,6 @@ class ApproximateRate(Rate):
 
                 fstring += "        drate_dT = drdT_ga + drdT_gp * r_pa * dd + r_gp * drdT_pa * dd - r_gp * r_pa * dd * dd * (drdT_pg + drdT_pa + drdT_pY);\n"
                 fstring += "    }\n"
-
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
 
         if self.approx_type in ("nn_g", "pp_g"):
 
@@ -1086,22 +1094,11 @@ class ApproximateRate(Rate):
                 fstring += f"        drate_dT = dr1dT_g{self.cnuc} * r2_g{self.cnuc} * dd + r1_g{self.cnuc} * dr2dT_g{self.cnuc} * dd - r1_g{self.cnuc} * r2_g{self.cnuc} * dd * dd * (rho * Y{self.cnuc} * dr2dT_{self.cnuc}g + dr1dT_g{self.cnuc});\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "Yp_pg":
+        elif self.approx_type == "Yp_pg":
 
             # we are approximating A(Y,p)X(p,g)B with an alternate
             # branch from X, X(p,a)C, and possibly a direct path
             # between A and B, A(Y,g)B
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)C'].fname});\n"
@@ -1159,21 +1156,10 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_gY + drdT_pY * r_gp * dd + r_pY * drdT_gp * dd - r_pY * r_gp * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
-
-            return fstring
-
-        if self.approx_type == "Yp_pa":
+        elif self.approx_type == "Yp_pa":
 
             # we are approximating A(Y,a)B + A(Y,p)X(p,a)B with an alternate
             # branch from X, X(p,g)C
-
-            args = ["const T& rate_eval", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
-            fstring = ""
-            fstring = "template <typename T>\n"
-            fstring += f"{specifiers}\n"
-            fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
             fstring += f"    {dtype} r_pY = rate_eval.screened_rates(k_{self.rates['X(p,Y)A'].fname});\n"
             fstring += f"    {dtype} r_pa = rate_eval.screened_rates(k_{self.rates['X(p,a)B'].fname});\n"
@@ -1216,9 +1202,15 @@ class ApproximateRate(Rate):
                 fstring += "        drate_dT = drdT_aY + drdT_pY * r_ap * dd + r_pY * drdT_ap * dd - r_pY * r_ap * dd * dd * (drdT_pY + drdT_pa + drdT_pg);\n"
                 fstring += "    }\n"
 
-            if not leave_open:
-                fstring += "}\n\n"
+        else:
+            raise NotImplementedError("don't know how to work with this approximation")
 
-            return fstring
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
-        raise NotImplementedError("don't know how to work with this approximation")
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring

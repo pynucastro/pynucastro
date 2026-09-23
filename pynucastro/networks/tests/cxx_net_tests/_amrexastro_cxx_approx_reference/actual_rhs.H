@@ -74,7 +74,7 @@ void evaluate_screening(const burn_t& state,
         static_assert(scn_fac.z1 == 2.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_He4_Mg24) = log_scor;
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_He4_Mg24) = dlog_scor_dT;
         }
     }
@@ -84,7 +84,7 @@ void evaluate_screening(const burn_t& state,
         static_assert(scn_fac.z1 == 2.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_He4_Si28) = log_scor;
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_He4_Si28) = dlog_scor_dT;
         }
     }
@@ -94,7 +94,7 @@ void evaluate_screening(const burn_t& state,
         static_assert(scn_fac.z1 == 1.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_p_Al27) = log_scor;
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_p_Al27) = dlog_scor_dT;
         }
     }
@@ -104,7 +104,7 @@ void evaluate_screening(const burn_t& state,
         static_assert(scn_fac.z1 == 1.0_rt);
         actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
         rate_eval.log_screen(k_p_P31) = log_scor;
-        if constexpr (do_T_derivatives) {
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_p_P31) = dlog_scor_dT;
         }
     }
@@ -137,7 +137,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<do_T_derivatives, T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -210,7 +210,7 @@ void get_ydot_weak(const burn_t& state,
 
     // Compute all weak rates and get ydot_weak
 
-    tabular_weak_rates::fill_rates<do_T_derivatives>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
     ydot_nuc(He4) = 0.0_rt;
 
