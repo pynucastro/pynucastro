@@ -1302,9 +1302,16 @@ class PythonNetwork(RateCollection):
             Y0 = comp.get_molar_array()
         else:
             if isinstance(molar_composition, Composition):
-                Y0 = molar_composition.get_molar_array()
+                # don't assume that the input composition is in the same order
+                # as this network
+                Y0 = np.array([molar_composition[nuc] / nuc.A for nuc in self.unique_nuclei])
             else:
                 Y0 = np.asarray(molar_composition)
+
+        # make sure the initial compositon's mass fractions sum to ~ 1
+        sumX = sum(Y0[n] * nuc.A for n, nuc in enumerate(self.unique_nuclei))
+        if abs(sumX - 1) > 1.e-10:
+            raise ValueError("initial mass fractions don't sum to 1")
 
         # if we have a stopping condition, setup the event
         events = None
