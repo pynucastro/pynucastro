@@ -45,7 +45,7 @@ jobs:
       - name: Check links
         run: |
           cd docs/
-          make SPHINXOPTS=-v linkcheck
+          make SPHINXOPTS=-v SKIP_EXECUTE=TRUE linkcheck
 
       - name: Upload linkcheck report
         uses: actions/upload-artifact@v7
