@@ -1,4 +1,4 @@
-name: docs build
+name: linkcheck
 
 on:
   push:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  docs:
+  linkcheck:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +42,15 @@ jobs:
       - name: Install pynucastro
         run: pip install .
 
-      - name: Build docs
+      - name: Check links
         run: |
           cd docs/
-          make SPHINXOPTS='-v -W --keep-going -n' html
+          make SPHINXOPTS=-v SKIP_EXECUTE=TRUE linkcheck
+
+      - name: Upload linkcheck report
+        uses: actions/upload-artifact@v7
+        with:
+          name: linkcheck-output
+          path: docs/build/linkcheck/output.txt
+          archive: false
+
