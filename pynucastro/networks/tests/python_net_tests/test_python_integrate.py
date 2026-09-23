@@ -45,6 +45,22 @@ class TestPythonIntegrate:
 
         return sol
 
+    @pytest.fixture(scope="class")
+    @classmethod
+    def sol_thresh(cls, net):
+        rho = 1.e7
+        T = 1.e9
+        comp = Composition(net.unique_nuclei)
+        comp.X[Nucleus("he4")] = 1.0
+        tmax = 100000.0
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=UserWarning)
+            sol = net.integrate_network(tmax, rho, T, comp.get_molar_array(),
+                                        stopping_condition=("he4", 1.e-3))
+
+        return sol
+
     def test_sol_success(self, sol):
         assert sol.success
 
@@ -78,3 +94,10 @@ class TestPythonIntegrate:
         T = sol_heating.T_at(100)
 
         assert T == pytest.approx(3.47848964e+09, rel=1.e-5, abs=1.e-10)
+
+    def test_stopping_condition(self, sol_thresh):
+
+        idx = sol_thresh.unique_nuclei.index(Nucleus("he4"))
+        Xhe_final = sol_thresh.X[idx, -1]
+        assert Xhe_final == pytest.approx(1.e-3, rel=1.e-6, abs=1.e-6)
+

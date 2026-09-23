@@ -1317,7 +1317,7 @@ class PythonNetwork(RateCollection):
             assert idx >= 0, "nucleus not present in solution vector"
 
             def exhaustion(t, y, *args):  # pylint: disable=unused-argument
-                return y[idx] > val / nuc.A
+                return y[idx] - val / nuc.A
             exhaustion.terminal = True
             exhaustion.direction = -1
 
