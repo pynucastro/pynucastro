@@ -2959,7 +2959,9 @@ class RateCollection:
         plt.ylim(minZ - 0.5, maxZ + 0.6)
 
         # Set plot appearance
-        rat = (maxN - minN) / (maxZ - minZ)
+        span_n = maxN - minN + 1
+        span_z = maxZ - minZ + 1
+        rat = span_n / span_z
         width = np.sqrt(area * rat)
         height = area / width
         fig.set_size_inches(width, height)
