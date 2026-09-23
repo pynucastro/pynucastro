@@ -369,8 +369,8 @@ class RateCollection:
         reverse = None
 
         for rr in reverse_rates:
-            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+            if sorted(forward_rate.reactants) == sorted(rr.products) and \
+               sorted(forward_rate.products) == sorted(rr.reactants):
                 reverse = rr
                 break
 
