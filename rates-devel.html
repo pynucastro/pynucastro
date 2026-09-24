@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working with Rate Objects &#8212; pynucastro 3.1.0.post24+g8813b6c3c documentation</title>
+    <title>Working with Rate Objects &#8212; pynucastro 3.1.0.post25+g9deb6be0f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=62d46ccc"></script>
+    <script src="_static/documentation_options.js?v=f29ea28f"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -607,6 +607,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-membership">List membership</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#descriptive-attributes">Descriptive attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
@@ -622,6 +623,24 @@
                   
   <section id="working-with-rate-objects">
 <h1>Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects<a class="headerlink" href="#working-with-rate-objects" title="Link to this heading">#</a></h1>
+<section id="list-membership">
+<h2>List membership<a class="headerlink" href="#list-membership" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Rate</span></code></a> class defines an equality
+operator <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> that is used as follows:</p>
+<ul>
+<li><p>To test equality of rates, for example, given a
+<code class="docutils literal notranslate"><span class="pre">Rate</span></code> <code class="docutils literal notranslate"><span class="pre">r</span></code> and a list of rates <code class="docutils literal notranslate"><span class="pre">rate_list</span></code> doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
+    <span class="c1"># do something</span>
+</pre></div>
+</div>
+<p>will use <code class="docutils literal notranslate"><span class="pre">Rate.__eq__</span></code> for the comparison.</p>
+</li>
+<li><p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we use lists for <code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code>
+and <code class="docutils literal notranslate"><span class="pre">RateCollection.all_rates</span></code>.  As noted above, to test membership
+in a list, the <code class="docutils literal notranslate"><span class="pre">id</span></code> will be used.</p></li>
+</ul>
+</section>
 <section id="descriptive-attributes">
 <h2>Descriptive attributes<a class="headerlink" href="#descriptive-attributes" title="Link to this heading">#</a></h2>
 <p>There are several different attributes that refer to the name /
@@ -635,9 +654,9 @@ properties of the rate in some way.  Consider the rate for
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">Rate.rid</span></code> : this is a string that gives the reactants and
 products, using only ASCII characters.  No information about the
-source of the rate included.</p>
+source of the rate is included.</p>
 <p>It is not used for library operations directly, but instead is used
-to build <code class="docutils literal notranslate"><span class="pre">rid</span></code> (described next) and included as a human-readable
+to build <code class="docutils literal notranslate"><span class="pre">id</span></code> (described next) and included as a human-readable
 comment in the generated rate functions in exported networks.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">c12ag.rid</span></code>, we have:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16'</span>
@@ -658,25 +677,16 @@ same <code class="docutils literal notranslate"><span class="pre">rid</span></co
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Rate.id</span></code> : this is intended to be a unique identifier for a rate.
-It is composed of the <code class="docutils literal notranslate"><span class="pre">rid</span></code> and the rate source (<code class="docutils literal notranslate"><span class="pre">Rate.src</span></code>).</p>
+It is composed of the <code class="docutils literal notranslate"><span class="pre">rid</span></code>, any label, and the rate source (<code class="docutils literal notranslate"><span class="pre">Rate.src</span></code>).</p>
 <p>Here are several ways <code class="docutils literal notranslate"><span class="pre">Rate.id</span></code> is used:</p>
 <ul>
-<li><p>To test equality of rates, for example, given a
-<code class="docutils literal notranslate"><span class="pre">Rate</span></code> <code class="docutils literal notranslate"><span class="pre">r</span></code> and a list of rates <code class="docutils literal notranslate"><span class="pre">rate_list</span></code> doing:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rate_list</span><span class="p">:</span>
-    <span class="c1"># do something</span>
-</pre></div>
-</div>
-<p>will use <code class="docutils literal notranslate"><span class="pre">r.id</span></code> for the comparison.</p>
-</li>
 <li><p>For a <code class="docutils literal notranslate"><span class="pre">Library</span></code>, the main storage for rates (<code class="docutils literal notranslate"><span class="pre">Library._rates</span></code>)
 is a dictionary keyed by <code class="docutils literal notranslate"><span class="pre">Rate.id</span></code>.</p>
-<p>As a result, <code class="docutils literal notranslate"><span class="pre">Rate,id</span></code> must
+<p>As a result, <code class="docutils literal notranslate"><span class="pre">Rate.id</span></code> must
 be unique in a <code class="docutils literal notranslate"><span class="pre">Library</span></code> and a generated network.</p>
 </li>
-<li><p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we use lists for <code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code>
-and <code class="docutils literal notranslate"><span class="pre">RateCollection.all_rates</span></code>.  As noted above, to test membership
-in a list, the <code class="docutils literal notranslate"><span class="pre">id</span></code> will be used.</p></li>
+<li><p>In the allowed-duplicate checks (<a class="reference internal" href="pynucastro.rates.known_duplicates.html#pynucastro.rates.known_duplicates.is_allowed_dupe" title="pynucastro.rates.known_duplicates.is_allowed_dupe"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_allowed_dupe</span></code></a>), together with
+the rate class name.</p></li>
 </ul>
 <p>For <code class="docutils literal notranslate"><span class="pre">c12ag.id</span></code>, we have:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12 + He4 --&gt; O16 &lt;reaclib_nac2&gt;'</span>
@@ -693,7 +703,7 @@ string (no special characters except for <code class="docutils literal notransla
 and rate indices in exported networks.</p>
 <p>This must be unique in a generated network.</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">c12ag</span></code>, we have:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'He4_C12_to_O16_reaclib'</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">'C12_He4_to_O16_reaclib'</span>
 </pre></div>
 </div>
 <p>For weak rates, the weak rate type is added to the string.  This is important,
@@ -737,6 +747,11 @@ shallow copy for most rate attributes, but explicitly recreates the
 <p class="admonition-title">Tip</p>
 <p>When we create a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> or other network, we explicitly
 copy the rates into the network.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For <a class="reference internal" href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate" title="pynucastro.rates.reaclib_rate.ReacLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReacLibRate</span></code></a>, the
+sets that make up the rate are shared with the copy.</p>
 </div>
 </section>
 </section>
@@ -788,6 +803,7 @@ copy the rates into the network.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-membership">List membership</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#descriptive-attributes">Descriptive attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
