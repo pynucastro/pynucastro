@@ -57,7 +57,7 @@ class NetworkSolution:
         self._sol = sol
         self._rhs = rhs
         self._jac = jac
-        self.network = network
+        self.unique_nuclei = tuple(network.unique_nuclei)
         self.rho = rho
         self.T = T
         self.self_heating = self_heating
@@ -129,18 +129,6 @@ class NetworkSolution:
 
         assert self.self_heating
         return self._sol.y[-1, :]
-
-    @property
-    def unique_nuclei(self):
-        """Return a list of nuclei explicitly carried in the network,
-        ordered consistent with molar fraction solution, Y.
-
-        Returns
-        -------
-        List(Nucleus)
-        """
-
-        return self.network.unique_nuclei
 
     def X_at(self, t):
         """Evaluate the mass fractions for a given time.
