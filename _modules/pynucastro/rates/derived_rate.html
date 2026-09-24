@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 3.1.0.post25+g9deb6be0f documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 3.1.0.post26+gd55c28a2a documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f29ea28f"></script>
+    <script src="../../../_static/documentation_options.js?v=70911dd8"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -912,7 +912,9 @@
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate += set_rate;</span><span class="se">\n</span><span class="s2">"</span>
 
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        if (ln_set_rate &gt; -230.0_rt) {</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        }</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">):</span>
