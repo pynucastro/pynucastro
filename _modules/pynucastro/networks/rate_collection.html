@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post13+g2db5bd428 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post15+gde049b8e4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a66ebf5c"></script>
+    <script src="../../../_static/documentation_options.js?v=b571a776"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -2046,6 +2046,9 @@
                     <span class="k">if</span> <span class="n">rate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_rates</span> <span class="ow">and</span> <span class="n">rate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">missing_rates</span><span class="p">:</span>
                         <span class="n">missing_rates</span><span class="p">[</span><span class="n">rate</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"alpha capture"</span>
 
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_rates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">passed_validation</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">return_dict</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">passed_validation</span><span class="p">,</span> <span class="n">missing_rates</span>
         <span class="k">return</span> <span class="n">passed_validation</span></div>
@@ -3632,7 +3635,9 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">minZ</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">maxZ</span> <span class="o">+</span> <span class="mf">0.6</span><span class="p">)</span>
 
         <span class="c1"># Set plot appearance</span>
-        <span class="n">rat</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxN</span> <span class="o">-</span> <span class="n">minN</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">maxZ</span> <span class="o">-</span> <span class="n">minZ</span><span class="p">)</span>
+        <span class="n">span_n</span> <span class="o">=</span> <span class="n">maxN</span> <span class="o">-</span> <span class="n">minN</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">span_z</span> <span class="o">=</span> <span class="n">maxZ</span> <span class="o">-</span> <span class="n">minZ</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">rat</span> <span class="o">=</span> <span class="n">span_n</span> <span class="o">/</span> <span class="n">span_z</span>
         <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">area</span> <span class="o">*</span> <span class="n">rat</span><span class="p">)</span>
         <span class="n">height</span> <span class="o">=</span> <span class="n">area</span> <span class="o">/</span> <span class="n">width</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
