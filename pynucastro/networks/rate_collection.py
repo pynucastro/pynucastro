@@ -1425,6 +1425,9 @@ class RateCollection:
                     if rate not in current_rates and rate not in missing_rates:
                         missing_rates[rate] = "alpha capture"
 
+        if len(missing_rates) > 0:
+            passed_validation = False
+
         if return_dict:
             return passed_validation, missing_rates
         return passed_validation
