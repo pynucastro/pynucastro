@@ -670,6 +670,10 @@ class RateCollection:
         for rate in set(rates_to_delete):
             self.rates.remove(rate)
 
+        # if we requested removing an inert nucleus, also remove it
+        if self.inert_nuclei is not None:
+            self.inert_nuclei = [nuc for nuc in self.inert_nuclei if nuc not in nuc_list]
+
         self._build_collection()
 
     def remove_rates(self, rates):
