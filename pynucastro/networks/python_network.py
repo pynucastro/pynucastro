@@ -1125,14 +1125,16 @@ class PythonNetwork(RateCollection):
             of.write(f"# temperature / rate tabulation for {r.rid}\n")
 
             log_temp_str = np.array2string(r.log_t9_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_t9_data = np.array(\n")
             for line in log_temp_str.split("\n"):
                 of.write(f"     {line}\n")
             of.write("   )\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_rate_data = np.array(\n")
             for line in log_rate_str.split("\n"):
                 of.write(f"     {line}\n")
