@@ -732,13 +732,15 @@ class ReacLibRate(Rate):
             fstring += "\n"
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
-            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
+            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0_rt);\n"
             fstring += "    set_rate = std::exp(ln_set_rate);\n"
 
             fstring += "    rate += set_rate;\n"
 
             fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+            fstring += "        if (ln_set_rate > -230.0_rt) {\n"
+            fstring += "            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+            fstring += "        }\n"
             fstring += "    }\n\n"
 
         fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
