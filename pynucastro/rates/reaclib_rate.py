@@ -334,12 +334,14 @@ class ReacLibRate(Rate):
 
         """
 
+        x = super().__eq__(other)
+        if not x:
+            return x
+
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = ((self.chapter == other.chapter) and
-             (self.products == other.products) and
-             (self.reactants == other.reactants))
+        x = self.chapter == other.chapter
         if not x:
             return x
 
