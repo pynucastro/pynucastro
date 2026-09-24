@@ -687,6 +687,12 @@ class Library:
         derive reverse rates via detailed balance.  This means that
         they cannot be tabular or weak rates.
 
+        Parameters
+        ----------
+        use_unreliable_spins : bool
+            Do we use spin data that is not marked as reliable in the
+            Nubase nuclear data evaluations?
+
         Returns
         -------
         Library
@@ -695,6 +701,8 @@ class Library:
 
         collect_rates = []
         onlyfwd = self.forward()
+        if onlyfwd is None:
+            return Library()
 
         for r in onlyfwd.get_rates():
 
@@ -705,8 +713,7 @@ class Library:
             else:
                 collect_rates.append(r)
 
-        list1 = Library(rates=collect_rates)
-        return list1
+        return Library(rates=collect_rates)
 
     def derived_backward(self, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
