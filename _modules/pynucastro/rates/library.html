@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 3.1.0.post20+g02e3fa3fb documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 3.1.0.post21+gb76ea0112 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a37d89e5"></script>
+    <script src="../../../_static/documentation_options.js?v=a62dbe59"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1269,6 +1269,12 @@
 <span class="sd">        derive reverse rates via detailed balance.  This means that</span>
 <span class="sd">        they cannot be tabular or weak rates.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        use_unreliable_spins : bool</span>
+<span class="sd">            Do we use spin data that is not marked as reliable in the</span>
+<span class="sd">            Nubase nuclear data evaluations?</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Library</span>
@@ -1277,6 +1283,8 @@
 
         <span class="n">collect_rates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">onlyfwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">onlyfwd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Library</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">onlyfwd</span><span class="o">.</span><span class="n">get_rates</span><span class="p">():</span>
 
@@ -1287,8 +1295,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">collect_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-        <span class="n">list1</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">collect_rates</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">list1</span></div>
+        <span class="k">return</span> <span class="n">Library</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="n">collect_rates</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Library.derived_backward">
