@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post18+g1ed91433f documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post20+g02e3fa3fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a02699c7"></script>
+    <script src="../../../_static/documentation_options.js?v=a37d89e5"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -915,7 +915,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_write_temp_table_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">npts</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Write a temperature-table array with consistent precision and formatting."""</span>
         <span class="n">idnt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">*</span> <span class="n">n_indent</span>
-        <span class="n">data_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">)</span>
+        <span class="n">data_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+                                   <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span>
         <span class="c1"># remove the [ ]</span>
         <span class="n">data_str</span> <span class="o">=</span> <span class="n">data_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 

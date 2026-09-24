@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post18+g1ed91433f documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post20+g02e3fa3fb documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=a02699c7"></script>
+    <script src="../../../_static/documentation_options.js?v=a37d89e5"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1717,14 +1717,16 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"# temperature / rate tabulation for </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="n">log_temp_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">log_t9_data</span><span class="p">,</span>
-                                           <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">)</span>
+                                           <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+                                           <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_log_t9_data = np.array(</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">log_temp_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"   )</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="n">log_rate_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">log_rate_data</span><span class="p">,</span>
-                                           <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">)</span>
+                                           <span class="n">max_line_width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span>
+                                           <span class="n">separator</span><span class="o">=</span><span class="s2">", "</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_log_rate_data = np.array(</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">log_rate_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"     </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
@@ -1899,7 +1901,7 @@
             <span class="k">assert</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"nucleus not present in solution vector"</span>
 
             <span class="k">def</span><span class="w"> </span><span class="nf">exhaustion</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
-                <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">val</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
+                <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span> <span class="o">/</span> <span class="n">nuc</span><span class="o">.</span><span class="n">A</span>
             <span class="n">exhaustion</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">exhaustion</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
