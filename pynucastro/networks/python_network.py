@@ -57,7 +57,7 @@ class NetworkSolution:
         self._sol = sol
         self._rhs = rhs
         self._jac = jac
-        self.network = network
+        self.unique_nuclei = tuple(network.unique_nuclei)
         self.rho = rho
         self.T = T
         self.self_heating = self_heating
@@ -129,18 +129,6 @@ class NetworkSolution:
 
         assert self.self_heating
         return self._sol.y[-1, :]
-
-    @property
-    def unique_nuclei(self):
-        """Return a list of nuclei explicitly carried in the network,
-        ordered consistent with molar fraction solution, Y.
-
-        Returns
-        -------
-        List(Nucleus)
-        """
-
-        return self.network.unique_nuclei
 
     def X_at(self, t):
         """Evaluate the mass fractions for a given time.
@@ -1145,14 +1133,16 @@ class PythonNetwork(RateCollection):
             of.write(f"# temperature / rate tabulation for {r.rid}\n")
 
             log_temp_str = np.array2string(r.log_t9_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_t9_data = np.array(\n")
             for line in log_temp_str.split("\n"):
                 of.write(f"     {line}\n")
             of.write("   )\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_rate_data = np.array(\n")
             for line in log_rate_str.split("\n"):
                 of.write(f"     {line}\n")
@@ -1310,9 +1300,16 @@ class PythonNetwork(RateCollection):
             Y0 = comp.get_molar_array()
         else:
             if isinstance(molar_composition, Composition):
-                Y0 = molar_composition.get_molar_array()
+                # don't assume that the input composition is in the same order
+                # as this network
+                Y0 = np.array([molar_composition[nuc] / nuc.A for nuc in self.unique_nuclei])
             else:
                 Y0 = np.asarray(molar_composition)
+
+        # make sure the initial compositon's mass fractions sum to ~ 1
+        sumX = sum(Y0[n] * nuc.A for n, nuc in enumerate(self.unique_nuclei))
+        if abs(sumX - 1) > 1.e-10:
+            raise ValueError("initial mass fractions don't sum to 1")
 
         # if we have a stopping condition, setup the event
         events = None
@@ -1325,7 +1322,7 @@ class PythonNetwork(RateCollection):
             assert idx >= 0, "nucleus not present in solution vector"
 
             def exhaustion(t, y, *args):  # pylint: disable=unused-argument
-                return y[idx] > val / nuc.A
+                return y[idx] - val / nuc.A
             exhaustion.terminal = True
             exhaustion.direction = -1
 
