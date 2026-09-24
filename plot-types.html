@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Plotting Examples &#8212; pynucastro 3.1.0.post15+gde049b8e4 documentation</title>
+    <title>Plotting Examples &#8212; pynucastro 3.1.0.post14+ga51ae2794 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=b571a776"></script>
+    <script src="_static/documentation_options.js?v=dd7f0bb1"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -909,7 +909,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4512/521355089.py:4: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3802/521355089.py:4: DeprecationWarning: plot_jacobian(rho, T, comp, ...) is deprecated, use plot_jacobian(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_jacobian(rho, T, comp, rate_scaling=1.e10)
 </pre></div>
 </div>
@@ -958,7 +958,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/3e325e061c753f7019ec537b3a2491ae511b7f3d291c6ca9b3487a74f9aff547.png" src="_images/3e325e061c753f7019ec537b3a2491ae511b7f3d291c6ca9b3487a74f9aff547.png" />
+<img alt="_images/df5a6640928c1379c6f73ec231a3efa11459cb994368493ce01469330b288e72.png" src="_images/df5a6640928c1379c6f73ec231a3efa11459cb994368493ce01469330b288e72.png" />
 </div>
 </div>
 <p>The plot is configurable through a large number of keyword arguments. Here we want to look at the rates at which nuclides are being created or destroyed, so we color by <span class="math notranslate nohighlight">\(\dot{Y}\)</span>, the rate of change of molar abundance. Density and temperature need to be supplied to evaluate the rates. A full list of valid keyword arguments can be found in the API documentation.</p>
@@ -970,7 +970,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/70baa376e1895385f857622123894b3b7772f8cc366626eeac56087964727e2e.png" src="_images/70baa376e1895385f857622123894b3b7772f8cc366626eeac56087964727e2e.png" />
+<img alt="_images/90d33866515fb9cfabe1f9ca44923625b75c6c0f283c9de5eae7053b5580eee7.png" src="_images/90d33866515fb9cfabe1f9ca44923625b75c6c0f283c9de5eae7053b5580eee7.png" />
 </div>
 </div>
 <p>Unlike the network plot, this won’t omit hydrogen and helium by default. To just look at the heavier nuclides, we can define a function to filter by proton number.  Here we also plot
@@ -998,7 +998,7 @@ where</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_4512/1870448911.py:1: DeprecationWarning: plot_network_chart(rho, T, comp, ...) is deprecated, use plot_network_chart(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/tmp/ipykernel_3802/1870448911.py:1: DeprecationWarning: plot_network_chart(rho, T, comp, ...) is deprecated, use plot_network_chart(ThermoState(rho=rho, T=T, comp=comp,  ...) instead
   fig = rc.plot_network_chart(rho, T, comp)
 </pre></div>
 </div>
