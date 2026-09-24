@@ -324,7 +324,8 @@ class Library:
 
     def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B", a Rate object, or the rate id
+        short name "A(x,y)B", a ``Rate`` object, or the rate id
+        (``Rate.id``)
 
         Parameters
         ----------
@@ -337,11 +338,18 @@ class Library:
             rid = rate.id
             self._rates.pop(rid)
         elif isinstance(rate, str):
-            rid = self.get_rate_by_name(rate).id
-            self._rates.pop(rid)
-        else:
-            # we assume that a rate id as provided
-            self._rates.pop(rate)
+            if rate in self._rates:
+                # we matched on rate.id
+                self._rates.pop(rate)
+                return
+            if _rate_name_to_nuc(rate) is None:
+                raise LookupError(f"unknown rate identifier: {rate!r}")
+            found_rate = self.get_rate_by_name(rate)
+            if found_rate is None:
+                raise LookupError(f"rate not found: {rate!r}")
+            if isinstance(found_rate, list):
+                raise LookupError(f"ambiguous rate name: {rate!r}")
+            self._rates.pop(found_rate.id)
 
     def get_nuclei(self):
         """Get the list of unique nuclei in the library
