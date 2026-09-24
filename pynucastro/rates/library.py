@@ -1022,7 +1022,7 @@ class ReacLibLibrary(Library):
 
         Parameters
         ----------
-        filename : str
+        filename : str or pathlib.Path
             The filename to use for the library
         prepend_rates_dir : bool
             If ``True``, then output to the pynucastro rate file
@@ -1030,8 +1030,9 @@ class ReacLibLibrary(Library):
 
         """
 
+        filename = Path(filename)
         if prepend_rates_dir:
-            filename = get_rates_dir()/filename
+            filename = get_rates_dir() / filename
 
         with filename.open("w") as f:
             for rate in self.get_rates():
