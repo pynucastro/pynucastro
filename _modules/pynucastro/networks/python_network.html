@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post26+gd55c28a2a documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post27+g58376debd documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=70911dd8"></script>
+    <script src="../../../_static/documentation_options.js?v=6e0b520d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -668,7 +668,10 @@
 <span class="sd">        ----------</span>
 <span class="sd">        t : float or list or numpy.ndarray</span>
 <span class="sd">            time or time array used to evaluate the mass fractions.  If a time</span>
-<span class="sd">            array is given, the output is an array of shape (nuc, times)</span>
+<span class="sd">            array is given, the output is an array of shape (nuc, times).</span>
+
+<span class="sd">            If a negative scalar time is passed in (e.g., -1.0), the state</span>
+<span class="sd">            at the end of integration is returned.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -679,6 +682,8 @@
         <span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">A</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)]</span> <span class="o">*</span> <span class="n">As</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="o">...</span><span class="p">]</span> <span class="o">*</span> <span class="n">As</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span></div>
 
@@ -702,6 +707,29 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sol</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">),</span> <span class="o">...</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="NetworkSolution.comp_at">
+<a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.NetworkSolution.comp_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">comp_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a Composition object for the state at the specified time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">           The time at which to evaluate the composition.  If t &lt; 0, then</span>
+<span class="sd">           the endpoint of integration is used.</span>
+
+<span class="sd">        """</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
+
+        <span class="n">_X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_at</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">comp</span> <span class="o">=</span> <span class="n">Composition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">X</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">_X</span><span class="p">):</span>
+            <span class="n">comp</span><span class="o">.</span><span class="n">set_nuc</span><span class="p">(</span><span class="n">nuc</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">comp</span></div>
 
 
 <div class="viewcode-block" id="NetworkSolution.T_at">
