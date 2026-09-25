@@ -84,7 +84,7 @@ The available sources are:
 
   .. note::
 
-     The paper :cite:`suzuki:2016` says that the rates are evaluated
+     The paper :cite:t:`suzuki:2016` says that the rates are evaluated
      are in the range $8 \le \log_{10}(\rho Y_e) \le 11$, but the
      tables provided have the lower limit as $\log_{10}(\rho Y_e) =
      7$.

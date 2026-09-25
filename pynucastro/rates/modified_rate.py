@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate, ThermoState
+from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -40,16 +40,36 @@ class ModifiedRate(Rate):
         do we reset the screening pairs for this rate to reflect any
         new products or stoichiometry? or do we still screen based on
         the underlying rate?
+    not_in_ydot_term : list(Nucleus)
+        A list of nuclei that appear in ``reactants`` but should not
+        contribute to the Y[nuc] scaling in the dY/dt term of the
+        rate equations.  As an example, consider the sequence:
+        He4(He3,γ)Be7(e-,ν)Li7(p,α)He4.  Here, He4, He3, and p are
+        consumed, but if we want to model this using just the first
+        rate in the sequence, then the dY/dt term is ρY(He3)Y(He4)λ,
+        Even though p doesn't appear here, we still want to account
+        for its consumption in dY(p)/dt.
+    description : str
+        a description of the rate sequence we are approximating.  This
+        will be added as a comment to code outputs.
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv.  This information is also used in the
+        unique ``Rate.id``
 
     """
 
     def __init__(self, original_rate, *,
                  stoichiometry=None,
                  new_reactants=None, new_products=None,
-                 update_screening=False):
+                 update_screening=False,
+                 not_in_ydot_term=None,
+                 description=None,
+                 rate_source=None):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
+        self.description = description
 
         # at the moment, this is only tested with ReacLibRate,
         # TemperatureTabularRate, and StarLibRate rates.  It is
@@ -71,9 +91,15 @@ class ModifiedRate(Rate):
         super().__init__(reactants=reactants, products=products,
                          weak_type=self.original_rate.weak_type,
                          label="modified",
-                         stoichiometry=stoichiometry)
+                         stoichiometry=stoichiometry,
+                         not_in_ydot_term=not_in_ydot_term,
+                         rate_source=rate_source)
 
-        self.modified = True
+        # set the function string args to be those of the original rate
+        self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
+        self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
+        self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
 
         self._set_print_representation()
 
@@ -123,6 +149,17 @@ class ModifiedRate(Rate):
         # Find screening_pairs
         self.screening_pairs = []
         self._set_screening_pairs()
+
+    def get_child_rates(self):
+        """Return the rate that this ModifiedRate depends on
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+
+        return [self.original_rate]
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
@@ -184,6 +221,8 @@ class ModifiedRate(Rate):
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
+        if self.description:
+            fstring += f"    # represents the sequence: {self.description}\n\n"
         fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
@@ -216,17 +255,28 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors",
-                f"const {dtype} log_scor", f"const {dtype} dlog_scor_dT",
-                f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         # first we need to get all of the rates that make this up
-        fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, log_scor, dlog_scor_dT, rate, drate_dT);\n"
+        fstring += f"    // {self.rid} (calls the underlying rate)\n"
+        if self.description:
+            fstring += f"    // represents the sequence: {self.description}\n\n"
+
+        cargs = cxx_rate_func_args(self, mode="call")
+        fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate_eval.screened_rates(k_{self.original_rate.fname});\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = rate_eval.dscreened_rates_dT(k_{self.original_rate.fname});\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"

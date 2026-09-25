@@ -105,6 +105,17 @@ class TestNetworkCompare:
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
+    def test_compare_energy(self, eval_cond1):
+
+        for other in [eval_cond1.enuc_amrex, eval_cond1.enuc_py_module]:
+            assert other == approx(eval_cond1.enuc_py_inline,
+                                   rel=1.e-10, abs=1.e-30)
+        for other in [eval_cond1.enu_weak_amrex, eval_cond1.enu_weak_py_module]:
+            assert other == approx(eval_cond1.enu_weak_py_inline,
+                                   rel=1.e-10, abs=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
     def test_compare_ydots2(self, eval_cond2):
 
         # compare the AMReX and python module nets to the python
@@ -126,3 +137,14 @@ class TestNetworkCompare:
             for nuc in eval_cond2.rates_py_inline:
                 assert other[nuc] == approx(eval_cond2.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_energy2(self, eval_cond2):
+
+        for other in [eval_cond2.enuc_amrex, eval_cond2.enuc_py_module]:
+            assert other == approx(eval_cond2.enuc_py_inline,
+                                   rel=1.e-10, abs=1.e-30)
+        for other in [eval_cond2.enu_weak_amrex, eval_cond2.enu_weak_py_module]:
+            assert other == approx(eval_cond2.enu_weak_py_inline,
+                                   rel=1.e-10, abs=1.e-30)

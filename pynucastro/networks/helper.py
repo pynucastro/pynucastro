@@ -1,5 +1,6 @@
 """Methods to ease the creation of networks."""
 
+from pynucastro.nucdata import Nucleus, parse_nuclei_group
 from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
                               TabularWeakLibrary)
 
@@ -7,6 +8,41 @@ from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
 from .python_network import PythonNetwork
 from .simple_cxx_network import SimpleCxxNetwork
+
+
+def get_net_class(*, network_type="python"):
+    """
+    Given a network_type, return the class that constructs that type.
+
+    Parameters
+    ----------
+    network_type : str
+        The type of network to create.  Allowed values are:
+
+        * "python" : create a :py:obj:`PythonNetwork <pynucastro.networks.python_network.PythonNetwork>`
+        * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
+        * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
+        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+
+    Returns
+    -------
+    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork
+
+    """
+
+    if network_type == "python":
+        return PythonNetwork
+
+    if network_type == "cxx":
+        return SimpleCxxNetwork
+
+    if network_type == "fortran":
+        return FortranNetwork
+
+    if network_type == "amrex":
+        return AmrexAstroCxxNetwork
+
+    raise ValueError("invalid network_type")
 
 
 def network_helper(nuclei, *,
@@ -23,8 +59,11 @@ def network_helper(nuclei, *,
 
     Parameters
     ----------
-    nuclei : Iterable(Nucleus)
-        the nuclei to use for the network
+    nuclei : Iterable(Nucleus) or Iterable(str)
+        the nuclei to use for the network.  In addition of names of
+        nuclei, ranges of masses for the same element can be
+        specified in a string like "ni56-58", or comma-separated like
+        "ni56,58,60".
     network_type : str
         The type of network to create.  Allowed values are:
 
@@ -62,12 +101,25 @@ def network_helper(nuclei, *,
 
     assert main_library in ["reaclib", "starlib"]
 
+    # interpret the nuclei
+    nuclist = []
+    for n in nuclei:
+        try:
+            _nuc = Nucleus.cast(n)
+            nuclist.append(_nuc)
+            continue
+        except ValueError:
+            pass
+
+        _nucs = parse_nuclei_group(n)
+        nuclist.extend(_nucs)
+
     if main_library == "reaclib":
         rl = ReacLibLibrary()
-        lib = rl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
+        lib = rl.linking_nuclei(nuclist, with_reverse=with_reverse, print_warning=verbose)
     else:
         sl = StarLibLibrary()
-        lib = sl.linking_nuclei(nuclei, with_reverse=with_reverse, print_warning=verbose)
+        lib = sl.linking_nuclei(nuclist, with_reverse=with_reverse, print_warning=verbose)
 
     if use_tabular_rates:
         if tabular_ordering:
@@ -75,7 +127,7 @@ def network_helper(nuclei, *,
         else:
             tl = TabularWeakLibrary()
 
-        lib += tl.linking_nuclei(nuclei, print_warning=verbose)
+        lib += tl.linking_nuclei(nuclist, print_warning=verbose)
 
         # if we have both a tabular and ReacLib rate,
         # remove the ReacLib version
@@ -99,20 +151,7 @@ def network_helper(nuclei, *,
                 d = DerivedRate(source_rate=fr, use_pf=True, use_unreliable_spins=True)
                 lib.add_rate(d)
 
-    if network_type == "python":
-        return PythonNetwork(libraries=[lib],
-                             inert_nuclei=inert_nuclei, verbose=verbose)
+    net_class = get_net_class(network_type=network_type)
 
-    if network_type == "cxx":
-        return SimpleCxxNetwork(libraries=[lib],
-                                inert_nuclei=inert_nuclei, verbose=verbose)
-
-    if network_type == "fortran":
-        return FortranNetwork(libraries=[lib],
-                              inert_nuclei=inert_nuclei, verbose=verbose)
-
-    if network_type == "amrex":
-        return AmrexAstroCxxNetwork(libraries=[lib],
-                                    inert_nuclei=inert_nuclei, verbose=verbose)
-
-    raise ValueError("invalid network_type")
+    return net_class(libraries=[lib],
+                     inert_nuclei=inert_nuclei, verbose=verbose)

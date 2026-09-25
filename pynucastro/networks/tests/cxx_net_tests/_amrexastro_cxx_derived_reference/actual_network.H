@@ -1,5 +1,5 @@
-#ifndef actual_network_H
-#define actual_network_H
+#ifndef ACTUAL_NETWORK_H
+#define ACTUAL_NETWORK_H
 
 #include <random>
 #include <string_view>
@@ -126,13 +126,13 @@ namespace Rates
     enum NetworkRates :
     std::uint8_t
     {
-        k_He4_Fe52_to_Ni56_reaclib = 1,
-        k_p_Co55_to_Ni56_reaclib = 2,
-        k_He4_Fe52_to_p_Co55_reaclib = 3,
+        k_Fe52_He4_to_Ni56_reaclib = 1,
+        k_Co55_p_to_Ni56_reaclib = 2,
+        k_Fe52_He4_to_p_Co55_reaclib = 3,
         k_Ni56_to_He4_Fe52_derived = 4,
         k_Ni56_to_p_Co55_derived = 5,
-        k_p_Co55_to_He4_Fe52_derived = 6,
-        NumRates = k_p_Co55_to_He4_Fe52_derived
+        k_Co55_p_to_He4_Fe52_derived = 6,
+        NumRates = k_Co55_p_to_He4_Fe52_derived
     };
 
     enum ScreenPairs :
@@ -149,12 +149,12 @@ namespace Rates
 
     static const std::vector<std::string> rate_names = {
         "",   // 0
-        "He4_Fe52_to_Ni56_reaclib",  // 1,
-        "p_Co55_to_Ni56_reaclib",  // 2,
-        "He4_Fe52_to_p_Co55_reaclib",  // 3,
+        "Fe52_He4_to_Ni56_reaclib",  // 1,
+        "Co55_p_to_Ni56_reaclib",  // 2,
+        "Fe52_He4_to_p_Co55_reaclib",  // 3,
         "Ni56_to_He4_Fe52_derived",  // 4,
         "Ni56_to_p_Co55_derived",  // 5,
-        "p_Co55_to_He4_Fe52_derived"  // 6,
+        "Co55_p_to_He4_Fe52_derived"  // 6,
     };
 
     template<std::uint8_t rate>
@@ -187,9 +187,9 @@ namespace NSE_INDEX
     constexpr int NumNSERatePairs = 3;
 
     inline AMREX_GPU_MANAGED amrex::Array2D<std::int8_t, 1, NumNSERatePairs, 1, 10, amrex::Order::C> rate_pair_data {
-        He4, Fe52, -1, Ni56, -1, -1, Fe52, Ni56, k_He4_Fe52_to_Ni56_reaclib, k_Ni56_to_He4_Fe52_derived,
-        H1, Co55, -1, Ni56, -1, -1, Co55, Ni56, k_p_Co55_to_Ni56_reaclib, k_Ni56_to_p_Co55_derived,
-        He4, Fe52, -1, H1, Co55, -1, Fe52, Co55, k_He4_Fe52_to_p_Co55_reaclib, k_p_Co55_to_He4_Fe52_derived
+        He4, Fe52, -1, Ni56, -1, -1, Fe52, Ni56, k_Fe52_He4_to_Ni56_reaclib, k_Ni56_to_He4_Fe52_derived,
+        H1, Co55, -1, Ni56, -1, -1, Co55, Ni56, k_Co55_p_to_Ni56_reaclib, k_Ni56_to_p_Co55_derived,
+        He4, Fe52, -1, H1, Co55, -1, Fe52, Co55, k_Fe52_He4_to_p_Co55_reaclib, k_Co55_p_to_He4_Fe52_derived
     };
 }
 #endif

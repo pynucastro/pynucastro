@@ -199,7 +199,7 @@ from pynucastro.networks import (AmrexAstroCxxNetwork, BaseCxxNetwork,
                                  Explorer, FortranNetwork, NSENetwork,
                                  PythonNetwork, RateCollection,
                                  SimpleCxxNetwork, StarKillerCxxNetwork,
-                                 SympyRates, network_helper)
+                                 SympyRates, common_networks, network_helper)
 from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
                                 get_nuclei_in_range)
 from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,

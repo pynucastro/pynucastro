@@ -288,9 +288,14 @@ class Library:
         objects that match from the Library.  If there are multiple
         inputs, then a list of Rate objects is returned.
 
+        Parameters
+        ----------
+        name : str, Iterable(str)
+            the name of the rate, in the form "A(x,y)B"
+
         Returns
         -------
-        rates : list, Rate
+        rates : list(Rate), Rate
             A single rate or a list of rates
 
         """
@@ -319,7 +324,8 @@ class Library:
 
     def remove_rate(self, rate):
         """Manually remove a rate from the library by supplying the
-        short name "A(x,y)B", a Rate object, or the rate id
+        short name "A(x,y)B", a ``Rate`` object, or the rate id
+        (``Rate.id``)
 
         Parameters
         ----------
@@ -332,11 +338,18 @@ class Library:
             rid = rate.id
             self._rates.pop(rid)
         elif isinstance(rate, str):
-            rid = self.get_rate_by_name(rate).id
-            self._rates.pop(rid)
-        else:
-            # we assume that a rate id as provided
-            self._rates.pop(rate)
+            if rate in self._rates:
+                # we matched on rate.id
+                self._rates.pop(rate)
+                return
+            if _rate_name_to_nuc(rate) is None:
+                raise LookupError(f"unknown rate identifier: {rate!r}")
+            found_rate = self.get_rate_by_name(rate)
+            if found_rate is None:
+                raise LookupError(f"rate not found: {rate!r}")
+            if isinstance(found_rate, list):
+                raise LookupError(f"ambiguous rate name: {rate!r}")
+            self._rates.pop(found_rate.id)
 
     def get_nuclei(self):
         """Get the list of unique nuclei in the library
@@ -682,6 +695,12 @@ class Library:
         derive reverse rates via detailed balance.  This means that
         they cannot be tabular or weak rates.
 
+        Parameters
+        ----------
+        use_unreliable_spins : bool
+            Do we use spin data that is not marked as reliable in the
+            Nubase nuclear data evaluations?
+
         Returns
         -------
         Library
@@ -690,6 +709,8 @@ class Library:
 
         collect_rates = []
         onlyfwd = self.forward()
+        if onlyfwd is None:
+            return Library()
 
         for r in onlyfwd.get_rates():
 
@@ -700,8 +721,7 @@ class Library:
             else:
                 collect_rates.append(r)
 
-        list1 = Library(rates=collect_rates)
-        return list1
+        return Library(rates=collect_rates)
 
     def derived_backward(self, use_pf=False, use_unreliable_spins=True):
         """Loop over all of the forward rates that can be used to
@@ -1010,7 +1030,7 @@ class ReacLibLibrary(Library):
 
         Parameters
         ----------
-        filename : str
+        filename : str or pathlib.Path
             The filename to use for the library
         prepend_rates_dir : bool
             If ``True``, then output to the pynucastro rate file
@@ -1018,8 +1038,9 @@ class ReacLibLibrary(Library):
 
         """
 
+        filename = Path(filename)
         if prepend_rates_dir:
-            filename = get_rates_dir()/filename
+            filename = get_rates_dir() / filename
 
         with filename.open("w") as f:
             for rate in self.get_rates():
@@ -1217,9 +1238,8 @@ class StarLibLibrary(Library):
             an arbitrary seed is used.
         """
         if seed is None:
-            #arbitrarily chosen upper limit for np.random
-            #since it requires one.
-            seed = np.random.randint(10e5)
+            # arbitrarily chosen
+            seed = np.random.default_rng().integers(1.e6)
         self.seed = seed
         rng = np.random.default_rng(seed=self.seed)
 

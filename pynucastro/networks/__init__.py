@@ -36,6 +36,7 @@ networks.
 
 #__all__ = ["python_network", "rate_collection", "sympy_network_support"]
 
+from . import common_networks
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .base_cxx_network import BaseCxxNetwork
 from .fortran_network import FortranNetwork

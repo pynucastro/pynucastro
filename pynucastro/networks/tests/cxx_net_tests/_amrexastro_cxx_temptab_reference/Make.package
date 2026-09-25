@@ -14,6 +14,7 @@ ifeq ($(USE_REACT),TRUE)
   CEXE_headers += modified_rates.H
   CEXE_headers += table_rates.H
   CEXE_headers += temperature_table_rates.H
+  CEXE_headers += tabular_weak_rates.H
   CEXE_headers += derived_rates.H
   USE_SCREENING = TRUE
   USE_NEUTRINOS = TRUE

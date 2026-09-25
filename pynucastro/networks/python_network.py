@@ -14,8 +14,7 @@ from pynucastro.constants import constants
 from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
-from pynucastro.nucdata import Composition
-from pynucastro.rates import ApproximateRate, BranchedRate, ModifiedRate
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
@@ -58,7 +57,7 @@ class NetworkSolution:
         self._sol = sol
         self._rhs = rhs
         self._jac = jac
-        self.network = network
+        self.unique_nuclei = tuple(network.unique_nuclei)
         self.rho = rho
         self.T = T
         self.self_heating = self_heating
@@ -130,18 +129,6 @@ class NetworkSolution:
 
         assert self.self_heating
         return self._sol.y[-1, :]
-
-    @property
-    def unique_nuclei(self):
-        """Return a list of nuclei explicitly carried in the network,
-        ordered consistent with molar fraction solution, Y.
-
-        Returns
-        -------
-        List(Nucleus)
-        """
-
-        return self.network.unique_nuclei
 
     def X_at(self, t):
         """Evaluate the mass fractions for a given time.
@@ -670,6 +657,47 @@ class PythonNetwork(RateCollection):
 
     """
 
+    def __init__(self, *args, **kwargs):
+
+        # initialize the base class
+        super().__init__(*args, **kwargs)
+
+        # carry the numba compiled network used in integration
+        self.network_module = None
+
+    def _build_collection(self):
+
+        super()._build_collection()
+
+        # invalidate any compiled network module since the network
+        # changed
+        self.network_module = None
+
+    def resample(self, seed=None):
+        """Resample starlib rates
+
+        Parameters
+        ----------
+        seed: int
+            Seed for resampling. If no seed is provided then
+            an arbitrary seed is used.
+        """
+
+        super().resample(seed=seed)
+
+        # invalid when we do resample.
+        # Since StarLibRate log_rate_data will be changed
+        self.network_module = None
+
+    def unsample(self):
+        """Restore starlib rates to median values."""
+
+        super().unsample()
+
+        # invalid when we do resample.
+        # Since StarLibRate log_rate_data will be changed
+        self.network_module = None
+
     def full_ydot_string(self, nucleus, indent=""):
         """Construct a string containing the python code for
         dY(nucleus)/dt by considering every reaction that involves
@@ -698,7 +726,22 @@ class PythonNetwork(RateCollection):
             ostr += f"{indent}dYdt[j{nucleus.raw}] = 0.0\n\n"
         else:
             ostr += f"{indent}dYdt[j{nucleus.raw}] = (\n"
-            for ipair, rp in enumerate(self.nuclei_rate_pairs[nucleus]):
+
+            # if a nucleus appears both as a reactant and product in a
+            # rate then it's contribution might be 0.  So ignore this
+            # pair if that is true for both the forward and reverse
+            # for this nucleus
+
+            def net_coefficient(rate):
+                if rate is None:
+                    return 0
+                return rate.product_count(nucleus) - rate.reactant_count(nucleus)
+
+            valid_pairs = [q for q in self.nuclei_rate_pairs[nucleus] if
+                           not (net_coefficient(q.forward) == 0 and
+                                net_coefficient(q.reverse) == 0)]
+
+            for ipair, rp in enumerate(valid_pairs):
                 # when we are working with rate pairs, one or more of the
                 # rates may be missing.  We also have not clearly separated
                 # them into creation / destruction, so we'll figure that out
@@ -720,9 +763,13 @@ class PythonNetwork(RateCollection):
 
                 if len(rlist) > 1:
                     ostr += ")"
-                if ipair < len(self.nuclei_rate_pairs[nucleus]) - 1:
+                if ipair < len(valid_pairs) - 1:
                     ostr += " +"
                 ostr = ostr.rstrip() + "\n"
+
+            # if there were no rates, just output 0.0
+            if len(valid_pairs) == 0:
+                ostr += f"{indent}      0.0\n"
 
             ostr += f"{indent}   )\n\n"
 
@@ -812,7 +859,7 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
 
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
 
         # Initialize log_scor to 0.0
         for n1, n2 in screening_pair_set:
@@ -855,14 +902,18 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r, use_tf=True):
+        def format_rate_call(r):
             args = ["rate_eval"]
-            if use_tf:
+            if r.rate_eval_needs_tfactors:
                 args.append("tf")
-            else:
+            elif r.rate_eval_needs_temp:
                 args.append("T")
+            if r.rate_eval_needs_logtemp:
+                args.append("log_T=log_T")
             if r.rate_eval_needs_rho:
                 args.append("rho=rho")
+            if r.rate_eval_needs_logrhoye:
+                args.append("log_rhoY=log_rhoY")
             if r.rate_eval_needs_comp:
                 args.append("Y=Y")
             if r.screening_pairs:
@@ -876,6 +927,10 @@ class PythonNetwork(RateCollection):
         ostr += self.screening_string(indent=indent)
         ostr += "\n"
 
+        ostr += f"{indent}rhoY = rho * ye(Y)\n"
+        ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
+        ostr += f"{indent}log_T = np.log10(T)\n\n"
+
         ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
             ostr += format_rate_call(r)
@@ -883,27 +938,22 @@ class PythonNetwork(RateCollection):
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r, use_tf=False)
+            ostr += format_rate_call(r)
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
             ostr += format_rate_call(r)
-
-        # modified rates will have their own screening,
-        # either using the original rate or any modified
-        # form.  Therefore we call them before applying
-        # screening factors.
 
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
@@ -1075,14 +1125,16 @@ class PythonNetwork(RateCollection):
             of.write(f"# temperature / rate tabulation for {r.rid}\n")
 
             log_temp_str = np.array2string(r.log_t9_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_t9_data = np.array(\n")
             for line in log_temp_str.split("\n"):
                 of.write(f"     {line}\n")
             of.write("   )\n")
 
             log_rate_str = np.array2string(r.log_rate_data,
-                                           max_line_width=70, precision=17, separator=", ")
+                                           max_line_width=70, precision=17,
+                                           separator=", ", threshold=sys.maxsize)
             of.write(f"{r.fname}_log_rate_data = np.array(\n")
             for line in log_rate_str.split("\n"):
                 of.write(f"     {line}\n")
@@ -1095,53 +1147,11 @@ class PythonNetwork(RateCollection):
         of.write("def ye(Y):\n")
         of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
 
-        # the functions to evaluate the temperature dependence of the rates
+        # the functions to evaluate the T dependence (strong) or ρ-T
+        # dependence (weak) of the rates
 
-        _rate_func_written = []
-        for r in self.rates:
-            if isinstance(r, ApproximateRate):
-                # write out the function string for all of the rates we depend on
-                for cr in r.get_child_rates():
-                    if cr in _rate_func_written:
-                        continue
-                    of.write(cr.function_string_py())
-                    _rate_func_written.append(cr)
-
-                # now write out the function that computes the
-                # approximate rate
-                of.write(r.function_string_py())
-            elif isinstance(r, BranchedRate):
-                # we need to write out the function string
-                # of all the rates we depend on
-                rates_needed = [r.underlying_rate,
-                                r.primary_branch,
-                                r.other_branch]
-                for mr in rates_needed:
-                    if mr in _rate_func_written:
-                        continue
-                    of.write(mr.function_string_py())
-                    _rate_func_written.append(mr)
-
-                # now write out the function that computes the
-                # branched rate
-                of.write(r.function_string_py())
-
-            elif isinstance(r, ModifiedRate):
-                orig_rate = r.original_rate
-                if orig_rate in _rate_func_written:
-                    continue
-                of.write(orig_rate.function_string_py())
-                _rate_func_written.append(orig_rate)
-
-                # now write out the function that computes the
-                # modified rate
-                of.write(r.function_string_py())
-                _rate_func_written.append(r)
-            else:
-                if r in _rate_func_written:
-                    continue
-                of.write(r.function_string_py())
-                _rate_func_written.append(r)
+        for r in self.all_rates:
+            of.write(r.function_string_py())
 
         # the rhs() function
 
@@ -1203,6 +1213,7 @@ class PythonNetwork(RateCollection):
                           self_heating=False,
                           thermal_neutrinos=False,
                           initial_comp="uniform",
+                          stopping_condition=None,
                           rtol=1e-8, atol=1e-8):
         """Integrate the network to tmax given (rho, T, Y0) using
         SciPy's solve_ivp() with BDF method.  Optionally, we can
@@ -1233,6 +1244,9 @@ class PythonNetwork(RateCollection):
             different modes to use to set up the initial composition if
             molar_composition is None.
             Valid choices are: `uniform`, `random`, and `solar`.
+        stopping_condition : tuple([Nucleus, str], float)
+            If provided, then we stop the integration when the specified nucleus
+            mass fraction drops to the value provided.
         rtol : float
             relative tolerance for SciPy's solve_ivp()
         atol : float
@@ -1246,15 +1260,20 @@ class PythonNetwork(RateCollection):
         """
 
         # Write the network module as a string
-        f = io.StringIO()
-        self.write_network(outfile=f)
-        network_code = f.getvalue()
+        if not self.network_module:
+            f = io.StringIO()
+            self.write_network(outfile=f)
+            network_code = f.getvalue()
 
-        # Create a new in-memory module called `network`
-        network = types.ModuleType("network")
+            # Create a new in-memory module called `network`
+            network = types.ModuleType("network")
 
-        # Execute the code inside the module namespace
-        exec(network_code, network.__dict__)  # pylint: disable=exec-used
+            # Execute the code inside the module namespace
+            exec(network_code, network.__dict__)  # pylint: disable=exec-used
+
+            self.network_module = network
+        else:
+            network = self.network_module
 
         # Get RHS and Jacobian. Use getattr to avoid pylint warning.
         rhs = getattr(network, "rhs")
@@ -1273,9 +1292,33 @@ class PythonNetwork(RateCollection):
             Y0 = comp.get_molar_array()
         else:
             if isinstance(molar_composition, Composition):
-                Y0 = molar_composition.get_molar_array()
+                # don't assume that the input composition is in the same order
+                # as this network
+                Y0 = np.array([molar_composition[nuc] / nuc.A for nuc in self.unique_nuclei])
             else:
                 Y0 = np.asarray(molar_composition)
+
+        # make sure the initial compositon's mass fractions sum to ~ 1
+        sumX = sum(Y0[n] * nuc.A for n, nuc in enumerate(self.unique_nuclei))
+        if abs(sumX - 1) > 1.e-10:
+            raise ValueError("initial mass fractions don't sum to 1")
+
+        # if we have a stopping condition, setup the event
+        events = None
+        if stopping_condition:
+            nuc, val = stopping_condition
+            if isinstance(nuc, str):
+                nuc = Nucleus(nuc)
+            # find the index of nuc in the solution vector
+            idx = self.unique_nuclei.index(nuc)
+            assert idx >= 0, "nucleus not present in solution vector"
+
+            def exhaustion(t, y, *args):  # pylint: disable=unused-argument
+                return y[idx] - val / nuc.A
+            exhaustion.terminal = True
+            exhaustion.direction = -1
+
+            events = [exhaustion]
 
         if self_heating:
             energy_release = getattr(network, "energy_release")
@@ -1317,14 +1360,16 @@ class PythonNetwork(RateCollection):
             sol = solve_ivp(rhs_wrapper, [0, tmax], xi0, method="BDF",
                             dense_output=True,
                             args=(do_rate_eval, ydot_eq, energy_release, rho, screen_func),
-                            rtol=rtol, atol=atol)
+                            rtol=rtol, atol=atol,
+                            events=events)
 
         else:
             # Integrate using SciPy's solve_ivp() using BDF method --
             # good for stiff system.
             sol = solve_ivp(rhs, [0, tmax], Y0, method="BDF",
                             dense_output=True, args=(rho, T, screen_func),
-                            rtol=rtol, atol=atol, jac=jacobian)
+                            rtol=rtol, atol=atol, jac=jacobian,
+                            events=events)
 
         if not sol.success:
             warnings.warn(f"Warning, integration failed, final integration time = {sol.t[-1]}")
