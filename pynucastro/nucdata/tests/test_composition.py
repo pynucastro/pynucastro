@@ -111,7 +111,10 @@ class TestComposition:
         assert comp["C12"] == approx(0.005076173651329372)
 
     def test_set_andnormalize(self, comp):
-        comp.set_array([1, 2, 3, 4, 5, 6])
+        names = ["H1", "He4", "C12", "O16", "N14", "Ca40"]
+        for nuc, X in zip(names, range(1, len(names)+1)):
+            comp.set_nuc(Nucleus(nuc), X)
+
         assert comp.X == {Nucleus("H1"): 1, Nucleus("He4"): 2, Nucleus("C12"): 3,
                           Nucleus("O16"): 4, Nucleus("N14"): 5, Nucleus("Ca40"): 6}
         comp.normalize()
