@@ -7,7 +7,7 @@ equilibrium through a nucleus.
 import math
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate, cxx_rate_func_args
+from pynucastro.rates.rate import Rate, cxx_rate_func_args, need_state
 
 
 def _assert_rate_prop(rate, *,
@@ -324,6 +324,9 @@ class ApproximateRate(Rate):
             # we work on already-evaluated rates, so we don't need TFactors
             # in our function argument list
             self.rate_eval_needs_tfactors = False
+
+            # the approximate rate has an explicit n dependence
+            self.rate_comp_dependence = [Nucleus("n")]
 
         elif self.approx_type == "Yp_pg":
 
@@ -754,6 +757,77 @@ class ApproximateRate(Rate):
 
         raise NotImplementedError(f"approximation type {self.approx_type} not supported")
 
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
+                           screen_func=None):
+        """Evaluate drate/d(y_i), the derivative of the rate with
+        respect to ``y_i``.  This rate term has the full composition
+        and density dependence, i.e.:
+
+        rate = c ρ**n Y1**a Y2**b ... λ
+
+        The derivative is only non-zero if this term depends on
+        nucleus ``y_i``.
+
+        For ``ApproximateRate`` we will consider both the explicit
+        molar fraction prefactors and composition dependence that is
+        built into the approximation itself.
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the jacobian_term will include the
+            screening correction.
+
+        Returns
+        -------
+        float
+
+        """
+
+        # get the Jacobian term differentiating with respect to y_i
+        val = super().eval_jacobian_term(state, y_i, screen_func=screen_func)
+
+        if self.rate_comp_dependence is None or y_i not in self.rate_comp_dependence:
+            return val
+
+        # we want the contribution of the form c ρ**n Y1**a Y2**b ... ∂λ/∂Y_i
+        # we will compute this as:
+        #
+        #  (c ρ**n Y1**a Y2**b ... λ) * ∂λ/∂Y_i / λ
+        #
+        # the first term is just the flux, given by
+        # Rate.eval_full_rate.  The λ is just the rate itself, given
+        # by Rate.eval.  We compute the ∂λ/∂Y_i here.
+
+        if self.approx_type == "nn_g":
+            assert y_i == Nucleus("n")
+
+            flux = self.eval_full_rate(state, screen_func=screen_func)
+
+            Yn = state.comp.get_molar()[y_i]
+            r2_ng = self.rates["X(n,g)B"].eval(state.T, rho=state.rho, comp=state.comp,
+                                                screen_func=screen_func)
+            r1_gn = self.rates["X(g,n)A"].eval(state.T, rho=state.rho, comp=state.comp,
+                                                screen_func=screen_func)
+
+            dd = 1.0 / (state.rho * Yn * r2_ng + r1_gn)
+
+            # this form is the same for forward or reverse
+            # note: we analytically cancel the explicit rate factor here
+            # since we divide by the rate in creating our final term.
+            # so this is (∂λ/∂Y_n)/λ
+            dlnrate_dYN = -dd * state.rho * r2_ng
+            return val + flux * dlnrate_dYN
+
+        raise ValueError("invalid rate_comp_dependence")
+
     def function_string_py(self):
         """Return a string containing the python function that
         computes the approximate rate.
@@ -811,27 +885,26 @@ class ApproximateRate(Rate):
 
             string += "    Yn = Y[jn]\n"
 
+            # create the normalization
+            string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
+            string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
+            string += "    dd = 1.0 / (rho * Yn * r2_ng + r1_gn)\n\n"
+
             if not self.is_reverse:
-
-                # first we need to get all of the rates that make this up
                 string += f"    r1_ng = rate_eval.{self.rates['A(n,g)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
 
                 # now the approximation
-                string += "    rate = 2.0 * r1_ng * r2_ng / (rho * Yn * r2_ng + r1_gn)\n"
-
+                string += "    rate = 2.0 * r1_ng * r2_ng * dd\n"
+                string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
             else:
-
-                # first we need to get all of the rates that make this up
-                string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
                 string += f"    r2_gn = rate_eval.{self.rates['B(g,n)X'].fname}\n"
-                string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
 
                 # now the approximation
-                string += "    rate = r1_gn * r2_gn / (rho * Yn * r2_ng + r1_gn)\n"
+                string += "    rate = r1_gn * r2_gn * dd\n"
+                string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n\n"
+            string += f"    rate_eval.{self.fname} = rate\n"
+            string += f"    rate_eval.drate_{self.fname}_dYN = drate_dYN\n\n"
             return string
 
         if self.approx_type == "Yp_pg":
@@ -1007,40 +1080,45 @@ class ApproximateRate(Rate):
 
         elif self.approx_type == "nn_g":
 
+            fstring += f"    {dtype} drate_dYN{{}};\n"
             fstring += f"    {dtype} Yn = Y(N);\n"
+
+            fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
+            fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
+            fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
                 fstring += f"    {dtype} r1_ng = rate_eval.screened_rates(k_{self.rates['A(n,g)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
                 fstring += "    rate = 2.0_rt * r1_ng * r2_ng * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 fstring += f"        {dtype} dr1dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['A(n,g)X'].fname});\n"
                 fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
                 fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += "        drate_dT = 2.0_rt * (dr1dT_ng * r2_ng * dd + r1_ng * dr2dT_ng * dd - r1_ng * r2_ng * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn));\n"
+                fstring += "        drate_dYN = -rate * dd * rho * r2_ng;\n"
                 fstring += "    }\n"
             else:
 
                 # first we need to get all of the rates that make this up
-                fstring += f"    {dtype} r1_gn = rate_eval.screened_rates(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += f"    {dtype} r2_gn = rate_eval.screened_rates(k_{self.rates['B(g,n)X'].fname});\n"
-                fstring += f"    {dtype} r2_ng = rate_eval.screened_rates(k_{self.rates['X(n,g)B'].fname});\n"
 
                 # now the approximation
-                fstring += f"    {dtype} dd = 1.0_rt / (rho * Yn * r2_ng + r1_gn);\n"
                 fstring += "    rate = r1_gn * r2_gn * dd;\n"
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
                 fstring += f"        {dtype} dr1dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['X(g,n)A'].fname});\n"
                 fstring += f"        {dtype} dr2dT_gn = rate_eval.dscreened_rates_dT(k_{self.rates['B(g,n)X'].fname});\n"
                 fstring += f"        {dtype} dr2dT_ng = rate_eval.dscreened_rates_dT(k_{self.rates['X(n,g)B'].fname});\n"
                 fstring += "        drate_dT = dr1dT_gn * r2_gn * dd + r1_gn * dr2dT_gn * dd - r1_gn * r2_gn * dd * dd * (rho * Yn * dr2dT_ng + dr1dT_gn);\n"
+                fstring += "        drate_dYN = -rate * dd * rho * r2_ng;\n"
                 fstring += "    }\n"
+
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+            fstring += f"        rate_eval.drate_{self.fname}_dYN = drate_dYN;\n"
+            fstring += "    }\n"
 
         elif self.approx_type == "Yp_pg":
 
