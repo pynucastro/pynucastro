@@ -137,7 +137,10 @@ class NetworkSolution:
         ----------
         t : float or list or numpy.ndarray
             time or time array used to evaluate the mass fractions.  If a time
-            array is given, the output is an array of shape (nuc, times)
+            array is given, the output is an array of shape (nuc, times).
+
+            If a negative scalar time is passed in (e.g., -1.0), the state
+            at the end of integration is returned.
 
         Returns
         -------
@@ -148,6 +151,8 @@ class NetworkSolution:
         As = np.array([n.A for n in self.unique_nuclei])
 
         if isinstance(t, (float, int)):
+            if t < 0:
+                t = self._sol.t[-1]
             return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
         return self._sol.sol(t)[0:len(self.unique_nuclei), ...] * As[:, None]
 
@@ -168,6 +173,26 @@ class NetworkSolution:
             return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
         return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
+
+    def comp_at(self, t):
+        """Create a Composition object for the state at the specified time.
+
+        Parameters
+        ----------
+        t : float
+           The time at which to evaluate the composition.  If t < 0, then
+           the endpoint of integration is used.
+
+        """
+
+        assert isinstance(t, (float, int))
+
+        _X = self.X_at(t)
+        comp = Composition(self.unique_nuclei)
+        for nuc, X in zip(self.unique_nuclei, _X):
+            comp.set_nuc(nuc, X)
+
+        return comp
 
     def T_at(self, t):
         """Evaluate the temperature for a given time.
