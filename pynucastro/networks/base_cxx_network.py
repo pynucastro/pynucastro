@@ -191,7 +191,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if odir is not None:
                 outfile = odir/outfile
 
-            with open(tfile) as ifile, open(outfile, "w") as of:
+            with open(tfile, encoding="utf-8") as ifile, open(outfile, "w", encoding="utf-8") as of:
                 for l in ifile:
                     ls = l.strip()
                     foundkey = False
