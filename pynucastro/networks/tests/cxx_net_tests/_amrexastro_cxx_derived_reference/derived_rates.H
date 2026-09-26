@@ -61,7 +61,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Ni56_to_He4_Fe52_derived) = rate;
@@ -120,7 +122,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Ni56_to_p_Co55_derived) = rate;
@@ -187,7 +191,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Co55_p_to_He4_Fe52_derived) = rate;

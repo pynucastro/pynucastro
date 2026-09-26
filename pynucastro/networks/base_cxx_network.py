@@ -377,7 +377,8 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _write_temp_table_array(self, n_indent, of, name, data, npts):
         """Write a temperature-table array with consistent precision and formatting."""
         idnt = self.indent * n_indent
-        data_str = np.array2string(data, max_line_width=70, precision=17, separator=", ")
+        data_str = np.array2string(data, max_line_width=70, precision=17,
+                                   separator=", ", threshold=sys.maxsize)
         # remove the [ ]
         data_str = data_str[1:-1]
 
