@@ -1,21 +1,16 @@
-#ifndef MODIFIED_RATES_H
-#define MODIFIED_RATES_H
+#ifndef BETA_LIMITED_RATES_H
+#define BETA_LIMITED_RATES_H
 
 #include <amrex_bridge.H>
 
 #include <tfactors.H>
 #include <actual_network.H>
 #include <rate_type.H>
-#include <reaclib_rates.H>
-#include <beta_limited_rates.H>
 
-namespace modified_rates {
+namespace beta_limited_rates {
 
-    using namespace reaclib_rates;
     using namespace Rates;
-    using namespace beta_limited_rates;
 
-    <modified_rate_functions>(1)
 
     template <int do_T_derivatives, typename T>
     inline
@@ -29,7 +24,6 @@ namespace modified_rates {
         [[maybe_unused]] Real rate;
         [[maybe_unused]] Real drate_dT;
 
-        <fill_modified_rates>(2)
 
     }
 }

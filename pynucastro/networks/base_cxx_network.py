@@ -25,7 +25,8 @@ from pynucastro.screening import get_screening_pair_set
 from pynucastro.utils import pynucastro_version
 
 # dict to convert rate type to the C++ namespace
-namespaces = {"BranchedRate": "branched_rates",
+namespaces = {"BetaLimitedRate": "beta_limited_rates",
+              "BranchedRate": "branched_rates",
               "DerivedRate": "derived_rates",
               "ModifiedRate": "modified_rates",
               "ReacLibRate": "reaclib_rates",
@@ -111,6 +112,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
+        self.ftags['<fill_beta_limited_rates>'] = self._fill_beta_limited_rates
         self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
         self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
         self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
@@ -119,6 +121,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<fill_tabular_rates>'] = self._fill_tabular_rates
         self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
+        self.ftags['<beta_limited_rate_functions>'] = self._beta_limited_rate_functions
         self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
@@ -609,6 +612,9 @@ class BaseCxxNetwork(ABC, RateCollection):
     def _branched_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.branched_rates)
 
+    def _beta_limited_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.beta_limited_rates)
+
     def _derived_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.derived_rates)
 
@@ -690,6 +696,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_branched_rates(self, n_indent, of):
         self._fill_rates(n_indent, of, self.branched_rates)
+
+    def _fill_beta_limited_rates(self, n_indent, of):
+        self._fill_rates(n_indent, of, self.beta_limited_rates)
 
     def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:

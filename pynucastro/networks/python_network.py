@@ -980,6 +980,14 @@ class PythonNetwork(RateCollection):
         for r in self.custom_rates:
             ostr += format_rate_call(r)
 
+        if self.beta_limited_rates:
+            ostr += f"\n{indent}# beta-limited rates\n"
+        for r in self.beta_limited_rates:
+            # a beta-limited rate simply compares two (or more)
+            # existing rates.  It assumes that they have already been
+            # evaluated and screened.
+            ostr += format_rate_call(r)
+
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:

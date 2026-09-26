@@ -10,6 +10,7 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
+#include <beta_limited_rates.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>
@@ -114,7 +115,11 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+
+    // fill beta-limited ratesranched rates -- these can have ReacLib or
+    // TemperatureTabular/StarLib as the underlying rate or branches.
+    beta_limited_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
