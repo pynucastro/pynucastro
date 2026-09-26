@@ -5,6 +5,7 @@ abundances.
 
 import collections
 import math
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -103,7 +104,7 @@ class Composition(collections.UserDict):
             solar = SolarComposition(Z=0.02)
             _tmp_comp = solar.bin_as(nuclei)
             _tmp_comp.normalize()
-            self.set_array(_tmp_comp.get_array())
+            self._set_array(_tmp_comp.get_array())
         elif init == "lightest":
             lightest = min(nuc for nuc in self)
             self.X[lightest] = 1.0
@@ -216,7 +217,7 @@ class Composition(collections.UserDict):
 
         self.normalize(half_life_thresh=half_life_thresh)
 
-    def set_array(self, arr):
+    def _set_array(self, arr):
         """Set the mass fractions of all species to the values
         in arr, `get_nuclei()`
 
@@ -229,6 +230,27 @@ class Composition(collections.UserDict):
 
         for i, k in enumerate(self):
             self[k] = arr[i]
+
+    def set_array(self, arr):
+        """Set the mass fractions of all species to the values
+        in arr, `get_nuclei()`
+
+        .. deprecated:: 3.1 ``set_array`` has been deprecated.  Use
+           ``set_nuc`` instead.  ``set_array`` will be
+           removed in version 3.3.
+
+        Parameters
+        ----------
+        arr : list, tuple, numpy.ndarray
+            input values of mass fractions
+
+        """
+
+        warnings.warn("set_array is deprecated, use set_nuc instead",
+                      DeprecationWarning,
+                      stacklevel=2)
+
+        self._set_array(arr)
 
     def set_molar_array(self, arr):
         """Set the molar fractions of all species to the values
@@ -281,7 +303,7 @@ class Composition(collections.UserDict):
             alpha = np.ones(len(self))
 
         fracs = rng.dirichlet(alpha)
-        self.set_array(fracs)
+        self._set_array(fracs)
 
         # ensures exact normalization
         self.normalize()

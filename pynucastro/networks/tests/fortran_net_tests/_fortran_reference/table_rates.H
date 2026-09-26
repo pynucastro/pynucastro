@@ -19,7 +19,7 @@
 // Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
 //
 
-const int num_tables = 0;
+constexpr int num_tables = 0;
 
 enum TableVars : std::uint8_t
 {
@@ -44,6 +44,7 @@ struct weak_rate_t
     Real rate;
     Real drate_dT;
     Real enu;
+    Real denu_dT;
     Real gamma;
 };
 
@@ -120,8 +121,8 @@ template<typename R, typename T, typename D>
 inline
 Real
 evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
-                  [[maybe_unused]] const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                  const Real log_rhoy, const Real log_temp)
+                  const table_t& table_meta, const R& log_rhoy_table, const T& log_temp_table, const D& data,
+                  const Real log_rhoy, const Real log_temp, const int component)
 {
 
     // Differentiate the same bilinear log-rate interpolant as evaluate_vars.
@@ -142,10 +143,10 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
     const Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
     const Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
 
-    const Real fij     = data(jtemp_lo, irhoy_lo, jtab_rate);
-    const Real fip1j   = data(jtemp_lo, irhoy_hi, jtab_rate);
-    const Real fijp1   = data(jtemp_hi, irhoy_lo, jtab_rate);
-    const Real fip1jp1 = data(jtemp_hi, irhoy_hi, jtab_rate);
+    const Real fij     = data(jtemp_lo, irhoy_lo, component);
+    const Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+    const Real fijp1   = data(jtemp_hi, irhoy_lo, component);
+    const Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
     // compute the gradients in the T direction: dr/dT |_i and dr/dT |_{i+1}
 
@@ -185,7 +186,12 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
         entries.drate_dT =
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
-                              log_rhoy, log_temp);
+                              log_rhoy, log_temp, jtab_rate);
+
+        entries.denu_dT =
+            evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
+                              table_meta, log_rhoy_table, log_temp_table, data,
+                              log_rhoy, log_temp, jtab_nuloss);
     }
 }
 
@@ -220,6 +226,11 @@ tabular_evaluate(const table_t& table_meta,
         entries.drate_dT = 0.0;
     }
     entries.enu = -std::pow(10.0_rt, entries.enu);
+    if constexpr (do_T_derivatives) {
+        entries.denu_dT = entries.enu * entries.denu_dT / temp;
+    } else {
+        entries.denu_dT = 0.0;
+    }
     entries.gamma = std::pow(10.0_rt, entries.gamma);
 }
 
