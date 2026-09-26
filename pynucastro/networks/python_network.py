@@ -1229,6 +1229,13 @@ class PythonNetwork(RateCollection):
             for n_j in self.unique_nuclei:
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
 
+        # now the correction for the Ye dependence in weak rates
+        of.write(f"{indent}# add ∂λ_weak / ∂Y_e terms now\n")
+        of.write(f"{indent}# this uses ∂Y_e/∂Y_i = Z_i\n")
+        of.write(f"{indent}for irow in range(nnuc):\n")
+        of.write(f"{indent}    for jcol in range(nnuc):\n")
+        of.write(f"{indent}        jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]\n\n")
+
         of.write(f"{indent}return jac\n")
 
         if close_file:

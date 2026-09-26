@@ -128,13 +128,13 @@ class TableInterpolator:
 
         return irhoy * self.table_temp_lines + jtemp
 
-    def _interpolate_1d(self, xi, fhi, flo, dx):
+    def _interpolate_1d(self, xi, fhi, flo, xlo, xhi):
         """Helper function for 1D interpolation at point xi in [xlo, xhi],
         with data node values (xlo, flo) and (xhi, fhi).
 
         """
 
-        f = flo + (fhi - flo) * xi / dx
+        f = flo + (fhi - flo) * (xi - xlo) / (xhi - xlo)
         return f
 
     def interpolate(self, logrhoy, logT, component):
@@ -234,7 +234,6 @@ class TableInterpolator:
         # note: rhoy and T are already stored as log
 
         dlogrhoy = self.rhoy[irhoy+1] - self.rhoy[irhoy]
-        dlogT = self.temp[jT+1] - self.temp[jT]
 
         # get the data at the 4 points
 
@@ -253,7 +252,8 @@ class TableInterpolator:
         dlogr_dlogrhoy_j = (f_ip1j - f_ij) / dlogrhoy
         dlogr_dlogrhoy_jp1 = (f_ip1jp1 - f_ijp1) / dlogrhoy
 
-        return self._interpolate_1d(logT, dlogr_dlogrhoy_jp1, dlogr_dlogrhoy_j, dlogT)
+        return self._interpolate_1d(logT, dlogr_dlogrhoy_jp1, dlogr_dlogrhoy_j,
+                                    self.temp[jT], self.temp[jT+1])
 
 
 class TabularWeakRate(Rate):
@@ -434,10 +434,12 @@ class TabularWeakRate(Rate):
         fstring += f"    r = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)\n"
         fstring += f"    enu = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)\n"
         fstring += f"    egamma = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)\n\n"
+        fstring += f"    drate_drhoye = {self.fname}_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)\n\n"
 
         fstring += f"    rate_eval.{self.fname} = 10.0**r\n"
         fstring += "    edot_nu = -10.0**enu\n"
         fstring += "    edot_gamma = 10.0**egamma\n"
+        fstring += "    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)\n"
         fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
         fstring += f"    rate_eval.dweak_ydot_dYe[j{self.reactants[0].raw}] -= rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n"
         fstring += f"    rate_eval.dweak_ydot_dYe[j{self.products[0].raw}] += rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n\n"
