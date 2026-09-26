@@ -46,7 +46,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Ne20_He4_to_C12_C12_derived) = rate;
@@ -90,7 +92,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Na23_p_to_C12_C12_derived) = rate;
@@ -132,7 +136,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         // ReacLib set derived from nac2
@@ -153,7 +159,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;

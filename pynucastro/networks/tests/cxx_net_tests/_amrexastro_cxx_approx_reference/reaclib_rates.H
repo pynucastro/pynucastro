@@ -39,11 +39,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -60,11 +62,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -81,11 +85,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Mg24_He4_to_p_Al27_reaclib) = rate;
@@ -119,11 +125,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // st08r
@@ -140,11 +148,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Mg24_He4_to_Si28_reaclib) = rate;
@@ -178,11 +188,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -199,11 +211,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -220,11 +234,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Al27_p_to_He4_Mg24_reaclib) = rate;
@@ -258,11 +274,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -279,11 +297,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -300,11 +320,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Al27_p_to_Si28_reaclib) = rate;
@@ -333,11 +355,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // st08r
@@ -351,11 +375,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Si28_to_He4_Mg24_reaclib) = rate;
@@ -386,11 +412,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -404,11 +432,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -422,11 +452,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Si28_to_p_Al27_reaclib) = rate;
@@ -460,11 +492,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -481,11 +515,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -502,11 +538,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Si28_He4_to_p_P31_reaclib) = rate;
@@ -540,11 +578,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_Si28_He4_to_S32_reaclib) = rate;
@@ -578,11 +618,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -599,11 +641,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -620,11 +664,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_P31_p_to_He4_Si28_reaclib) = rate;
@@ -658,11 +704,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -679,11 +727,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -700,11 +750,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_P31_p_to_S32_reaclib) = rate;
@@ -735,11 +787,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_S32_to_He4_Si28_reaclib) = rate;
@@ -770,11 +824,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10r
@@ -786,11 +842,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         // il10n
@@ -804,11 +862,13 @@ namespace reaclib_rates {
         }
 
         // avoid underflows by zeroing rates in [0.0, 1.e-100]
-        ln_set_rate = std::max(ln_set_rate, -230.0);
+        ln_set_rate = std::max(ln_set_rate, -230.0_rt);
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;
+            }
         }
 
         rate_eval.screened_rates(k_S32_to_p_P31_reaclib) = rate;
