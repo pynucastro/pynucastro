@@ -128,6 +128,15 @@ class TableInterpolator:
 
         return irhoy * self.table_temp_lines + jtemp
 
+    def _interpolate_1d(self, xi, fhi, flo, dx):
+        """Helper function for 1D interpolation at point xi in [xlo, xhi],
+        with data node values (xlo, flo) and (xhi, fhi).
+
+        """
+
+        f = flo + (fhi - flo) * xi / dx
+        return f
+
     def interpolate(self, logrhoy, logT, component):
         """Given logrhoy and logT, do bilinear interpolation to
         find the value of the data component in the table
@@ -148,33 +157,21 @@ class TableInterpolator:
 
         """
 
-        # We are going to do bilinear interpolation.  We create a
-        # polynomial of the form:
-        #
-        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
-        #     B [log(rho) - log(rho_i)] +
-        #     C [log(T) - log(T_j)] +
-        #     D
-        #
-        # we then find the i,j such that our point is in the
-        # box with corners (i,j) to (i+1,j+1), and solve for
-        # A, B, C, D
-
-        # find the T and rhoY in the data table corresponding to the
-        # lower left
-
         if logT < self.temp.min() or logT > self.temp.max():
             raise ValueError("temperature out of table bounds")
 
         if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
             raise ValueError("rhoy out of table bounds")
 
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
         irhoy = self._get_logrhoy_idx(logrhoy)
         jT = self._get_logT_idx(logT)
 
         # note: rhoy and T are already stored as log
 
-        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogrhoy = self.rhoy[irhoy+1] - self.rhoy[irhoy]
         dlogT = self.temp[jT+1] - self.temp[jT]
 
         # get the data at the 4 points
@@ -191,15 +188,72 @@ class TableInterpolator:
         idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
         f_ip1jp1 = self.data[idx, component]
 
-        D = f_ij
-        C = (f_ijp1 - f_ij) / dlogT
-        B = (f_ip1j - f_ij) / dlogrho
-        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
+        u = (logrhoy - self.rhoy[irhoy]) / dlogrhoy
+        v = (logT - self.temp[jT]) / dlogT
 
-        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
-             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
+        E = f_ij
+        C = f_ijp1 - f_ij
+        B = f_ip1j - f_ij
+        A = f_ip1jp1 - f_ip1j - f_ijp1 + f_ij
 
-        return r
+        return A * u * v + B * u + C * v + E
+
+    def interpolate_dlogrhoy(self, logrhoy, logT, component):
+        """Given logrhoy and logT, compute the derivative, ∂log(q)/∂log(ρY_e)
+        of component q from the data table.  This is done by differentiating
+        the bilinear interpolant.
+
+        Parameters
+        ----------
+        logrhoy : float
+            log10(ρ Y_e) to interpolate at
+        logT : float
+            log10(T) to interpolate at
+        component : int
+            the component from the data table we are interpolating.
+            This should correspond to a :py:class:`TableIndex` component.
+
+        Returns
+        -------
+        float
+
+        """
+
+        if logT < self.temp.min() or logT > self.temp.max():
+            raise ValueError("temperature out of table bounds")
+
+        if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
+            raise ValueError("rhoy out of table bounds")
+
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
+        irhoy = self._get_logrhoy_idx(logrhoy)
+        jT = self._get_logT_idx(logT)
+
+        # note: rhoy and T are already stored as log
+
+        dlogrhoy = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogT = self.temp[jT+1] - self.temp[jT]
+
+        # get the data at the 4 points
+
+        idx = self._rhoy_T_to_idx(irhoy, jT)
+        f_ij = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT)
+        f_ip1j = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy, jT+1)
+        f_ijp1 = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
+        f_ip1jp1 = self.data[idx, component]
+
+        dlogr_dlogrhoy_j = (f_ip1j - f_ij) / dlogrhoy
+        dlogr_dlogrhoy_jp1 = (f_ip1jp1 - f_ijp1) / dlogrhoy
+
+        return self._interpolate_1d(logT, dlogr_dlogrhoy_jp1, dlogr_dlogrhoy_j, dlogT)
 
 
 class TabularWeakRate(Rate):
@@ -385,6 +439,8 @@ class TabularWeakRate(Rate):
         fstring += "    edot_nu = -10.0**enu\n"
         fstring += "    edot_gamma = 10.0**egamma\n"
         fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
+        fstring += f"    rate_eval.dweak_ydot_dYe[j{self.reactants[0].raw}] -= rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n"
+        fstring += f"    rate_eval.dweak_ydot_dYe[j{self.products[0].raw}] += rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n\n"
 
         return fstring
 
