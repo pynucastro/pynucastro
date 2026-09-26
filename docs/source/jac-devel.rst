@@ -314,8 +314,6 @@ This term is then added as $\partial
 \epsilon_{\nu,\mathrm{weak}}/\partial Y_j$ to the respective species
 column in the energy row.
 
-This contribution was added in `pynucastro PR #1535 <https://github.com/pynucastro/pynucastro/pull/1535>`_.
-
 Electron fraction dependence
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -487,8 +485,6 @@ tabular rates as:
        N_A\, Y(P)\, \frac{\partial\dot{e}_\nu}{\partial T}
 
 and then add it to the $\partial \dot{e} /\partial T$ term in the Jacobian function.
-
-This contribution was added in `pynucastro PR #1535 <https://github.com/pynucastro/pynucastro/pull/1535>`_.
 
 This is computed as:
 
