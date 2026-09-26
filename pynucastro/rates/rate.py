@@ -61,6 +61,8 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append(f"const {dtype} log_temp")
         if r.rate_eval_needs_rho:
             args.append(f"const {dtype} rho")
+        if r.rate_eval_needs_rhoye:
+            args.append(f"const {dtype} rhoy")
         if r.rate_eval_needs_logrhoye:
             args.append(f"const {dtype} log_rhoy")
         if r.rate_eval_needs_comp:
@@ -81,6 +83,8 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append("log_temp")
         if r.rate_eval_needs_rho:
             args.append("rho")
+        if r.rate_eval_needs_rhoye:
+            args.append("rhoy")
         if r.rate_eval_needs_logrhoye:
             args.append("log_rhoy")
         if r.rate_eval_needs_comp:
@@ -403,6 +407,7 @@ class Rate:
         self.rate_eval_needs_logtemp = False
 
         self.rate_eval_needs_rho = False
+        self.rate_eval_needs_rhoye = False
         self.rate_eval_needs_logrhoye = False
 
         self.rate_eval_needs_comp = False

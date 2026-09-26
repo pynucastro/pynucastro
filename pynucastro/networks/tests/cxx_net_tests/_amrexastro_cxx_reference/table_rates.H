@@ -45,8 +45,10 @@ struct weak_rate_t
 {
     amrex::Real rate;
     amrex::Real drate_dT;
+    amrex::Real drate_drhoye;
     amrex::Real enu;
     amrex::Real denu_dT;
+    amrex::Real denu_drhoye;
     amrex::Real gamma;
 };
 
@@ -1080,7 +1082,8 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
     const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, component);
     const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
-    // compute the gradients in the T direction: dr/dT |_i and dr/dT |_{i+1}
+    // compute the gradients in the T direction: dlog(r)/dlog(T) |_i and
+    // dlog(r)/dlog(T) |_{i+1}
 
     const amrex::Real dlogT = log_temp_hi - log_temp_lo;
     const amrex::Real dlogr_dlogT_i = (fijp1 - fij) / dlogT;
@@ -1088,6 +1091,50 @@ evaluate_dr_dtemp(const int irhoy_lo, const int jtemp_lo,
 
     return evaluate_linear_1d(dlogr_dlogT_ip1, dlogr_dlogT_i,
                               log_rhoy_hi, log_rhoy_lo, log_rhoy);
+}
+
+
+template<typename R, typename T, typename D>
+AMREX_INLINE AMREX_GPU_DEVICE
+amrex::Real
+evaluate_dr_drhoYe(const int irhoy_lo, const int jtemp_lo,
+                   [[maybe_unused]] const table_t& table_meta,
+                   const R& log_rhoy_table, const T& log_temp_table, const D& data,
+                   const amrex::Real log_rhoy, const amrex::Real log_temp, const int component)
+{
+
+    // Differentiate the same bilinear log-rate interpolant as evaluate_vars.
+    // At (rho Ye) knots, use the cell selected by find_index_extrap:
+    // the cell to the right, except at the upper endpoint (the last cell).
+
+    const int irhoy_hi = irhoy_lo + 1;
+    const int jtemp_hi = jtemp_lo + 1;
+
+    const amrex::Real log_rhoy_lo = log_rhoy_table(irhoy_lo);
+    const amrex::Real log_rhoy_hi = log_rhoy_table(irhoy_hi);
+
+    // The interpolated rate is constant outside the density table.
+    if (log_rhoy < log_rhoy_lo || log_rhoy > log_rhoy_hi) {
+        return 0.0_rt;
+    }
+
+    const amrex::Real log_temp_lo = log_temp_table(jtemp_lo);
+    const amrex::Real log_temp_hi = log_temp_table(jtemp_hi);
+
+    const amrex::Real fij     = data(jtemp_lo, irhoy_lo, component);
+    const amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+    const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, component);
+    const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
+
+    // compute the gradients in the rhoY direction: dlog(r)/dlog(ρY_e) |_j and
+    // dlog(r)/dlog(ρY_e) |_{j+1}
+
+    const amrex::Real dlogrhoy = log_rhoy_hi - log_rhoy_lo;
+    const amrex::Real dlogr_dlogrhoy_j = (fip1j - fij) / dlogrhoy;
+    const amrex::Real dlogr_dlogrhoy_jp1 = (fip1jp1 - fijp1) / dlogrhoy;
+
+    return evaluate_linear_1d(dlogr_dlogrhoy_jp1, dlogr_dlogrhoy_j,
+                              log_temp_hi, log_temp_lo, log_temp);
 }
 
 
@@ -1120,10 +1167,21 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp, jtab_rate);
 
+        entries.drate_drhoye =
+            evaluate_dr_drhoYe(irhoy_lo, jtemp_lo,
+                               table_meta, log_rhoy_table, log_temp_table, data,
+                               log_rhoy, log_temp, jtab_rate);
+
         entries.denu_dT =
             evaluate_dr_dtemp(irhoy_lo, jtemp_lo,
                               table_meta, log_rhoy_table, log_temp_table, data,
                               log_rhoy, log_temp, jtab_nuloss);
+
+        entries.denu_drhoye =
+            evaluate_dr_drhoYe(irhoy_lo, jtemp_lo,
+                               table_meta, log_rhoy_table, log_temp_table, data,
+                               log_rhoy, log_temp, jtab_nuloss);
+
     }
 }
 
@@ -1132,7 +1190,8 @@ AMREX_INLINE AMREX_GPU_DEVICE
 void
 tabular_evaluate(const table_t& table_meta,
                  const R& log_rhoy_table, const T& log_temp_table, const D& data,
-                 const amrex::Real log_rhoy, const amrex::Real log_temp, const amrex::Real temp,
+                 const amrex::Real log_rhoy, const amrex::Real rhoy,
+                 const amrex::Real log_temp, const amrex::Real temp,
                  weak_rate_t& entries)
 {
 
@@ -1154,14 +1213,18 @@ tabular_evaluate(const table_t& table_meta,
     entries.rate = amrex::Math::exp10(entries.rate);
     if constexpr (do_T_derivatives) {
         entries.drate_dT = entries.rate * entries.drate_dT / temp;
+        entries.drate_drhoye = entries.rate * entries.drate_drhoye / rhoy;
     } else {
         entries.drate_dT = 0.0;
+        entries.drate_drhoye = 0.0;
     }
     entries.enu = -amrex::Math::exp10(entries.enu);
     if constexpr (do_T_derivatives) {
         entries.denu_dT = entries.enu * entries.denu_dT / temp;
+        entries.denu_drhoye = entries.enu * entries.denu_drhoye / rhoy;
     } else {
         entries.denu_dT = 0.0;
+        entries.denu_drhoye = 0.0;
     }
     entries.gamma = amrex::Math::exp10(entries.gamma);
 }

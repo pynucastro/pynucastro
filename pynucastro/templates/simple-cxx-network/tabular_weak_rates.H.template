@@ -24,6 +24,7 @@ namespace tabular_weak_rates {
     inline
     void
     fill_rates([[maybe_unused]] const Real temp,
+               [[maybe_unused]] const Real rho,
                [[maybe_unused]] const Real rhoy,
                [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
                [[maybe_unused]] T& rate_eval)

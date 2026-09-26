@@ -18,9 +18,11 @@ struct rate_derivs_t {
     Array1D<Real, 1, Rates::NumScreenPairs>  log_screen;
     Array1D<Real, 1, Rates::NumScreenPairs>  dlog_screen_dT;
 #endif
+    Array1D<Real, 1, NumSpec>  dweak_ydot_dYe;
     Real enuc_weak;
     Array1D<Real, 1, NumSpec> denuc_weak_dY;
     Real denuc_weak_dT;
+    Real denuc_weak_dYe;
 };
 
 

@@ -117,7 +117,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, state.rho, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
 
@@ -197,7 +197,7 @@ void get_ydot_weak(const burn_t& state,
         reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors);
     }
 
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
 
     const auto& screened_rates = rate_eval.screened_rates;
 
@@ -324,12 +324,16 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
 
+    auto& screened_rates = rate_eval.screened_rates;
+
     amrex::Real scratch;
+
+    // n row
 
     scratch = -screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(N, N, scratch);
@@ -351,6 +355,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(N, Mg23, 0.0);
 
+
+    // p row
+
     scratch = screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(H1, N, scratch);
 
@@ -370,6 +377,9 @@ void jac_nuc(const burn_t& state,
     jac.set(H1, Na23, 0.0);
 
     jac.set(H1, Mg23, 0.0);
+
+
+    // He4 row
 
     jac.set(He4, N, 0.0);
 
@@ -391,6 +401,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(He4, Mg23, 0.0);
 
+
+    // C12 row
+
     jac.set(C12, N, 0.0);
 
     jac.set(C12, H1, 0.0);
@@ -410,6 +423,9 @@ void jac_nuc(const burn_t& state,
     jac.set(C12, Na23, 0.0);
 
     jac.set(C12, Mg23, 0.0);
+
+
+    // O16 row
 
     jac.set(O16, N, 0.0);
 
@@ -431,6 +447,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(O16, Mg23, 0.0);
 
+
+    // Ne20 row
+
     jac.set(Ne20, N, 0.0);
 
     jac.set(Ne20, H1, 0.0);
@@ -449,6 +468,9 @@ void jac_nuc(const burn_t& state,
     jac.set(Ne20, Na23, 0.0);
 
     jac.set(Ne20, Mg23, 0.0);
+
+
+    // Ne23 row
 
     jac.set(Ne23, N, 0.0);
 
@@ -469,6 +491,9 @@ void jac_nuc(const burn_t& state,
     jac.set(Ne23, Na23, scratch);
 
     jac.set(Ne23, Mg23, 0.0);
+
+
+    // Na23 row
 
     jac.set(Na23, N, 0.0);
 
@@ -491,6 +516,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Na23, Mg23, 0.0);
 
+
+    // Mg23 row
+
     jac.set(Mg23, N, 0.0);
 
     jac.set(Mg23, H1, 0.0);
@@ -510,6 +538,15 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Mg23, Mg23, 0.0);
 
+
+
+    // add ∂λ_weak / ∂Y_e terms now
+    // this uses ∂Y_e/∂Y_i = Z_i
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            jac.add(irow, jcol, rate_eval.dweak_ydot_dYe(irow) * NetworkProperties::zion(jcol));
+        }
+    }
 
 }
 
@@ -549,7 +586,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
 
     // region 2
@@ -569,8 +606,12 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 
     // Account for the weak rate neutrino losses
-    for (int j = 1; j <= NumSpec; ++j) {
-        jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
+    // There are two contributions here:
+    // ∂(ε_{ν,weak})/∂Y_j and ∂(ε_{ν,weak})/∂Y_e ∂Y_e/∂Y_j
+    for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+        jac.add(net_ienuc, jcol,
+                rate_eval.denuc_weak_dY(jcol) +
+                rate_eval.denuc_weak_dYe * NetworkProperties::zion(jcol));
     }
 
     // Account for the thermal neutrino losses
