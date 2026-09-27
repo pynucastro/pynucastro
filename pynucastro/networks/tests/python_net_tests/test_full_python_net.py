@@ -67,7 +67,7 @@ class TestFullPythonNetwork:
                                    1.66005909e-01,  8.95826395e-08, -5.70473332e-05,  5.71197480e-05,
                                    4.04051452e-10])
 
-        assert_allclose(ydot, ydot_benchmark, rtol=1.e-6, abs=1.e-15)
+        assert_allclose(ydot, ydot_benchmark, rtol=1.e-6, atol=1.e-30)
 
         rate_eval = net.do_rate_eval(0.0, Y, rho, T, None)
         ydot_with_enuc = net.ydot_eq(Y, rho, rate_eval)
