@@ -1178,7 +1178,7 @@ class RateCollection:
     def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
         """Return an array of the form J_ij = dYdot_i/dY_j for the
-        network.  The i and j indicies are in the order of
+        network.  The i and j indices are in the order of
         ``RateCollection.unique_nuclei``.
 
         Parameters
