@@ -1204,6 +1204,10 @@ class RateCollection:
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
+        # first get the composition terms from the explicit molar
+        # fraction terms and any molar fraction dependency built into
+        # the rate itself (typically an ApproximateRate)
+
         for i, n_i in enumerate(self.unique_nuclei):
             for j, n_j in enumerate(self.unique_nuclei):
 
@@ -1232,6 +1236,25 @@ class RateCollection:
                     jac[i, j] += c * \
                         r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
+
+            # now add contributions from the Ye dependence in
+            # TabularWeakRate, this is -ρY(p) ∂λ/∂(ρY_e) for the
+            # parent and +ρY(p) ∂λ/∂(ρY_e) for the child.
+
+            Ys = state.comp.get_molar_array()
+
+            for tr in self.tabular_rates:
+                # each rate effects 2 rows: the parent and child
+                ip = self.unique_nuclei.index(tr.reactants[0])
+                ic = self.unique_nuclei.index(tr.products[0])
+                assert ip >= 0 and ic >= 0
+
+                dr_drhoye = tr.get_drate_drhoye(state)
+                term = state.rho * Ys[ip] * dr_drhoye
+
+                for jcol, nuc in enumerate(self.unique_nuclei):
+                    jac[ip, jcol] -= term * nuc.Z
+                    jac[ic, jcol] += term * nuc.Z
 
         return jac
 

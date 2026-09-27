@@ -544,7 +544,7 @@ class TabularWeakRate(Rate):
 
         rhoY = rho * comp.ye
         log10_r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
-                                          TableIndex.RATE.value)
+                                                         TableIndex.RATE.value)
         return log10_r * np.log(10)
 
     @need_state
@@ -567,6 +567,34 @@ class TabularWeakRate(Rate):
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
                                           TableIndex.NU.value)
         return 10**r
+
+    @need_state
+    def get_drate_drhoye(self, state):
+        """Evaluate the ∂λ/∂(ρY_e) for the rate.
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information
+            used to evaluate the rate derivative loss. It knows about
+            (rho, T, composition).
+
+        Returns
+        -------
+        float
+
+        """
+
+        rhoY = state.rho * state.ye
+        log10_r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
+                                                         TableIndex.RATE.value)
+        r = 10.0**log10_r
+
+        dlogr_dlogrhoye = self.interpolator.interpolate_dlogrhoy(np.log10(rhoY), np.log10(state.T),
+                                                                 TableIndex.RATE.value)
+
+        dr_drhoye = r * dlogr_dlogrhoye / rhoY
+        return dr_drhoye
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):
