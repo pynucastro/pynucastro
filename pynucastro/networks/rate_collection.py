@@ -1177,7 +1177,7 @@ class RateCollection:
     @need_state
     def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
-        """Return an array of the form J_ij = dYdot_i/dY_j for the
+        """Return an array of the form J_ij = ∂Ẏ_i/∂Y_j for the
         network.  The i and j indices are in the order of
         ``RateCollection.unique_nuclei``.
 
@@ -1212,7 +1212,7 @@ class RateCollection:
         for i, n_i in enumerate(self.unique_nuclei):
             for j, n_j in enumerate(self.unique_nuclei):
 
-                # we are considering dYdot(n_i) / dY(n_j)
+                # we are considering ∂Ẏ(n_i) / ∂((n_j)
 
                 jac[i, j] = 0.0
 
