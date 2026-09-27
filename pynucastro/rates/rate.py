@@ -26,7 +26,7 @@ class BaryonConservationError(Exception):
 
 def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
     """Given a rate, give the list of arguments that are needed to
-    define the function arguments or call the function.
+    define the C++ function arguments or call the C++ function.
 
     Parameters
     ----------
@@ -90,6 +90,65 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append("dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("pf_cache")
+
+    return args
+
+
+def py_rate_func_args(r, *, mode="definition"):
+    """Given a rate, give the list of arguments that are needed to
+    define the python function arguments or call the python function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if mode == "definition":
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=None")
+        if r.rate_eval_needs_rho:
+            args.append("rho=None")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=None")
+        if r.rate_eval_needs_comp:
+            args.append("Y=None")
+        if r.screening_pairs:
+            args.append("log_scor=0")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=log_T")
+        if r.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=log_rhoY")
+        if r.rate_eval_needs_comp:
+            args.append("Y=Y")
+        if r.screening_pairs:
+            screen_terms = [f"log_scor_{r1}_{r2}"
+                            for r1, r2 in r.screening_pairs]
+            args.append("log_scor=" + " + ".join(screen_terms))
 
     return args
 
