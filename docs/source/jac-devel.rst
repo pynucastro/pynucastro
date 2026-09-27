@@ -184,8 +184,9 @@ This contribution was added in `pynucastro PR #1539 <https://github.com/pynucast
 
 Status of this term:
 
-* ``RateCollection`` : not currently included
-* ``PythonNetwork`` : not currently include
+* ``RateCollection`` : implemented in :py:meth:`RateCollection.evaluate_jacobian <pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian>`
+* ``PythonNetwork`` : stored in ``RateEval`` when the tabular rates are evaluated
+  and added to the Jacobian during the final construction of the Jacobian.
 * ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
   ``rate_derivs_t`` in the ``TabularWeakRate`` evaluation and explicitly
   added to the Jacobian during the final construction of the Jacobian
