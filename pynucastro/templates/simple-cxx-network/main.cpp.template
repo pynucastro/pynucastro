@@ -68,13 +68,14 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Jacobian values" << std::endl;
 
-    for (int jcol = 1; jcol <= NumSpec; ++jcol) {
-        for (int irow = 1; irow <= NumSpec; ++irow) {
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             std::cout << "jac("
                       << std::setw(5) << spec_names[irow-1] << ","
                       << std::setw(5) << spec_names[jcol-1] << ") = "
-                      << jac(irow,jcol) << std::endl;
+                      << jac(irow, jcol) << std::endl;
         }
+        std::cout << std::endl;
     }
 
     std::cout << std::endl;
@@ -97,15 +98,8 @@ int main(int argc, char* argv[]) {
     evaluate_rates<do_T_derivatives>(state, rate_eval);
 
     for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
+        std::cout << "rate(" << std::setw(40) << Rates::rate_names[n] << ") = "
                   << rate_eval.screened_rates(n) << std::endl;
-    }
-    std::cout << std::endl;
-
-    std::cout << "Reaction rate temperature values" << std::endl;
-    for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "d/dT rate(" << std::setw(35) << Rates::rate_names[n] << ") = "
-                  << rate_eval.dscreened_rates_dT(n) << std::endl;
     }
     std::cout << std::endl;
 
