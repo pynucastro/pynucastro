@@ -1030,7 +1030,7 @@ class PythonNetwork(RateCollection):
             close_file = False
         else:
             outfile = Path(outfile)
-            of = outfile.open("w")
+            of = outfile.open("w", encoding="utf-8")
             close_file = True
 
         indent = 4*" "
