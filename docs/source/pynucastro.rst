@@ -30,5 +30,6 @@ Submodules
    pynucastro.mesa_utils
    pynucastro.mpi_utils
    pynucastro.numba_util
+   pynucastro.sort_utils
    pynucastro.utils
    pynucastro.yt_utils

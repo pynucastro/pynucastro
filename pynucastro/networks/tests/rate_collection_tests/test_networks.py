@@ -127,3 +127,14 @@ O15
 
         assert len(rc_new.unique_nuclei) == 10
         assert len(rc_new.inert_nuclei) == 1
+
+
+class TestInert:
+
+    def test_inert_remove(self):
+
+        net = networks.RateCollection(inert_nuclei=["he4", "c12"])
+        net.remove_nuclei(["c12"])
+
+        assert net.get_nuclei() == [Nucleus("he4")]
+        assert net.inert_nuclei == [Nucleus("he4")]

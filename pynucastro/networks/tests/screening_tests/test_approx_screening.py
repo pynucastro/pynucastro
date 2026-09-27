@@ -22,7 +22,7 @@ class TestApproxScreening:
         return pynet
 
     def test_screening(self, pynet):
-        screening_pair_set = get_screening_pair_set(pynet.get_rates())
+        screening_pair_set = get_screening_pair_set(pynet.all_rates)
 
         # all of the reaclib rates that are 2 body (and not "n") should have
         # be in the screening map

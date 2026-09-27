@@ -32,7 +32,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         and stores them to rate_eval.log_screen.
 
         """
-        screening_pair_set = get_screening_pair_set(self.get_rates())
+        screening_pair_set = get_screening_pair_set(self.all_rates)
         for n1, n2 in screening_pair_set:
             nuc1_info = f'{float(n1.Z)}_rt, {float(n1.A)}_rt'
             nuc2_info = f'{float(n2.Z)}_rt, {float(n2.A)}_rt'

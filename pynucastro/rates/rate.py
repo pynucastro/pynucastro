@@ -24,6 +24,76 @@ class BaryonConservationError(Exception):
     """
 
 
+def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
+    """Given a rate, give the list of arguments that are needed to
+    define the function arguments or call the function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+    dtype : str
+        the data type for floating point quantities
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if dtype == "amrex::Real":
+        array_type = "amrex::Array1D"
+    else:
+        array_type = "Array1D"
+
+    if mode == "definition":
+        args = ["T& rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("const tf_t& tfactors")
+        if r.rate_eval_needs_temp:
+            args.append(f"const {dtype} temp")
+        if r.rate_eval_needs_logtemp:
+            args.append(f"const {dtype} log_temp")
+        if r.rate_eval_needs_rho:
+            args.append(f"const {dtype} rho")
+        if r.rate_eval_needs_logrhoye:
+            args.append(f"const {dtype} log_rhoy")
+        if r.rate_eval_needs_comp:
+            args.append(f"const {array_type}<{dtype}, 1, NumSpec>& Y")
+        if r.screening_pairs:
+            args.append(f"const {dtype} log_scor")
+            args.append(f"const {dtype} dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("part_fun::pf_cache_t& pf_cache")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tfactors")
+        if r.rate_eval_needs_temp:
+            args.append("temp")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_temp")
+        if r.rate_eval_needs_rho:
+            args.append("rho")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoy")
+        if r.rate_eval_needs_comp:
+            args.append("Y")
+        if r.screening_pairs:
+            args.append("log_scor")
+            args.append("dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("pf_cache")
+
+    return args
+
+
 @jitclass([
     ('T9', numba.float64),
     ('T9i', numba.float64),
@@ -327,8 +397,16 @@ class Rate:
 
         # these apply to the argument list for the function that evaluates
         # the just the N_A <σv> part of the rate
+
+        self.rate_eval_needs_tfactors = True
+        self.rate_eval_needs_temp = False
+        self.rate_eval_needs_logtemp = False
+
         self.rate_eval_needs_rho = False
+        self.rate_eval_needs_logrhoye = False
+
         self.rate_eval_needs_comp = False
+        self.rate_eval_needs_pfcache = False
 
     def __repr__(self):
         return self.string
@@ -669,6 +747,10 @@ class Rate:
         self.screening_pairs = []
         self._set_screening_pairs()
 
+    def get_child_rates(self):
+        """Return any rates that this rate depends on."""
+        return
+
     def get_rate_id(self):
         """Get an identifying string for this rate.
 
@@ -792,35 +874,6 @@ class Rate:
         if self.stoichiometry and c_prod > 0:
             return self.stoichiometry.get(n, c_prod)
         return c_prod
-
-    def modify_products(self, new_products):
-        """Change the products of the rate to new_products.  This will
-        recompute the Q value and update the print representation.
-
-        .. deprecated:: 3.0 ``modify_products`` has been deprecated.
-           Use ``ModifiedRate`` instead.  ``modify_products`` will be
-           removed in version 3.1.
-
-        Parameters
-        ----------
-        new_products : list(Nucleus)
-            the new products to use with the rate.
-
-        """
-
-        warnings.warn(
-            "modified_products is deprecated; use ModifiedRate instead.",
-            DeprecationWarning,
-            stacklevel=2
-        )
-
-        self.products = Nucleus.cast_list(new_products, allow_single=True)
-
-        # we need to update the Q value and the print string for the rate
-
-        self._set_q()
-        self._set_screening()
-        self._set_print_representation()
 
     @need_state
     def evaluate_screening(self, state, screen_func):

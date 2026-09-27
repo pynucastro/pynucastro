@@ -1,10 +1,6 @@
-# this will create 2 versions of a network with a modified rate.  the
-# first will simply use Rate.modifiy_products to change the endpoints.
-# The second will create a proper ModifiedRate.  We test to make sure
-# that these give the same values for the rates.
+# this will create a network using a ModifiedRate.
 
 import copy
-import warnings
 
 import numpy as np
 import pytest
@@ -14,25 +10,6 @@ import pynucastro as pyna
 
 
 class TestModifiedRate:
-    @pytest.fixture(scope="class")
-    @classmethod
-    def original_net(cls, reaclib_library):
-        # create a network and use the rate .modify_products()
-        # to change the endpoints
-
-        lib = reaclib_library.linking_nuclei(["he4", "c12", "o16",
-                                              "ne20", "mg24"],
-                                             with_reverse=False)
-
-        _c12c12_other = reaclib_library.get_rate_by_name("c12(c12,n)mg23")
-        c12c12_other = copy.deepcopy(_c12c12_other)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", DeprecationWarning)
-            c12c12_other.modify_products(["mg24"])
-        lib.add_rate(c12c12_other)
-
-        return pyna.PythonNetwork(libraries=[lib])
-
     @pytest.fixture(scope="class")
     @classmethod
     def new_net(cls, reaclib_library):
@@ -50,49 +27,13 @@ class TestModifiedRate:
 
         return pyna.PythonNetwork(libraries=[lib])
 
-    def test_hidden_rates(self, original_net, new_net):
+    def test_hidden_rates(self, new_net):
 
-        assert len(original_net.get_hidden_rates()) == 0
         assert len(new_net.get_hidden_rates()) == 1
 
-    def test_all_rates(self, original_net, new_net):
+    def test_all_rates(self, new_net):
 
-        assert len(original_net.all_rates) == 7
         assert len(new_net.all_rates) == 8
-
-    def test_evaluate_rates(self, original_net, new_net):
-        """test that the old and new ways of doing the modification
-        give the same rates
-
-        """
-
-        comp = pyna.Composition(original_net.unique_nuclei)
-        comp.set_equal()
-
-        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
-
-        onet_eval = original_net.evaluate_rates(state)
-        nnet_eval = new_net.evaluate_rates(state)
-
-        for key in onet_eval:
-            assert onet_eval[key] == nnet_eval[key]
-
-    def test_ydots(self, original_net, new_net):
-        """test that the old and new ways of doing the modification
-        give the same ydots
-
-        """
-
-        comp = pyna.Composition(original_net.unique_nuclei)
-        comp.set_equal()
-
-        state = pyna.ThermoState(rho=1e8, T=2e9, comp=comp)
-
-        onet_ydot = original_net.evaluate_ydots(state)
-        nnet_ydot = new_net.evaluate_ydots(state)
-
-        for key in onet_ydot:
-            assert onet_ydot[key] == nnet_ydot[key]
 
     def test_module(self, new_net):
         """write the new network to a file and import it and then
