@@ -129,8 +129,8 @@ class TableInterpolator:
         return irhoy * self.table_temp_lines + jtemp
 
     def _interpolate_1d(self, xi, fhi, flo, xlo, xhi):
-        """Helper function for 1D interpolation at point xi in [xlo, xhi],
-        with data node values (xlo, flo) and (xhi, fhi).
+        """Find the data value at xi via linear interpolation between
+        points (xlo, flo) and (xhi, fhi).
 
         """
 
