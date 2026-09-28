@@ -115,30 +115,30 @@ void evaluate_rates(const burn_t& state,
 
     // Fill in different rates
 
-    reaclib_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    reaclib_rates::fill_rates(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates<T>(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
 
-    temp_tabular::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    temp_tabular::fill_rates(tfactors, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    modified_rates::fill_rates(tfactors, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
-    branched_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    branched_rates::fill_rates(tfactors, rate_eval);
 
     // Calculate Derived Rates next. This should go last but before
     // approx rates, since those may have ReacLibRate,
     // TemperatureTabularRate / StarLibRate, or DerivedRate as the
     // underlying rate.
-    derived_rates::fill_rates<do_T_derivatives, T>(tfactors, rate_eval);
+    derived_rates::fill_rates(tfactors, rate_eval);
 
 
 
     // Fill approximate rates
-    approximate_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+    approximate_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
 
 }
 
@@ -324,10 +324,12 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
+
+    const auto& screened_rates = rate_eval.screened_rates;
 
     amrex::Real scratch;
 
@@ -378,7 +380,8 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho;
     jac.set(He4, He4, scratch);
 
-    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(He4, C12, scratch);
 
     jac.set(He4, O16, 0.0);
@@ -398,7 +401,10 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho;
     jac.set(C12, He4, scratch);
 
-    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(C12, C12, scratch);
 
     jac.set(C12, O16, 0.0);
@@ -549,7 +555,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
 
     // region 2
