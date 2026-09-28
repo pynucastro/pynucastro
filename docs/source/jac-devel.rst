@@ -128,13 +128,14 @@ indicates that we need to compute this derivative.
 The rate class itself will then compute the explicit $\partial\lambda/\partial Y_j$ term
 and store it in the python ``RateEval`` class or the C++ ``rate_derivs_t`` struct.
 
-This contribution was added in `pynucastro PR #1537 <https://github.com/pynucastro/pynucastro/pull/1537>`_.
-
 Status of this term:
 
-* ``RateCollection`` : not currently included
-* ``PythonNetwork`` : (to be done) included in the string returned via
-  :py:meth:`Rate.jacobian_string_py <pynucastro.rates.rate.Rate.jacobian_string_py>`
+* ``RateCollection`` : included directly in
+  :py:meth:`ApproximateRate.eval_jacobian_term
+  <pynucastro.rates.approximate_rates.ApproximateRate.eval_jacobian_term>`
+* ``PythonNetwork`` : included when the Jacobian is assembled in
+  :py:meth:`PythonNetwork.full_jacobian_element_string
+  <pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string>`
 * ``AmrexAstroCxxNetwork`` / ``SimpleCxxNetwork`` : stored in
   ``rate_derivs_t`` in the ``ApproximateRate`` evaluation and used
   symbolically using the SymPy methods in
