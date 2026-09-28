@@ -12,7 +12,7 @@ namespace beta_limited_rates {
     using namespace Rates;
 
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,
