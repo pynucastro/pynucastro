@@ -8,8 +8,6 @@ import re
 import subprocess
 from pathlib import Path
 
-import numpy as np
-
 from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
 from pynucastro.networks.simple_cxx_network import SimpleCxxNetwork
@@ -214,7 +212,7 @@ class NetworkCompare:
         for irow, inuc in enumerate(self.pynet.unique_nuclei):
             for jcol, jnuc in enumerate(self.pynet.unique_nuclei):
                 self.jac_py_inline[(inuc, jnuc)] = _jac[irow, jcol]
-        
+
         self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
                                           screen_func=self.screen_func)
                                 for r in self.pynet.all_rates}
