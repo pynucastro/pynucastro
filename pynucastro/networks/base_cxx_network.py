@@ -242,13 +242,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         is a molar fraction
 
         The Jacobian is stored as a list with each entry representing
-        a Jacobian element.  We also store whether the entry is null.
+        a Jacobian element in row-major order: i is the Ydot row and
+        j is the abundance column we differentiate with respect to.
+        We also store whether the entry is null.
 
         """
         jac_null = []
         jac_sym = []
-        for nj in self.unique_nuclei:
-            for ni in self.unique_nuclei:
+        for ni in self.unique_nuclei:
+            for nj in self.unique_nuclei:
                 rsym_is_null = True
                 rsym = float(sympy.sympify(0.0))
                 # A rate can be in both lists when a nucleus is both a
@@ -256,11 +258,22 @@ class BaseCxxNetwork(ABC, RateCollection):
                 # accounts for the net stoichiometric coefficient, so it
                 # must be included only once.
                 seen_rate_ids = set()
-                for r in self.nuclei_consumed[nj] + self.nuclei_produced[nj]:
+                for r in self.nuclei_consumed[ni] + self.nuclei_produced[ni]:
                     if id(r) in seen_rate_ids:
                         continue
                     seen_rate_ids.add(id(r))
-                    rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, nj, ni)
+                    rsym_add, rsym_add_null = self.symbol_rates.jacobian_term_symbol(r, ni, nj)
+                    if r.rate_comp_dependence and nj in r.rate_comp_dependence:
+                        # Product rule: retain the full abundance and density
+                        # factors and replace lambda with its Y_j derivative.
+                        ydot_term = self.symbol_rates.ydot_term_symbol(r, ni)
+                        if ydot_term is not None:
+                            rate_sym = sympy.Symbol(f'NRD__k_{r.fname}__')
+                            deriv_name = f'drate_{r.fname}_dY{nj.cindex()}'
+                            deriv_sym = sympy.Symbol(deriv_name)
+                            self.symbol_rates.symbol_ludict[deriv_name] = f'rate_eval.{deriv_name}'
+                            rsym_add += ydot_term.subs(rate_sym, deriv_sym)
+                            rsym_add_null = rsym_add.equals(0)
                     rsym = rsym + rsym_add
                     rsym_is_null = rsym_is_null and rsym_add_null
                 jac_sym.append(rsym)
@@ -562,8 +575,17 @@ class BaseCxxNetwork(ABC, RateCollection):
             for ini, ni in enumerate(self.unique_nuclei):
                 jac_idx = n_unique_nuclei*jnj + ini
                 if not self.jac_null_entries[jac_idx]:
-                    jvalue = self._cxxify(sympy.cxxcode(self.jac_out_result[jac_idx], precision=15,
-                                                                     standard="c++11"))
+                    terms = self.jac_out_result[jac_idx].as_ordered_terms()
+                    jvalues = []
+                    for i, term in enumerate(terms):
+                        sign = ""
+                        if i > 0:
+                            sign = "- " if term.could_extract_minus_sign() else "+ "
+                        if sign == "- ":
+                            term = -term
+                        jvalues.append(sign + self._cxxify(sympy.cxxcode(term, precision=15,
+                                                                       standard="c++11")))
+                    jvalue = ("\n" + self.indent*n_indent + " "*len("scratch = ")).join(jvalues)
                     of.write(f"{self.indent*(n_indent)}scratch = {jvalue};\n")
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
@@ -579,6 +601,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#endif\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write("};\n\n")
+
         of.write("struct rate_derivs_t {\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  screened_rates;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumRates>  dscreened_rates_dT;\n")
@@ -589,6 +612,15 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"    {self.dtype} enuc_weak;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec> denuc_weak_dY;\n")
         of.write(f"    {self.dtype} denuc_weak_dT;\n")
+
+        # some rates have explicit composition dependencies, so we
+        # want to store their derivatives.  We expect these to be few,
+        # so we will have an explicit entry for each case.
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f"    {self.dtype} drate_{r.fname}_dY{n.cindex()}{{}};\n")
+
         of.write("};\n\n")
 
     def _write_rate_functions(self, n_indent, of, rates):
