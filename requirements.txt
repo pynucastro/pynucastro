@@ -1,6 +1,6 @@
 # runtime dependencies
 matplotlib
-networkx>=3.4
+networkx>=3.7
 numpy>=2.0,<3.0
 scipy>=1.0.0
 sympy>=1.1.1
