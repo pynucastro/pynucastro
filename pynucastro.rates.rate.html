@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.rate module &#8212; pynucastro 3.1.0.post30+ga609400d8 documentation</title>
+    <title>pynucastro.rates.rate module &#8212; pynucastro 3.1.0.post31+gcefb15a06 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=5f38ca1e"></script>
+    <script src="_static/documentation_options.js?v=5cbd0916"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -740,9 +740,10 @@ to evaluate the rate and screening effects with.</p></li>
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval_full_rate">
 <span class="sig-name descname"><span class="pre">eval_full_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_molar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_full_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_full_rate" title="Link to this definition">#</a></dt>
 <dd><p>Evaluate the rate for a specific density, temperature, and
-composition, with optional screening.  Note: this returns that
-rate as dY/dt, where Y is the molar fraction.  For a 2 body
-reaction, a + b, this will be of the form:</p>
+composition, with optional screening.  This returns the flux
+that enters the dY/dt evolution, where Y is the molar
+fraction.  For a 2 body reaction, a + b, this will be of the
+form:</p>
 <p>ρ Y_a Y_b N_A &lt;σv&gt; / (1 + δ_{ab})</p>
 <p>where δ is the Kronecker delta that accounts for a = b.</p>
 <p>If you want dn/dt, where n is the number density (so you get
@@ -771,10 +772,10 @@ from composition</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.eval_jacobian_term">
 <span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.eval_jacobian_term" title="Link to this definition">#</a></dt>
-<dd><p>Evaluate drate/d(y_i), the derivative of the rate with
-respect to <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.  This rate term has the full composition
+<dd><p>Evaluate dflux/d(y_i), the derivative of the rate with
+respect to <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.  This flux term has the full composition
 and density dependence, i.e.:</p>
-<p>rate = ρ**n Y1**a Y2**b … N_A &lt;σv&gt;</p>
+<p>flux = c ρ**n Y1**a Y2**b … λ</p>
 <p>The derivative is only non-zero if this term depends on
 nucleus <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.</p>
 <dl class="field-list simple">
@@ -959,8 +960,8 @@ network.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Rate.ydot_string_py">
 <span class="sig-name descname"><span class="pre">ydot_string_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/rate.html#Rate.ydot_string_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.rate.Rate.ydot_string_py" title="Link to this definition">#</a></dt>
-<dd><p>Construct the string containing the term in a dY/dt
-equation in a reaction network corresponding to this rate.</p>
+<dd><p>Construct the string containing this rate’s contribution
+to the dY/dt evolution equation (the flux).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
@@ -1093,7 +1094,7 @@ not found.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.rate.Tfactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7ff8c15c15b0&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.Tfactors#7f6c9dfd56e0&lt;T9:float64,T9i:float64,T913:float64,T913i:float64,T953:float64,lnT9:float64&gt;</span></span><a class="headerlink" href="#pynucastro.rates.rate.Tfactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

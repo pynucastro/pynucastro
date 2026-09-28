@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.base_cxx_network module &#8212; pynucastro 3.1.0.post30+ga609400d8 documentation</title>
+    <title>pynucastro.networks.base_cxx_network module &#8212; pynucastro 3.1.0.post31+gcefb15a06 documentation</title>
   
   
   
@@ -42,12 +42,14 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=5f38ca1e"></script>
+    <script src="_static/documentation_options.js?v=5cbd0916"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=eaa7b67c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'pynucastro.networks.base_cxx_network';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -623,9 +625,18 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-pynucastro.networks.base_cxx_network">
-<span id="pynucastro-networks-base-cxx-network-module"></span><h1>pynucastro.networks.base_cxx_network module<a class="headerlink" href="#module-pynucastro.networks.base_cxx_network" title="Link to this heading">#</a></h1>
-<p>Support for a pure C++ reaction network.  These functions will
+  <section id="pynucastro-networks-base-cxx-network-module">
+<h1>pynucastro.networks.base_cxx_network module<a class="headerlink" href="#pynucastro-networks-base-cxx-network-module" title="Link to this heading">#</a></h1>
+<p>The generated C++ Jacobian includes explicit composition derivatives of
+rate coefficients for species listed in <code class="docutils literal notranslate"><span class="pre">Rate.rate_comp_dependence</span></code>.
+For a reaction contribution <span class="math notranslate nohighlight">\(f_j = C_j(Y, \rho)\lambda(Y)\)</span>, it uses
+the product rule,
+<span class="math notranslate nohighlight">\(\partial f_j/\partial Y_i = \lambda\,\partial C_j/\partial Y_i
++ C_j\,\partial\lambda/\partial Y_i\)</span>.
+The coefficient derivatives are read from <code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code>; for example,
+the effective Fe52(nn, gamma)Fe54 rate contributes a term using
+<code class="docutils literal notranslate"><span class="pre">drate_Fe52_n_n_to_Fe54_approx_dYN</span></code>.</p>
+<p id="module-pynucastro.networks.base_cxx_network">Support for a pure C++ reaction network.  These functions will
 write the C++ code necessary to integrate a reaction network
 comprised of the rates that are passed in.</p>
 <dl class="py class">
@@ -642,7 +653,9 @@ code needed to integrate the network.</p>
 <dd><p>Create the Jacobian matrix, df/dY, where f is a dY/dt and Y
 is a molar fraction</p>
 <p>The Jacobian is stored as a list with each entry representing
-a Jacobian element.  We also store whether the entry is null.</p>
+a Jacobian element in row-major order: i is the Ydot row and
+j is the abundance column we differentiate with respect to.
+We also store whether the entry is null.</p>
 </dd></dl>
 
 <dl class="py method">

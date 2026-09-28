@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post30+ga609400d8 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post31+gcefb15a06 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=5f38ca1e"></script>
+    <script src="../../../_static/documentation_options.js?v=5cbd0916"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -955,6 +955,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_pfcache</span> <span class="o">=</span> <span class="kc">False</span>
 
+        <span class="c1"># if a nucleus appears explicitly in the rate (likely because</span>
+        <span class="c1"># of a rate approximation), we will provide a function to</span>
+        <span class="c1"># give the derivative</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rate_comp_dependence</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span>
 
@@ -1478,8 +1484,8 @@
 <div class="viewcode-block" id="Rate.ydot_string_py">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.ydot_string_py">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ydot_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct the string containing the term in a dY/dt</span>
-<span class="sd">        equation in a reaction network corresponding to this rate.</span>
+<span class="w">        </span><span class="sd">"""Construct the string containing this rate's contribution</span>
+<span class="sd">        to the dY/dt evolution equation (the flux).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1589,9 +1595,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_full_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                        <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_molar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Evaluate the rate for a specific density, temperature, and</span>
-<span class="sd">        composition, with optional screening.  Note: this returns that</span>
-<span class="sd">        rate as dY/dt, where Y is the molar fraction.  For a 2 body</span>
-<span class="sd">        reaction, a + b, this will be of the form:</span>
+<span class="sd">        composition, with optional screening.  This returns the flux</span>
+<span class="sd">        that enters the dY/dt evolution, where Y is the molar</span>
+<span class="sd">        fraction.  For a 2 body reaction, a + b, this will be of the</span>
+<span class="sd">        form:</span>
 
 <span class="sd">        ρ Y_a Y_b N_A &lt;σv&gt; / (1 + δ_{ab})</span>
 
@@ -1728,11 +1735,11 @@
     <span class="nd">@need_state</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                            <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Evaluate drate/d(y_i), the derivative of the rate with</span>
-<span class="sd">        respect to ``y_i``.  This rate term has the full composition</span>
+<span class="w">        </span><span class="sd">"""Evaluate dflux/d(y_i), the derivative of the rate with</span>
+<span class="sd">        respect to ``y_i``.  This flux term has the full composition</span>
 <span class="sd">        and density dependence, i.e.:</span>
 
-<span class="sd">        rate = ρ**n Y1**a Y2**b ... N_A &lt;σv&gt;</span>
+<span class="sd">        flux = c ρ**n Y1**a Y2**b ... λ</span>
 
 <span class="sd">        The derivative is only non-zero if this term depends on</span>
 <span class="sd">        nucleus ``y_i``.</span>

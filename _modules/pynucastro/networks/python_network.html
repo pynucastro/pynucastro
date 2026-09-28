@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post30+ga609400d8 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.1.0.post31+gcefb15a06 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=5f38ca1e"></script>
+    <script src="../../../_static/documentation_options.js?v=5cbd0916"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1390,14 +1390,16 @@
 <a class="viewcode-back" href="../../../pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">full_jacobian_element_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ydot_i_nucleus</span><span class="p">,</span> <span class="n">y_j_nucleus</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">""</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct a string containing the python code for a single</span>
-<span class="sd">        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)</span>
+<span class="sd">        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus).</span>
+<span class="sd">        This includes implicit rate derivatives stored in ``RateEval``</span>
+<span class="sd">        for nuclei listed in a rate's ``rate_comp_dependence``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        ydot_i_nucleus: Nucleus</span>
 <span class="sd">            The nucleus representing the dY/dt term we are differentiating.</span>
 <span class="sd">            This is the row of the Jacobian.</span>
-<span class="sd">        ydot_j_nucleus: Nucleus</span>
+<span class="sd">        y_j_nucleus: Nucleus</span>
 <span class="sd">            The nucleus we are differentiating with respect to.  This</span>
 <span class="sd">            is the column of the Jacobian.</span>
 <span class="sd">        indent : str</span>
@@ -1421,28 +1423,34 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">idx_str</span><span class="si">}</span><span class="s2"> = (</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">rate_terms_str</span> <span class="o">=</span> <span class="s2">""</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span>
-
-                <span class="n">jac_str</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">jacobian_string_py</span><span class="p">(</span><span class="n">y_j_nucleus</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">jac_str</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+            <span class="n">seen_rate_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
+                <span class="c1"># A rate appearing in both lists contributes only once,</span>
+                <span class="c1"># with its net stoichiometric coefficient.</span>
+                <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">seen_rate_ids</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">seen_rate_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span> <span class="o">-</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">ydot_i_nucleus</span><span class="p">]:</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">ydot_i_nucleus</span><span class="p">)</span>
+                <span class="n">jac_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">jacobian_string_py</span><span class="p">(</span><span class="n">y_j_nucleus</span><span class="p">)]</span>
+                <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span> <span class="ow">and</span> <span class="n">y_j_nucleus</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span><span class="p">:</span>
+                    <span class="c1"># Product rule: retain the full abundance and density</span>
+                    <span class="c1"># factors and replace the rate with its derivative.</span>
+                    <span class="n">deriv_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"drate_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_dY</span><span class="si">{</span><span class="n">y_j_nucleus</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="n">jac_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">ydot_string_py</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rate_eval.</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                                                              <span class="sa">f</span><span class="s2">"rate_eval.</span><span class="si">{</span><span class="n">deriv_name</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 
-                <span class="n">jac_str</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">jacobian_string_py</span><span class="p">(</span><span class="n">y_j_nucleus</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">jac_str</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
-                    <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="k">for</span> <span class="n">jac_str</span> <span class="ow">in</span> <span class="n">jac_terms</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">jac_str</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   +</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   -</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">rate_terms_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">c</span><span class="si">:</span><span class="s2">+</span><span class="si">}</span><span class="s2">*</span><span class="si">{</span><span class="n">jac_str</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
 
             <span class="k">if</span> <span class="n">rate_terms_str</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">""</span>
@@ -1714,12 +1722,21 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("enuc_weak", numba.float64),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s1">", numba.float64),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nucs</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nucs</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("drate_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s1">_dY</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s1">", numba.float64),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"])</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"class RateEval:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">def __init__(self):</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.enuc_weak = 0.0</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = np.nan</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nucs</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nucs</span><span class="p">:</span>
+                    <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.drate_</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_dY</span><span class="si">{</span><span class="n">n</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2"> = np.nan</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 

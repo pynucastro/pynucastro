@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.1.0.post30+ga609400d8 documentation</title>
+    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.1.0.post31+gcefb15a06 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=5f38ca1e"></script>
+    <script src="_static/documentation_options.js?v=5cbd0916"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1023,13 +1023,15 @@ functions.</p>
 <dt class="sig sig-object py" id="pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">
 <span class="sig-name descname"><span class="pre">full_jacobian_element_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ydot_i_nucleus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_j_nucleus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/networks/python_network.html#PythonNetwork.full_jacobian_element_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string" title="Link to this definition">#</a></dt>
 <dd><p>Construct a string containing the python code for a single
-element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)</p>
+element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus).
+This includes implicit rate derivatives stored in <code class="docutils literal notranslate"><span class="pre">RateEval</span></code>
+for nuclei listed in a rate’s <code class="docutils literal notranslate"><span class="pre">rate_comp_dependence</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ydot_i_nucleus</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – The nucleus representing the dY/dt term we are differentiating.
 This is the row of the Jacobian.</p></li>
-<li><p><strong>ydot_j_nucleus</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – The nucleus we are differentiating with respect to.  This
+<li><p><strong>y_j_nucleus</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – The nucleus we are differentiating with respect to.  This
 is the column of the Jacobian.</p></li>
 <li><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – A string that will be prepended to each line of the output,
 typically consisting of just spaces representing the amount
