@@ -308,12 +308,16 @@ class NetworkCompare:
         # the Jacobian has lints of the form:
         #   jac(X, Y) = ...
         # for nuclei X, Y
-        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-w\+.]*)")
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)")
         self.jac_amrex = {}
         for line in stdout.split("\n"):
             if match := jac_re.search(line.strip()):
-                inuc = Nucleus(match.group(2).strip())
-                jnuc = Nucleus(match.group(3).strip())
+                inuc_str = match.group(2).strip()
+                jnuc_str = match.group(3).strip()
+                if inuc_str == "e" or jnuc_str == "e":
+                    continue
+                inuc = Nucleus(inuc_str)
+                jnuc = Nucleus(jnuc_str)
                 self.jac_amrex[(inuc, jnuc)] = float(match.group(7))
 
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
@@ -378,12 +382,16 @@ class NetworkCompare:
         # the Jacobian has lints of the form:
         #   jac(X, Y) = ...
         # for nuclei X, Y
-        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-w\+.]*)")
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)")
         self.jac_cxx = {}
         for line in stdout.split("\n"):
             if match := jac_re.search(line.strip()):
-                inuc = Nucleus(match.group(2).strip())
-                jnuc = Nucleus(match.group(3).strip())
+                inuc_str = match.group(2).strip()
+                jnuc_str = match.group(3).strip()
+                if inuc_str == "e" or jnuc_str == "e":
+                    continue
+                inuc = Nucleus(inuc_str)
+                jnuc = Nucleus(jnuc_str)
                 self.jac_cxx[(inuc, jnuc)] = float(match.group(7))
 
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
@@ -428,9 +436,16 @@ class NetworkCompare:
         self.T_eval = T
         self.rho_eval = rho
 
-    def print_summary(self):
+    def print_summary(self, *, jac_floor=1.e-90):
         """Print a summary of the dY/dt comparison and errors for each
         network type run.
+
+        Parameters
+        ----------
+        jac_floor : float
+            Value for |J_{i,j}| below which to switch to an absolute error
+            instead of relative error.  This helps deal with the different
+            ways nets floor rates.
 
         """
 
@@ -438,8 +453,8 @@ class NetworkCompare:
         if self.ydots_py_inline is None:
             raise ValueError("no ydots stored.  evaluate() must be run first")
 
-        print("dYdt")
-        print("====")
+        print("∂Y/∂t")
+        print("=====")
         print()
 
         data_headers = {"py (inline)": self.ydots_py_inline,
@@ -470,6 +485,48 @@ class NetworkCompare:
                     line += f"| {val:13.6g} "
                 else:
                     err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
+
+        print()
+        print()
+
+        print("Jacobian (∂Ẏ_i/∂Y_j)")
+        print("====================")
+        print()
+
+        data_headers = {"py (inline)": self.jac_py_inline,
+                        "py (module)": self.jac_py_module}
+
+        if self.rates_amrex:
+            data_headers["AMReX C++"] = self.jac_amrex
+
+        if self.rates_cxx:
+            data_headers["simple C++"] = self.jac_cxx
+
+        header = f" {'nuc_i':5}, {'nuc_j':5} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for entry in self.jac_py_inline:
+            nuc_i, nuc_j = entry
+            line = f" {nuc_i!s:5}, {nuc_j!s:5} "
+            for key, source in data_headers.items():
+                val = source[entry]
+                ref = self.jac_py_inline[entry]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    if abs(ref) < jac_floor:
+                        err = abs(val - ref)
+                    else:
+                        err = abs((val - ref) / ref)
                     line += f"| {val:13.6g} {err:11.5g} "
             print(line)
 
@@ -507,7 +564,10 @@ class NetworkCompare:
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
                 else:
-                    err = abs((val - ref) / ref)
+                    if ref == 0.0:
+                        err = abs(val - ref)
+                    else:
+                        err = abs((val - ref) / ref)
                     line += f"| {val:13.6g} {err:11.5g} "
             print(line)
 
