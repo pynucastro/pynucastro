@@ -878,7 +878,7 @@ namespace reaclib_rates {
     }
 
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,
