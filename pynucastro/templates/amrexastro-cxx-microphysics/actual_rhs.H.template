@@ -246,7 +246,7 @@ void jac_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    auto& screened_rates = rate_eval.screened_rates;
+    const auto& screened_rates = rate_eval.screened_rates;
 
     amrex::Real scratch;
 

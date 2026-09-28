@@ -329,7 +329,7 @@ void jac_nuc(const burn_t& state,
 
     using namespace Rates;
 
-    auto& screened_rates = rate_eval.screened_rates;
+    const auto& screened_rates = rate_eval.screened_rates;
 
     amrex::Real scratch;
 
@@ -388,7 +388,8 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho;
     jac.set(He4, He4, scratch);
 
-    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(He4, C12, scratch);
 
     jac.set(He4, O16, 0.0);
@@ -411,7 +412,10 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho;
     jac.set(C12, He4, scratch);
 
-    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(C12, C12, scratch);
 
     jac.set(C12, O16, 0.0);
