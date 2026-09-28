@@ -413,7 +413,8 @@ class NetworkCompare:
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
-        considering
+        considering.  This will compile the C++ networks if they have
+        not already been built.  This does not do any comparisons.
 
         Parameters
         ----------
@@ -435,6 +436,65 @@ class NetworkCompare:
 
         self.T_eval = T
         self.rho_eval = rho
+
+    def compare_results(self, *, quantity="ydots", rtol=1.e-11, atol=1.e-30):
+
+        # import at the method-level so the module itself doesn't
+        # depend on pytest
+
+        from pytest import approx  # pylint: disable=import-outside-toplevel  # noqa: PLC0415
+
+        assert quantity in ("ydots", "rates", "jac", "enuc", "enu_weak")
+
+        reference = None
+        others = []
+
+        if quantity == "ydots":
+            reference = self.ydots_py_inline
+            candidates = [self.ydots_py_module, self.ydots_amrex, self.ydots_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "rates":
+            reference = self.rates_py_inline
+            candidates = [self.rates_py_module, self.rates_amrex, self.rates_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "enuc":
+            reference = self.enuc_py_inline
+            candidates = [self.enuc_py_module, self.enuc_amrex, self.enuc_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "enu_weak":
+            reference = self.enu_weak_py_inline
+            candidates = [self.enu_weak_py_module, self.enu_weak_amrex, self.enu_weak_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "jac":
+            reference = self.jac_py_inline
+            candidates = [self.jac_py_module, self.jac_amrex, self.jac_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        if reference is None:
+            raise ValueError("evaluate() must be run first")
+
+        # now do the comparison
+        for o in others:
+            if isinstance(reference, dict):
+                for key in reference:
+                    assert o[key] == approx(reference[key], rel=rtol, abs=atol)
+            else:
+                # a scalar
+                assert o == approx(reference, rel=rtol, abs=atol)
 
     def print_summary(self, *, jac_floor=1.e-90):
         """Print a summary of the dY/dt comparison and errors for each
