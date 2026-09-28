@@ -119,7 +119,7 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // fill beta-limited ratesranched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
-    beta_limited_rates::fill_rates<do_T_derivatives, T>(tfactors, state.rho, Y, rate_eval);
+    beta_limited_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
