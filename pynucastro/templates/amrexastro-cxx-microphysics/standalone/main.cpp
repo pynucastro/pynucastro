@@ -114,15 +114,5 @@ int main(int argc, char *argv[]) {
 
     std::cout << std::endl;
 
-    // output reaction rates T derivatives
-
-    std::cout << "d(rates)/dT" << std::endl;
-    for (int n = 1; n <= Rates::NumRates; ++n) {
-        std::cout << "d/dT rate(" << std::setw(40) << Rates::rate_names[n] << ") = "
-                  << rate_eval.dscreened_rates_dT(n) << std::endl;
-    }
-
-    std::cout << std::endl;
-
     amrex::Finalize();
 }
