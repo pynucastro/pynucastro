@@ -1,6 +1,6 @@
 """Helper functions for comparing the output of different backends
 (python, C++) for the same network.  This will build and run each net
-and return the ydots.
+and return the ydots, rates, jacobian, and energy generation
 """
 
 import importlib
@@ -21,6 +21,10 @@ from pynucastro.screening import chugunov_2007
 class NetworkCompare:
     """A simple class to manage building a network with different
     backends to facilitate comparisons.
+
+    .. note::
+
+       For the Jacobian, only the species terms are compared.
 
     Parameters
     ----------
@@ -54,6 +58,21 @@ class NetworkCompare:
         <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
     ydots_cxx : dict(Nucleus)
         The dYdt terms parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    jac_py_inline : dict((Nucleus, Nucleus))
+        The Jacobian terms from the python inline network
+        (:py:func:`RateCollection.evaluate_jacobian
+        <pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian>`).
+    jac_py_module : dict((Nucleus, Nucleus))
+        The Jacobian terms from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    jac_amrex : dict((Nucleus, Nucleus))
+        The Jacobian terms parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    jac_cxx : dict((Nucleus, Nucleus))
+        The Jacobian terms parsed from a build of a
         :py:class:`SimpleCxxNetwork
         <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
     rates_py_inline : dict(Rate)
@@ -150,6 +169,14 @@ class NetworkCompare:
         self.ydots_amrex = None
         self.ydots_cxx = None
 
+        # storage for the Jacobian
+        # we will not include the energy terms, since most networks
+        # don't consider those.
+        self.jac_py_inline = None
+        self.jac_py_module = None
+        self.jac_amrex = None
+        self.jac_cxx = None
+
         # storage for the rates -- without the
         # density or composition factors
         self.rates_py_inline = None
@@ -181,6 +208,13 @@ class NetworkCompare:
         state = ThermoState(rho=rho, T=T, comp=self.comp)
         self.ydots_py_inline = self.pynet.evaluate_ydots(state,
                                                          screen_func=self.screen_func)
+        _jac = self.pynet.evaluate_jacobian(state,
+                                            screen_func=self.screen_func)
+        self.jac_py_inline = {}
+        for irow, inuc in enumerate(self.pynet.unique_nuclei):
+            for jcol, jnuc in enumerate(self.pynet.unique_nuclei):
+                self.jac_py_inline[(inuc, jnuc)] = _jac[irow, jcol]
+        
         self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
                                           screen_func=self.screen_func)
                                 for r in self.pynet.all_rates}
@@ -206,11 +240,18 @@ class NetworkCompare:
         spec.loader.exec_module(cn)
 
         # we can now compute the ydots via cn.rhs()
-        Y = np.asarray(list(self.comp.get_molar().values()))
+        Y = self.comp.get_molar_array()
         _tmp = cn.rhs(0.0, Y, rho, T, screen_func=self.screen_func)
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
+
+        # and the Jacobian via cn.jacobian()
+        _jac = cn.jacobian(0.0, Y, rho, T, screen_func=self.screen_func)
+        self.jac_py_module = {}
+        for irow, inuc in enumerate(self.pynet.unique_nuclei):
+            for jcol, jnuc in enumerate(self.pynet.unique_nuclei):
+                self.jac_py_module[(inuc, jnuc)] = _jac[irow, jcol]
 
         rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
         self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
@@ -265,6 +306,17 @@ class NetworkCompare:
             if match := ydot_re.search(line.strip()):
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_amrex[nuc] = float(match.group(6))
+
+        # the Jacobian has lints of the form:
+        #   jac(X, Y) = ...
+        # for nuclei X, Y
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-w\+.]*)")
+        self.jac_amrex = {}
+        for line in stdout.split("\n"):
+            if match := jac_re.search(line.strip()):
+                inuc = Nucleus(match.group(2).strip())
+                jnuc = Nucleus(match.group(3).strip())
+                self.jac_amrex[(inuc, jnuc)] = float(match.group(7))
 
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
@@ -324,6 +376,17 @@ class NetworkCompare:
             if match := ydot_re.search(line.strip()):
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_cxx[nuc] = float(match.group(6))
+
+        # the Jacobian has lints of the form:
+        #   jac(X, Y) = ...
+        # for nuclei X, Y
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-w\+.]*)")
+        self.jac_cxx = {}
+        for line in stdout.split("\n"):
+            if match := jac_re.search(line.strip()):
+                inuc = Nucleus(match.group(2).strip())
+                jnuc = Nucleus(match.group(3).strip())
+                self.jac_cxx[(inuc, jnuc)] = float(match.group(7))
 
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
