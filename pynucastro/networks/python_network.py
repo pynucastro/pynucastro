@@ -1171,7 +1171,7 @@ class PythonNetwork(RateCollection):
         # Ye helper function
         of.write("@numba.njit()\n")
         of.write("def ye(Y):\n")
-        of.write(f"{indent}return np.sum(Z * Y)/np.sum(A * Y)\n\n")
+        of.write(f"{indent}return np.sum(Z * Y)\n\n")
 
         # the functions to evaluate the T dependence (strong) or ρ-T
         # dependence (weak) of the rates
