@@ -15,8 +15,9 @@
     * switch `tabular_evaluate` to use a struct for results (#1540)
     * remove unneeded `do_T_derivatives` template parameter (#1582)
 
-  * `PythonNetwork` / `RateCollection` :
+  * `PythonNetwork` / `RateCollection` / general network changes :
 
+    * add composition derivating internal to (nn,γ) (#1537)
     * fix `remove_nuclei` for inert nucleus (#1551)
     * `RateCollection.validate` should fail if we find missing rates
       (#1552)
