@@ -1216,51 +1216,25 @@ class RateCollection:
 
                 jac[i, j] = 0.0
 
-                for r in self.nuclei_consumed[n_i]:
+                seen_rate_ids = set()
+                for r in self.nuclei_consumed[n_i] + self.nuclei_produced[n_i]:
                     if r in exclude_rates:
                         continue
+                    # A rate appearing in both lists contributes only once,
+                    # with its net stoichiometric coefficient.
+                    if id(r) in seen_rate_ids:
+                        continue
+                    seen_rate_ids.add(id(r))
 
-                    # how many of n_i are destroyed by this reaction
-                    c = r.reactant_count(n_i)
+                    # how many of n_i are created or destroyed by this reaction
+                    c = r.product_count(n_i) - r.reactant_count(n_i)
+                    if c == 0:
+                        continue
 
                     # Note eval_jacobian_term already includes screening
-                    jac[i, j] -= c * \
-                        r.eval_jacobian_term(state, n_j,
-                                             screen_func=screen_func)
-
-                for r in self.nuclei_produced[n_i]:
-                    if r in exclude_rates:
-                        continue
-
-                    # how many of n_i are produced by this reaction
-                    c = r.product_count(n_i)
                     jac[i, j] += c * \
                         r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
-
-        # now add contributions from the Ye dependence in
-        # TabularWeakRate, this is -ρY(p) ∂λ/∂(ρY_e) for the
-        # parent and +ρY(p) ∂λ/∂(ρY_e) for the child.
-
-        for tr in self.tabular_rates:
-
-            if tr in exclude_rates:
-                continue
-
-            # each rate effects 2 rows: the parent and child
-            ip = self.unique_nuclei.index(tr.reactants[0])
-            ic = self.unique_nuclei.index(tr.products[0])
-            assert ip >= 0 and ic >= 0
-
-            nuc_p = tr.reactants[0]
-            Yp = state.comp[nuc_p] / nuc_p.A
-
-            dr_drhoye = tr.get_drate_drhoye(state)
-            term = state.rho * Yp * dr_drhoye
-
-            for jcol, nuc in enumerate(self.unique_nuclei):
-                jac[ip, jcol] -= term * nuc.Z
-                jac[ic, jcol] += term * nuc.Z
 
         return jac
 

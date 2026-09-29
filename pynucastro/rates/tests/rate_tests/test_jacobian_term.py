@@ -80,8 +80,9 @@ class TestJacTerm:
         # this full rate is Y(ne20) lambda, where lambda is the 1/tau
         # read from the table
 
-        # the rate does not dependent on alpha
-        assert r.eval_jacobian_term(state, Nucleus("he4")) == 0.0
+        # the rate does not dependent on alpha, but it does depend
+        # on Ye, so there will be a contribution via dr_dYe
+        assert r.eval_jacobian_term(state, Nucleus("he4")) != 0.0
 
         # for dr/dY(ne20), we just have the raw rate from the table
         dr_dne20 = r.eval(T, rho=rho, comp=comp)

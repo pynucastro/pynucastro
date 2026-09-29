@@ -596,6 +596,47 @@ class TabularWeakRate(Rate):
         dr_drhoye = r * dlogr_dlogrhoye / rhoY
         return dr_drhoye
 
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
+                           screen_func=None):
+        """Evaluate ∂flux/∂(y_i), the derivative of the rate with
+        respect to ``y_i``.  This flux term has the full composition
+        dependence, i.e., for a decay rate:
+
+        flux = Y(p) λ(ρY_e, T)
+
+        where p is the parent nucleus.  Note that there are 2 contributions,
+
+        ∂flux/∂(y_i) = δ_{ip} λ + Y(p) ρ ∂λ/∂(ρY_e) Z_i
+
+        where we used ∂Y_e/∂Y_i = Z_i
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to
+        screen_func : Callable
+            Screening doesn't apply for electron-capture / decay rates, but
+            we include the argument here to ensure the interface is standard.
+
+        Returns
+        -------
+        float
+
+        """
+
+        explicit_term = super().eval_jacobian_term(state, y_i,
+                                                   screen_func=screen_func)
+
+        parent = self.reactants[0]
+        Yp = state.comp[parent] / parent.A
+        ye_term = state.rho * Yp * self.get_drate_drhoye(state)
+
+        return explicit_term + ye_term * y_i.Z
+
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):
         """Plot the rate or neutrino loss in the log10(ρ Y_e) and
