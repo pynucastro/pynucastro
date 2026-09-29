@@ -491,10 +491,16 @@ class NetworkCompare:
         for o in others:
             if isinstance(reference, dict):
                 for key in reference:
-                    assert o[key] == approx(reference[key], rel=rtol, abs=atol)
+                    try:
+                        assert o[key] == approx(reference[key], rel=rtol, abs=atol)
+                    except AssertionError as exc:
+                        raise ValueError(f"{key} : {o[key]} != {reference[key]}") from exc
             else:
                 # a scalar
-                assert o == approx(reference, rel=rtol, abs=atol)
+                try:
+                    assert o == approx(reference, rel=rtol, abs=atol)
+                except AssertionError as exc:
+                    raise ValueError(f"scalar : {o} != {reference}") from exc
 
     def print_summary(self, *, jac_floor=1.e-90):
         """Print a summary of the dY/dt comparison and errors for each
