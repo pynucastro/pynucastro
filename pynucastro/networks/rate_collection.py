@@ -1212,7 +1212,7 @@ class RateCollection:
         for i, n_i in enumerate(self.unique_nuclei):
             for j, n_j in enumerate(self.unique_nuclei):
 
-                # we are considering ∂Ẏ(n_i) / ∂((n_j)
+                # we are considering ∂Ẏ(n_i) / ∂Y(n_j)
 
                 jac[i, j] = 0.0
 
