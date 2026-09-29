@@ -12,6 +12,77 @@ import pynucastro as pyna
 from pynucastro.screening import chugunov_2007
 
 
+@pytest.mark.parametrize("direction", ["forward", "reverse", "both"])
+def test_double_neutron_capture_jacobian(reaclib_library, tmp_path, direction):
+    """Check dYdot/dY, including implicit neutron dependence, at fixed rho/T."""
+    # Eliminate Fe53 to obtain Fe52 + 2n <-> Fe54. Both effective rate
+    # coefficients depend on Y(n) through the equilibrium denominator.
+    library = reaclib_library.linking_nuclei(["n", "fe52", "fe53", "fe54"])
+    net = pyna.PythonNetwork(libraries=[library])
+    net.make_nn_g_approx(intermediate_nuclei=["fe53"])
+    assert len(net.approx_rates) == 2
+    # Check each direction separately so their errors cannot cancel. The
+    # reverse flux depends on Y(n) even though neutrons are only products.
+    if direction != "both":
+        rates = [r for r in net.approx_rates if r.is_reverse == (direction == "reverse")]
+        net = pyna.PythonNetwork(rates=rates)
+
+    # Exercise the generated, compiled RHS and Jacobian, including the
+    # derivative fields in RateEval, rather than just checking code strings.
+    path = tmp_path / "nn_capture.py"
+    net.write_network(path)
+    spec = importlib.util.spec_from_file_location("nn_capture", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    rho = 1.e7
+    temperature = 3.e9
+    abundances = np.array([0.2 if n.raw == "n" else 0.4 / n.A for n in net.unique_nuclei])
+
+    # Evaluate the generated analytic Jacobian, including the product-rule
+    # terms from the approximate rates' implicit neutron dependence.
+    jac = module.jacobian(0.0, abundances, rho, temperature)
+    collection = pyna.RateCollection(rates=net.rates)
+
+    def make_state(y):
+        comp = pyna.Composition(collection.unique_nuclei)
+        for nucleus, abundance in zip(collection.unique_nuclei, y):
+            # Set X = A Y without normalizing: the Jacobian treats each
+            # molar abundance as an independent variable.
+            comp[nucleus] = nucleus.A * abundance
+        return pyna.ThermoState(rho=rho, T=temperature, comp=comp)
+
+    # The direct RateCollection evaluation and generated Python code use
+    # separate Jacobian implementations but should agree to roundoff.
+    collection_jac = collection.evaluate_jacobian(make_state(abundances))
+    np.testing.assert_allclose(collection_jac, jac, rtol=1.e-12, atol=1.e-8)
+    for j, abundance in enumerate(abundances):
+        # Perturb only Y_j at fixed density and temperature. The centered
+        # finite difference of the RHS approximates column j of dYdot/dY.
+        step = 1.e-5 * abundance
+        plus = abundances.copy()
+        minus = abundances.copy()
+        plus[j] += step
+        minus[j] -= step
+        # Each RHS evaluation recomputes the composition-dependent rates,
+        # so this independently checks their implicit abundance derivatives.
+        numerical = (module.rhs(0.0, plus, rho, temperature) -
+                     module.rhs(0.0, minus, rho, temperature)) / (2 * step)
+        # Compare the finite-difference column with the analytic column.
+        np.testing.assert_allclose(jac[:, j], numerical, rtol=1.e-7, atol=1.e-8)
+
+        # Independently differentiate RateCollection's own RHS: agreement
+        # between the two analytic Jacobians alone could hide a shared bug.
+        plus_ydot = collection.evaluate_ydots(make_state(plus))
+        minus_ydot = collection.evaluate_ydots(make_state(minus))
+        # evaluate_ydots returns a nucleus-keyed mapping; arrange its values
+        # in the same row order as the Jacobian before comparing columns.
+        collection_numerical = np.array([plus_ydot[n] - minus_ydot[n]
+                                         for n in collection.unique_nuclei]) / (2 * step)
+        np.testing.assert_allclose(collection_jac[:, j], collection_numerical,
+                                   rtol=1.e-7, atol=1.e-8)
+
+
 class TestPythonNetwork:
     @pytest.fixture(scope="class")
     @classmethod

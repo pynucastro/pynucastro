@@ -408,6 +408,12 @@ class Rate:
         self.rate_eval_needs_comp = False
         self.rate_eval_needs_pfcache = False
 
+        # if a nucleus appears explicitly in the rate (likely because
+        # of a rate approximation), we will provide a function to
+        # give the derivative
+
+        self.rate_comp_dependence = None
+
     def __repr__(self):
         return self.string
 
@@ -905,8 +911,8 @@ class Rate:
         return log_scor
 
     def ydot_string_py(self):
-        """Construct the string containing the term in a dY/dt
-        equation in a reaction network corresponding to this rate.
+        """Construct the string containing this rate's contribution
+        to the dY/dt evolution equation (the flux).
 
         Returns
         -------
@@ -1007,9 +1013,10 @@ class Rate:
     def eval_full_rate(self, state, *,
                        screen_func=None, y_molar=None, y_e=None):
         """Evaluate the rate for a specific density, temperature, and
-        composition, with optional screening.  Note: this returns that
-        rate as dY/dt, where Y is the molar fraction.  For a 2 body
-        reaction, a + b, this will be of the form:
+        composition, with optional screening.  This returns the flux
+        that enters the dY/dt evolution, where Y is the molar
+        fraction.  For a 2 body reaction, a + b, this will be of the
+        form:
 
         ρ Y_a Y_b N_A <σv> / (1 + δ_{ab})
 
@@ -1137,11 +1144,11 @@ class Rate:
     @need_state
     def eval_jacobian_term(self, state, y_i, *,
                            screen_func=None):
-        """Evaluate drate/d(y_i), the derivative of the rate with
-        respect to ``y_i``.  This rate term has the full composition
+        """Evaluate dflux/d(y_i), the derivative of the rate with
+        respect to ``y_i``.  This flux term has the full composition
         and density dependence, i.e.:
 
-        rate = ρ**n Y1**a Y2**b ... N_A <σv>
+        flux = c ρ**n Y1**a Y2**b ... λ
 
         The derivative is only non-zero if this term depends on
         nucleus ``y_i``.
