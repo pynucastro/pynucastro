@@ -6,7 +6,6 @@ import warnings
 from pathlib import Path
 
 import pytest
-from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.aprox_family_rates import make_CO_approx_rates

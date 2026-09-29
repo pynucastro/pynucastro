@@ -438,11 +438,29 @@ class NetworkCompare:
         self.rho_eval = rho
 
     def compare_results(self, *, quantity="ydots", rtol=1.e-11, atol=1.e-30):
+        """Perform the comparison of quantity across the different network types.
+
+        Parameters
+        ----------
+        quantity : str
+            The quantity we are comparing.  Should be one of "ydots",
+            "rates", "jac", "enuc", "enu_weak"
+        rtol : float
+            The relative tolerance to use in the comparison.
+        atol : float
+            The absolute tolerance to use in the comparison.
+
+        Raises
+        ------
+        ValueError
+
+        """
 
         # import at the method-level so the module itself doesn't
         # depend on pytest
 
-        from pytest import approx  # pylint: disable=import-outside-toplevel  # noqa: PLC0415
+        from pytest import \
+            approx  # pylint: disable=import-outside-toplevel  # noqa: PLC0415
 
         assert quantity in ("ydots", "rates", "jac", "enuc", "enu_weak")
 
@@ -503,6 +521,7 @@ class NetworkCompare:
                     raise ValueError(f"scalar : {o} != {reference}") from exc
 
     def print_summary(self, *, jac_floor=1.e-90):
+
         """Print a summary of the dY/dt comparison and errors for each
         network type run.
 

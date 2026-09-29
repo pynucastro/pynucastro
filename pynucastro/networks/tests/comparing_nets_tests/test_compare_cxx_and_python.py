@@ -7,7 +7,6 @@ import warnings
 from pathlib import Path
 
 import pytest
-from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.rates.derived_rate import DerivedRate

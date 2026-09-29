@@ -8,7 +8,6 @@ import warnings
 from pathlib import Path
 
 import pytest
-from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
 
