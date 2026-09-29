@@ -527,7 +527,7 @@ class NetworkCompare:
         Parameters
         ----------
         jac_floor : float
-            Value for |J_{i,j}| below which to switch to an absolute error
+            Value for abs(J_{i,j}) below which to switch to an absolute error
             instead of relative error.  This helps deal with the different
             ways nets floor rates.
 
