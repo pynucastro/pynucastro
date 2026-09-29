@@ -26,23 +26,39 @@ Currently it can work with:
 
 Tests can be run with or without screening.  Once the ``NetworkCompare``
 object is setup, the comparison can be run for a single density and temperature
-using the :py:func:`evaluate <pynucastro.networks.network_compare.NetworkCompare.evaluate>` method.  The data are then stored in the object.
+using the :py:meth:`evaluate <pynucastro.networks.network_compare.NetworkCompare.evaluate>` method.  The data are then stored in the object.
 
 
 Accessing comparison data
 =========================
 
-The $dY/dt$ data for each network is stored as a ``dict`` keyed by
-:py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` as
-``ydots_py_inline``, ``ydots_py_module``, ``ydots_amrex``, and ``ydots_cxx``.
+* ODE righthand side: The $\partial Y/\partial t$ data for each network is stored as a ``dict`` keyed by
+  :py:class:`Nucleus <pynucastro.nucdata.nucleus.Nucleus>` as
+  ``ydots_py_inline``, ``ydots_py_module``, ``ydots_amrex``, and ``ydots_cxx``.
 
-The individual rate data (just the $N_A\langle \sigma v \rangle$ or
-equivalent) is stored as a ``dict`` keyed by :py:class:`Rate
-<pynucastro.rates.rate.Rate>` as ``rates_py_inline``,
-``rates_py_module``, ``rates_amrex``, and ``rates_cxx``.
+* Raw rates : The individual rate data (just the $N_A\langle \sigma v
+  \rangle$ or equivalent) is stored as a ``dict`` keyed by
+  :py:class:`Rate <pynucastro.rates.rate.Rate>` as ``rates_py_inline``,
+  ``rates_py_module``, ``rates_amrex``, and ``rates_cxx``.
+
+* Energy : The nuclear energy from mass changes is stored as a scalar,
+  ``enuc_py_inline``, ``enuc_py_module``, ``enuc_amrex``, and ``enuc_cxx``.
+
+* Weak rate neutrino losses : The neutrino energy loss from weak rates
+  is stored as a scalar, ``enu_weak_py_inline``,
+  ``enu_weak_py_module``, ``enu_weak_amrex``, and ``enu_weak_cxx``.
+
+
+Performing the comparison
+=========================
+
+The :py:meth:`compare_results
+<pynucastro.networks.network_compare.NetworkCompare.compare_results>`
+method manages the comparison.  It accepts a relative and absolute
+tolerance and raises a ``ValueError`` if networks do not agree.
 
 A summary of the comparison (including errors) can be printed using
-:py:func:`print_summary <pynucastro.networks.network_compare.NetworkCompare.print_summary>`.
+:py:meth:`print_summary <pynucastro.networks.network_compare.NetworkCompare.print_summary>`.
 
 Current unit tests comparing networks
 =====================================
