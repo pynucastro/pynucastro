@@ -521,7 +521,6 @@ class NetworkCompare:
                     raise ValueError(f"scalar : {o} != {reference}") from exc
 
     def print_summary(self, *, jac_floor=1.e-90):
-
         """Print a summary of the dY/dt comparison and errors for each
         network type run.
 
