@@ -257,7 +257,7 @@ class NetworkSolution:
 
         """
 
-        assert isinstance(t, (float, int) or np.ndim(t) == 0
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.ye(Y)
 
@@ -304,7 +304,7 @@ class NetworkSolution:
 
         """
 
-        assert isinstance(t, (float, int) or np.ndim(t) == 0
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         if self.self_heating:
             T = self.T_at(t)
@@ -350,7 +350,7 @@ class NetworkSolution:
 
         """
 
-        assert isinstance(t, (float, int) or np.ndim(t) == 0
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.jac(t, Y)
 
@@ -389,7 +389,7 @@ class NetworkSolution:
 
         """
 
-        assert isinstance(t, (float, int) or np.ndim(t) == 0
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
 
         if self._do_rate_eval is not None and self._ydot_eq is not None:
             Y = self.Y_at(t)
