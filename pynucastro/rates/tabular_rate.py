@@ -433,6 +433,8 @@ class TabularWeakRate(Rate):
 
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
         fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dT;\n"
+        fstring += f"        rate_eval.denuc_weak_dY({self.reactants[0].cindex()}) += C::n_A * (table_values.enu + table_values.gamma);\n"
+        fstring += f"        rate_eval.denuc_weak_dT += C::n_A * Y({self.reactants[0].cindex()}) * table_values.denu_dT;\n"
         fstring += "    }\n\n"
 
         fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (table_values.enu + table_values.gamma);\n"

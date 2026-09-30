@@ -30,10 +30,17 @@ namespace tabular_weak_rates {
 
         // Calculate tabular weak rates
 
-        const amrex::Real log_temp = std::log10(temp);
-        const amrex::Real log_rhoy = std::log10(rhoy);
+        [[maybe_unused]] const amrex::Real log_temp = std::log10(temp);
+        [[maybe_unused]] const amrex::Real log_rhoy = std::log10(rhoy);
 
         rate_eval.enuc_weak = 0.0_rt;
+
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            rate_eval.denuc_weak_dT = 0.0_rt;
+            for (int n = 1; n <= NumSpec; ++n) {
+                rate_eval.denuc_weak_dY(n) = 0.0_rt;
+            }
+        }
 
     }
 

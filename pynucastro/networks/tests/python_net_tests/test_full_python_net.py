@@ -56,18 +56,18 @@ class TestFullPythonNetwork:
 
         X = np.zeros(net.nnuc)
         X[:] = 1.0 / net.nnuc
-        Y = X * net.nnuc
+        Y = X / net.A
 
         rho = 1.e8
         T = 1.e9
 
         ydot = net.rhs(0.0, Y, rho, T)
 
-        ydot_benchmark = np.array([-1.129734e-03,  1.979093e-03, -1.702699e+06,  5.667057e+05,
-                                   6.454310e+02,  1.044892e-03, -1.1838042e-2,  1.268268e-02,
-                                   4.712856e-06])
+        ydot_benchmark = np.array([-1.26049259e-04,  1.26122078e-04, -3.66469152e+01,  1.19942969e+01,
+                                   1.66005909e-01,  8.95826395e-08, -5.70473332e-05,  5.71197480e-05,
+                                   4.04051452e-10])
 
-        assert_allclose(ydot, ydot_benchmark, rtol=1.e-6)
+        assert_allclose(ydot, ydot_benchmark, rtol=1.e-6, atol=1.e-30)
 
         rate_eval = net.do_rate_eval(0.0, Y, rho, T, None)
         ydot_with_enuc = net.ydot_eq(Y, rho, rate_eval)

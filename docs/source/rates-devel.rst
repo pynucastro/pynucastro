@@ -2,6 +2,26 @@
 Working with ``Rate`` Objects
 *****************************
 
+List membership
+===============
+
+The :py:obj:`Rate <pynucastro.rates.rate.Rate>` class defines an equality
+operator ``__eq__`` that is used as follows:
+
+* To test equality of rates, for example, given a
+  ``Rate`` ``r`` and a list of rates ``rate_list`` doing:
+
+  .. code:: python
+
+     if r in rate_list:
+         # do something
+
+  will use ``Rate.__eq__`` for the comparison.
+
+* For a ``RateCollection``, we use lists for ``RateCollection.rates``
+  and ``RateCollection.all_rates``.  As noted above, to test membership
+  in a list, the ``id`` will be used.
+
 Descriptive attributes
 ======================
 
@@ -18,10 +38,10 @@ The following rate attributes are defined:
 
 * ``Rate.rid`` : this is a string that gives the reactants and
   products, using only ASCII characters.  No information about the
-  source of the rate included.
+  source of the rate is included.
 
   It is not used for library operations directly, but instead is used
-  to build ``rid`` (described next) and included as a human-readable
+  to build ``id`` (described next) and included as a human-readable
   comment in the generated rate functions in exported networks.
 
   For ``c12ag.rid``, we have:
@@ -39,7 +59,7 @@ The following rate attributes are defined:
 
         from pynucastro.rates.alternate_rates import DeBoerC12agO16
         c12ag_deboer = DeBoerC12agO16()
-      
+
      We would find ``c12ag_deboer.rid`` to be:
 
      ::
@@ -49,29 +69,19 @@ The following rate attributes are defined:
 
 
 * ``Rate.id`` : this is intended to be a unique identifier for a rate.
-  It is composed of the ``rid`` and the rate source (``Rate.src``).
+  It is composed of the ``rid``, any label, and the rate source (``Rate.src``).
 
   Here are several ways ``Rate.id`` is used:
-
-  * To test equality of rates, for example, given a
-    ``Rate`` ``r`` and a list of rates ``rate_list`` doing:
-
-    .. code:: python
-
-       if r in rate_list:
-           # do something
-
-    will use ``r.id`` for the comparison.
 
   * For a ``Library``, the main storage for rates (``Library._rates``)
     is a dictionary keyed by ``Rate.id``.
 
-    As a result, ``Rate,id`` must
+    As a result, ``Rate.id`` must
     be unique in a ``Library`` and a generated network.
 
-  * For a ``RateCollection``, we use lists for ``RateCollection.rates``
-    and ``RateCollection.all_rates``.  As noted above, to test membership
-    in a list, the ``id`` will be used.
+  * In the allowed-duplicate checks (:py:func:`is_allowed_dupe
+    <pynucastro.rates.known_duplicates.is_allowed_dupe>`), together with
+    the rate class name.
 
   For ``c12ag.id``, we have:
 
@@ -96,7 +106,7 @@ The following rate attributes are defined:
 
   ::
 
-     'He4_C12_to_O16_reaclib'
+     'C12_He4_to_O16_reaclib'
 
   For weak rates, the weak rate type is added to the string.  This is important,
   for example, since ReacLib provides two rates for $p + p$, a $\beta^+$ and $e^-$-capture:
@@ -149,3 +159,8 @@ shallow copy for most rate attributes, but explicitly recreates the
 
    When we create a ``RateCollection`` or other network, we explicitly
    copy the rates into the network.
+
+.. warning::
+
+   For :py:obj:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>`, the
+   sets that make up the rate are shared with the copy.

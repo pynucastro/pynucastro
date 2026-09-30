@@ -375,7 +375,9 @@ class DerivedRate(Rate):
                 fstring += "    rate += set_rate;\n"
 
                 fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-                fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;\n"
+                fstring += "        if (ln_set_rate > -230.0_rt) {\n"
+                fstring += "            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;\n"
+                fstring += "        }\n"
                 fstring += "    }\n\n"
 
         elif isinstance(self.underlying_rate, TemperatureTabularRate):

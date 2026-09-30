@@ -129,7 +129,7 @@ Ne23_to_Na23_beta_neg_weaktab_info = (
 
 @numba.njit()
 def ye(Y):
-    return np.sum(Z * Y)/np.sum(A * Y)
+    return np.sum(Z * Y)
 
 @numba.njit()
 def C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=0.0):
