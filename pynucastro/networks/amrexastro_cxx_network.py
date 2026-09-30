@@ -121,6 +121,8 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
                     of.write(f"disable_{r.fname}    int     0\n")
             if self.starlib_rates:
                 of.write("starlib_seed      int       -1\n")
+                of.write('modify_rate       string       ""\n')
+                of.write("new_deviate       real        0.0\n")
 
         # copy the standalone build files if requested
         if standalone_build:
