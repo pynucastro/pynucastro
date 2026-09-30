@@ -419,7 +419,7 @@ class TabularWeakRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <typename T>\n"
+        fstring += "template <RateEvaluation T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
