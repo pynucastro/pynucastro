@@ -162,7 +162,12 @@ class NetworkSolution:
         Parameters
         ----------
         t : float or list or numpy.ndarray
-            time or time array used to evaluate the molar abundances
+            time or time array used to evaluate the molar
+            abundances. If a time array is given, the output is an
+            array of shape (nuc, times).
+
+            If a negative scalar time is passed in (e.g., -1.0), the state
+            at the end of integration is returned.
 
         Returns
         -------
@@ -170,6 +175,8 @@ class NetworkSolution:
 
         """
         if isinstance(t, (float, int)):
+            if t < 0:
+                t = self._sol.t[-1]
             return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
         return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
@@ -202,6 +209,9 @@ class NetworkSolution:
         t : float or list or numpy.ndarray
             time or time array used to evaluate the molar abundances
 
+            If a negative scalar time is passed in (e.g., -1.0), the
+            temperature at the end of integration is returned.
+
         Returns
         -------
         numpy.ndarray
@@ -209,7 +219,8 @@ class NetworkSolution:
         """
 
         assert self.self_heating
-
+        if t < 0:
+            t = self._sol.t[-1]
         return self._sol.sol(t)[-1, ...]
 
     def ye(self, Y):
@@ -237,12 +248,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the electron fraction
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
         Returns
         -------
         float
 
         """
 
+        assert isinstance(t, (float, int) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.ye(Y)
 
@@ -279,12 +294,17 @@ class NetworkSolution:
         t : float
             time used to evaluate the RHS
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
+
         Returns
         -------
         numpy.ndarray
 
         """
 
+        assert isinstance(t, (float, int) or np.ndim(t) == 0
         Y = self.Y_at(t)
         if self.self_heating:
             T = self.T_at(t)
@@ -321,12 +341,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the Jacobian
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
         Returns
         -------
         numpy.ndarray
 
         """
 
+        assert isinstance(t, (float, int) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.jac(t, Y)
 
@@ -356,11 +380,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the instantaneous energy release
 
+            If a negative scalar time is passed in (e.g., -1.0), the state
+            at the end of integration is returned.
+
         Returns
         -------
         float
 
         """
+
+        assert isinstance(t, (float, int) or np.ndim(t) == 0
 
         if self._do_rate_eval is not None and self._ydot_eq is not None:
             Y = self.Y_at(t)
