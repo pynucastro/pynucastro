@@ -14,6 +14,7 @@
     * add denu/dT & denu/dY weak rate terms to the Jacobian (#1535)
     * switch `tabular_evaluate` to use a struct for results (#1540)
     * remove unneeded `do_T_derivatives` template parameter (#1582)
+    * fix compiler warnings in C++ code (#1588)
 
   * `PythonNetwork` / `RateCollection` / general network changes :
 
@@ -61,6 +62,7 @@
   * git / project infrastructure:
 
     * split linkcheck off into its own action (#1545)
+    * add concurrency group to pytest-random CI (#1585)
 
   * documentation:
 
