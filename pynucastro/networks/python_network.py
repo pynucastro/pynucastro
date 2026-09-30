@@ -150,7 +150,7 @@ class NetworkSolution:
 
         As = np.array([n.A for n in self.unique_nuclei])
 
-        if isinstance(t, (float, int)):
+        if isinstance(t, (float, int)) or np.ndim(t) == 0:
             if t < 0:
                 t = self._sol.t[-1]
             return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
