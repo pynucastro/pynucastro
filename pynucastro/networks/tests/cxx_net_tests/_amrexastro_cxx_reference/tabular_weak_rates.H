@@ -18,7 +18,7 @@ namespace tabular_weak_rates {
 
     using namespace rate_tables;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Na23_to_Ne23_electron_capture_weaktab(T& rate_eval, const amrex::Real temp, const amrex::Real log_temp, const amrex::Real log_rhoy, const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
 
@@ -39,7 +39,7 @@ namespace tabular_weak_rates {
         rate_eval.enuc_weak += C::n_A * Y(Na23) * (table_values.enu + table_values.gamma);
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Ne23_to_Na23_beta_neg_weaktab(T& rate_eval, const amrex::Real temp, const amrex::Real log_temp, const amrex::Real log_rhoy, const amrex::Array1D<amrex::Real, 1, NumSpec>& Y) {
 

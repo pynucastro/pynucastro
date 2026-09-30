@@ -151,12 +151,12 @@ namespace interp_net {
         // If NOT on the edge, compute the slope from the other side
         // and limit the slope to preserve monotonicity
         if (idx != ilo) {
-            amrex::Real d_im1 = (f_idx - f_im1) / (x_idx - x_im1);
+            const amrex::Real d_im1 = (f_idx - f_im1) / (x_idx - x_im1);
             m0 = limit_slope(x_idx - x_im1, x_ip1 - x_idx, d_im1, m0);
         }
 
         if (ip1 != ihi) {
-            amrex::Real d_ip1 = (f_ip2 - f_ip1) / (x_ip2 - x_ip1);
+            const amrex::Real d_ip1 = (f_ip2 - f_ip1) / (x_ip2 - x_ip1);
             m1 = limit_slope(x_ip1 - x_idx, x_ip2 - x_ip1, m1, d_ip1);
         }
 
