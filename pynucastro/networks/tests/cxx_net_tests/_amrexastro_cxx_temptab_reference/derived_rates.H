@@ -13,7 +13,7 @@ namespace derived_rates {
 
     template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
-    void rate_F17_to_O16_p_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
+    void rate_F17_to_O16_p_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // F17 --> O16 + p
 
@@ -69,7 +69,7 @@ namespace derived_rates {
     }
 
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,

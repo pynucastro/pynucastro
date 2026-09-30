@@ -369,8 +369,8 @@ class RateCollection:
         reverse = None
 
         for rr in reverse_rates:
-            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+            if sorted(forward_rate.reactants) == sorted(rr.products) and \
+               sorted(forward_rate.products) == sorted(rr.reactants):
                 reverse = rr
                 break
 
@@ -669,6 +669,10 @@ class RateCollection:
 
         for rate in set(rates_to_delete):
             self.rates.remove(rate)
+
+        # if we requested removing an inert nucleus, also remove it
+        if self.inert_nuclei is not None:
+            self.inert_nuclei = [nuc for nuc in self.inert_nuclei if nuc not in nuc_list]
 
         self._build_collection()
 
@@ -1420,6 +1424,9 @@ class RateCollection:
                 for rate in other_by_reactants[key]:
                     if rate not in current_rates and rate not in missing_rates:
                         missing_rates[rate] = "alpha capture"
+
+        if len(missing_rates) > 0:
+            passed_validation = False
 
         if return_dict:
             return passed_validation, missing_rates
@@ -2959,7 +2966,9 @@ class RateCollection:
         plt.ylim(minZ - 0.5, maxZ + 0.6)
 
         # Set plot appearance
-        rat = (maxN - minN) / (maxZ - minZ)
+        span_n = maxN - minN + 1
+        span_z = maxZ - minZ + 1
+        rat = span_n / span_z
         width = np.sqrt(area * rat)
         height = area / width
         fig.set_size_inches(width, height)
