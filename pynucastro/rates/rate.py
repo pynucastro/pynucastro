@@ -69,7 +69,7 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append(f"const {dtype} log_scor")
             args.append(f"const {dtype} dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
-            args.append("part_fun::pf_cache_t& pf_cache")
+            args.append("[[maybe_unused]] part_fun::pf_cache_t& pf_cache")
 
     else:
         args = ["rate_eval"]
