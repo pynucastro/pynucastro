@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.1.0.post34+g220a3a3fe documentation</title>
+    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.1.0.post36+g3a62308b6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=f2411de4"></script>
+    <script src="_static/documentation_options.js?v=9111e036"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -684,7 +684,10 @@ the network</p></li>
 <dd><p>Evaluate the temperature for a given time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – time or time array used to evaluate the molar abundances</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – <p>time or time array used to evaluate the molar abundances</p>
+<p>If a negative scalar time is passed in (e.g., -1.0), the
+temperature at the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
@@ -751,7 +754,12 @@ for all times.</p>
 <dd><p>Evaluate the molar abundances for a given time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – time or time array used to evaluate the molar abundances</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em><em> or </em><em>list</em><em> or </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – <p>time or time array used to evaluate the molar
+abundances. If a time array is given, the output is an
+array of shape (nuc, times).</p>
+<p>If a negative scalar time is passed in (e.g., -1.0), the state
+at the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
@@ -791,7 +799,10 @@ the endpoint of integration is used.</p>
 <dd><p>Evaluate the instantaneous energy release in erg/g/s for a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – time used to evaluate the instantaneous energy release</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – <p>time used to evaluate the instantaneous energy release</p>
+<p>If a negative scalar time is passed in (e.g., -1.0), the state
+at the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
@@ -823,7 +834,10 @@ condition and screening routine used to integrate the network.</p>
 <dd><p>Evaluate the Jacobian of the network for a given time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – time used to evaluate the Jacobian</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – <p>time used to evaluate the Jacobian</p>
+<p>If a negative time is passed in (e.g., -1.0), Ye at
+the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
@@ -951,7 +965,10 @@ condition and screening routine used to integrate the network.</p>
 for a self-heating burn, this gives only dY/dt.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – time used to evaluate the RHS</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – <p>time used to evaluate the RHS</p>
+<p>If a negative time is passed in (e.g., -1.0), Ye at
+the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)">numpy.ndarray</a></p>
@@ -1001,7 +1018,10 @@ for a self-heating burn, this gives only dY/dt.</p>
 <dd><p>Evaluate the electron fraction for a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – time used to evaluate the electron fraction</p>
+<dd class="field-odd"><p><strong>t</strong> (<em>float</em>) – <p>time used to evaluate the electron fraction</p>
+<p>If a negative time is passed in (e.g., -1.0), Ye at
+the end of integration is returned.</p>
+</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
