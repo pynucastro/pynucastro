@@ -897,7 +897,6 @@ namespace starlib {{
         f'            {{"{rate.fname}", {n + 1}}},'
         for n, rate in enumerate(self.starlib_rates))
 
-
         of.write(f"""
     if (!network_rp::modify_rate.empty()) {{
         // Allows modifying the deviate of a single rate
