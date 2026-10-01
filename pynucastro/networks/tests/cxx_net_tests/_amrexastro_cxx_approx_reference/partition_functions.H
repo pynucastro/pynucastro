@@ -163,7 +163,7 @@ constexpr amrex::Real get_spin_state() {
         return 1.0_rt;
     }
     else if constexpr (
-        spec == P31
+        spec == H1 || spec == P31
                        )
     {
         return 2.0_rt;
