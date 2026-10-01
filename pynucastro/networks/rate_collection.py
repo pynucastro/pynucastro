@@ -1177,8 +1177,9 @@ class RateCollection:
     @need_state
     def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
-        """Return an array of the form J_ij = dYdot_i/dY_j for the
-        network
+        """Return an array of the form J_ij = ∂Ẏ_i/∂Y_j for the
+        network.  The i and j indices are in the order of
+        ``RateCollection.unique_nuclei``.
 
         Parameters
         ----------
@@ -1204,31 +1205,33 @@ class RateCollection:
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
+        # first get the composition terms from the explicit molar
+        # fraction terms and any molar fraction dependency built into
+        # the rate itself (typically an ApproximateRate)
+
         for i, n_i in enumerate(self.unique_nuclei):
             for j, n_j in enumerate(self.unique_nuclei):
 
-                # we are considering dYdot(n_i) / dY(n_j)
+                # we are considering ∂Ẏ(n_i) / ∂Y(n_j)
 
                 jac[i, j] = 0.0
 
-                for r in self.nuclei_consumed[n_i]:
+                seen_rate_ids = set()
+                for r in self.nuclei_consumed[n_i] + self.nuclei_produced[n_i]:
                     if r in exclude_rates:
                         continue
+                    # A rate appearing in both lists contributes only once,
+                    # with its net stoichiometric coefficient.
+                    if id(r) in seen_rate_ids:
+                        continue
+                    seen_rate_ids.add(id(r))
 
-                    # how many of n_i are destroyed by this reaction
-                    c = r.reactant_count(n_i)
+                    # how many of n_i are created or destroyed by this reaction
+                    c = r.product_count(n_i) - r.reactant_count(n_i)
+                    if c == 0:
+                        continue
 
                     # Note eval_jacobian_term already includes screening
-                    jac[i, j] -= c * \
-                        r.eval_jacobian_term(state, n_j,
-                                             screen_func=screen_func)
-
-                for r in self.nuclei_produced[n_i]:
-                    if r in exclude_rates:
-                        continue
-
-                    # how many of n_i are produced by this reaction
-                    c = r.product_count(n_i)
                     jac[i, j] += c * \
                         r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
