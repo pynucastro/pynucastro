@@ -14,12 +14,13 @@
     * add denu/dT & denu/dY weak rate terms to the Jacobian (#1535)
     * switch `tabular_evaluate` to use a struct for results (#1540)
     * remove unneeded `do_T_derivatives` template parameter (#1582)
-    * fix compiler warnings in C++ code (#1588)
+    * fix compiler warnings in C++ code (#1588, #1589)
 
   * `PythonNetwork` / `RateCollection` / general network changes :
 
     * add composition derivating internal to (nn,γ) to Jacobian
       (#1537)
+    * add weak rate ∂/∂Y_e contribution to the Jacobian (#1539)
     * fix `remove_nuclei` for inert nucleus (#1551)
     * `RateCollection.validate` should fail if we find missing rates
       (#1552)
@@ -34,6 +35,8 @@
     * fix stopping condition in `integrate_network` (#1565)
     * add `NetworkSolution.comp_at` (#1578)
     * fix def for `ye()` in exported networks (#1581)
+    * fix NetworkSolution.X_at when a numpy scalar array is passed
+      (#1590)
 
   * `Library` :
 
@@ -58,6 +61,10 @@
   * nuclei / screening / partition functions:
 
     * simplify how we construct the screening pair set (#1536)
+
+  * EOS:
+
+    * fix Ye for fully-ionized ideal gas (#1599
 
   * git / project infrastructure:
 
