@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.1.0.post37+gd8cccea20 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.1.0.post34+g220a3a3fe documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=188d31a2"></script>
+    <script src="_static/documentation_options.js?v=f2411de4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -892,7 +892,6 @@ def energy_release(dY):
     ("N15_p_to_He4_C12_reaclib", numba.float64),
     ("O14_to_N14_beta_pos_reaclib", numba.float64),
     ("O15_to_N15_beta_pos_reaclib", numba.float64),
-    ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
     def __init__(self):
@@ -905,7 +904,6 @@ class RateEval:
         self.N15_p_to_He4_C12_reaclib = np.nan
         self.O14_to_N14_beta_pos_reaclib = np.nan
         self.O15_to_N15_beta_pos_reaclib = np.nan
-        self.dweak_ydot_dYe = np.zeros(9)
 
 @numba.njit()
 def ye(Y):
@@ -1353,12 +1351,6 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        -rate_eval.O15_to_N15_beta_pos_reaclib
        )
 
-    # add ∂λ_weak / ∂Y_e terms now
-    # this uses ∂Y_e/∂Y_i = Z_i
-    for irow in range(nnuc):
-        for jcol in range(nnuc):
-            jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]
-
     return jac
 </pre></div>
 </div>
@@ -1499,7 +1491,7 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon(t=         0) =          117.7738358
 epsilon(t=  2.55e+14) =          2.990307739
-epsilon(t=     1e+20) =      4.503996597e-10
+epsilon(t=     1e+20) =      4.503996655e-10
 </pre></div>
 </div>
 </div>

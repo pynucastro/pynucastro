@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Assessing the Stiffness of a Network &#8212; pynucastro 3.1.0.post37+gd8cccea20 documentation</title>
+    <title>Assessing the Stiffness of a Network &#8212; pynucastro 3.1.0.post34+g220a3a3fe documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=188d31a2"></script>
+    <script src="_static/documentation_options.js?v=f2411de4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -717,12 +717,12 @@ step.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ρ(J) = </span><span class="si">{</span><span class="n">sprad</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">sprad</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ρ(J) = 345703.34
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(345703.34445394564)
 </pre></div>
 </div>
 </div>
@@ -748,12 +748,12 @@ step.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sprad</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">spectral_radius</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ρ(J) = </span><span class="si">{</span><span class="n">sprad</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">sprad</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ρ(J) = 7094.29
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>np.float64(7094.285320878137)
 </pre></div>
 </div>
 </div>

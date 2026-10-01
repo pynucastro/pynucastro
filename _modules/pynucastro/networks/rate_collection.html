@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post37+gd8cccea20 documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post34+g220a3a3fe documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=188d31a2"></script>
+    <script src="../../../_static/documentation_options.js?v=f2411de4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1789,9 +1789,8 @@
     <span class="nd">@need_state</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_jacobian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exclude_rates</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Return an array of the form J_ij = ∂Ẏ_i/∂Y_j for the</span>
-<span class="sd">        network.  The i and j indices are in the order of</span>
-<span class="sd">        ``RateCollection.unique_nuclei``.</span>
+<span class="w">        </span><span class="sd">"""Return an array of the form J_ij = dYdot_i/dY_j for the</span>
+<span class="sd">        network</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1817,33 +1816,31 @@
         <span class="n">nnuc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
         <span class="n">jac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nnuc</span><span class="p">,</span> <span class="n">nnuc</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
-        <span class="c1"># first get the composition terms from the explicit molar</span>
-        <span class="c1"># fraction terms and any molar fraction dependency built into</span>
-        <span class="c1"># the rate itself (typically an ApproximateRate)</span>
-
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">n_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
 
-                <span class="c1"># we are considering ∂Ẏ(n_i) / ∂Y(n_j)</span>
+                <span class="c1"># we are considering dYdot(n_i) / dY(n_j)</span>
 
                 <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
-                <span class="n">seen_rate_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n_i</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_consumed</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">exclude_rates</span><span class="p">:</span>
                         <span class="k">continue</span>
-                    <span class="c1"># A rate appearing in both lists contributes only once,</span>
-                    <span class="c1"># with its net stoichiometric coefficient.</span>
-                    <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">in</span> <span class="n">seen_rate_ids</span><span class="p">:</span>
-                        <span class="k">continue</span>
-                    <span class="n">seen_rate_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
 
-                    <span class="c1"># how many of n_i are created or destroyed by this reaction</span>
-                    <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span> <span class="o">-</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="k">continue</span>
+                    <span class="c1"># how many of n_i are destroyed by this reaction</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactant_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
 
                     <span class="c1"># Note eval_jacobian_term already includes screening</span>
+                    <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">c</span> <span class="o">*</span> \
+                        <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
+                                             <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nuclei_produced</span><span class="p">[</span><span class="n">n_i</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">exclude_rates</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># how many of n_i are produced by this reaction</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">product_count</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
                     <span class="n">jac</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">*</span> \
                         <span class="n">r</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">n_j</span><span class="p">,</span>
                                              <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post37+gd8cccea20 documentation</title>
+    <title>pynucastro.rates.tabular_rate &#8212; pynucastro 3.1.0.post34+g220a3a3fe documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=188d31a2"></script>
+    <script src="../../../_static/documentation_options.js?v=f2411de4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -660,15 +660,6 @@
 
         <span class="k">return</span> <span class="n">irhoy</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_temp_lines</span> <span class="o">+</span> <span class="n">jtemp</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_interpolate_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">fhi</span><span class="p">,</span> <span class="n">flo</span><span class="p">,</span> <span class="n">xlo</span><span class="p">,</span> <span class="n">xhi</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Find the data value at xi via linear interpolation between</span>
-<span class="sd">        points (xlo, flo) and (xhi, fhi).</span>
-
-<span class="sd">        """</span>
-
-        <span class="n">f</span> <span class="o">=</span> <span class="n">flo</span> <span class="o">+</span> <span class="p">(</span><span class="n">fhi</span> <span class="o">-</span> <span class="n">flo</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">xi</span> <span class="o">-</span> <span class="n">xlo</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">xhi</span> <span class="o">-</span> <span class="n">xlo</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">f</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy</span><span class="p">,</span> <span class="n">logT</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Given logrhoy and logT, do bilinear interpolation to</span>
 <span class="sd">        find the value of the data component in the table</span>
@@ -689,21 +680,33 @@
 
 <span class="sd">        """</span>
 
+        <span class="c1"># We are going to do bilinear interpolation.  We create a</span>
+        <span class="c1"># polynomial of the form:</span>
+        <span class="c1">#</span>
+        <span class="c1"># f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +</span>
+        <span class="c1">#     B [log(rho) - log(rho_i)] +</span>
+        <span class="c1">#     C [log(T) - log(T_j)] +</span>
+        <span class="c1">#     D</span>
+        <span class="c1">#</span>
+        <span class="c1"># we then find the i,j such that our point is in the</span>
+        <span class="c1"># box with corners (i,j) to (i+1,j+1), and solve for</span>
+        <span class="c1"># A, B, C, D</span>
+
+        <span class="c1"># find the T and rhoY in the data table corresponding to the</span>
+        <span class="c1"># lower left</span>
+
         <span class="k">if</span> <span class="n">logT</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logT</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"temperature out of table bounds"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logrhoy</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logrhoy</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rhoy out of table bounds"</span><span class="p">)</span>
 
-        <span class="c1"># find the T and rhoY in the data table corresponding to the</span>
-        <span class="c1"># lower left</span>
-
         <span class="n">irhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_idx</span><span class="p">(</span><span class="n">logrhoy</span><span class="p">)</span>
         <span class="n">jT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_idx</span><span class="p">(</span><span class="n">logT</span><span class="p">)</span>
 
         <span class="c1"># note: rhoy and T are already stored as log</span>
 
-        <span class="n">dlogrhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">]</span>
+        <span class="n">dlogrho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">]</span>
         <span class="n">dlogT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">]</span>
 
         <span class="c1"># get the data at the 4 points</span>
@@ -720,72 +723,15 @@
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">f_ip1jp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
 
-        <span class="n">u</span> <span class="o">=</span> <span class="p">(</span><span class="n">logrhoy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">])</span> <span class="o">/</span> <span class="n">dlogrhoy</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">logT</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">])</span> <span class="o">/</span> <span class="n">dlogT</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">f_ij</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ijp1</span> <span class="o">-</span> <span class="n">f_ij</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogT</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1j</span> <span class="o">-</span> <span class="n">f_ij</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogrho</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1jp1</span> <span class="o">-</span> <span class="n">B</span> <span class="o">*</span> <span class="n">dlogrho</span> <span class="o">-</span> <span class="n">C</span> <span class="o">*</span> <span class="n">dlogT</span> <span class="o">-</span> <span class="n">D</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">dlogrho</span> <span class="o">*</span> <span class="n">dlogT</span><span class="p">)</span>
 
-        <span class="n">E</span> <span class="o">=</span> <span class="n">f_ij</span>
-        <span class="n">C</span> <span class="o">=</span> <span class="n">f_ijp1</span> <span class="o">-</span> <span class="n">f_ij</span>
-        <span class="n">B</span> <span class="o">=</span> <span class="n">f_ip1j</span> <span class="o">-</span> <span class="n">f_ij</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">f_ip1jp1</span> <span class="o">-</span> <span class="n">f_ip1j</span> <span class="o">-</span> <span class="n">f_ijp1</span> <span class="o">+</span> <span class="n">f_ij</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="n">logrhoy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">logT</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">])</span> <span class="o">+</span>
+             <span class="n">B</span> <span class="o">*</span> <span class="p">(</span><span class="n">logrhoy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">])</span> <span class="o">+</span> <span class="n">C</span> <span class="o">*</span> <span class="p">(</span><span class="n">logT</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">])</span> <span class="o">+</span> <span class="n">D</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">A</span> <span class="o">*</span> <span class="n">u</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">C</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="n">E</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate_dlogrhoy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logrhoy</span><span class="p">,</span> <span class="n">logT</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Given logrhoy and logT, compute the derivative, ∂log(q)/∂log(ρY_e)</span>
-<span class="sd">        of component q from the data table.  This is done by differentiating</span>
-<span class="sd">        the bilinear interpolant.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        logrhoy : float</span>
-<span class="sd">            log10(ρ Y_e) to interpolate at</span>
-<span class="sd">        logT : float</span>
-<span class="sd">            log10(T) to interpolate at</span>
-<span class="sd">        component : int</span>
-<span class="sd">            the component from the data table we are interpolating.</span>
-<span class="sd">            This should correspond to a :py:class:`TableIndex` component.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-
-<span class="sd">        """</span>
-
-        <span class="k">if</span> <span class="n">logT</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logT</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"temperature out of table bounds"</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">logrhoy</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">or</span> <span class="n">logrhoy</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"rhoy out of table bounds"</span><span class="p">)</span>
-
-        <span class="c1"># find the T and rhoY in the data table corresponding to the</span>
-        <span class="c1"># lower left</span>
-
-        <span class="n">irhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logrhoy_idx</span><span class="p">(</span><span class="n">logrhoy</span><span class="p">)</span>
-        <span class="n">jT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logT_idx</span><span class="p">(</span><span class="n">logT</span><span class="p">)</span>
-
-        <span class="c1"># note: rhoy and T are already stored as log</span>
-
-        <span class="n">dlogrhoy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhoy</span><span class="p">[</span><span class="n">irhoy</span><span class="p">]</span>
-
-        <span class="c1"># get the data at the 4 points</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="p">,</span> <span class="n">jT</span><span class="p">)</span>
-        <span class="n">f_ij</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">jT</span><span class="p">)</span>
-        <span class="n">f_ip1j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="p">,</span> <span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">f_ijp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rhoy_T_to_idx</span><span class="p">(</span><span class="n">irhoy</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">f_ip1jp1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">component</span><span class="p">]</span>
-
-        <span class="n">dlogr_dlogrhoy_j</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1j</span> <span class="o">-</span> <span class="n">f_ij</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogrhoy</span>
-        <span class="n">dlogr_dlogrhoy_jp1</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_ip1jp1</span> <span class="o">-</span> <span class="n">f_ijp1</span><span class="p">)</span> <span class="o">/</span> <span class="n">dlogrhoy</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpolate_1d</span><span class="p">(</span><span class="n">logT</span><span class="p">,</span> <span class="n">dlogr_dlogrhoy_jp1</span><span class="p">,</span> <span class="n">dlogr_dlogrhoy_j</span><span class="p">,</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">[</span><span class="n">jT</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span></div>
+        <span class="k">return</span> <span class="n">r</span></div>
 
 
 
@@ -824,9 +770,7 @@
                          <span class="n">rate_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rfile_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                          <span class="n">label</span><span class="o">=</span><span class="s2">"weaktab"</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_rhoye</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="c1"># we work from T not TFactors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="kc">False</span>
@@ -963,7 +907,7 @@
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, log_T, rho, log_rhoY, Y):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, T, log_T, log_rhoY, Y):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator = TableInterpolator(*</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_info)</span><span class="se">\n</span><span class="s2">"</span>
@@ -971,15 +915,11 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    enu = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    egamma = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)</span><span class="se">\n\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    drate_drhoye = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = 10.0**r</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_nu = -10.0**enu</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    edot_gamma = 10.0**egamma</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.enuc_weak += N_A * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * (edot_nu + edot_gamma)</span><span class="se">\n\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.dweak_ydot_dYe[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] -= rho * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * drate_drhoye;</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.dweak_ydot_dYe[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] += rho * Y[j</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">raw</span><span class="si">}</span><span class="s2">] * drate_drhoye;</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">fstring</span></div>
 
@@ -1027,24 +967,14 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    weak_rate_t table_values</span><span class="si">{}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    constexpr int do_T_derivatives = std::is_same_v&lt;T, rate_derivs_t&gt;;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    tabular_evaluate&lt;do_T_derivatives&gt;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_meta, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_rhoy, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_temp, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_index_name</span><span class="si">}</span><span class="s2">_data,</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"                                        log_rhoy, rhoy, log_temp, temp, table_values);</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"                                        log_rhoy, log_temp, temp, table_values);</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.screened_rates(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = table_values.rate;</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    if constexpr (std::is_same_v&lt;T, rate_derivs_t&gt;) {</span><span class="se">\n</span><span class="s2">"</span>
-
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = table_values.drate_dT;</span><span class="se">\n\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        // accumulate ∂/∂Y_e contributions to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        // this is the derivative of ∂Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2">)/∂t = -Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2">) λ and</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        //                           ∂Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2">)/∂t = +Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">!s}</span><span class="s2">) λ</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dweak_ydot_dYe(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) -= rho * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * table_values.drate_drhoye;</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dweak_ydot_dYe(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">products</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) += rho * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * table_values.drate_drhoye;</span><span class="se">\n\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        // also accumulate the derivatives of ε_{ν,weak} with respect to T and Y</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.dscreened_rates_dT(k_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">) = table_values.drate_dT;</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.denuc_weak_dY(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) += C::n_A * (table_values.enu + table_values.gamma);</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.denuc_weak_dT += C::n_A * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * table_values.denu_dT;</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"        // finally the derivatives of ε_{ν,weak} with respect to Ye</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"        rate_eval.denuc_weak_dYe += C::n_A * rho * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * table_values.denu_drhoye;</span><span class="se">\n</span><span class="s2">"</span>
-
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    }</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.enuc_weak += C::n_A * Y(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">) * (table_values.enu + table_values.gamma);</span><span class="se">\n</span><span class="s2">"</span>
@@ -1087,7 +1017,7 @@
 
         <span class="n">rhoY</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">comp</span><span class="o">.</span><span class="n">ye</span>
         <span class="n">log10_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
-                                                         <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                                          <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">log10_r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span></div>
 
 
@@ -1113,81 +1043,6 @@
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
                                           <span class="n">TableIndex</span><span class="o">.</span><span class="n">NU</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">r</span></div>
-
-
-<div class="viewcode-block" id="TabularWeakRate.get_drate_drhoye">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.get_drate_drhoye">[docs]</a>
-    <span class="nd">@need_state</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_drate_drhoye</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Evaluate the ∂λ/∂(ρY_e) for the rate.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        state: ThermoState</span>
-<span class="sd">            ThermoState containing relevant thermodynamic information</span>
-<span class="sd">            used to evaluate the rate derivative loss. It knows about</span>
-<span class="sd">            (rho, T, composition).</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-
-<span class="sd">        """</span>
-
-        <span class="n">rhoY</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
-        <span class="n">log10_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
-                                                         <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">log10_r</span>
-
-        <span class="n">dlogr_dlogrhoye</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolate_dlogrhoy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">rhoY</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">T</span><span class="p">),</span>
-                                                                 <span class="n">TableIndex</span><span class="o">.</span><span class="n">RATE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-
-        <span class="n">dr_drhoye</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">dlogr_dlogrhoye</span> <span class="o">/</span> <span class="n">rhoY</span>
-        <span class="k">return</span> <span class="n">dr_drhoye</span></div>
-
-
-<div class="viewcode-block" id="TabularWeakRate.eval_jacobian_term">
-<a class="viewcode-back" href="../../../pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term">[docs]</a>
-    <span class="nd">@need_state</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">eval_jacobian_term</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                           <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Evaluate ∂flux/∂(y_i), the derivative of the rate with</span>
-<span class="sd">        respect to ``y_i``.  This flux term has the full composition</span>
-<span class="sd">        dependence, i.e., for a decay rate:</span>
-
-<span class="sd">        flux = Y(p) λ(ρY_e, T)</span>
-
-<span class="sd">        where p is the parent nucleus.  Note that there are 2 contributions,</span>
-
-<span class="sd">        ∂flux/∂(y_i) = δ_{ip} λ + Y(p) ρ ∂λ/∂(ρY_e) Z_i</span>
-
-<span class="sd">        where we used ∂Y_e/∂Y_i = Z_i</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        state: ThermoState</span>
-<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
-<span class="sd">            evaluate rates. It knows about (rho, T, composition).</span>
-<span class="sd">        y_i : Nucleus</span>
-<span class="sd">            the nucleus we are differentiating with respect to</span>
-<span class="sd">        screen_func : Callable</span>
-<span class="sd">            Screening doesn't apply for electron-capture / decay rates, but</span>
-<span class="sd">            we include the argument here to ensure the interface is standard.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-
-<span class="sd">        """</span>
-
-        <span class="n">explicit_term</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eval_jacobian_term</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">y_i</span><span class="p">,</span>
-                                                   <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">Yp</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">comp</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">/</span> <span class="n">parent</span><span class="o">.</span><span class="n">A</span>
-        <span class="n">ye_term</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">Yp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_drate_drhoye</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">explicit_term</span> <span class="o">+</span> <span class="n">ye_term</span> <span class="o">*</span> <span class="n">y_i</span><span class="o">.</span><span class="n">Z</span></div>
 
 
 <div class="viewcode-block" id="TabularWeakRate.plot">
