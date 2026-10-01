@@ -104,13 +104,13 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
     evaluate_screening<do_T_derivatives, T>(state, Y, rate_eval);
 #endif
 
-    tf_t tfactors = evaluate_tfactors(state.T);
+    const tf_t tfactors = evaluate_tfactors(state.T);
 
     // Calculate Reaclib rates
     reaclib_rates::fill_rates(tfactors, rate_eval);
 
     // Calculate tabular rates
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates<T>(state.T, state.rho, rhoy, Y, rate_eval);
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
@@ -211,13 +211,17 @@ inline
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const Array1D<Real, 1, NumSpec>& Y,
-             const Array1D<Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
     using namespace Species;
 
+    const auto& screened_rates = rate_eval.screened_rates;
+
     Real scratch;
+
+    // n row
 
     scratch = -screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(N, N, scratch);
@@ -236,6 +240,9 @@ void jac_nuc(const burn_t& state,
     jac.set(N, Na23, 0.0);
 
     jac.set(N, Mg23, 0.0);
+
+
+    // p row
 
     scratch = screened_rates(k_n_to_p_beta_neg_reaclib);
     jac.set(H1, N, scratch);
@@ -257,14 +264,19 @@ void jac_nuc(const burn_t& state,
 
     jac.set(H1, Mg23, 0.0);
 
+
+    // He4 row
+
     jac.set(He4, N, 0.0);
 
     jac.set(He4, H1, 0.0);
 
-    scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho - screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(Ne20)*state.rho;
+    scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(Ne20)*state.rho;
     jac.set(He4, He4, scratch);
 
-    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = 1.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(He4, C12, scratch);
 
     scratch = screened_rates(k_O16_to_He4_C12_derived);
@@ -277,15 +289,22 @@ void jac_nuc(const burn_t& state,
 
     jac.set(He4, Mg23, 0.0);
 
+
+    // C12 row
+
     jac.set(C12, N, 0.0);
 
     scratch = 2.0*screened_rates(k_Na23_p_to_C12_C12_derived)*Y(Na23)*state.rho;
     jac.set(C12, H1, scratch);
 
-    scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho + 2.0*screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(Ne20)*state.rho;
+    scratch = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*state.rho
+              + 2.0*screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(Ne20)*state.rho;
     jac.set(C12, He4, scratch);
 
-    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
+    scratch = -2.0*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*Y(C12)*state.rho
+              - 2.0*screened_rates(k_C12_C12_to_p_Na23_reaclib)*Y(C12)*state.rho
+              - screened_rates(k_C12_He4_to_O16_reaclib)*Y(He4)*state.rho;
     jac.set(C12, C12, scratch);
 
     scratch = screened_rates(k_O16_to_He4_C12_derived);
@@ -298,6 +317,9 @@ void jac_nuc(const burn_t& state,
     jac.set(C12, Na23, scratch);
 
     jac.set(C12, Mg23, 0.0);
+
+
+    // O16 row
 
     jac.set(O16, N, 0.0);
 
@@ -318,6 +340,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(O16, Mg23, 0.0);
 
+
+    // Ne20 row
+
     jac.set(Ne20, N, 0.0);
 
     jac.set(Ne20, H1, 0.0);
@@ -336,6 +361,9 @@ void jac_nuc(const burn_t& state,
     jac.set(Ne20, Na23, 0.0);
 
     jac.set(Ne20, Mg23, 0.0);
+
+
+    // Na23 row
 
     jac.set(Na23, N, 0.0);
 
@@ -356,6 +384,9 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Na23, Mg23, 0.0);
 
+
+    // Mg23 row
+
     jac.set(Mg23, N, 0.0);
 
     jac.set(Mg23, H1, 0.0);
@@ -372,6 +403,7 @@ void jac_nuc(const burn_t& state,
     jac.set(Mg23, Na23, 0.0);
 
     jac.set(Mg23, Mg23, 0.0);
+
 
 
 }
@@ -401,7 +433,7 @@ void actual_jac(burn_t& state, MatrixType& jac)
 
     // Species Jacobian elements with respect to other species
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
 }
 

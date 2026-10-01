@@ -137,7 +137,7 @@ void evaluate_rates(const burn_t& state,
 
     reaclib_rates::fill_rates(tfactors, rate_eval);
 
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
 
     temp_tabular::fill_rates(tfactors, rate_eval);
 
@@ -202,15 +202,14 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    constexpr int do_T_derivatives = 0;
     [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
-    [[maybe_unused]] amrex::Real rhoy = state.rho * state.y_e;
+    [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
     rate_eval.enuc_weak = 0.0_rt;
 
     // Compute all weak rates and get ydot_weak
 
-    tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);
+    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
 
     ydot_nuc(He4) = 0.0_rt;
 
@@ -301,24 +300,33 @@ AMREX_GPU_DEVICE AMREX_INLINE
 void jac_nuc(const burn_t& state,
              MatrixType& jac,
              const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-             const amrex::Array1D<amrex::Real, 1, Rates::NumRates>& screened_rates)
+             const rate_derivs_t& rate_eval)
 {
 
     using namespace Rates;
 
+    const auto& screened_rates = rate_eval.screened_rates;
+
     amrex::Real scratch;
 
-    scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
+    // He4 row
+
+    scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho
+              - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(He4, He4, scratch);
 
     scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*state.rho;
     jac.set(He4, Mg24, scratch);
 
-    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho + screened_rates(k_Si28_to_Mg24_He4_approx);
+    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho
+              + screened_rates(k_Si28_to_Mg24_He4_approx);
     jac.set(He4, Si28, scratch);
 
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(He4, S32, scratch);
+
+
+    // Mg24 row
 
     scratch = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho;
     jac.set(Mg24, He4, scratch);
@@ -331,17 +339,25 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Mg24, S32, 0.0);
 
-    scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
+
+    // Si28 row
+
+    scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(Mg24)*state.rho
+              - screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(Si28, He4, scratch);
 
     scratch = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*state.rho;
     jac.set(Si28, Mg24, scratch);
 
-    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho - screened_rates(k_Si28_to_Mg24_He4_approx);
+    scratch = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*state.rho
+              - screened_rates(k_Si28_to_Mg24_He4_approx);
     jac.set(Si28, Si28, scratch);
 
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(Si28, S32, scratch);
+
+
+    // S32 row
 
     scratch = screened_rates(k_Si28_He4_to_S32_approx)*Y(Si28)*state.rho;
     jac.set(S32, He4, scratch);
@@ -354,6 +370,15 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(S32, S32, scratch);
 
+
+
+    // add ∂λ_weak / ∂Y_e terms now
+    // this uses ∂Y_e/∂Y_i = Z_i
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            jac.add(irow, jcol, rate_eval.dweak_ydot_dYe(irow) * NetworkProperties::zion(jcol));
+        }
+    }
 
 }
 
@@ -393,7 +418,7 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     // Species Jacobian elements with respect to other species
     // J_ij = ∂(Ydot_i)/∂Y_j
 
-    jac_nuc(state, jac, Y, rate_eval.screened_rates);
+    jac_nuc(state, jac, Y, rate_eval);
 
 
     // region 2
@@ -413,8 +438,12 @@ void actual_jac(const burn_t& state, MatrixType& jac)
     }
 
     // Account for the weak rate neutrino losses
-    for (int j = 1; j <= NumSpec; ++j) {
-        jac.add(net_ienuc, j, rate_eval.denuc_weak_dY(j));
+    // There are two contributions here:
+    // ∂(ε_{ν,weak})/∂Y_j and ∂(ε_{ν,weak})/∂Y_e ∂Y_e/∂Y_j
+    for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+        jac.add(net_ienuc, jcol,
+                rate_eval.denuc_weak_dY(jcol) +
+                rate_eval.denuc_weak_dYe * NetworkProperties::zion(jcol));
     }
 
     // Account for the thermal neutrino losses

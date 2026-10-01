@@ -151,7 +151,7 @@ class NetworkSolution:
 
         As = np.array([n.A for n in self.unique_nuclei])
 
-        if isinstance(t, (float, int)):
+        if isinstance(t, (float, int)) or np.ndim(t) == 0:
             if t < 0:
                 t = self._sol.t[-1]
             return self._sol.sol(t)[0:len(self.unique_nuclei)] * As
@@ -163,7 +163,12 @@ class NetworkSolution:
         Parameters
         ----------
         t : float or list or numpy.ndarray
-            time or time array used to evaluate the molar abundances
+            time or time array used to evaluate the molar
+            abundances. If a time array is given, the output is an
+            array of shape (nuc, times).
+
+            If a negative scalar time is passed in (e.g., -1.0), the state
+            at the end of integration is returned.
 
         Returns
         -------
@@ -171,6 +176,8 @@ class NetworkSolution:
 
         """
         if isinstance(t, (float, int)):
+            if t < 0:
+                t = self._sol.t[-1]
             return self._sol.sol(t)[0:len(self.unique_nuclei)]
 
         return self._sol.sol(t)[0:len(self.unique_nuclei), ...]
@@ -203,6 +210,9 @@ class NetworkSolution:
         t : float or list or numpy.ndarray
             time or time array used to evaluate the molar abundances
 
+            If a negative scalar time is passed in (e.g., -1.0), the
+            temperature at the end of integration is returned.
+
         Returns
         -------
         numpy.ndarray
@@ -210,7 +220,8 @@ class NetworkSolution:
         """
 
         assert self.self_heating
-
+        if t < 0:
+            t = self._sol.t[-1]
         return self._sol.sol(t)[-1, ...]
 
     def ye(self, Y):
@@ -238,12 +249,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the electron fraction
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
         Returns
         -------
         float
 
         """
 
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.ye(Y)
 
@@ -280,12 +295,17 @@ class NetworkSolution:
         t : float
             time used to evaluate the RHS
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
+
         Returns
         -------
         numpy.ndarray
 
         """
 
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         if self.self_heating:
             T = self.T_at(t)
@@ -322,12 +342,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the Jacobian
 
+            If a negative time is passed in (e.g., -1.0), Ye at
+            the end of integration is returned.
+
         Returns
         -------
         numpy.ndarray
 
         """
 
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
         Y = self.Y_at(t)
         return self.jac(t, Y)
 
@@ -357,11 +381,16 @@ class NetworkSolution:
         t : float
             time used to evaluate the instantaneous energy release
 
+            If a negative scalar time is passed in (e.g., -1.0), the state
+            at the end of integration is returned.
+
         Returns
         -------
         float
 
         """
+
+        assert isinstance(t, (float, int)) or np.ndim(t) == 0
 
         if self._do_rate_eval is not None and self._ydot_eq is not None:
             Y = self.Y_at(t)
@@ -803,14 +832,16 @@ class PythonNetwork(RateCollection):
 
     def full_jacobian_element_string(self, ydot_i_nucleus, y_j_nucleus, indent=""):
         """Construct a string containing the python code for a single
-        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus)
+        element of the Jacobian, dYdot(ydot_i_nucleus)/dY(y_j_nucleus).
+        This includes implicit rate derivatives stored in ``RateEval``
+        for nuclei listed in a rate's ``rate_comp_dependence``.
 
         Parameters
         ----------
         ydot_i_nucleus: Nucleus
             The nucleus representing the dY/dt term we are differentiating.
             This is the row of the Jacobian.
-        ydot_j_nucleus: Nucleus
+        y_j_nucleus: Nucleus
             The nucleus we are differentiating with respect to.  This
             is the column of the Jacobian.
         indent : str
@@ -834,28 +865,34 @@ class PythonNetwork(RateCollection):
         else:
             ostr += f"{indent}{idx_str} = (\n"
             rate_terms_str = ""
-            for r in self.nuclei_consumed[ydot_i_nucleus]:
-                c = r.reactant_count(ydot_i_nucleus)
-
-                jac_str = r.jacobian_string_py(y_j_nucleus)
-                if jac_str == "":
+            seen_rate_ids = set()
+            for r in self.nuclei_consumed[ydot_i_nucleus] + self.nuclei_produced[ydot_i_nucleus]:
+                # A rate appearing in both lists contributes only once,
+                # with its net stoichiometric coefficient.
+                if id(r) in seen_rate_ids:
+                    continue
+                seen_rate_ids.add(id(r))
+                c = r.product_count(ydot_i_nucleus) - r.reactant_count(ydot_i_nucleus)
+                if c == 0:
                     continue
 
-                if c == 1:
-                    rate_terms_str += f"{indent}   -{jac_str}\n"
-                else:
-                    rate_terms_str += f"{indent}   -{c}*{jac_str}\n"
-            for r in self.nuclei_produced[ydot_i_nucleus]:
-                c = r.product_count(ydot_i_nucleus)
+                jac_terms = [r.jacobian_string_py(y_j_nucleus)]
+                if r.rate_comp_dependence and y_j_nucleus in r.rate_comp_dependence:
+                    # Product rule: retain the full abundance and density
+                    # factors and replace the rate with its derivative.
+                    deriv_name = f"drate_{r.fname}_dY{y_j_nucleus.cindex()}"
+                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.{r.fname}",
+                                                              f"rate_eval.{deriv_name}"))
 
-                jac_str = r.jacobian_string_py(y_j_nucleus)
-                if jac_str == "":
-                    continue
-
-                if c == 1:
-                    rate_terms_str += f"{indent}   +{jac_str}\n"
-                else:
-                    rate_terms_str += f"{indent}   +{c}*{jac_str}\n"
+                for jac_str in jac_terms:
+                    if jac_str == "":
+                        continue
+                    if c == 1:
+                        rate_terms_str += f"{indent}   +{jac_str}\n"
+                    elif c == -1:
+                        rate_terms_str += f"{indent}   -{jac_str}\n"
+                    else:
+                        rate_terms_str += f"{indent}   {c:+}*{jac_str}\n"
 
             if rate_terms_str == "":
                 return ""
@@ -1022,7 +1059,7 @@ class PythonNetwork(RateCollection):
             close_file = False
         else:
             outfile = Path(outfile)
-            of = outfile.open("w")
+            of = outfile.open("w", encoding="utf-8")
             close_file = True
 
         indent = 4*" "
@@ -1111,12 +1148,23 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         for r in self.all_rates:
             of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f'{indent}("drate_{r.fname}_dY{n.cindex()}", numba.float64),\n')
+
         of.write("])\n")
         of.write("class RateEval:\n")
         of.write(f"{indent}def __init__(self):\n")
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         for r in self.all_rates:
             of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+        of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
+        for r in self.all_rates:
+            if nucs := r.rate_comp_dependence:
+                for n in nucs:
+                    of.write(f"{indent*2}self.drate_{r.fname}_dY{n.cindex()} = np.nan\n")
 
         of.write("\n")
 
@@ -1219,6 +1267,13 @@ class PythonNetwork(RateCollection):
         for n_i in self.unique_nuclei:
             for n_j in self.unique_nuclei:
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        # now the correction for the Ye dependence in weak rates
+        of.write(f"{indent}# add ∂λ_weak / ∂Y_e terms now\n")
+        of.write(f"{indent}# this uses ∂Y_e/∂Y_i = Z_i\n")
+        of.write(f"{indent}for irow in range(nnuc):\n")
+        of.write(f"{indent}    for jcol in range(nnuc):\n")
+        of.write(f"{indent}        jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]\n\n")
 
         of.write(f"{indent}return jac\n")
 
