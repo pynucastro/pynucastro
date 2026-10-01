@@ -181,8 +181,6 @@ After all of the contributions are accumulated, they are added to every species 
    This contribution affects all charged species, not just the parent and child.  As a result,
    the Jacobian with weak rates in it will not be nearly as sparse.
 
-This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
-
 Status of this term:
 
 * ``RateCollection`` : implemented directly in :py:meth:`TabularWeakRate.eval_jacobian_term <pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term>`
@@ -331,7 +329,6 @@ in ``rate_derivs_t.denuc_weak_dYe``:
 This term is then added as $\texttt{denuc\_weak\_dYe} \, Z_j$
 in the same place as the term above.
 
-This contribution was added in `pynucastro PR #1539 <https://github.com/pynucastro/pynucastro/pull/1539>`_.
 
 Status of these terms
 ^^^^^^^^^^^^^^^^^^^^^
