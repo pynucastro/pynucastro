@@ -5,6 +5,7 @@ from pynucastro.nucdata import UnsupportedNucleus
 from .approximate_rates import ApproximateRate
 from .aprox_family_rates import (make_ap_pg_rates, make_CO_approx_rates,
                                  make_double_neutron_rates)
+from .beta_limited_rate import BetaLimitedRate
 from .branched_rate import BranchedRate
 from .derived_rate import DerivedRate
 from .files import RateFileError, _find_rate_file
