@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 3.1.0.post36+g3a62308b6 documentation</title>
+    <title>pynucastro.reduction.drgep_module module &#8212; pynucastro 3.1.0.post38+g90846b73c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=9111e036"></script>
+    <script src="_static/documentation_options.js?v=b440f41b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -633,7 +633,7 @@ matrix, where N is the number of nuclei in <code class="docutils literal notrans
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>net</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network we are reducing (can be a subclass of <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>)</p></li>
-<li><p><strong>rvals</strong> (<em>dict</em><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – A dictionary of reaction rate values, including all
+<li><p><strong>rvals</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><em>Rate</em></a><em>)</em>) – A dictionary of reaction rate values, including all
 density, temperature, and composition dependencies.  This
 is typically the result of
 <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates" title="pynucastro.networks.rate_collection.RateCollection.evaluate_rates"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_rates</span></code></a></p></li>
@@ -658,9 +658,9 @@ based on the description in <span class="bibtex-citation" id="id1">Pepiot-Desjar
 <li><p><strong>net</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network to reduce (can be a subclass of <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>)</p></li>
 <li><p><strong>conds</strong> (<em>Iterable</em>) – The set of thermodynamic conditions to reduce over. This is a
 sequence of tuples: (<code class="docutils literal notranslate"><span class="pre">Composition</span></code>, density, temperature)</p></li>
-<li><p><strong>targets</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><em>str</em><em>)</em>) – A collection of target nuclei (or a single target nucleus) to
+<li><p><strong>targets</strong> (<em>Iterable</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>) or </em><em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>)</em>) – A collection of target nuclei (or a single target nucleus) to
 run the graph search algorithm from.</p></li>
-<li><p><strong>tols</strong> (<em>Iterable</em><em>(</em><em>float</em><em>) or </em><em>float</em>) – Tolerance(s) or cutoff threshold(s) to use for paths from each
+<li><p><strong>tols</strong> (<em>Iterable</em><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>) or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Tolerance(s) or cutoff threshold(s) to use for paths from each
 of the target nuclei.  Nuclei whose interaction coefficients
 do not meet the specified tolerance will have their
 interaction coefficients set to 0.0.  If supplied as a single
@@ -668,7 +668,7 @@ number then that value is used for all targets.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
 – if provided, then the evaluated rates will include the screening
 correction.</p></li>
-<li><p><strong>returnobj</strong> (<em>str</em>) – <p>The type of object to return.  Valid options are:</p>
+<li><p><strong>returnobj</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>The type of object to return.  Valid options are:</p>
 <ul>
 <li><p>’net’ : a reduced network (default)</p></li>
 <li><p>’nuclei’ : unique nuclei with nonzero interaction coefficients,
@@ -677,7 +677,7 @@ ordered so the interaction coefficients are descending</p></li>
 with entries corresponding to nuclei in <code class="docutils literal notranslate"><span class="pre">net.unique_nuclei</span></code>).</p></li>
 </ul>
 </p></li>
-<li><p><strong>use_mpi</strong> (<em>bool</em>) – Do we divide up the set of conditions across MPI processes?</p></li>
+<li><p><strong>use_mpi</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Do we divide up the set of conditions across MPI processes?</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -701,7 +701,7 @@ and each other nucleus in the net.</p>
 <li><p><strong>net</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network we are reducing (can be a subclass of <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>)</p></li>
 <li><p><strong>r_AB</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – The interaction coefficient matrix</p></li>
 <li><p><strong>target</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – The nucleus on which we are running the graph search</p></li>
-<li><p><strong>adj_nuc</strong> (<em>dict</em><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – A dictionary giving the set of nuclei that are connected
+<li><p><strong>adj_nuc</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – A dictionary giving the set of nuclei that are connected
 to the key nucleus.</p></li>
 </ul>
 </dd>
@@ -720,7 +720,7 @@ to the key nucleus.</p></li>
 <dd class="field-odd"><p><strong>net</strong> (<a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><em>RateCollection</em></a>) – The network we are reducing (can be a subclass of <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a>(<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus">Nucleus</a>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -734,12 +734,12 @@ non-iterable case, the supplied object will be repeated <em>n</em> times
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>Iterable</em><em> or </em><em>float</em><em> or </em><em>int</em>) – The object we want to convert to a list</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – The number of times to repeat x (if x is not an iterable)</p></li>
+<li><p><strong>x</strong> (<em>Iterable</em><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The object we want to convert to a list</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of times to repeat x (if x is not an iterable)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>list</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>

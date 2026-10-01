@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.composition module &#8212; pynucastro 3.1.0.post36+g3a62308b6 documentation</title>
+    <title>pynucastro.nucdata.composition module &#8212; pynucastro 3.1.0.post38+g90846b73c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=9111e036"></script>
+    <script src="_static/documentation_options.js?v=b440f41b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -650,15 +650,15 @@ abundances.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.nucdata.composition.</span></span><span class="sig-name descname"><span class="pre">Composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nuclei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserDict</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.UserDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">UserDict</span></code></a></p>
 <p>A composition holds the mass fractions of the nuclei in a
 network.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nuclei</strong> (<em>list</em><em>, </em><em>tuple</em>) – an iterable of Nucleus objects</p></li>
-<li><p><strong>small</strong> (<em>float</em>) – a floor for nuclei mass fractions, used as the default value.</p></li>
-<li><p><strong>init</strong> (<em>str</em>) – <p>Different modes to set up the initial composition. Valid choices
+<li><p><strong>nuclei</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – an iterable of Nucleus objects</p></li>
+<li><p><strong>small</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – a floor for nuclei mass fractions, used as the default value.</p></li>
+<li><p><strong>init</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <p>Different modes to set up the initial composition. Valid choices
 are:</p>
 <ul>
 <li><p>”lightest” : the least massive nucleus is given X = 1</p></li>
@@ -681,7 +681,7 @@ will be set.</p>
 <dd class="field-odd"><p><strong>A</strong> – {Nucleus : A} pairs</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -701,7 +701,7 @@ will be set.</p>
 <dd class="field-odd"><p><strong>Z</strong> – {Nucleus : Z} pairs</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -712,7 +712,7 @@ will be set.</p>
 <dd><p>Return the mean molecular weight</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -726,10 +726,10 @@ new nuclei.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>nuclei</strong> (<em>list</em>) – Input nuclei (either as string names or
+<li><p><strong>nuclei</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Input nuclei (either as string names or
 Nucleus objects) defining the new composition.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Output more information</p></li>
-<li><p><strong>exclude</strong> (<em>bool</em>) – List of nuclei in <cite>nuclei</cite> that only
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Output more information</p></li>
+<li><p><strong>exclude</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – List of nuclei in <cite>nuclei</cite> that only
 exact matches from the original composition can
 map into</p></li>
 </ul>
@@ -764,7 +764,7 @@ The ordering is the same as the <code class="docutils literal notranslate"><span
 <dd class="field-odd"><p><strong>molar</strong> – {Nucleus : Y}</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -788,7 +788,7 @@ The ordering is the same as the <code class="docutils literal notranslate"><span
 composition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -799,7 +799,7 @@ composition.</p>
 <dd><p>Return the sum of the mass fractions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -810,7 +810,7 @@ composition.</p>
 <dd><p>Normalize the mass fractions to sum to 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>half_life_thresh</strong> (<em>float</em>) – The half life value below which to zero the mass fraction
+<dd class="field-odd"><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
 of a nucleus.  This prevents us from making a composition
 that is not really stable.</p>
 </dd>
@@ -825,10 +825,10 @@ together and explode into bar chart</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>trace_threshold</strong> (<em>float</em>) – the threshold to consider a component to be trace.</p></li>
-<li><p><strong>hard_limit</strong> (<em>float</em>) – limit below which an abundance will not be included
+<li><p><strong>trace_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the threshold to consider a component to be trace.</p></li>
+<li><p><strong>hard_limit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – limit below which an abundance will not be included
 in the trace nuclei wedget of the plot.</p></li>
-<li><p><strong>size</strong> (<em>tuple</em>) – width, height of the plot in inches</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – width, height of the plot in inches</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -843,7 +843,7 @@ in the trace nuclei wedget of the plot.</p></li>
 <dd><p>Set all species to the same scalar value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>xval</strong> (<em>float</em>) – mass fraction value for all species</p>
+<dd class="field-odd"><p><strong>xval</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – mass fraction value for all species</p>
 </dd>
 </dl>
 </dd></dl>
@@ -860,7 +860,7 @@ removed in version 3.3.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arr</strong> (<em>list</em><em>, </em><em>tuple</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -878,7 +878,7 @@ removed in version 3.3.</p>
 in arr, <cite>get_nuclei()</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>arr</strong> (<em>list</em><em>, </em><em>tuple</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
+<dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -891,7 +891,7 @@ in arr, <cite>get_nuclei()</cite></p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus to set</p></li>
-<li><p><strong>xval</strong> (<em>float</em>)</p></li>
+<li><p><strong>xval</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -905,8 +905,8 @@ parameters alpha and specified rng seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha</strong> (<em>list</em><em>, </em><em>tuple</em><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – distribution length for the Dirichlet distribution</p></li>
-<li><p><strong>seed</strong> (<em>float</em>) – seed for the random number generator</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – distribution length for the Dirichlet distribution</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – seed for the random number generator</p></li>
 </ul>
 </dd>
 </dl>
@@ -920,8 +920,8 @@ parameters alpha and specified rng seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Z</strong> (<em>float</em>) – The desired metalicity</p></li>
-<li><p><strong>half_life_thresh</strong> (<em>float</em>) – The half life value below which to zero the mass fraction
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The desired metalicity</p></li>
+<li><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
 of a nucleus.  This prevents us from making a composition
 that is not really stable.</p></li>
 </ul>
@@ -935,7 +935,7 @@ that is not really stable.</p></li>
 <dd><p>Return the electron fraction of the composition</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -946,7 +946,7 @@ that is not really stable.</p></li>
 <dd><p>Return the mean charge, Zbar</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -961,10 +961,10 @@ that is not really stable.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Z</strong> (<em>float</em>) – Target metallicity <span class="math notranslate nohighlight">\(Z\)</span> to scale the Lodders solar
+<li><p><strong>Z</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Target metallicity <span class="math notranslate nohighlight">\(Z\)</span> to scale the Lodders solar
 mixture to. If <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default), the unscaled Lodders
 abundances are used.</p></li>
-<li><p><strong>half_life_thresh</strong> (<em>float</em>) – The half life value below which to zero the mass fraction
+<li><p><strong>half_life_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The half life value below which to zero the mass fraction
 of a nucleus.  This prevents us from making a composition
 that is not really stable.</p></li>
 </ul>

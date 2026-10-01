@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.1.0.post36+g3a62308b6 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.1.0.post38+g90846b73c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=9111e036"></script>
+    <script src="_static/documentation_options.js?v=b440f41b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -892,6 +892,7 @@ def energy_release(dY):
     ("N15_p_to_He4_C12_reaclib", numba.float64),
     ("O14_to_N14_beta_pos_reaclib", numba.float64),
     ("O15_to_N15_beta_pos_reaclib", numba.float64),
+    ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
     def __init__(self):
@@ -904,6 +905,7 @@ class RateEval:
         self.N15_p_to_He4_C12_reaclib = np.nan
         self.O14_to_N14_beta_pos_reaclib = np.nan
         self.O15_to_N15_beta_pos_reaclib = np.nan
+        self.dweak_ydot_dYe = np.zeros(9)
 
 @numba.njit()
 def ye(Y):
@@ -1350,6 +1352,12 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     jac[jo15, jo15] = (
        -rate_eval.O15_to_N15_beta_pos_reaclib
        )
+
+    # add ∂λ_weak / ∂Y_e terms now
+    # this uses ∂Y_e/∂Y_i = Z_i
+    for irow in range(nnuc):
+        for jcol in range(nnuc):
+            jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]
 
     return jac
 </pre></div>

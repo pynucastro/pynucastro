@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 3.1.0.post36+g3a62308b6 documentation</title>
+    <title>pynucastro.rates.tabular_rate module &#8212; pynucastro 3.1.0.post38+g90846b73c documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=9111e036"></script>
+    <script src="_static/documentation_options.js?v=b440f41b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -622,8 +622,10 @@
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.eval_jacobian_term()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_py()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_drate_drhoye"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_drate_drhoye()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_nu_loss()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.log_eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.plot()</span></code></a></li>
@@ -647,7 +649,7 @@ tabulated in terms of electron density and temperature.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableIndex">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.rates.tabular_rate.</span></span><span class="sig-name descname"><span class="pre">TableIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TableIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableIndex" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <p>An enum-like container for indexing the electron-capture
 tables.</p>
 <dl class="py attribute">
@@ -701,8 +703,8 @@ methods that allow us to interpolate a variable</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table_rhoy_lines</strong> (<em>int</em>) – the number of the (ρ Y_e) values where the rate is tabulated</p></li>
-<li><p><strong>table_temp_lines</strong> (<em>int</em>) – the number of T values where the rate is tabulated</p></li>
+<li><p><strong>table_rhoy_lines</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the number of the (ρ Y_e) values where the rate is tabulated</p></li>
+<li><p><strong>table_temp_lines</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – the number of T values where the rate is tabulated</p></li>
 <li><p><strong>table_data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – a 2D array giving the tabulated rate data of the form (index,
 component) where index is a 1D flattened representation of
 (rhoY, T).</p></li>
@@ -711,7 +713,7 @@ component) where index is a 1D flattened representation of
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TableInterpolator.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7f775754d7f0&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.TableInterpolator#7fda78790cb0&lt;data:array(float64,</span> <span class="pre">2d,</span> <span class="pre">A),table_rhoy_lines:int32,table_temp_lines:int32,rhoy:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A),temp:array(float64,</span> <span class="pre">1d,</span> <span class="pre">A)&gt;</span></span><a class="headerlink" href="#pynucastro.rates.tabular_rate.TableInterpolator.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -727,7 +729,7 @@ instead.  <code class="docutils literal notranslate"><span class="pre">TabularRa
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rfile</strong> (<em>str</em><em>, </em><em>pathlib.Path</em><em>, </em><em>io.StringIO</em>) – the file containing the data table</p>
+<dd class="field-odd"><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.14)"><em>io.StringIO</em></a>) – the file containing the data table</p>
 </dd>
 </dl>
 </dd></dl>
@@ -739,9 +741,35 @@ instead.  <code class="docutils literal notranslate"><span class="pre">TabularRa
 <p>A rate tabulated in terms of log10(ρ Y_e) and log10(T).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>rfile</strong> (<em>str</em><em>, </em><em>pathlib.Path</em><em>, </em><em>io.StringIO</em>) – the file containing the data table</p>
+<dd class="field-odd"><p><strong>rfile</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><em>pathlib.Path</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/io.html#io.StringIO" title="(in Python v3.14)"><em>io.StringIO</em></a>) – the file containing the data table</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term">
+<span class="sig-name descname"><span class="pre">eval_jacobian_term</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_i</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.eval_jacobian_term"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate ∂flux/∂(y_i), the derivative of the rate with
+respect to <code class="docutils literal notranslate"><span class="pre">y_i</span></code>.  This flux term has the full composition
+dependence, i.e., for a decay rate:</p>
+<p>flux = Y(p) λ(ρY_e, T)</p>
+<p>where p is the parent nucleus.  Note that there are 2 contributions,</p>
+<p>∂flux/∂(y_i) = δ_{ip} λ + Y(p) ρ ∂λ/∂(ρY_e) Z_i</p>
+<p>where we used ∂Y_e/∂Y_i = Z_i</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information used to
+evaluate rates. It knows about (rho, T, composition).</p></li>
+<li><p><strong>y_i</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus we are differentiating with respect to</p></li>
+<li><p><strong>screen_func</strong> (<em>Callable</em>) – Screening doesn’t apply for electron-capture / decay rates, but
+we include the argument here to ensure the interface is standard.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.function_string_cxx">
 <span class="sig-name descname"><span class="pre">function_string_cxx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'double'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifiers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave_open</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.function_string_cxx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_cxx" title="Link to this definition">#</a></dt>
@@ -750,19 +778,19 @@ the rate</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dtype</strong> (<em>str</em>) – The C++ datatype to use for all declarations</p></li>
-<li><p><strong>specifiers</strong> (<em>str</em>) – C++ specifiers to add before each function declaration
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The C++ datatype to use for all declarations</p></li>
+<li><p><strong>specifiers</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – C++ specifiers to add before each function declaration
 (i.e. “inline”)</p></li>
-<li><p><strong>leave_open</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">true</span></code>, then we leave the function unclosed (no “}”
+<li><p><strong>leave_open</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">true</span></code>, then we leave the function unclosed (no “}”
 at the end).  This can allow additional functions to add
 to this output.</p></li>
-<li><p><strong>extra_args</strong> (<em>list</em><em>, </em><em>tuple</em>) – A list of strings representing additional arguments that
+<li><p><strong>extra_args</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A list of strings representing additional arguments that
 should be appended to the argument list when defining the
 function interface.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -773,7 +801,23 @@ function interface.</p></li>
 <dd><p>Construct the python function that computes the rate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.rates.tabular_rate.TabularWeakRate.get_drate_drhoye">
+<span class="sig-name descname"><span class="pre">get_drate_drhoye</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/rates/tabular_rate.html#TabularWeakRate.get_drate_drhoye"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_drate_drhoye" title="Link to this definition">#</a></dt>
+<dd><p>Evaluate the ∂λ/∂(ρY_e) for the rate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.ThermoState" title="pynucastro.rates.rate.ThermoState"><em>ThermoState</em></a>) – ThermoState containing relevant thermodynamic information
+used to evaluate the rate derivative loss. It knows about
+(rho, T, composition).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -788,7 +832,7 @@ function interface.</p></li>
 evaluate neutrino loss. It knows about (rho, T, composition).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -800,9 +844,9 @@ evaluate neutrino loss. It knows about (rho, T, composition).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>T</strong> (<em>float</em>) – the temperature to evaluate the rate at</p></li>
-<li><p><strong>rho</strong> (<em>float</em>) – the density to evaluate the rate at.</p></li>
-<li><p><strong>comp</strong> (<em>float</em>) – the composition (of type
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the temperature to evaluate the rate at</p></li>
+<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the density to evaluate the rate at.</p></li>
+<li><p><strong>comp</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – the composition (of type
 <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Composition</span></code></a>)
 to evaluate the rate with.</p></li>
 <li><p><strong>screen_func</strong> (<em>Callable</em>) – one of the screening functions from <a class="reference internal" href="pynucastro.screening.html#module-pynucastro.screening" title="pynucastro.screening"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pynucastro.screening</span></code></a>
@@ -811,7 +855,7 @@ Unused for Tabular weak rates since screening does not affect weak reactions.</p
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -824,12 +868,12 @@ log10(T) plane.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Tmin</strong> (<em>float</em>) – minimum temperature for the plot</p></li>
-<li><p><strong>Tmax</strong> (<em>float</em>) – maximum temperature for the plot</p></li>
-<li><p><strong>rhoYmin</strong> (<em>float</em>) – minimum (ρ Y_e) for the plto</p></li>
-<li><p><strong>rhoYmax</strong> (<em>float</em>) – maximum (ρ Y_e) for the plto</p></li>
-<li><p><strong>color_field</strong> (<em>str</em>) – the field to plot.  Possible values are “rate” or “nu_loss”</p></li>
-<li><p><strong>figsize</strong> (<em>tuple</em>) – the horizontal, vertical size (in inches) for the plot</p></li>
+<li><p><strong>Tmin</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – minimum temperature for the plot</p></li>
+<li><p><strong>Tmax</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – maximum temperature for the plot</p></li>
+<li><p><strong>rhoYmin</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – minimum (ρ Y_e) for the plto</p></li>
+<li><p><strong>rhoYmax</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – maximum (ρ Y_e) for the plto</p></li>
+<li><p><strong>color_field</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the field to plot.  Possible values are “rate” or “nu_loss”</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – the horizontal, vertical size (in inches) for the plot</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -906,8 +950,10 @@ log10(T) plane.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularRate"><code class="docutils literal notranslate"><span class="pre">TabularRate</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.eval_jacobian_term()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_cxx"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_cxx()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.function_string_py"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.function_string_py()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_drate_drhoye"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_drate_drhoye()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.get_nu_loss"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.get_nu_loss()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.log_eval"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.log_eval()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.rates.tabular_rate.TabularWeakRate.plot"><code class="docutils literal notranslate"><span class="pre">TabularWeakRate.plot()</span></code></a></li>
