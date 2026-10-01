@@ -176,6 +176,14 @@ void jac_nuc(const burn_t& state,
 
     <jacnuc>(1)
 
+    // add ∂λ_weak / ∂Y_e terms now
+    // this uses ∂Y_e/∂Y_i = Z_i
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            jac.set(irow, jcol, jac.get(irow, jcol) + rate_eval.dweak_ydot_dYe(irow) * zion[jcol-1]);
+        }
+    }
+
 }
 
 
