@@ -1067,7 +1067,7 @@ class PythonNetwork(RateCollection):
             close_file = False
         else:
             outfile = Path(outfile)
-            of = outfile.open("w")
+            of = outfile.open("w", encoding="utf-8")
             close_file = True
 
         indent = 4*" "
@@ -1156,6 +1156,7 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         for r in self.all_rates:
             of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
                 for n in nucs:
@@ -1167,6 +1168,7 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         for r in self.all_rates:
             of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+        of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
                 for n in nucs:
@@ -1273,6 +1275,13 @@ class PythonNetwork(RateCollection):
         for n_i in self.unique_nuclei:
             for n_j in self.unique_nuclei:
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        # now the correction for the Ye dependence in weak rates
+        of.write(f"{indent}# add ∂λ_weak / ∂Y_e terms now\n")
+        of.write(f"{indent}# this uses ∂Y_e/∂Y_i = Z_i\n")
+        of.write(f"{indent}for irow in range(nnuc):\n")
+        of.write(f"{indent}    for jcol in range(nnuc):\n")
+        of.write(f"{indent}        jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]\n\n")
 
         of.write(f"{indent}return jac\n")
 
