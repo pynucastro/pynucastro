@@ -128,6 +128,15 @@ class TableInterpolator:
 
         return irhoy * self.table_temp_lines + jtemp
 
+    def _interpolate_1d(self, xi, fhi, flo, xlo, xhi):
+        """Find the data value at xi via linear interpolation between
+        points (xlo, flo) and (xhi, fhi).
+
+        """
+
+        f = flo + (fhi - flo) * (xi - xlo) / (xhi - xlo)
+        return f
+
     def interpolate(self, logrhoy, logT, component):
         """Given logrhoy and logT, do bilinear interpolation to
         find the value of the data component in the table
@@ -148,33 +157,21 @@ class TableInterpolator:
 
         """
 
-        # We are going to do bilinear interpolation.  We create a
-        # polynomial of the form:
-        #
-        # f = A [log(rho) - log(rho_i)] [log(T) - log(T_j)] +
-        #     B [log(rho) - log(rho_i)] +
-        #     C [log(T) - log(T_j)] +
-        #     D
-        #
-        # we then find the i,j such that our point is in the
-        # box with corners (i,j) to (i+1,j+1), and solve for
-        # A, B, C, D
-
-        # find the T and rhoY in the data table corresponding to the
-        # lower left
-
         if logT < self.temp.min() or logT > self.temp.max():
             raise ValueError("temperature out of table bounds")
 
         if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
             raise ValueError("rhoy out of table bounds")
 
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
         irhoy = self._get_logrhoy_idx(logrhoy)
         jT = self._get_logT_idx(logT)
 
         # note: rhoy and T are already stored as log
 
-        dlogrho = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+        dlogrhoy = self.rhoy[irhoy+1] - self.rhoy[irhoy]
         dlogT = self.temp[jT+1] - self.temp[jT]
 
         # get the data at the 4 points
@@ -191,15 +188,72 @@ class TableInterpolator:
         idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
         f_ip1jp1 = self.data[idx, component]
 
-        D = f_ij
-        C = (f_ijp1 - f_ij) / dlogT
-        B = (f_ip1j - f_ij) / dlogrho
-        A = (f_ip1jp1 - B * dlogrho - C * dlogT - D) / (dlogrho * dlogT)
+        u = (logrhoy - self.rhoy[irhoy]) / dlogrhoy
+        v = (logT - self.temp[jT]) / dlogT
 
-        r = (A * (logrhoy - self.rhoy[irhoy]) * (logT - self.temp[jT]) +
-             B * (logrhoy - self.rhoy[irhoy]) + C * (logT - self.temp[jT]) + D)
+        E = f_ij
+        C = f_ijp1 - f_ij
+        B = f_ip1j - f_ij
+        A = f_ip1jp1 - f_ip1j - f_ijp1 + f_ij
 
-        return r
+        return A * u * v + B * u + C * v + E
+
+    def interpolate_dlogrhoy(self, logrhoy, logT, component):
+        """Given logrhoy and logT, compute the derivative, ∂log(q)/∂log(ρY_e)
+        of component q from the data table.  This is done by differentiating
+        the bilinear interpolant.
+
+        Parameters
+        ----------
+        logrhoy : float
+            log10(ρ Y_e) to interpolate at
+        logT : float
+            log10(T) to interpolate at
+        component : int
+            the component from the data table we are interpolating.
+            This should correspond to a :py:class:`TableIndex` component.
+
+        Returns
+        -------
+        float
+
+        """
+
+        if logT < self.temp.min() or logT > self.temp.max():
+            raise ValueError("temperature out of table bounds")
+
+        if logrhoy < self.rhoy.min() or logrhoy > self.rhoy.max():
+            raise ValueError("rhoy out of table bounds")
+
+        # find the T and rhoY in the data table corresponding to the
+        # lower left
+
+        irhoy = self._get_logrhoy_idx(logrhoy)
+        jT = self._get_logT_idx(logT)
+
+        # note: rhoy and T are already stored as log
+
+        dlogrhoy = self.rhoy[irhoy+1] - self.rhoy[irhoy]
+
+        # get the data at the 4 points
+
+        idx = self._rhoy_T_to_idx(irhoy, jT)
+        f_ij = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT)
+        f_ip1j = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy, jT+1)
+        f_ijp1 = self.data[idx, component]
+
+        idx = self._rhoy_T_to_idx(irhoy+1, jT+1)
+        f_ip1jp1 = self.data[idx, component]
+
+        dlogr_dlogrhoy_j = (f_ip1j - f_ij) / dlogrhoy
+        dlogr_dlogrhoy_jp1 = (f_ip1jp1 - f_ijp1) / dlogrhoy
+
+        return self._interpolate_1d(logT, dlogr_dlogrhoy_jp1, dlogr_dlogrhoy_j,
+                                    self.temp[jT], self.temp[jT+1])
 
 
 class TabularWeakRate(Rate):
@@ -235,7 +289,9 @@ class TabularWeakRate(Rate):
                          rate_source=self.rfile_path.parent.name,
                          label="weaktab")
 
+        self.rate_eval_needs_rho = True
         self.rate_eval_needs_logrhoye = True
+        self.rate_eval_needs_rhoye = True
 
         # we work from T not TFactors
         self.rate_eval_needs_tfactors = False
@@ -370,7 +426,7 @@ class TabularWeakRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, log_T, log_rhoY, Y):\n"
+        fstring += f"def {self.fname}(rate_eval, T, log_T, rho, log_rhoY, Y):\n"
         fstring += f"    # {self.rid}\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
@@ -378,11 +434,15 @@ class TabularWeakRate(Rate):
         fstring += f"    r = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)\n"
         fstring += f"    enu = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)\n"
         fstring += f"    egamma = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)\n\n"
+        fstring += f"    drate_drhoye = {self.fname}_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)\n\n"
 
         fstring += f"    rate_eval.{self.fname} = 10.0**r\n"
         fstring += "    edot_nu = -10.0**enu\n"
         fstring += "    edot_gamma = 10.0**egamma\n"
+        fstring += "    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)\n"
         fstring += f"    rate_eval.enuc_weak += N_A * Y[j{self.reactants[0].raw}] * (edot_nu + edot_gamma)\n\n"
+        fstring += f"    rate_eval.dweak_ydot_dYe[j{self.reactants[0].raw}] -= rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n"
+        fstring += f"    rate_eval.dweak_ydot_dYe[j{self.products[0].raw}] += rho * Y[j{self.reactants[0].raw}] * drate_drhoye;\n\n"
 
         return fstring
 
@@ -427,12 +487,24 @@ class TabularWeakRate(Rate):
         fstring += "    weak_rate_t table_values{};\n"
         fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
         fstring += f"    tabular_evaluate<do_T_derivatives>({self.table_index_name}_meta, {self.table_index_name}_rhoy, {self.table_index_name}_temp, {self.table_index_name}_data,\n"
-        fstring += "                                        log_rhoy, log_temp, temp, table_values);\n\n"
+        fstring += "                                        log_rhoy, rhoy, log_temp, temp, table_values);\n\n"
 
         fstring += f"    rate_eval.screened_rates(k_{self.fname}) = table_values.rate;\n"
 
         fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
-        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dT;\n"
+
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = table_values.drate_dT;\n\n"
+        fstring += f"        // accumulate ∂/∂Y_e contributions to {self.reactants[0]!s} and {self.products[0]!s}\n"
+        fstring += f"        // this is the derivative of ∂Y({self.reactants[0]!s})/∂t = -Y({self.reactants[0]!s}) λ and\n"
+        fstring += f"        //                           ∂Y({self.products[0]!s})/∂t = +Y({self.reactants[0]!s}) λ\n"
+        fstring += f"        rate_eval.dweak_ydot_dYe({self.reactants[0].cindex()}) -= rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n"
+        fstring += f"        rate_eval.dweak_ydot_dYe({self.products[0].cindex()}) += rho * Y({self.reactants[0].cindex()}) * table_values.drate_drhoye;\n\n"
+        fstring += "        // also accumulate the derivatives of ε_{ν,weak} with respect to T and Y\n"
+        fstring += f"        rate_eval.denuc_weak_dY({self.reactants[0].cindex()}) += C::n_A * (table_values.enu + table_values.gamma);\n"
+        fstring += f"        rate_eval.denuc_weak_dT += C::n_A * Y({self.reactants[0].cindex()}) * table_values.denu_dT;\n"
+        fstring += "        // finally the derivatives of ε_{ν,weak} with respect to Ye\n"
+        fstring += f"        rate_eval.denuc_weak_dYe += C::n_A * rho * Y({self.reactants[0].cindex()}) * table_values.denu_drhoye;\n"
+
         fstring += "    }\n\n"
 
         fstring += f"    rate_eval.enuc_weak += C::n_A * Y({self.reactants[0].cindex()}) * (table_values.enu + table_values.gamma);\n"
@@ -472,7 +544,7 @@ class TabularWeakRate(Rate):
 
         rhoY = rho * comp.ye
         log10_r = self.interpolator.interpolate(np.log10(rhoY), np.log10(T),
-                                          TableIndex.RATE.value)
+                                                         TableIndex.RATE.value)
         return log10_r * np.log(10)
 
     @need_state
@@ -495,6 +567,75 @@ class TabularWeakRate(Rate):
         r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
                                           TableIndex.NU.value)
         return 10**r
+
+    @need_state
+    def get_drate_drhoye(self, state):
+        """Evaluate the ∂λ/∂(ρY_e) for the rate.
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information
+            used to evaluate the rate derivative loss. It knows about
+            (rho, T, composition).
+
+        Returns
+        -------
+        float
+
+        """
+
+        rhoY = state.rho * state.ye
+        log10_r = self.interpolator.interpolate(np.log10(rhoY), np.log10(state.T),
+                                                         TableIndex.RATE.value)
+        r = 10.0**log10_r
+
+        dlogr_dlogrhoye = self.interpolator.interpolate_dlogrhoy(np.log10(rhoY), np.log10(state.T),
+                                                                 TableIndex.RATE.value)
+
+        dr_drhoye = r * dlogr_dlogrhoye / rhoY
+        return dr_drhoye
+
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
+                           screen_func=None):
+        """Evaluate ∂flux/∂(y_i), the derivative of the rate with
+        respect to ``y_i``.  This flux term has the full composition
+        dependence, i.e., for a decay rate:
+
+        flux = Y(p) λ(ρY_e, T)
+
+        where p is the parent nucleus.  Note that there are 2 contributions,
+
+        ∂flux/∂(y_i) = δ_{ip} λ + Y(p) ρ ∂λ/∂(ρY_e) Z_i
+
+        where we used ∂Y_e/∂Y_i = Z_i
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
+        y_i : Nucleus
+            the nucleus we are differentiating with respect to
+        screen_func : Callable
+            Screening doesn't apply for electron-capture / decay rates, but
+            we include the argument here to ensure the interface is standard.
+
+        Returns
+        -------
+        float
+
+        """
+
+        explicit_term = super().eval_jacobian_term(state, y_i,
+                                                   screen_func=screen_func)
+
+        parent = self.reactants[0]
+        Yp = state.comp[parent] / parent.A
+        ye_term = state.rho * Yp * self.get_drate_drhoye(state)
+
+        return explicit_term + ye_term * y_i.Z
 
     def plot(self, *, Tmin=None, Tmax=None, rhoYmin=None, rhoYmax=None,
              color_field='rate', figsize=(10, 10)):

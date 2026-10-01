@@ -369,8 +369,8 @@ class RateCollection:
         reverse = None
 
         for rr in reverse_rates:
-            if sorted(forward_rate.reactants, key=lambda x: x.A) == sorted(rr.products, key=lambda x: x.A) and \
-               sorted(forward_rate.products, key=lambda x: x.A) == sorted(rr.reactants, key=lambda x: x.A):
+            if sorted(forward_rate.reactants) == sorted(rr.products) and \
+               sorted(forward_rate.products) == sorted(rr.reactants):
                 reverse = rr
                 break
 
@@ -669,6 +669,10 @@ class RateCollection:
 
         for rate in set(rates_to_delete):
             self.rates.remove(rate)
+
+        # if we requested removing an inert nucleus, also remove it
+        if self.inert_nuclei is not None:
+            self.inert_nuclei = [nuc for nuc in self.inert_nuclei if nuc not in nuc_list]
 
         self._build_collection()
 
@@ -1173,8 +1177,9 @@ class RateCollection:
     @need_state
     def evaluate_jacobian(self, state, *,
                           screen_func=None, exclude_rates=None):
-        """Return an array of the form J_ij = dYdot_i/dY_j for the
-        network
+        """Return an array of the form J_ij = ∂Ẏ_i/∂Y_j for the
+        network.  The i and j indices are in the order of
+        ``RateCollection.unique_nuclei``.
 
         Parameters
         ----------
@@ -1200,31 +1205,33 @@ class RateCollection:
         nnuc = len(self.unique_nuclei)
         jac = np.zeros((nnuc, nnuc), dtype=np.float64)
 
+        # first get the composition terms from the explicit molar
+        # fraction terms and any molar fraction dependency built into
+        # the rate itself (typically an ApproximateRate)
+
         for i, n_i in enumerate(self.unique_nuclei):
             for j, n_j in enumerate(self.unique_nuclei):
 
-                # we are considering dYdot(n_i) / dY(n_j)
+                # we are considering ∂Ẏ(n_i) / ∂Y(n_j)
 
                 jac[i, j] = 0.0
 
-                for r in self.nuclei_consumed[n_i]:
+                seen_rate_ids = set()
+                for r in self.nuclei_consumed[n_i] + self.nuclei_produced[n_i]:
                     if r in exclude_rates:
                         continue
+                    # A rate appearing in both lists contributes only once,
+                    # with its net stoichiometric coefficient.
+                    if id(r) in seen_rate_ids:
+                        continue
+                    seen_rate_ids.add(id(r))
 
-                    # how many of n_i are destroyed by this reaction
-                    c = r.reactant_count(n_i)
+                    # how many of n_i are created or destroyed by this reaction
+                    c = r.product_count(n_i) - r.reactant_count(n_i)
+                    if c == 0:
+                        continue
 
                     # Note eval_jacobian_term already includes screening
-                    jac[i, j] -= c * \
-                        r.eval_jacobian_term(state, n_j,
-                                             screen_func=screen_func)
-
-                for r in self.nuclei_produced[n_i]:
-                    if r in exclude_rates:
-                        continue
-
-                    # how many of n_i are produced by this reaction
-                    c = r.product_count(n_i)
                     jac[i, j] += c * \
                         r.eval_jacobian_term(state, n_j,
                                              screen_func=screen_func)
@@ -1420,6 +1427,9 @@ class RateCollection:
                 for rate in other_by_reactants[key]:
                     if rate not in current_rates and rate not in missing_rates:
                         missing_rates[rate] = "alpha capture"
+
+        if len(missing_rates) > 0:
+            passed_validation = False
 
         if return_dict:
             return passed_validation, missing_rates
@@ -2959,7 +2969,9 @@ class RateCollection:
         plt.ylim(minZ - 0.5, maxZ + 0.6)
 
         # Set plot appearance
-        rat = (maxN - minN) / (maxZ - minZ)
+        span_n = maxN - minN + 1
+        span_z = maxZ - minZ + 1
+        rat = span_n / span_z
         width = np.sqrt(area * rat)
         height = area / width
         fig.set_size_inches(width, height)

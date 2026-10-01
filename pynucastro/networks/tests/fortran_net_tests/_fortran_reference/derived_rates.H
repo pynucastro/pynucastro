@@ -13,7 +13,7 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_Ne20_He4_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache) {
+    void rate_Ne20_He4_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // Ne20 + He4 --> C12 + C12
 
@@ -46,7 +46,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Ne20_He4_to_C12_C12_derived) = rate;
@@ -57,7 +59,7 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_Na23_p_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, part_fun::pf_cache_t& pf_cache) {
+    void rate_Na23_p_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // Na23 + p --> C12 + C12
 
@@ -90,7 +92,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Na23_p_to_C12_C12_derived) = rate;
@@ -101,7 +105,7 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_O16_to_He4_C12_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
+    void rate_O16_to_He4_C12_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // O16 --> He4 + C12
 
@@ -132,7 +136,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         // ReacLib set derived from nac2
@@ -153,7 +159,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_O16_to_He4_C12_derived) = rate;
@@ -164,7 +172,7 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_Mg24_to_He4_Ne20_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
+    void rate_Mg24_to_He4_Ne20_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // Mg24 --> He4 + Ne20
 
@@ -195,7 +203,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         // ReacLib set derived from il10r
@@ -214,7 +224,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         // ReacLib set derived from il10r
@@ -233,7 +245,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         // ReacLib set derived from il10n
@@ -254,7 +268,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Mg24_to_He4_Ne20_derived) = rate;
@@ -265,7 +281,7 @@ namespace derived_rates {
 
     template <typename T>
     inline
-    void rate_Mg24_to_n_Mg23_derived(T& rate_eval, const tf_t& tfactors, part_fun::pf_cache_t& pf_cache) {
+    void rate_Mg24_to_n_Mg23_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
         // Mg24 --> n + Mg23
 
@@ -296,7 +312,9 @@ namespace derived_rates {
         set_rate = std::exp(ln_set_rate);
         rate += set_rate;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            if (ln_set_rate > -230.0_rt) {
+                drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9_rt;
+            }
         }
 
         rate_eval.screened_rates(k_Mg24_to_n_Mg23_derived) = rate;
@@ -306,7 +324,7 @@ namespace derived_rates {
     }
 
 
-    template <int do_T_derivatives, typename T>
+    template <typename T>
     inline
     void
     fill_rates([[maybe_unused]] const tf_t& tfactors,

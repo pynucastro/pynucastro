@@ -97,6 +97,7 @@ def energy_release(dY):
     ("He4_He4_He4_to_C12_reaclib", numba.float64),
     ("Na23_to_Ne23_electron_capture_weaktab", numba.float64),
     ("Ne23_to_Na23_beta_neg_weaktab", numba.float64),
+    ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
     def __init__(self):
@@ -109,6 +110,7 @@ class RateEval:
         self.He4_He4_He4_to_C12_reaclib = np.nan
         self.Na23_to_Ne23_electron_capture_weaktab = np.nan
         self.Ne23_to_Na23_beta_neg_weaktab = np.nan
+        self.dweak_ydot_dYe = np.zeros(9)
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
 # load data for Na23 --> Ne23
@@ -129,7 +131,7 @@ Ne23_to_Na23_beta_neg_weaktab_info = (
 
 @numba.njit()
 def ye(Y):
-    return np.sum(Z * Y)/np.sum(A * Y)
+    return np.sum(Z * Y)
 
 @numba.njit()
 def C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=0.0):
@@ -245,30 +247,42 @@ def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.He4_He4_He4_to_C12_reaclib = rate
 
 @numba.njit()
-def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T, log_rhoY, Y):
+def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T, rho, log_rhoY, Y):
     # Na23 --> Ne23
     Na23_to_Ne23_electron_capture_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_electron_capture_weaktab_info)
     r = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
     enu = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
     egamma = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
 
+    drate_drhoye = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)
+
     rate_eval.Na23_to_Ne23_electron_capture_weaktab = 10.0**r
     edot_nu = -10.0**enu
     edot_gamma = 10.0**egamma
+    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)
     rate_eval.enuc_weak += N_A * Y[jna23] * (edot_nu + edot_gamma)
 
+    rate_eval.dweak_ydot_dYe[jna23] -= rho * Y[jna23] * drate_drhoye;
+    rate_eval.dweak_ydot_dYe[jne23] += rho * Y[jna23] * drate_drhoye;
+
 @numba.njit()
-def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T, log_rhoY, Y):
+def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T, rho, log_rhoY, Y):
     # Ne23 --> Na23
     Ne23_to_Na23_beta_neg_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_beta_neg_weaktab_info)
     r = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
     enu = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.NU.value)
     egamma = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)
 
+    drate_drhoye = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)
+
     rate_eval.Ne23_to_Na23_beta_neg_weaktab = 10.0**r
     edot_nu = -10.0**enu
     edot_gamma = 10.0**egamma
+    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)
     rate_eval.enuc_weak += N_A * Y[jne23] * (edot_nu + edot_gamma)
+
+    rate_eval.dweak_ydot_dYe[jne23] -= rho * Y[jne23] * drate_drhoye;
+    rate_eval.dweak_ydot_dYe[jna23] += rho * Y[jne23] * drate_drhoye;
 
 def rhs(t, Y, rho, T, screen_func=None):
     return rhs_eq(t, Y, rho, T, screen_func)
@@ -309,8 +323,8 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
 
     # tabular rates
-    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
-    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, log_rhoY=log_rhoY, Y=Y)
+    Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
+    Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
 
     return rate_eval
 
@@ -455,5 +469,11 @@ def jacobian_eq(t, Y, rho, T, screen_func):
     jac[jmg23, jc12] = (
        +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.C12_C12_to_n_Mg23_reaclib
        )
+
+    # add ∂λ_weak / ∂Y_e terms now
+    # this uses ∂Y_e/∂Y_i = Z_i
+    for irow in range(nnuc):
+        for jcol in range(nnuc):
+            jac[irow, jcol] += rate_eval.dweak_ydot_dYe[irow] * Z[jcol]
 
     return jac
