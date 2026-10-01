@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post35+g9e5a0eb8f documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post37+gd8cccea20 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=ee99acbe"></script>
+    <script src="../../../_static/documentation_options.js?v=188d31a2"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -723,7 +723,7 @@
             <span class="k">if</span> <span class="n">odir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">outfile</span> <span class="o">=</span> <span class="n">odir</span><span class="o">/</span><span class="n">outfile</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tfile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">ifile</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">of</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">ifile</span><span class="p">:</span>
                     <span class="n">ls</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="n">foundkey</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1070,7 +1070,7 @@
                              <span class="n">namespace</span><span class="o">=</span><span class="s2">"branched_rates"</span><span class="p">)</span>
 
         <span class="c1"># Now do tabular weak rates explicitly</span>
-        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">tabular_weak_rates::fill_rates(state.T, rhoy, Y, rate_eval);</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
         <span class="c1"># Compose and write ydot for all weak reactions</span>
@@ -1110,6 +1110,8 @@
         <span class="c1"># now make the Jacobian</span>
         <span class="n">n_unique_nuclei</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">jnj</span><span class="p">,</span> <span class="n">nj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">// </span><span class="si">{</span><span class="n">nj</span><span class="si">!s}</span><span class="s2"> row</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">ini</span><span class="p">,</span> <span class="n">ni</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
                 <span class="n">jac_idx</span> <span class="o">=</span> <span class="n">n_unique_nuclei</span><span class="o">*</span><span class="n">jnj</span> <span class="o">+</span> <span class="n">ini</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_null_entries</span><span class="p">[</span><span class="n">jac_idx</span><span class="p">]:</span>
@@ -1128,6 +1130,7 @@
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">jac.set(</span><span class="si">{</span><span class="n">nj</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ni</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, scratch);</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="o">*</span><span class="n">n_indent</span><span class="si">}</span><span class="s2">jac.set(</span><span class="si">{</span><span class="n">nj</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ni</span><span class="o">.</span><span class="n">cindex</span><span class="p">()</span><span class="si">}</span><span class="s2">, 0.0);</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_rate_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">n_indent</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"function definitions must be at top level"</span>
@@ -1147,10 +1150,11 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s2">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, Rates::NumScreenPairs&gt;  log_screen;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s2">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, Rates::NumScreenPairs&gt;  dlog_screen_dT;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"#endif</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s2">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, NumSpec&gt;  dweak_ydot_dYe;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> enuc_weak;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">array_namespace</span><span class="si">}</span><span class="s2">Array1D&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">, 1, NumSpec&gt; denuc_weak_dY;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> denuc_weak_dT;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> denuc_weak_dYe;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="c1"># some rates have explicit composition dependencies, so we</span>
         <span class="c1"># want to store their derivatives.  We expect these to be few,</span>
         <span class="c1"># so we will have an explicit entry for each case.</span>
