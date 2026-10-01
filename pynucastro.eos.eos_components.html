@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos.eos_components module &#8212; pynucastro 3.1.0.post32+g9899cf5da documentation</title>
+    <title>pynucastro.eos.eos_components module &#8212; pynucastro 3.1.0.post35+g9e5a0eb8f documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=fcb114c3"></script>
+    <script src="_static/documentation_options.js?v=ee99acbe"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,7 +632,7 @@ electrons + radiation)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.eos.eos_components.EOSComponentState">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.eos.eos_components.</span></span><span class="sig-name descname"><span class="pre">EOSComponentState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dn_drho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dn_dT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_drho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp_dT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">de_drho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">de_dT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/eos_components.html#EOSComponentState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.eos_components.EOSComponentState" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A container to hold a thermodynamic state for a single
 component of a full stellar plasma (i.e., ions, electrons, or
 radiation) that depends on density, temperature, and composition</p>
@@ -641,12 +641,12 @@ radiation) that depends on density, temperature, and composition</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.eos.eos_components.IdealGasEOS">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.eos.eos_components.</span></span><span class="sig-name descname"><span class="pre">IdealGasEOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_electrons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/eos/eos_components.html#IdealGasEOS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.eos_components.IdealGasEOS" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>An ideal gas equation of state for ions (and optionally
 electrons).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>include_electrons</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – do we include electrons together with the ions, assuming
+<dd class="field-odd"><p><strong>include_electrons</strong> (<em>bool</em>) – do we include electrons together with the ions, assuming
 full ionization?</p>
 </dd>
 </dl>
@@ -658,8 +658,8 @@ and composition</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Density (g/cm**3)</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Temperature (K)</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – Density (g/cm**3)</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature (K)</p></li>
 <li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – Composition (abundances of each nucleus)</p></li>
 </ul>
 </dd>
@@ -674,7 +674,7 @@ and composition</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.eos.eos_components.RadiationEOS">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.eos.eos_components.</span></span><span class="sig-name descname"><span class="pre">RadiationEOS</span></span><a class="reference internal" href="_modules/pynucastro/eos/eos_components.html#RadiationEOS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.eos.eos_components.RadiationEOS" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A blackbody radiation equation of state</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.eos.eos_components.RadiationEOS.pe_state">
@@ -684,8 +684,8 @@ and composition</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rho</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Density (g/cm**3)</p></li>
-<li><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Temperature (K)</p></li>
+<li><p><strong>rho</strong> (<em>float</em>) – Density (g/cm**3)</p></li>
+<li><p><strong>T</strong> (<em>float</em>) – Temperature (K)</p></li>
 <li><p><strong>comp</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a>) – Composition (abundances of each nucleus)</p></li>
 </ul>
 </dd>
