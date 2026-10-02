@@ -81,7 +81,7 @@ class TestPythonCustomNetwork:
 
     def test_eval(self, pynet):
         r_custom = pynet.get_rate_by_name("n14(p,g)o15")
-        assert r_custom.eval(1.e8) == approx(2.0377211133509627e-5)
+        assert r_custom.eval(1.e8) == approx(2.0377181715111526e-05)
 
     def test_eval_screening(self, pynet):
         T = 1.e8
@@ -93,7 +93,7 @@ class TestPythonCustomNetwork:
         r = r_custom.eval(T, rho=rho, comp=comp,
                           screen_func=chugunov_2007)
 
-        assert r == approx(0.0001575732699071119)
+        assert r == approx(0.0001575730424199865)
 
     def test_ydot_string(self, pynet):
 
@@ -116,7 +116,7 @@ class TestPythonCustomNetwork:
         func = \
 """@numba.njit()
 def N14_p_to_O15_custom(rate_eval, tf, log_scor=0.0):
-    rate_eval.N14_p_to_O15_custom = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601859314950396)
+    rate_eval.N14_p_to_O15_custom = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858115843468)
 
 """
 
