@@ -239,8 +239,12 @@ class ElectronEOS:
 
         # correct energy to be specific energy
         e_e = E_e / rho
-        dee_drho = (dEe_drho - E_e / rho) / rho
-        dee_dT = dEe_dT / rho
+        dee_drho = 0.0
+        dee_dT = 0.0
+
+        if compute_derivs:
+            dee_drho = (dEe_drho - E_e / rho) / rho
+            dee_dT = dEe_dT / rho
 
         e_pos = 0.0
         dep_drho = 0.0
@@ -248,8 +252,9 @@ class ElectronEOS:
 
         if self.include_positrons:
             e_pos = E_pos / rho
-            dep_drho = (dEp_drho - E_pos / rho) / rho
-            dep_dT = dEp_dT / rho
+            if compute_derivs:
+                dep_drho = (dEp_drho - E_pos / rho) / rho
+                dep_dT = dEp_dT / rho
 
         ele_state = EOSComponentState(eta=eta,
                                       n=n_e, p=p_e, e=e_e,
