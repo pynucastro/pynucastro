@@ -80,7 +80,7 @@ class IdealGasEOS:
         if not self.include_electrons:
             mu = abar
         else:
-            mu = 1.0 / (1.0 / abar + comp.Ye)
+            mu = 1.0 / (1.0 / abar + comp.ye)
 
         n = rho / (mu * constants.m_u)
         p = rho * constants.k * T / (mu * constants.m_u)
