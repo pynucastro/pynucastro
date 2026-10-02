@@ -162,11 +162,6 @@ class Library:
         iterable of `Rate` objects.  If it is a dictionary, then it
         should be keyed by the rate id.
 
-    Attributes
-    ----------
-    num_rates : int
-        the number of rates in the library
-
     """
 
     def __init__(self, rates=None):
