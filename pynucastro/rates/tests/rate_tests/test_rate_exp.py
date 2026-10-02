@@ -41,4 +41,3 @@ class TestRateExponent:
         # but our derivative should recover the T**2 form from
         # our single set (the last coefficient)
         assert rate.get_rate_exponent(1.e9) == approx(2.0)
-
