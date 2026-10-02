@@ -1,5 +1,89 @@
 # Changelog
 
+## 3.2.0
+
+  * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
+    `BaseCxxNetwork` :
+
+    * create a function to get C++ rate function args (#1522)
+    * remove unneeded template params + simplify screening (#1523)
+    * `TabularWeakRate` now creates a separate rate-filling function
+      for each rate (#1525)
+    * fix tabular weak rate interpolation of rate derivative (#1528)
+    * all C++ rate functions now fill `rate_eval` directly (#1529)
+    * add denu/dT & denu/dY weak rate terms to the Jacobian (#1535)
+    * switch `tabular_evaluate` to use a struct for results (#1540)
+    * remove unneeded `do_T_derivatives` template parameter (#1582)
+    * fix compiler warnings in C++ code (#1588, #1589)
+    * save a few divides in the partition function interp (#1604)
+
+  * `PythonNetwork` / `RateCollection` / general network changes :
+
+    * add composition derivating internal to (nn,γ) to Jacobian
+      (#1537)
+    * add weak rate ∂/∂Y_e contribution to the Jacobian (#1539, #1601)
+    * fix `remove_nuclei` for inert nucleus (#1551)
+    * `RateCollection.validate` should fail if we find missing rates
+      (#1552)
+    * fix potential Inf in `RateCollection.gridplot` aspect ratio
+      (#1553)
+    * fix `find_reverse` / `get_rate_pairs` for nuclei with same mass
+      number (#1554)
+    * add checks on input composition ordering to `integrate_network`
+      (#1559)
+    * `NetworkSolution` now stores its own copy of `unique_nuclei`
+      (#1560)
+    * fix stopping condition in `integrate_network` (#1565)
+    * add `NetworkSolution.comp_at` (#1578)
+    * fix def for `ye()` in exported networks (#1581)
+    * fix NetworkSolution.X_at when a numpy scalar array is passed
+      (#1590)
+
+  * `Library` :
+
+    * fix `Library.write_to_file` argument (#1573)
+    * return empty `Library` if no forward rates found via
+      `forward_for_detailed_balance` (#1574)
+    * fix `Library.remove_rate` when an `id` is passed in (#1575)
+
+  * `ApproximateRate` / `ModifiedRate` :
+
+  * general rate changes:
+
+    * make `_classify_hidden_rate` more robust (#1514)
+    * add `rate_eval_needs_{tfactors,temp}` to rate classes (#1521)
+    * remove `Rate.modify_products` (#1533)
+    * fix dr/dT for `ReacLibRate` and `DerivedRate` if rate is floored
+      (#1542)
+    * change `ReacLibRate.__eq__` to first use super-class (#1564)
+    * add `threshold=sys.maxsize` to `np.array2string` for table
+      writing (#1566)
+
+  * nuclei / screening / partition functions:
+
+    * simplify how we construct the screening pair set (#1536)
+
+  * EOS:
+
+    * fix Ye for fully-ionized ideal gas (#1599)
+    * fix printing of `FermiIntegral` when derivatives are not
+      computed (#1600)
+
+  * git / project infrastructure:
+
+    * split linkcheck off into its own action (#1545)
+    * add concurrency group to pytest-random CI (#1585)
+
+  * documentation:
+
+    * fix inaccuracies / typos in rate dev docs (#1576)
+
+  * testing:
+
+  * helper functionality:
+
+    * add a function to do a topological sort of rates (#1530)
+
 ## 3.1.0
 
   * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
