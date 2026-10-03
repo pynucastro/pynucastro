@@ -8,7 +8,8 @@ from pytest import approx
 
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import BaryonConservationError, ModifiedRate, ReacLibRate, SingleSet
+from pynucastro.rates import (BaryonConservationError, ModifiedRate,
+                              ReacLibRate, SingleSet)
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 from pynucastro.screening.screen import chugunov_2007
 
@@ -479,4 +480,3 @@ class TestReacLibCompare:
         # these Rates should test as different regardless of the ordering
         assert left != right
         assert right != left
-
