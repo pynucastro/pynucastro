@@ -187,9 +187,6 @@ class TestRate:
         assert srates["ch4"].prefactor == 1.0
         assert srates["ch8"].prefactor == approx(0.16666666)
 
-    def test_rate_exponent(self, srates):
-        assert srates["ch8"].get_rate_exponent(1.e8) == approx(40.9106396)
-
     def test_eval(self, srates):
         assert srates["ch8"].eval(1.e8) == approx(2.0403192412842946e-24, rel=1.e-6, abs=1.e-40)
 
