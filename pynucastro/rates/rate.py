@@ -423,7 +423,7 @@ class Rate:
         return self.string
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -448,9 +448,18 @@ class Rate:
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
-        equal if they contain identical reactants and products
+        equal if they use the same equality implementation and contain
+        identical reactants, products, and weak types.
 
         """
+
+        if not isinstance(other, Rate):
+            return NotImplemented
+
+        # Subclasses with more restrictive equality must not compare equal
+        # in only one direction to rates using the base implementation.
+        if type(self).__eq__ is not type(other).__eq__:
+            return False
 
         test1 = self.weak_type == other.weak_type
         test2 = (self.reactants, self.products) == (other.reactants, other.products)

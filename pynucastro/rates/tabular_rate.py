@@ -315,7 +315,7 @@ class TabularWeakRate(Rate):
                                               self.tabular_data_table)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products)))
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
