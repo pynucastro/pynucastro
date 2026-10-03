@@ -20,7 +20,34 @@ operator ``__eq__`` that is used as follows:
 
 * For a ``RateCollection``, we use lists for ``RateCollection.rates``
   and ``RateCollection.all_rates``.  As noted above, to test membership
-  in a list, the ``id`` will be used.
+  in a list, the equality operator will be used.
+
+Hashing and equality
+====================
+
+Rates can also be dictionary keys or set members.  Their hashes use the
+fields compared by their equality operators, independently of display
+strings, ``id``, or ``fname``:
+
+* ``Rate`` and subclasses inheriting its equality compare the reactant and
+  product lists and ``weak_type``.  Rates using different equality
+  implementations compare unequal, so comparisons between base-rate
+  wrappers and specialized rates are symmetric.
+* ``ReacLibRate`` also compares the chapter and the collection of
+  ``SingleSet`` objects, ignoring set order but preserving duplicate counts.
+  Each ``SingleSet`` compares its ordered coefficients, label, and flags.
+* ``TemperatureTabularRate`` and ``TabularWeakRate`` compare reactant and
+  product lists within their respective rate families.  ``StarLibRate``
+  additionally compares ``weak_type`` within the StarLib family.
+
+Fields not used in equality, such as tabulated rate values, must not be
+added to the hash alone.  These comparisons define object identity, not
+numerical equivalence at every temperature and density.
+
+Rates and ``SingleSet`` objects remain mutable.  Do not change their
+equality fields (including nested set coefficients) while using them as
+dictionary keys or set members.  Copy a library rate before modifying it;
+copy its sets and coefficient arrays too if those will be changed.
 
 Descriptive attributes
 ======================

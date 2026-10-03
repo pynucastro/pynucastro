@@ -334,7 +334,9 @@ class ReacLibRate(Rate):
                          use_identical_particle_factor=True)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        # Match the order-independent, multiplicity-sensitive set comparison.
+        return hash((super().__hash__(), self.chapter,
+                     frozenset(Counter(self.sets).items())))
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
