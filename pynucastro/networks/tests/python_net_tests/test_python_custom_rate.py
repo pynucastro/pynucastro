@@ -110,7 +110,8 @@ class TestPythonCustomNetwork:
 
         assert pynet.full_ydot_string(pyna.Nucleus("p")) == dpdt
 
-    @pytest.mark.skipif(sys.platform == "darwin")
+    @pytest.mark.skipif(sys.platform == "darwin",
+                        reason="Mac has different roundoff for logsumexp")
     def test_py_function(self, pynet):
         r_custom = pynet.get_rate_by_name("n14(p,g)o15")
 
