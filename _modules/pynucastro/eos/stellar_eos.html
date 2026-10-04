@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 3.1.0.post42+g9849f59c7 documentation</title>
+    <title>pynucastro.eos.stellar_eos &#8212; pynucastro 3.1.0.post43+g709280ac0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=ed33e34d"></script>
+    <script src="../../../_static/documentation_options.js?v=76e28e72"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -530,9 +530,12 @@
 
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.electron_eos</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElectronEOS</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.eos_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">IdealGasEOS</span><span class="p">,</span> <span class="n">RadiationEOS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.eos_components</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOSComponentState</span><span class="p">,</span> <span class="n">IdealGasEOS</span><span class="p">,</span> <span class="n">RadiationEOS</span>
 
 
 <div class="viewcode-block" id="EOSState">
@@ -595,7 +598,9 @@
 <span class="sd">    ----------</span>
 <span class="sd">    electrons_are_degenerate : bool</span>
 <span class="sd">        Do we treat electrons as a Fermi gas with arbitrary degeneracy</span>
-<span class="sd">        and relativity? or just treat them as an ideal gas?</span>
+<span class="sd">        and relativity? or just treat them as an ideal gas?  Note, if</span>
+<span class="sd">        electrons are not treated as degenerate, then the degeneracy</span>
+<span class="sd">        parameter is not computed and is set to np.nan.</span>
 <span class="sd">    include_positrons : bool</span>
 <span class="sd">        If electrons are Fermi gas, do we consider both positrons and</span>
 <span class="sd">        electrons?</span>
@@ -643,7 +648,13 @@
         <span class="c1"># evaluate the full state</span>
         <span class="n">ion_state</span> <span class="o">=</span> <span class="n">ion_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
         <span class="n">rad_state</span> <span class="o">=</span> <span class="n">rad_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
-        <span class="n">ele_state</span><span class="p">,</span> <span class="n">pos_state</span> <span class="o">=</span> <span class="n">ele_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ele_eos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ele_state</span><span class="p">,</span> <span class="n">pos_state</span> <span class="o">=</span> <span class="n">ele_eos</span><span class="o">.</span><span class="n">pe_state</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># all thermodynamics were already computed in the ideal</span>
+            <span class="c1"># gas case.  We just want to fill in the number density.</span>
+            <span class="n">ele_state</span> <span class="o">=</span> <span class="n">EOSComponentState</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">rho</span><span class="o">*</span><span class="n">comp</span><span class="o">.</span><span class="n">ye</span><span class="o">/</span><span class="n">constants</span><span class="o">.</span><span class="n">m_u</span><span class="p">,</span> <span class="n">eta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">pos_state</span> <span class="o">=</span> <span class="n">EOSComponentState</span><span class="p">()</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">p</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">ion_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">rad_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">ele_state</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="n">pos_state</span><span class="o">.</span><span class="n">e</span>

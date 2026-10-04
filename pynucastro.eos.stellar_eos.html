@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.eos.stellar_eos module &#8212; pynucastro 3.1.0.post42+g9849f59c7 documentation</title>
+    <title>pynucastro.eos.stellar_eos module &#8212; pynucastro 3.1.0.post43+g709280ac0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ed33e34d"></script>
+    <script src="_static/documentation_options.js?v=76e28e72"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -643,7 +643,9 @@ electrons, and radiation.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>electrons_are_degenerate</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Do we treat electrons as a Fermi gas with arbitrary degeneracy
-and relativity? or just treat them as an ideal gas?</p></li>
+and relativity? or just treat them as an ideal gas?  Note, if
+electrons are not treated as degenerate, then the degeneracy
+parameter is not computed and is set to np.nan.</p></li>
 <li><p><strong>include_positrons</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If electrons are Fermi gas, do we consider both positrons and
 electrons?</p></li>
 </ul>
