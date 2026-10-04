@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.eos.electron_eos &#8212; pynucastro 3.1.0.post41+g240e726eb documentation</title>
+    <title>pynucastro.eos.electron_eos &#8212; pynucastro 3.1.0.post42+g9849f59c7 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=d6d9dc20"></script>
+    <script src="../../../_static/documentation_options.js?v=ed33e34d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -770,8 +770,12 @@
 
         <span class="c1"># correct energy to be specific energy</span>
         <span class="n">e_e</span> <span class="o">=</span> <span class="n">E_e</span> <span class="o">/</span> <span class="n">rho</span>
-        <span class="n">dee_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEe_drho</span> <span class="o">-</span> <span class="n">E_e</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
-        <span class="n">dee_dT</span> <span class="o">=</span> <span class="n">dEe_dT</span> <span class="o">/</span> <span class="n">rho</span>
+        <span class="n">dee_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dee_dT</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">compute_derivs</span><span class="p">:</span>
+            <span class="n">dee_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEe_drho</span> <span class="o">-</span> <span class="n">E_e</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
+            <span class="n">dee_dT</span> <span class="o">=</span> <span class="n">dEe_dT</span> <span class="o">/</span> <span class="n">rho</span>
 
         <span class="n">e_pos</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">dep_drho</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -779,8 +783,9 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_positrons</span><span class="p">:</span>
             <span class="n">e_pos</span> <span class="o">=</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span>
-            <span class="n">dep_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEp_drho</span> <span class="o">-</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
-            <span class="n">dep_dT</span> <span class="o">=</span> <span class="n">dEp_dT</span> <span class="o">/</span> <span class="n">rho</span>
+            <span class="k">if</span> <span class="n">compute_derivs</span><span class="p">:</span>
+                <span class="n">dep_drho</span> <span class="o">=</span> <span class="p">(</span><span class="n">dEp_drho</span> <span class="o">-</span> <span class="n">E_pos</span> <span class="o">/</span> <span class="n">rho</span><span class="p">)</span> <span class="o">/</span> <span class="n">rho</span>
+                <span class="n">dep_dT</span> <span class="o">=</span> <span class="n">dEp_dT</span> <span class="o">/</span> <span class="n">rho</span>
 
         <span class="n">ele_state</span> <span class="o">=</span> <span class="n">EOSComponentState</span><span class="p">(</span><span class="n">eta</span><span class="o">=</span><span class="n">eta</span><span class="p">,</span>
                                       <span class="n">n</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p_e</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e_e</span><span class="p">,</span>
