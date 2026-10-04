@@ -36,6 +36,8 @@
     * fix stopping condition in `integrate_network` (#1565)
     * add `NetworkSolution.comp_at` (#1578)
     * fix def for `ye()` in exported networks (#1581)
+    * automate the construction of python rate function arguments
+      (#1583)
     * fix NetworkSolution.X_at when a numpy scalar array is passed
       (#1590)
 
@@ -58,6 +60,7 @@
     * change `ReacLibRate.__eq__` to first use super-class (#1564)
     * add `threshold=sys.maxsize` to `np.array2string` for table
       writing (#1566)
+    * fix subtraction of `Library` objects (#1608)
 
   * nuclei / screening / partition functions:
 
@@ -68,6 +71,9 @@
     * fix Ye for fully-ionized ideal gas (#1599)
     * fix printing of `FermiIntegral` when derivatives are not
       computed (#1600)
+    * fix EOS degeneracy parameter bounds w/ positrons (#1605)
+    * fix `StellarEOS` with `electrons_are_degenerate=False` (#1606)
+    * fox `ElectronEOS` when `compute_derivs=False` (#1607)
 
   * git / project infrastructure:
 
