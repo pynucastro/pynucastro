@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post44+gf761ae0df documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post47+g1516d7558 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f09741ad"></script>
+    <script src="../../../_static/documentation_options.js?v=319ee645"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -535,6 +535,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">logsumexp</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">numba</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
@@ -558,7 +559,7 @@
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.cxx_rate_func_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cxx_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"Real"</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Given a rate, give the list of arguments that are needed to</span>
-<span class="sd">    define the function arguments or call the function.</span>
+<span class="sd">    define the C++ function arguments or call the C++ function.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -626,6 +627,68 @@
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"dlog_scor_dT"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_pfcache</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"pf_cache"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+
+<div class="viewcode-block" id="py_rate_func_args">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.py_rate_func_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">py_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Given a rate, give the list of arguments that are needed to</span>
+<span class="sd">    define the python function arguments or call the python function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r : Rate</span>
+<span class="sd">        The rate whose function we are working with.</span>
+<span class="sd">    mode : str</span>
+<span class="sd">        "definition" if it is for writing the function,</span>
+<span class="sd">        "call" if it is for calling the function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list(str)</span>
+
+<span class="sd">    """</span>
+
+    <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"definition"</span><span class="p">,</span> <span class="s2">"call"</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"definition"</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rate_eval"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"tf"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_T=None"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rho=None"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_rhoY=None"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y=None"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_scor=0"</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rate_eval"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"tf"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_temp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logtemp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_T=log_T"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_rho</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"rho=rho"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_logrhoye</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_rhoY=log_rhoY"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y=Y"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"log_scor_</span><span class="si">{</span><span class="n">r1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r2</span><span class="si">}</span><span class="s2">"</span>
+                            <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">]</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_scor="</span> <span class="o">+</span> <span class="s2">" + "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">screen_terms</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">args</span></div>
 
@@ -1592,6 +1655,69 @@
         <span class="c1"># 2) A list of log_rates, e.g. ReacLib</span>
         <span class="n">log_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="Rate.get_rate_exponent">
+<a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.get_rate_exponent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_exponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""For a rate written as a power law, r = r_0 (T/T0)**nu,</span>
+<span class="sd">        return nu corresponding to T0. This also considers electron</span>
+<span class="sd">        screening effect if screen_func is passed in. The derivative is</span>
+<span class="sd">        evaluated in logarithmic space so finite logarithmic rates remain</span>
+<span class="sd">        usable even when the linear rate underflows or overflows.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T0 : float</span>
+<span class="sd">            the temperature to base the power law from</span>
+<span class="sd">        rho : float</span>
+<span class="sd">            the density to evaluate the rate at (not needed for ReacLib</span>
+<span class="sd">            rates), but needed for evaluating screening effects.</span>
+<span class="sd">        comp : float</span>
+<span class="sd">            the composition (of type</span>
+<span class="sd">            :py:class:`Composition &lt;pynucastro.nucdata.composition.Composition&gt;`)</span>
+<span class="sd">            to evaluate the rate with (not needed for ReacLib rates),</span>
+<span class="sd">            but needed for evaluating screening effects.</span>
+<span class="sd">        screen_func : Callable</span>
+<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
+<span class="sd">            -- if provided, then the rate exponent will include screening correction.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The dimensionless logarithmic temperature derivative.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If T0 is not positive and finite, or the summed logarithmic</span>
+<span class="sd">            rate is nonfinite at either finite-difference temperature.</span>
+<span class="sd">            Empty fits and fits with only negative-infinite logarithmic</span>
+<span class="sd">            rates represent zero rates and have no defined exponent.</span>
+
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">T0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">T0</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"T0 must be positive and finite."</span><span class="p">)</span>
+
+        <span class="c1"># nu = dlog(λ)/dlog(T). Sum the sets before differencing,</span>
+        <span class="c1"># without requiring the linear rate to be representable (i.e.,</span>
+        <span class="c1"># λ might underflow but log(λ) is okay).</span>
+        <span class="n">dlogT</span> <span class="o">=</span> <span class="mf">1.e-5</span>
+        <span class="n">log_rates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="p">(</span><span class="n">T0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">dlogT</span><span class="p">),</span> <span class="n">T0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">dlogT</span><span class="p">)):</span>
+            <span class="c1"># we are differencing in logT.  If there are multiple</span>
+            <span class="c1"># sets, then logsumexp is a stable sum of exponential</span>
+            <span class="c1"># terms</span>
+            <span class="n">log_rate</span> <span class="o">=</span> <span class="n">logsumexp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span>
+                                               <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">log_rate</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Rate exponent requires a finite summed logarithmic rate."</span><span class="p">)</span>
+            <span class="n">log_rates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_rate</span><span class="p">)</span>
+
+        <span class="c1"># compute dlog(λ)/dlog(T)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">log_rates</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">log_rates</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">dlogT</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Rate.eval_full_rate">

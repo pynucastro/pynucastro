@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 3.1.0.post44+gf761ae0df documentation</title>
+    <title>pynucastro.rates.reaclib_rate &#8212; pynucastro 3.1.0.post47+g1516d7558 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f09741ad"></script>
+    <script src="../../../_static/documentation_options.js?v=319ee645"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1395,45 +1395,6 @@
             <span class="n">drdT</span> <span class="o">+=</span> <span class="n">dfdT</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">drdT</span></div>
-
-
-<div class="viewcode-block" id="ReacLibRate.get_rate_exponent">
-<a class="viewcode-back" href="../../../pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.get_rate_exponent">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_rate_exponent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                          <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""For a rate written as a power law, r = r_0 (T/T0)**nu,</span>
-<span class="sd">        return nu corresponding to T0. This also considers electron</span>
-<span class="sd">        screening effect if screen_func is passed in.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        T0 : float</span>
-<span class="sd">            the temperature to base the power law from</span>
-<span class="sd">        rho : float</span>
-<span class="sd">            the density to evaluate the rate at (not needed for ReacLib</span>
-<span class="sd">            rates), but needed for evaluating screening effects.</span>
-<span class="sd">        comp : float</span>
-<span class="sd">            the composition (of type</span>
-<span class="sd">            :py:class:`Composition &lt;pynucastro.nucdata.composition.Composition&gt;`)</span>
-<span class="sd">            to evaluate the rate with (not needed for ReacLib rates),</span>
-<span class="sd">            but needed for evaluating screening effects.</span>
-<span class="sd">        screen_func : Callable</span>
-<span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
-<span class="sd">            -- if provided, then the rate exponent will include screening correction.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-
-<span class="sd">        """</span>
-
-        <span class="c1"># nu = dln r /dln T, so we need dr/dT</span>
-        <span class="n">r1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T0</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-        <span class="n">dT</span> <span class="o">=</span> <span class="mf">1.e-8</span><span class="o">*</span><span class="n">T0</span>
-        <span class="n">r2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T0</span> <span class="o">+</span> <span class="n">dT</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
-
-        <span class="n">drdT</span> <span class="o">=</span> <span class="p">(</span><span class="n">r2</span> <span class="o">-</span> <span class="n">r1</span><span class="p">)</span><span class="o">/</span><span class="n">dT</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">T0</span><span class="o">/</span><span class="n">r1</span><span class="p">)</span><span class="o">*</span><span class="n">drdT</span></div>
 
 
 <div class="viewcode-block" id="ReacLibRate.plot">

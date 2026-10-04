@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.nse_network &#8212; pynucastro 3.1.0.post44+gf761ae0df documentation</title>
+    <title>pynucastro.networks.nse_network &#8212; pynucastro 3.1.0.post47+g1516d7558 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f09741ad"></script>
+    <script src="../../../_static/documentation_options.js?v=319ee645"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -565,10 +565,9 @@
 <span class="sd">        the weak rate neutrino energy loss</span>
 <span class="sd">    comp_reduction_function : Callable</span>
 <span class="sd">        a function that converts the NSE composition into a smaller set</span>
-<span class="sd">        of nuclei.  It takes a Composition object and returns a dictionary</span>
-<span class="sd">        with the nucleus name (like "Ni56") as the key and the corresponding</span>
-<span class="sd">        mass fraction as the value.  It should be ordered in the way you</span>
-<span class="sd">        want the nuclei output into the NSE table file.</span>
+<span class="sd">        of nuclei.  It takes a Composition object and returns a new Composition</span>
+<span class="sd">        object representing the reduced set of nuclei and their abundances.</span>
+
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Ye</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
@@ -893,8 +892,8 @@
 <span class="sd">        Ye_values : numpy.ndarray</span>
 <span class="sd">            values of electron fraction to use in the tabulation</span>
 <span class="sd">        comp_reduction_func : Callable</span>
-<span class="sd">            a function that takes the NSE composition and return a reduced</span>
-<span class="sd">            composition</span>
+<span class="sd">            a function that takes the NSE ``Composition`` object and returns</span>
+<span class="sd">            a new ``Composition`` representing a reduced set of nuclei.</span>
 <span class="sd">        verbose : bool</span>
 <span class="sd">            output progress on creating the table as we go along</span>
 <span class="sd">        outfile : str</span>
@@ -954,7 +953,7 @@
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'Abar'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'&lt;B/A&gt;'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'dYe/dt'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'dAbar/dt'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'d&lt;B/A&gt;/dt'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'e_nu'</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> "</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">nse_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">nse_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">nse_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"X(</span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">)"</span>
                     <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_tmp</span><span class="si">:</span><span class="s2">^15</span><span class="si">}</span><span class="s2"> "</span><span class="p">)</span>
 
@@ -965,7 +964,7 @@
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">abar</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">bea</span><span class="si">:</span><span class="s2">15.10f</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dYedt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dabardt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">dbeadt</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">enu</span><span class="si">:</span><span class="s2">15.8g</span><span class="si">}</span><span class="s2"> "</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">X</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">15.10g</span><span class="si">}</span><span class="s2"> "</span><span class="p">)</span>
                 <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 </div>
