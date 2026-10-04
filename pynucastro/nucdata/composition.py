@@ -374,7 +374,9 @@ class Composition(collections.UserDict):
         -------
         float
         """
-        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
+
+        assert abs(self.get_sum_X() - 1.0) < 1.e-12, "mass fractions must sum to 1"
+        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self)
         return electron_frac
 
     @property
