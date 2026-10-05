@@ -14,7 +14,7 @@ namespace reaclib_rates {
     using namespace Rates;
     using namespace Species;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_C12_C12_to_He4_Ne20_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -54,7 +54,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_C12_C12_to_n_Mg23_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -94,7 +94,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_C12_C12_to_p_Na23_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -134,7 +134,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_C12_He4_to_O16_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -197,7 +197,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_n_to_p_beta_neg_reaclib(T& rate_eval, const tf_t& tfactors) {
 

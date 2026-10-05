@@ -100,19 +100,19 @@ evaluate_vars(const int irhoy_lo, const int jtemp_lo,
 {
     // This function evaluates the 2-D interpolator, for several pairs of rho_ye and temperature.
 
-    int irhoy_hi = irhoy_lo + 1;
-    int jtemp_hi = jtemp_lo + 1;
+    const int irhoy_hi = irhoy_lo + 1;
+    const int jtemp_hi = jtemp_lo + 1;
 
-    amrex::Real rhoy_lo = log_rhoy_table(irhoy_lo);
-    amrex::Real rhoy_hi = log_rhoy_table(irhoy_hi);
+    const amrex::Real rhoy_lo = log_rhoy_table(irhoy_lo);
+    const amrex::Real rhoy_hi = log_rhoy_table(irhoy_hi);
 
-    amrex::Real t_lo = log_temp_table(jtemp_lo);
-    amrex::Real t_hi = log_temp_table(jtemp_hi);
+    const amrex::Real t_lo = log_temp_table(jtemp_lo);
+    const amrex::Real t_hi = log_temp_table(jtemp_hi);
 
-    amrex::Real fij     = data(jtemp_lo, irhoy_lo, component);
-    amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, component);
-    amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, component);
-    amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
+    const amrex::Real fij     = data(jtemp_lo, irhoy_lo, component);
+    const amrex::Real fip1j   = data(jtemp_lo, irhoy_hi, component);
+    const amrex::Real fijp1   = data(jtemp_hi, irhoy_lo, component);
+    const amrex::Real fip1jp1 = data(jtemp_hi, irhoy_hi, component);
 
     amrex::Real r = evaluate_linear_2d(fip1jp1, fip1j, fijp1, fij,
                                        rhoy_hi, rhoy_lo, t_hi, t_lo, log_rhoy, log_temp);

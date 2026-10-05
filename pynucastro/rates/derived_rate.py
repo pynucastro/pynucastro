@@ -297,7 +297,7 @@ class DerivedRate(Rate):
                 args.append(arg)
 
         fstring = ""
-        fstring += "template <typename T>\n"
+        fstring += "template <RateEvaluation T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
@@ -321,13 +321,13 @@ class DerivedRate(Rate):
                     fstring += f"    d{nuc}_log_pf_dT9 = 0.0_rt;\n"
                 fstring += "\n"
 
-            fstring += f"    {dtype} net_log_pf = "
+            fstring += f"    const {dtype} net_log_pf = "
             fstring += " + ".join([f"{nucr}_log_pf" for nucr in self.source_rate.reactants])
             fstring += " - "
             fstring += " - ".join([f"{nucp}_log_pf" for nucp in self.source_rate.products])
             fstring += ";\n"
 
-            fstring += f"    [[maybe_unused]] {dtype} net_dlog_pf_dT9 = "
+            fstring += f"    [[maybe_unused]] const {dtype} net_dlog_pf_dT9 = "
             fstring += " + ".join([f"d{nucr}_log_pf_dT9" for nucr in self.source_rate.reactants])
             fstring += " - "
             fstring += " - ".join([f"d{nucp}_log_pf_dT9" for nucp in self.source_rate.products])
