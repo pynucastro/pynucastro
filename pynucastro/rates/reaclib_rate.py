@@ -827,42 +827,6 @@ class ReacLibRate(Rate):
 
         return drdT
 
-    def get_rate_exponent(self, T0, *, rho=None, comp=None,
-                          screen_func=None):
-        """For a rate written as a power law, r = r_0 (T/T0)**nu,
-        return nu corresponding to T0. This also considers electron
-        screening effect if screen_func is passed in.
-
-        Parameters
-        ----------
-        T0 : float
-            the temperature to base the power law from
-        rho : float
-            the density to evaluate the rate at (not needed for ReacLib
-            rates), but needed for evaluating screening effects.
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates),
-            but needed for evaluating screening effects.
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-            -- if provided, then the rate exponent will include screening correction.
-
-        Returns
-        -------
-        float
-
-        """
-
-        # nu = dln r /dln T, so we need dr/dT
-        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func)
-        dT = 1.e-8*T0
-        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func)
-
-        drdT = (r2 - r1)/dT
-        return (T0/r1)*drdT
-
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
              figsize=(10, 10), *, rho=None, comp=None, screen_func=None):
         """Plot the rate's temperature sensitivity vs temperature
