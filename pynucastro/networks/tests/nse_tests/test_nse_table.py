@@ -44,10 +44,7 @@ class TestNSETable:
         nuc_list = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
                     Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
         reduced_comp = comp.bin_as(nuc_list, exclude=[Nucleus("ni56")])
-        X = []
-        for n in reduced_comp.X:
-            X.append((f"{n}", reduced_comp.X[n]))
-        return X
+        return reduced_comp
 
     def test_generate_table(self, nse_net):
 
