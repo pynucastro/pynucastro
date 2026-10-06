@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working with Rate Objects &#8212; pynucastro 3.1.0.post48+gad2501ae9 documentation</title>
+    <title>Working with Rate Objects &#8212; pynucastro 3.1.0.post49+g00ada78f7 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=1a9a5e32"></script>
+    <script src="_static/documentation_options.js?v=40b8ab83"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -608,6 +608,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-membership">List membership</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hashing-and-equality">Hashing and equality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#descriptive-attributes">Descriptive attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
@@ -638,8 +639,33 @@ operator <code class="docutils literal notranslate"><span class="pre">__eq__</sp
 </li>
 <li><p>For a <code class="docutils literal notranslate"><span class="pre">RateCollection</span></code>, we use lists for <code class="docutils literal notranslate"><span class="pre">RateCollection.rates</span></code>
 and <code class="docutils literal notranslate"><span class="pre">RateCollection.all_rates</span></code>.  As noted above, to test membership
-in a list, the <code class="docutils literal notranslate"><span class="pre">id</span></code> will be used.</p></li>
+in a list, the equality operator will be used.</p></li>
 </ul>
+</section>
+<section id="hashing-and-equality">
+<h2>Hashing and equality<a class="headerlink" href="#hashing-and-equality" title="Link to this heading">#</a></h2>
+<p>Rates can also be dictionary keys or set members.  Their hashes use the
+fields compared by their equality operators, independently of display
+strings, <code class="docutils literal notranslate"><span class="pre">id</span></code>, or <code class="docutils literal notranslate"><span class="pre">fname</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Rate</span></code> and subclasses inheriting its equality compare the reactant and
+product lists and <code class="docutils literal notranslate"><span class="pre">weak_type</span></code>.  Rates using different equality
+implementations compare unequal, so comparisons between base-rate
+wrappers and specialized rates are symmetric.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ReacLibRate</span></code> also compares the chapter and the collection of
+<code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> objects, ignoring set order but preserving duplicate counts.
+Each <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> compares its ordered coefficients, label, and flags.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> and <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> compare reactant and
+product lists within their respective rate families.  <code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code>
+additionally compares <code class="docutils literal notranslate"><span class="pre">weak_type</span></code> within the StarLib family.</p></li>
+</ul>
+<p>Fields not used in equality, such as tabulated rate values, must not be
+added to the hash alone.  These comparisons define object identity, not
+numerical equivalence at every temperature and density.</p>
+<p>Rates and <code class="docutils literal notranslate"><span class="pre">SingleSet</span></code> objects remain mutable.  Do not change their
+equality fields (including nested set coefficients) while using them as
+dictionary keys or set members.  Copy a library rate before modifying it;
+copy its sets and coefficient arrays too if those will be changed.</p>
 </section>
 <section id="descriptive-attributes">
 <h2>Descriptive attributes<a class="headerlink" href="#descriptive-attributes" title="Link to this heading">#</a></h2>
@@ -804,6 +830,7 @@ sets that make up the rate are shared with the copy.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-membership">List membership</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hashing-and-equality">Hashing and equality</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#descriptive-attributes">Descriptive attributes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#copying">Copying</a></li>
 </ul>
