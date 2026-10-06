@@ -612,7 +612,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         """
         contributions = []
         for rate in self.rates:
-            if not rate.screening_pairs:
+            # for approximate rates, we want to look at the effective
+            # screening pairs to capture the overall screening
+            # dependence.  This reduces to screening_pairs for regular
+            # rates.
+            if not rate.get_effective_screening_pairs():
                 continue
             flux = self.symbol_rates.ydot_term_symbol(rate, nuc)
             if flux is not None:
@@ -625,21 +629,29 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f"{self.indent*n_indent}{{\n")
         indent = self.indent * (n_indent + 1)
         of.write(f"{indent}// Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).\n")
-        for variable in ("Ye", "Z2"):
-            of.write(f"{indent}{self.dtype} dscreen_ydot_d{variable}{{0.0_rt}};\n")
+
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dYe{{}};\n")
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dZ2{{}};\n")
+
         for rate, flux in contributions:
             flux_cxx = self._cxxify(sympy.cxxcode(flux, precision=15, standard="c++11"))
             of.write(f"{indent}{{\n")
             of.write(f"{indent}    const {self.dtype} flux = {flux_cxx};\n")
+
+            # we are storing d(log f)/dYe, where f is the screening
+            # factor, so the we can just multiply by the flux to get
+            # the derivative of the screening portion of the flux with
+            # respect to Ye, since dlogf = df/f, the screening factor
+            # cancels.
             for variable in ("Ye", "Z2"):
                 derivative = " + ".join(f"rate_eval.dlog_screen_d{variable}(k_{n1}_{n2})"
-                                        for n1, n2 in rate.screening_pairs)
+                                        for n1, n2 in rate.get_effective_screening_pairs())
                 of.write(f"{indent}    dscreen_ydot_d{variable} += flux * ({derivative});\n")
             of.write(f"{indent}}}\n")
+
         of.write(f"{indent}for (int jcol = 1; jcol <= NumSpec; ++jcol) {{\n")
         of.write(f"{indent}    const {self.dtype} Z = zion[jcol-1];\n")
-        of.write(f"{indent}    jac.set({nuc.cindex()}, jcol, jac.get({nuc.cindex()}, jcol)\n")
-        of.write(f"{indent}            + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);\n")
+        of.write(f"{indent}    jac.add({nuc.cindex()}, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);\n")
         of.write(f"{indent}}}\n")
         of.write(f"{self.indent*n_indent}}}\n")
         of.write("#endif\n")
