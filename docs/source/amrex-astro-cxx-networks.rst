@@ -39,24 +39,16 @@ For the generation of the righthand side of the network itself, we use
 SymPy to build up an expression for each term and then use SymPy's
 `cxxcode <https://docs.sympy.org/latest/modules/printing.html#sympy.printing.codeprinter.cxxcode>`_ function to translate it into C++ code.  This is managed by the :class:`SympyRates <pynucastro.networks.sympy_network_support.SympyRates>` class.
 
-With screening enabled, the molar abundance Jacobian includes the
-composition dependence of each rate's explicit screening pairs.  At fixed
-temperature and density, define :math:`Y_e = \sum_j Z_j Y_j` and
-:math:`Z_2 = \sum_j Z_j^2 Y_j`.  For each row, the generator accumulates
-the signed screened fluxes multiplied by the logarithmic screening
-derivatives with respect to these two quantities.  It then adds
-:math:`S_{Y_e} Z_j + S_{Z_2} Z_j^2` to every composition column, including
-columns for nuclei that do not participate in the reaction.  Fluxes include
-net stoichiometric coefficients and identical-reactant factors; derivatives
-from multiple screening pairs, such as triple-alpha, are summed.
-
-This requires the Microphysics screening interface providing
+With screening enabled, we need to account for both the temperature
+and composition dependence of the screening factor in the Jacobian.
+For composition, derivatives of the screening function with respect to :math:`Y_e =
+\sum_j Z_j Y_j` and :math:`Z_2 = \sum_j Z_j^2 Y_j` are computed and
+used to correct the Jacobian row for the composition dependence.  This
+requires the Microphysics screening interface providing
 ``screening_dual_t`` and derivatives of log screening with respect to
-temperature, :math:`Y_e`, and :math:`Z_2`.  Screening inherited through
-child rates of approximate or branched rates is not included in this
-composition correction.  The simple-C++ screening implementation does
-not yet compute these derivatives; its composition correction remains zero.
-
+temperature, :math:`Y_e`, and :math:`Z_2`.  For temperature, the
+derivative of the screening function is combined with the derivative
+of the rate with respect to temperature.
 
 This will directly write out the C++ code into a collection of headers
 and source files.  These are:
