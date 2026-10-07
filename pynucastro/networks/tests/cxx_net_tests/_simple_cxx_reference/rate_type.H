@@ -17,8 +17,6 @@ struct rate_derivs_t {
 #ifdef SCREENING
     Array1D<Real, 1, Rates::NumScreenPairs>  log_screen;
     Array1D<Real, 1, Rates::NumScreenPairs>  dlog_screen_dT;
-    Array1D<Real, 1, Rates::NumScreenPairs>  dlog_screen_dYe{};
-    Array1D<Real, 1, Rates::NumScreenPairs>  dlog_screen_dZ2{};
 #endif
     Array1D<Real, 1, NumSpec>  dweak_ydot_dYe;
     Real enuc_weak;

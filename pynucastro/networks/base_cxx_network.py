@@ -69,6 +69,14 @@ class BaseCxxNetwork(ABC, RateCollection):
     interprets the collection of rates and nuclei to produce the C++
     code needed to integrate the network.
 
+    Parameters
+    ----------
+    do_screeening_comp_derivs : bool
+        Do we take into account the Jacobian corrections due to
+        composition dependence in screening function?  This requires a
+        screening function that returns derivatives with respect to Ye
+        and Z2.
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +99,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.gpu_device_specifier = ""
         self.dtype = "double"
         self.array_namespace = ""
+
+        # we only support Jacobian corrections due to the Ye and Z2
+        # composition dependence in the screening function if the
+        # screening implementation returns these derivatives
+        self.do_comp_screening_derivs = False
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -284,7 +297,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = True
 
     def _compute_screening_factors_helper(self, n_indent, of, rates,
-                                          do_T_derivatives=True):
+                                          do_T_derivatives=True, do_screening_comp_derivatives=True):
         """Compose the screening factors string given a list of rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
@@ -303,7 +316,11 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
             if do_T_derivatives:
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
-                of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);\n')
+                else:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+
                 of.write(f'{self.indent*(n_indent+1)}}} else {{\n')
                 of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
@@ -313,8 +330,9 @@ class BaseCxxNetwork(ABC, RateCollection):
             if do_T_derivatives:
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                 of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
-                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dYe(k_{n1}_{n2}) = dlog_scor_dYe;\n')
-                of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dZ2(k_{n1}_{n2}) = dlog_scor_dZ2;\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dYe(k_{n1}_{n2}) = dlog_scor_dYe;\n')
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dZ2(k_{n1}_{n2}) = dlog_scor_dZ2;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
             of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -601,7 +619,8 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
-            self._jacnuc_screening(n_indent, of, nj)
+            if self.do_comp_screening_derivs:
+                self._jacnuc_screening(n_indent, of, nj)
             of.write("\n")
 
     def _jacnuc_screening(self, n_indent, of, nuc):
@@ -673,8 +692,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#ifdef SCREENING\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dYe{{}};\n")
-        of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dZ2{{}};\n")
+        if self.do_comp_screening_derivs:
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dYe{{}};\n")
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dZ2{{}};\n")
         of.write("#endif\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec>  dweak_ydot_dYe;\n")
         of.write(f"    {self.dtype} enuc_weak;\n")

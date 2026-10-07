@@ -365,8 +365,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -374,8 +374,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(N, jcol, jac.get(N, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(N, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -405,8 +404,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -414,8 +413,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(H1, jcol, jac.get(H1, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(H1, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -446,8 +444,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -460,8 +458,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(He4, jcol, jac.get(He4, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(He4, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -494,8 +491,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = -screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -518,8 +515,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(C12, jcol, jac.get(C12, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(C12, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -549,8 +545,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_C12));
@@ -558,8 +554,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(O16, jcol, jac.get(O16, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(O16, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -588,8 +583,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -597,8 +592,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(Ne20, jcol, jac.get(Ne20, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(Ne20, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -652,8 +646,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -661,8 +655,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(Na23, jcol, jac.get(Na23, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(Na23, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif
@@ -691,8 +684,8 @@ void jac_nuc(const burn_t& state,
 #ifdef SCREENING
     {
         // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
-        amrex::Real dscreen_ydot_dYe{0.0_rt};
-        amrex::Real dscreen_ydot_dZ2{0.0_rt};
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
         {
             const amrex::Real flux = 0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*amrex::Math::powi<2>(Y(C12))*state.rho;
             dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
@@ -700,8 +693,7 @@ void jac_nuc(const burn_t& state,
         }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
             const amrex::Real Z = zion[jcol-1];
-            jac.set(Mg23, jcol, jac.get(Mg23, jcol)
-                    + dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+            jac.add(Mg23, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
         }
     }
 #endif

@@ -345,6 +345,27 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(He4, S32, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Mg24));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Mg24));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Si28));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Si28));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(He4, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // Mg24 row
 
@@ -359,6 +380,22 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Mg24, S32, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Mg24));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Mg24));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(Mg24, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // Si28 row
 
@@ -376,6 +413,27 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(Si28, S32, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = screened_rates(k_Mg24_He4_to_Si28_approx)*Y(He4)*Y(Mg24)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Mg24));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Mg24));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Si28));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Si28));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(Si28, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // S32 row
 
@@ -390,6 +448,22 @@ void jac_nuc(const burn_t& state,
     scratch = -screened_rates(k_S32_to_Si28_He4_approx);
     jac.set(S32, S32, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = screened_rates(k_Si28_He4_to_S32_approx)*Y(He4)*Y(Si28)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Si28));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Si28));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(S32, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
 
     // add ∂λ_weak / ∂Y_e terms now
