@@ -8,6 +8,7 @@ from operator import mul
 from pathlib import Path
 
 import numpy as np
+from scipy.special import logsumexp
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
@@ -482,7 +483,7 @@ class Rate:
         return self.string
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -507,9 +508,18 @@ class Rate:
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
-        equal if they contain identical reactants and products
+        equal if they use the same equality implementation and contain
+        identical reactants, products, and weak types.
 
         """
+
+        if not isinstance(other, Rate):
+            return NotImplemented
+
+        # Subclasses with more restrictive equality must not compare equal
+        # in only one direction to rates using the base implementation.
+        if type(self).__eq__ is not type(other).__eq__:
+            return False
 
         test1 = self.weak_type == other.weak_type
         test2 = (self.reactants, self.products) == (other.reactants, other.products)
@@ -1072,6 +1082,66 @@ class Rate:
         # 2) A list of log_rates, e.g. ReacLib
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
+
+    def get_rate_exponent(self, T0, *, rho=None, comp=None,
+                          screen_func=None):
+        """For a rate written as a power law, r = r_0 (T/T0)**nu,
+        return nu corresponding to T0. This also considers electron
+        screening effect if screen_func is passed in. The derivative is
+        evaluated in logarithmic space so finite logarithmic rates remain
+        usable even when the linear rate underflows or overflows.
+
+        Parameters
+        ----------
+        T0 : float
+            the temperature to base the power law from
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates), but needed for evaluating screening effects.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates),
+            but needed for evaluating screening effects.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate exponent will include screening correction.
+
+        Returns
+        -------
+        float
+            The dimensionless logarithmic temperature derivative.
+
+        Raises
+        ------
+        ValueError
+            If T0 is not positive and finite, or the summed logarithmic
+            rate is nonfinite at either finite-difference temperature.
+            Empty fits and fits with only negative-infinite logarithmic
+            rates represent zero rates and have no defined exponent.
+
+        """
+
+        if not np.isfinite(T0) or T0 <= 0.0:
+            raise ValueError("T0 must be positive and finite.")
+
+        # nu = dlog(λ)/dlog(T). Sum the sets before differencing,
+        # without requiring the linear rate to be representable (i.e.,
+        # λ might underflow but log(λ) is okay).
+        dlogT = 1.e-5
+        log_rates = []
+        for T in (T0 * np.exp(-dlogT), T0 * np.exp(dlogT)):
+            # we are differencing in logT.  If there are multiple
+            # sets, then logsumexp is a stable sum of exponential
+            # terms
+            log_rate = logsumexp(self.log_eval(T, rho=rho, comp=comp,
+                                               screen_func=screen_func))
+            if not np.isfinite(log_rate):
+                raise ValueError("Rate exponent requires a finite summed logarithmic rate.")
+            log_rates.append(log_rate)
+
+        # compute dlog(λ)/dlog(T)
+        return (log_rates[1] - log_rates[0]) / (2.0 * dlogT)
 
     @need_state
     def eval_full_rate(self, state, *,
