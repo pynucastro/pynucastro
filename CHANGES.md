@@ -40,6 +40,8 @@
       (#1583)
     * fix NetworkSolution.X_at when a numpy scalar array is passed
       (#1590)
+    * fix mismatch in `NSENetwork` description of
+      `comp_reduced_function` (#1611)
 
   * `Library` :
 
@@ -61,6 +63,10 @@
     * add `threshold=sys.maxsize` to `np.array2string` for table
       writing (#1566)
     * fix subtraction of `Library` objects (#1608)
+    * address divide by zero in `get_rate_exponent` + move to `Rate`
+      (#1610)
+    * fix `ReacLibRate` `__eq__` (#1613)
+    * make rate hash consistent with `__eq__` (#1614)
 
   * nuclei / screening / partition functions:
 
