@@ -314,15 +314,12 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     log_rhoY = np.log10(rhoY)
     log_T = np.log10(T)
 
-    # reaclib rates
     C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
     C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
     n_to_p_beta_neg_reaclib(rate_eval, tf)
     He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
-
-    # tabular rates
     Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
     Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
 

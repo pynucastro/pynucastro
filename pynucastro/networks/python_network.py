@@ -17,6 +17,7 @@ from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.rates.rate import py_rate_func_args
 from pynucastro.screening import get_screening_func, get_screening_pair_set
+from pynucastro.sort_utils import topo_sort
 
 
 class NetworkSolution:
@@ -975,59 +976,11 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
         ostr += f"{indent}log_T = np.log10(T)\n\n"
 
-        if self.reaclib_rates:
-            ostr += f"{indent}# reaclib rates\n"
-        for r in self.reaclib_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
+        # We evaluate teh rates in a topologically-sorted order,
+        # this way any dependences have already been evaluated
+        # in RateEval
 
-        if self.tabular_rates:
-            ostr += f"\n{indent}# tabular rates\n"
-        for r in self.tabular_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.temperature_tabular_rates:
-            ostr += f"\n{indent}# temperature tabular rates\n"
-        for r in self.temperature_tabular_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.starlib_rates:
-            ostr += f"\n{indent}# starlib rates\n"
-        for r in self.starlib_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.custom_rates:
-            ostr += f"\n{indent}# custom rates\n"
-        for r in self.custom_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.modified_rates:
-            ostr += f"\n{indent}# modified rates\n"
-        for r in self.modified_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.branched_rates:
-            ostr += f"\n{indent}# branched rates\n"
-        for r in self.branched_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        # Derived rate should go last (before approx rates)
-        # since the inverse rate should be evaluated first.
-        if self.derived_rates:
-            ostr += f"\n{indent}# derived rates\n"
-        for r in self.derived_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.approx_rates:
-            ostr += f"\n{indent}# approximate rates\n"
-        for r in self.approx_rates:
+        for r in topo_sort(self.all_rates):
             call_args = py_rate_func_args(r, mode="call")
             ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
