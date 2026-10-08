@@ -8,9 +8,6 @@ import copy
 import numpy as np
 
 from pynucastro.rates.rate import Rate, cxx_rate_func_args
-from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class BranchedRate(Rate):
