@@ -976,7 +976,7 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
         ostr += f"{indent}log_T = np.log10(T)\n\n"
 
-        # We evaluate teh rates in a topologically-sorted order,
+        # We evaluate the rates in a topologically-sorted order,
         # this way any dependences have already been evaluated
         # in RateEval
 
