@@ -697,7 +697,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"
             if namespace == "auto":
-                prefix = f"{namespaces[type(r).__name__]}::" + prefix
+                cls = type(r).__name__
+                if cls not in namespaces:
+                    cls = type(r).__base__.__name__
+                prefix = f"{namespaces[cls]}::" + prefix
             elif namespace:
                 prefix = f"{namespace}::" + prefix
             if template_args:
