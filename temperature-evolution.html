@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 3.1.0.post49+g00ada78f7 documentation</title>
+    <title>Integrating Networks with Temperature Evolution &#8212; pynucastro 3.1.0.post51+gc6010ea64 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=40b8ab83"></script>
+    <script src="_static/documentation_options.js?v=8d4286e5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -280,6 +280,7 @@
 <li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adding-rates.html">Adding Rates from the Literature</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jac-devel.html">Form of the Jacobian</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
@@ -691,9 +692,9 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
-/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
@@ -706,7 +707,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:538: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:538: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
@@ -744,11 +745,11 @@ is not Numba-compiled.  As a result, integrating with temperature evolution can 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:538: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:538: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/ead38a1e6cbc810aedeb2d354736020cf316931744653e49fe8e28d08693b7ed.png" src="_images/ead38a1e6cbc810aedeb2d354736020cf316931744653e49fe8e28d08693b7ed.png" />
+<img alt="_images/e6969abb5c08aad4d216cf3b25bc6dbc2042d3ceb83f434a28e5733aa6925cca.png" src="_images/e6969abb5c08aad4d216cf3b25bc6dbc2042d3ceb83f434a28e5733aa6925cca.png" />
 </div>
 </div>
 <p>This looks dramatically different than the fixed-temperature case.  This is not too surprising, since at these temperatures, the 3-<span class="math notranslate nohighlight">\(\alpha\)</span> rate is very temperature sensitive, so as the temperature increases due to the energy release from burning, the He burning rate increases dramatically.</p>
@@ -759,11 +760,11 @@ is not Numba-compiled.  As a result, integrating with temperature evolution can 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:610: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:610: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/1a0bfcb8aec7ecf01edeb51d86281e9c186942e9e4bafdd4fa29436cef6020cf.png" src="_images/1a0bfcb8aec7ecf01edeb51d86281e9c186942e9e4bafdd4fa29436cef6020cf.png" />
+<img alt="_images/9cd70aeedb066be988aab0d5ffb2ad6233c65fe0925a7c96cf1b8673cafa661d.png" src="_images/9cd70aeedb066be988aab0d5ffb2ad6233c65fe0925a7c96cf1b8673cafa661d.png" />
 </div>
 </div>
 <p>We see that the temperature increased from <span class="math notranslate nohighlight">\(2\times 10^8\)</span> K to over <span class="math notranslate nohighlight">\(1.6\times 10^9\)</span> K.</p>

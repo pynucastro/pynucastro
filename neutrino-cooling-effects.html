@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 3.1.0.post49+g00ada78f7 documentation</title>
+    <title>Effects of Thermal Neutrino Cooling in Network Integrations &#8212; pynucastro 3.1.0.post51+gc6010ea64 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=40b8ab83"></script>
+    <script src="_static/documentation_options.js?v=8d4286e5"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -280,6 +280,7 @@
 <li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adding-rates.html">Adding Rates from the Literature</a></li>
 <li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jac-devel.html">Form of the Jacobian</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
@@ -681,9 +682,9 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
-/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
+/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: N13 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
@@ -712,11 +713,11 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:693: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:693: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
-<img alt="_images/29c7678e496275cd9ce791747c018524637c2e016e510c565954b79a73d91fce.png" src="_images/29c7678e496275cd9ce791747c018524637c2e016e510c565954b79a73d91fce.png" />
+<img alt="_images/5c1a31d44c9474ef5a9dad8057dfc0db702c3978d6c07097ffe4e44fe32fa99c.png" src="_images/5c1a31d44c9474ef5a9dad8057dfc0db702c3978d6c07097ffe4e44fe32fa99c.png" />
 </div>
 </div>
 <p>During the runaway, <span class="math notranslate nohighlight">\(\epsilon_\mathrm{nuc}\)</span> is much larger than <span class="math notranslate nohighlight">\(\epsilon_{\nu, \mathrm{therm}}\)</span>.  After the peak, the nuclear energy generation rate falls while the neutrino loss rate remains large for longer.</p>
@@ -747,7 +748,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/63095716eb87b455094f9835f382774b044d2489ad67343cb84b738dd27e20f1.png" src="_images/63095716eb87b455094f9835f382774b044d2489ad67343cb84b738dd27e20f1.png" />
+<img alt="_images/eaceda634aecabf6a6d58e12e17518d77c3ea71b99b5a7b0a07e703a9f644343.png" src="_images/eaceda634aecabf6a6d58e12e17518d77c3ea71b99b5a7b0a07e703a9f644343.png" />
 </div>
 </div>
 <p>The integration with thermal neutrino cooling cools after the runaway, while the integration without this loss term remains hot.  The difference arises because the cooling term changes the temperature history, and the reaction rates depend on temperature.</p>

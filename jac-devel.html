@@ -1,0 +1,1202 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Form of the Jacobian &#8212; pynucastro 3.1.0.post51+gc6010ea64 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=8d4286e5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'jac-devel';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing and Comparing Backends" href="testing.html" />
+    <link rel="prev" title="Working with Network Objects" href="nets-devel.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.1" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">pynucastro 3.1</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_composition.html">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Networks with StarLib rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="finding-rates.html">Finding Available Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documenting-networks.html">Documenting Networks</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Approximating Rates</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-intro.html">NSE Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling-effects.html">Effects of Thermal Neutrino Cooling in Network Integrations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="common-nets.html">Common Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working With Simulation Codes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="mesa-nova.html">Importing MESA Models and Visualizing Reactive Flow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/c-burning-products.html">Products of Carbon Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding-rates.html">Adding Rates from the Literature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Form of the Jacobian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.common_networks.html">pynucastro.networks.common_networks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mesa_utils.html">pynucastro.mesa_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.sort_utils.html">pynucastro.sort_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/jac-devel.rst?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/jac-devel.rst" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fjac-devel.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/jac-devel.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Form of the Jacobian</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-i-partial-dot-y-i-partial-y-j">Region I: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-rates">Basic rates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approximaterate"><code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-tabulated-rates">Weak-tabulated rates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#screening">Screening</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-ii-partial-dot-e-partial-y-j">Region II: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial Y_j\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-energy-contribution">Binding energy contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-rate-energy-contribution">Weak rate energy contribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-y-dependence">Explicit Y dependence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#electron-fraction-dependence">Electron fraction dependence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#status-of-these-terms">Status of these terms</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-neutrinos">Thermal neutrinos</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-iii-partial-dot-y-i-partial-e">Region III: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial e\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Screening</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Status of these terms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#as-energy-derivative">As energy derivative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-iv-partial-dot-e-partial-e">Region IV: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial e\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Binding energy contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-rate-neutrino-contribution">Weak-rate neutrino contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Thermal neutrinos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">As energy derivative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-conversion-to-energy">Final conversion to energy</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="form-of-the-jacobian">
+<h1>Form of the Jacobian<a class="headerlink" href="#form-of-the-jacobian" title="Link to this heading">#</a></h1>
+<p>The exported networks include the Jacobian needed to use implicit integration
+methods.  When energy evolution is included, the full form of the Jacobian looks like:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}{\bf J} = \left ( \begin{array}{ccc|c}
+                  \ddots &amp; \vdots &amp; \iddots &amp; \vdots \\
+                  \cdots &amp; \partial \dot{Y}_i/\partial Y_j &amp; \cdots &amp; \partial \dot{Y}_i / \partial e  \\
+                  \iddots &amp; \vdots &amp; \ddots &amp; \vdots \\
+                  \hline
+                  \cdots &amp; \partial \dot{e} /\partial Y_j &amp; \cdots &amp; \partial \dot{e}/\partial e
+                  \end{array} \right )\end{split}\]</div>
+<p>which we note as Regions I through IV:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}{\bf J} = \left ( \begin{array}{c|c}
+                I &amp; III \\
+               \hline
+               II &amp; IV \end{array} \right )\end{split}\]</div>
+<p>Here we describe how and where each of these contributions are computed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a>, the Jacobian
+is only used for visualization, via <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.plot_jacobian" title="pynucastro.networks.rate_collection.RateCollection.plot_jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_jacobian</span></code></a>
+and for the stiffness assessment in <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.spectral_radius" title="pynucastro.networks.rate_collection.RateCollection.spectral_radius"><code class="xref py py-meth docutils literal notranslate"><span class="pre">spectral_radius</span></code></a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For a <a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a>,
+temperature is integrated instead of specific internal energy, <span class="math notranslate nohighlight">\(e\)</span>.</p>
+<p>Furthermore, we presently require a numerical (finite-difference) Jacobian when
+evolving energy in a <code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a>
+does not include the energy evolution terms, so its Jacobian is species-only.</p>
+</div>
+<section id="region-i-partial-dot-y-i-partial-y-j">
+<h2>Region I: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span><a class="headerlink" href="#region-i-partial-dot-y-i-partial-y-j" title="Link to this heading">#</a></h2>
+<p>For most rates, this is simply the derivative of the composition factors that appear explicitly
+in the reactive flux.  There are a few instances where the composition is internal to the rate
+itself that we also need to capture.</p>
+<section id="basic-rates">
+<h3>Basic rates<a class="headerlink" href="#basic-rates" title="Link to this heading">#</a></h3>
+<p>For a 2-body strong-mediated reaction rate (with distinct reactants <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span>), the reactive flux has the form:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{AB} = \rho Y(A) Y(B) \lambda_{AB}\]</div>
+</p>
+<p>and the contributions to <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span> would be <span class="math notranslate nohighlight">\(\partial F_{AB}/\partial Y_j\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) \lambda_{AB}\]</div>
+<p>For weak rates, the explicit composition dependence of the parent nucleus is also computed this way.  E.g.,
+for a decay with a parent nucleus <span class="math notranslate nohighlight">\(P\)</span>, the flux is:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}\]</div>
+</p>
+<p>The composition derivative is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{P,\mathrm{weak}}}{\partial Y_j} = \delta_{Pj} \lambda_{P,\mathrm{weak}}\]</div>
+<p>and the contribution to the Jacobian is:</p>
+<div class="math notranslate nohighlight">
+\[J_{ij}\mathrel{+}=(n_i^{\mathrm{products}}-n_i^{\mathrm{reactants}})
+  \frac{\partial F}{\partial Y_j}.\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_i\)</span> are the stoichiometric coefficients for species <span class="math notranslate nohighlight">\(i\)</span>.</p>
+<p>This is computed as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : directly via
+<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval_jacobian_term" title="pynucastro.rates.rate.Rate.eval_jacobian_term"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Rate.eval_jacobian_term</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : as a string via
+<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.jacobian_string_py" title="pynucastro.rates.rate.Rate.jacobian_string_py"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Rate.jacobian_string_py</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> / <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : symbolically using the SymPy methods
+in <a class="reference internal" href="pynucastro.networks.sympy_network_support.html#pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol" title="pynucastro.networks.sympy_network_support.SympyRates.jacobian_term_symbol"><code class="xref py py-meth docutils literal notranslate"><span class="pre">SympyRates.jacobian_term_symbol</span></code></a></p></li>
+</ul>
+</section>
+<section id="approximaterate">
+<h3><code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code><a class="headerlink" href="#approximaterate" title="Link to this heading">#</a></h3>
+<p>For some rate approximations, the composition appears explicitly in
+the effective rate, <span class="math notranslate nohighlight">\(\lambda\)</span>.  In this case, we need to also need to
+compute <span class="math notranslate nohighlight">\(\partial\lambda/\partial Y_j\)</span>.  An example of such a rate is the
+<a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate" title="pynucastro.rates.approximate_rates.ApproximateRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a> for <span class="math notranslate nohighlight">\((nn,\gamma)\)</span>.</p>
+<p>For this type of rate, the flux is:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{AB} = \rho Y(A) Y(B) \lambda_{AB}(Y)\]</div>
+</p>
+<p>and the contribution to the Jacobian is then:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) \lambda_{AB} +
+       \rho Y(A) Y(B) \frac{\partial \lambda_{AB}}{\partial Y_j}\]</div>
+<p>In a rate class, we set <code class="docutils literal notranslate"><span class="pre">Rate.rate_comp_dependence</span></code> to a list of the
+nuclei that the rate (<span class="math notranslate nohighlight">\(\lambda\)</span>) depends on internally.  This
+indicates that we need to compute this derivative.</p>
+<p>The rate class itself will then compute the explicit <span class="math notranslate nohighlight">\(\partial\lambda/\partial Y_j\)</span> term
+and store it in the python <code class="docutils literal notranslate"><span class="pre">RateEval</span></code> class or the C++ <code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code> struct.</p>
+<p>Status of this term:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : included directly in
+<a class="reference internal" href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.eval_jacobian_term" title="pynucastro.rates.approximate_rates.ApproximateRate.eval_jacobian_term"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ApproximateRate.eval_jacobian_term</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : included when the Jacobian is assembled in
+<a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string" title="pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string"><code class="xref py py-meth docutils literal notranslate"><span class="pre">PythonNetwork.full_jacobian_element_string</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> / <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : stored in
+<code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code> in the <code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code> evaluation and used
+symbolically using the SymPy methods in
+<a class="reference internal" href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian" title="pynucastro.networks.base_cxx_network.BaseCxxNetwork.compose_jacobian"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseCxxNetwork.compose_jacobian</span></code></a></p></li>
+</ul>
+</section>
+<section id="weak-tabulated-rates">
+<h3>Weak-tabulated rates<a class="headerlink" href="#weak-tabulated-rates" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate" title="pynucastro.rates.tabular_rate.TabularWeakRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularWeakRate</span></code></a> store the rate
+data as functions of <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho Y_e\)</span>, where</p>
+<p><div class="math notranslate nohighlight">
+\[Y_e = \sum_k Z_k Y_k\]</div>
+</p>
+<p>is the electron fraction.  The flux for a tabulated weak-rate decay is:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{P,\mathrm{weak}} = Y(P) \lambda_{P,\mathrm{weak}}(T, \rho Y_e)\]</div>
+</p>
+<p>this means that in addition to the derivative with respect to the explicit <span class="math notranslate nohighlight">\(Y(P)\)</span> composition term,
+we also need to account for the <span class="math notranslate nohighlight">\(Y_e\)</span> in the tabulation.  For the parent <span class="math notranslate nohighlight">\(P\)</span> and child <span class="math notranslate nohighlight">\(C\)</span> of the decay,
+we need to accumulate the contributions due to <span class="math notranslate nohighlight">\(Y_e\)</span>.  We do this in an array <code class="docutils literal notranslate"><span class="pre">dweak_ydot_dYe</span></code>
+that is part of <code class="docutils literal notranslate"><span class="pre">RateEval</span></code> or <code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+\texttt{dweak\_ydot\_dYe}(P)&amp;\mathrel{-}=
+    Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)},\\
+\texttt{dweak\_ydot\_dYe}(C)&amp;\mathrel{+}=
+Y_p\,\rho\,\frac{\partial\lambda}{\partial(\rho Y_e)}
+\end{split}\end{split}\]</div>
+<p>After all of the contributions are accumulated, they are added to every species column:</p>
+<div class="math notranslate nohighlight">
+\[J_{ij}\mathrel{+}=\texttt{dweak\_ydot\_dYe}(i)\,Z_j\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This contribution affects all charged species, not just the parent and child.  As a result,
+the Jacobian with weak rates in it will not be nearly as sparse.</p>
+</div>
+<p>Status of this term:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : implemented directly in <a class="reference internal" href="pynucastro.rates.tabular_rate.html#pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term" title="pynucastro.rates.tabular_rate.TabularWeakRate.eval_jacobian_term"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TabularWeakRate.eval_jacobian_term</span></code></a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : stored in <code class="docutils literal notranslate"><span class="pre">RateEval</span></code> when the tabular rates are evaluated
+and added to the Jacobian during the final construction of the Jacobian.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> / <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : stored in
+<code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code> in the <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> evaluation and explicitly
+added to the Jacobian during the final construction of the Jacobian
+in the template C++ code.</p></li>
+</ul>
+</section>
+<section id="screening">
+<h3>Screening<a class="headerlink" href="#screening" title="Link to this heading">#</a></h3>
+<p>The screening function applied to rates is a function of composition, through the plasma state.
+This contribution enters as <span class="math notranslate nohighlight">\(Y_e\)</span> and <span class="math notranslate nohighlight">\(\zeta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}Y_e &amp;= \sum_k Z_k Y_k \\
+\zeta &amp;= \sum_k Z_k^2 Y_k\end{split}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><span class="math notranslate nohighlight">\(\zeta\)</span> is related to the quantity <span class="math notranslate nohighlight">\(\overline{Z^2}\)</span> that the <code class="docutils literal notranslate"><span class="pre">plasma_state_t</span></code> calls <code class="docutils literal notranslate"><span class="pre">z2bar</span></code> as:</p>
+<p><div class="math notranslate nohighlight">
+\[\overline{Z^2} = \bar{A} \zeta\]</div>
+</p>
+</div>
+<p>This means that for each rate flux (where we now explicitly include the screening factor, <span class="math notranslate nohighlight">\(f\)</span>):</p>
+<p><div class="math notranslate nohighlight">
+\[F_{AB} = \rho Y(A) Y(B) f_{AB} \lambda_{AB}\]</div>
+</p>
+<p>the contribution to the Jacobian would be:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial Y_j} = \rho (Y(B) \delta_{Aj} + Y(A) \delta_{Bj}) f_{AB} \lambda_{AB}
+       + \rho Y(A) Y(B) \frac{\partial f_{AB}}{\partial Y_j} \lambda_{AB}\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial f_{AB}}{\partial Y_j} = \frac{\partial f_{AB}}{\partial Y_e} Z_j
+   + \frac{\partial f_{AB}}{\partial \zeta} Z_j^2\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This contribution affects all composition Jacobian elements for charged species, which
+means that the Jacobian is no longer really sparse.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This contribution is not currently implemented.</p>
+</div>
+</section>
+</section>
+<section id="region-ii-partial-dot-e-partial-y-j">
+<h2>Region II: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial Y_j\)</span><a class="headerlink" href="#region-ii-partial-dot-e-partial-y-j" title="Link to this heading">#</a></h2>
+<p>The energy evolution equation is:</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{de}{dt} = \epsilon_\mathrm{nuc} + \epsilon_{\nu,\mathrm{weak}} - \epsilon_{\nu,\mathrm{thermal}}\]</div>
+</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The neutrino contribution in <span class="math notranslate nohighlight">\(\epsilon_{\nu,\mathrm{weak}}\)</span> is constructed to be negative in
+the table interpolation routines.  In general, <span class="math notranslate nohighlight">\(\epsilon_{\nu,\mathrm{weak}}\)</span> can also include
+a positive <span class="math notranslate nohighlight">\(\gamma\)</span> contribution, hence the <span class="math notranslate nohighlight">\(+\)</span> in this evolution equation.
+This term will represents an energy loss when neutrinos dominate.</p>
+</div>
+<p>Each of these energy terms depends on temperature and composition.</p>
+<section id="binding-energy-contribution">
+<h3>Binding energy contribution<a class="headerlink" href="#binding-energy-contribution" title="Link to this heading">#</a></h3>
+<p>The dominant contribution to energy comes from the mass difference between reactants and products:</p>
+<p><div class="math notranslate nohighlight">
+\[\epsilon_\mathrm{nuc} = -N_A \sum_i \frac{\partial Y_i}{\partial t} m_i c^2\]</div>
+</p>
+<p>Differentiating with respect to <span class="math notranslate nohighlight">\(Y_j\)</span>, we get the contribution to each
+column of the <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial Y_j\)</span> row:</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{\partial \epsilon_\mathrm{nuc}}{\partial Y_j} = -N_A \sum_i \frac{\partial \dot{Y}_i}{\partial Y_j} m_i c^2\]</div>
+</p>
+<p>We already computed the elements <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span> in
+Region I, so we can interpret this sum as simply summing down a
+column, weighting by <span class="math notranslate nohighlight">\(m_i c^2\)</span>.</p>
+<p>Status of this term:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : N/A (numerical Jacobian is used with self-heating networks)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : computed directly in
+the template C++ code.</p></li>
+</ul>
+</section>
+<section id="weak-rate-energy-contribution">
+<h3>Weak rate energy contribution<a class="headerlink" href="#weak-rate-energy-contribution" title="Link to this heading">#</a></h3>
+<p>For a decay <span class="math notranslate nohighlight">\(P \rightarrow C\)</span>, there is an energy release:</p>
+<p><div class="math notranslate nohighlight">
+\[\epsilon_{\nu.\mathrm{weak}} = N_A \, Y(P)\, (\dot{e}_\nu + \dot{e}_\gamma)\]</div>
+</p>
+<p>where <span class="math notranslate nohighlight">\(\dot{e}_\nu\)</span> is the neutrino energy release rate (erg/s) from the rate table,
+and <span class="math notranslate nohighlight">\(\dot{e}_\gamma\)</span> is the gamma energy release rate (erg/s) (note: most rate tabulations
+do not provide this).</p>
+<p>There are 2 contributions we need to account for here.</p>
+<section id="explicit-y-dependence">
+<h4>Explicit Y dependence<a class="headerlink" href="#explicit-y-dependence" title="Link to this heading">#</a></h4>
+<p>First we account for the explicit dependence on the
+parent nucleus.  We accumulate this in <code class="docutils literal notranslate"><span class="pre">rate_derivs_t.denuc_weak_dY</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{denuc\_weak\_dY}(P) \mathrel{+}=
+     N_A\, (\dot{e}_\nu + \dot{e}_\gamma)\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><span class="math notranslate nohighlight">\(\dot{e}_\nu\)</span> is negative, so this quantity represents an energy loss.</p>
+</div>
+<p>This term is then added as <span class="math notranslate nohighlight">\(\partial
+\epsilon_{\nu,\mathrm{weak}}/\partial Y_j\)</span> to the respective species
+column in the energy row.</p>
+</section>
+<section id="electron-fraction-dependence">
+<h4>Electron fraction dependence<a class="headerlink" href="#electron-fraction-dependence" title="Link to this heading">#</a></h4>
+<p>The second term reflects the fact that <span class="math notranslate nohighlight">\(\dot{e}_\nu = \dot{e}_\nu(T, \rho Y_e)\)</span>,
+so we have an additional species contribution through <span class="math notranslate nohighlight">\(Y_e\)</span>.  We accumulate this
+in <code class="docutils literal notranslate"><span class="pre">rate_derivs_t.denuc_weak_dYe</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{denuc\_weak\_dYe} \mathrel{+}=
+     N_A\, \rho Y(P) \, \frac{\partial \dot{e}_\nu}{\partial \rho Y_e}\]</div>
+<p>This term is then added as <span class="math notranslate nohighlight">\(\texttt{denuc\_weak\_dYe} \, Z_j\)</span>
+in the same place as the term above.</p>
+</section>
+<section id="status-of-these-terms">
+<h4>Status of these terms<a class="headerlink" href="#status-of-these-terms" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : N/A (numerical Jacobian is used with self-heating networks)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : stored in
+<code class="docutils literal notranslate"><span class="pre">rate_derivs_t</span></code> in the <code class="docutils literal notranslate"><span class="pre">TabularWeakRate</span></code> evaluation and explicitly
+added to the Jacobian during the final construction of the Jacobian
+in the template C++ code.</p></li>
+</ul>
+</section>
+</section>
+<section id="thermal-neutrinos">
+<h3>Thermal neutrinos<a class="headerlink" href="#thermal-neutrinos" title="Link to this heading">#</a></h3>
+<p>The thermal neutrino loss rate, <span class="math notranslate nohighlight">\(\epsilon_{\nu,\mathrm{thermal}}\)</span>, is a positive
+energy loss per unit mass (erg/g/s).  In <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code>, its composition
+dependence enters through the mean mass number and mean charge:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\bar{A} &amp;= \left (\sum_k Y_k \right )^{-1} \\
+\bar{Z} &amp;= \bar{A} \sum_k Z_k Y_k = \bar{A} Y_e .\end{split}\]</div>
+<p>At fixed <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(\rho\)</span>, their composition derivatives are:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{\partial \bar{A}}{\partial Y_j} &amp;= -\bar{A}^2 \\
+\frac{\partial \bar{Z}}{\partial Y_j} &amp;= \bar{A}(Z_j - \bar{Z}).\end{split}\]</div>
+<p>Since the thermal neutrino loss is subtracted in the energy equation, its
+contribution to the energy row is:</p>
+<div class="math notranslate nohighlight">
+\[J_{e j} \mathrel{+}= -\frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial Y_j}
+  = -\left[-\bar{A}^2
+      \frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial \bar{A}}
+    + \bar{A}(Z_j - \bar{Z})
+      \frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial \bar{Z}}\right].\]</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">actual_jac</span></code> in the <code class="docutils literal notranslate"><span class="pre">actual_rhs.H</span></code> template, the call to
+<code class="docutils literal notranslate"><span class="pre">neutrino_cooling&lt;1&gt;</span></code> returns these derivatives as <code class="docutils literal notranslate"><span class="pre">dsnuda</span></code> and <code class="docutils literal notranslate"><span class="pre">dsnudz</span></code>.
+This term is then computed and added to the Jacobian.</p>
+</section>
+</section>
+<section id="region-iii-partial-dot-y-i-partial-e">
+<h2>Region III: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial e\)</span><a class="headerlink" href="#region-iii-partial-dot-y-i-partial-e" title="Link to this heading">#</a></h2>
+<p>All rate objects can compute their temperature derivative, so we can compute
+the temperature derivative of the flux of each rate, e.g., for our
+2-body strong-mediated reaction rate:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{AB} = \rho Y(A) Y(B) \lambda_{AB}\]</div>
+</p>
+<p>we have:</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \frac{\partial \lambda_{AB}}{\partial T}\]</div>
+</p>
+<p>likewise, for tabulate weak rates, we can compute the derivative with
+respect to temperature by differentiating the interpolant.</p>
+<p>We take advantage of the fact that each rate’s flux contributing to <span class="math notranslate nohighlight">\(\partial Y_i/\partial t\)</span> is linear in
+<span class="math notranslate nohighlight">\(\lambda\)</span>, and simply construct the algebraic form of <span class="math notranslate nohighlight">\(\partial Y_i/\partial t\)</span> using
+<span class="math notranslate nohighlight">\(\partial \lambda/\partial T\)</span> instead of <span class="math notranslate nohighlight">\(\lambda\)</span> by calling the <code class="docutils literal notranslate"><span class="pre">rhs_nuc</span></code> function
+in <code class="docutils literal notranslate"><span class="pre">actual_rhs.H</span></code>.  This gives us <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial T\)</span>.</p>
+<section id="id1">
+<h3>Screening<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>There is an additional contribution from the temperature derivative of screening.  Taking into
+account screening <span class="math notranslate nohighlight">\(f\)</span>, the flux is:</p>
+<p><div class="math notranslate nohighlight">
+\[F_{AB} = \rho Y(A) Y(B) f_{AB} \lambda_{AB}\]</div>
+</p>
+<p>and the total temperature derivative</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial T} = \rho Y(A) Y(B) \left [ \frac{\partial f_{AB}}{\partial T} \lambda_{AB} + f_{AB} \frac{\partial \lambda_{AB}}{\partial T} \right ]\]</div>
+<p>We store the quantity in <span class="math notranslate nohighlight">\([ \ldots ]\)</span> in <code class="docutils literal notranslate"><span class="pre">rate_derivs_t.dscreened_rates_dT</span></code> when we evaluate the rates.</p>
+</section>
+<section id="id2">
+<h3>Status of these terms<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : N/A (numerical Jacobian is used with self-heating networks)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : computed directly
+in the template C++ code using the rate derivatives with respect to <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+</ul>
+</section>
+<section id="as-energy-derivative">
+<h3>As energy derivative<a class="headerlink" href="#as-energy-derivative" title="Link to this heading">#</a></h3>
+<p>We convert this to an energy derivative as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial F_{AB}}{\partial e} = \frac{1}{c_v} \frac{\partial F_{AB}}{\partial T}\]</div>
+</section>
+</section>
+<section id="region-iv-partial-dot-e-partial-e">
+<h2>Region IV: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial e\)</span><a class="headerlink" href="#region-iv-partial-dot-e-partial-e" title="Link to this heading">#</a></h2>
+<section id="id3">
+<h3>Binding energy contribution<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>Starting with</p>
+<p><div class="math notranslate nohighlight">
+\[\epsilon_\mathrm{nuc} = -N_A \sum_i \frac{\partial Y_i}{\partial t} m_i c^2\]</div>
+</p>
+<p>and differentiating with respect to temperature, we have:</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{\partial \epsilon_\mathrm{nuc}}{\partial T} = -N_A \sum_i \frac{\partial \dot{Y}_i}{\partial T} m_i c^2\]</div>
+</p>
+<p>we have <span class="math notranslate nohighlight">\(\frac{\partial \dot{Y}_i}{\partial T}\)</span> from Region III.  So
+we can just compute <span class="math notranslate nohighlight">\(\frac{\partial \epsilon_\mathrm{nuc}}{\partial T}\)</span>
+from these.</p>
+<p>This is computed as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : N/A (numerical Jacobian is used with self-heating networks)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : directly in the C++ template.</p></li>
+</ul>
+</section>
+<section id="weak-rate-neutrino-contribution">
+<h3>Weak-rate neutrino contribution<a class="headerlink" href="#weak-rate-neutrino-contribution" title="Link to this heading">#</a></h3>
+<p>The weak rate energy is:</p>
+<p><div class="math notranslate nohighlight">
+\[\epsilon_{\nu.\mathrm{weak}} = N_A \, Y(P)\, (\dot{e}_\nu + \dot{e}_\gamma)\]</div>
+</p>
+<p>We can differentiate this with respect to temperature (ignoring <span class="math notranslate nohighlight">\(\dot{e}_\gamma\)</span>:</p>
+<p><div class="math notranslate nohighlight">
+\[\frac{\partial\epsilon_{\nu.\mathrm{weak}}}{\partial T} = N_A \, Y(P)\, \frac{\partial \dot{e}_\nu}{\partial T}\]</div>
+</p>
+<p>we accumulate this contribution in <code class="docutils literal notranslate"><span class="pre">rate_derivs_t.denuc_weak_dT</span></code> when we evaluate the
+tabular rates as:</p>
+<div class="math notranslate nohighlight">
+\[\texttt{denuc\_weak\_dT} \mathrel{+}=
+    N_A\, Y(P)\, \frac{\partial\dot{e}_\nu}{\partial T}\]</div>
+<p>and then add it to the <span class="math notranslate nohighlight">\(\partial \dot{e} /\partial T\)</span> term in the Jacobian function.</p>
+<p>This is computed as:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> : N/A (numerical Jacobian is used with self-heating networks)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : N/A (energy not considered)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : directly in the C++ template.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Thermal neutrinos<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>At fixed density and composition, the thermal neutrino contribution to the
+temperature derivative of the energy RHS is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \dot{e}}{\partial T} \mathrel{+}=
+    -\frac{\partial \epsilon_{\nu,\mathrm{thermal}}}{\partial T}.\]</div>
+<p>The same <code class="docutils literal notranslate"><span class="pre">neutrino_cooling&lt;1&gt;</span></code> call in the <code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> template
+returns this loss-rate derivative as <code class="docutils literal notranslate"><span class="pre">dsneutdt</span></code>.  In <code class="docutils literal notranslate"><span class="pre">actual_jac</span></code>, we subtract
+it from <code class="docutils literal notranslate"><span class="pre">jac_e_T</span></code>.</p>
+</section>
+<section id="id5">
+<h3>As energy derivative<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>We convert this to an energy derivative as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \dot{e}}{\partial e} = \frac{1}{c_v} \frac{\partial  \dot{e}}{\partial T}\]</div>
+</section>
+</section>
+<section id="final-conversion-to-energy">
+<h2>Final conversion to energy<a class="headerlink" href="#final-conversion-to-energy" title="Link to this heading">#</a></h2>
+<p>There is one last part of the conversion from <span class="math notranslate nohighlight">\(T\)</span> to <span class="math notranslate nohighlight">\(e\)</span>.  If we take the derivative with respect
+to species, with <span class="math notranslate nohighlight">\(e\)</span> and <span class="math notranslate nohighlight">\(\rho\)</span> held constant, then <span class="math notranslate nohighlight">\(T\)</span> will change.  We need to take into account
+how this affects the reactions.</p>
+<p>This is handled by the integration wrappers in <a class="reference external" href="https://github.com/amrex-astro/Microphysics">AMReX Microphysics</a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="nets-devel.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Working with Network Objects</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="testing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Testing and Comparing Backends</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-i-partial-dot-y-i-partial-y-j">Region I: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-rates">Basic rates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#approximaterate"><code class="docutils literal notranslate"><span class="pre">ApproximateRate</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-tabulated-rates">Weak-tabulated rates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#screening">Screening</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-ii-partial-dot-e-partial-y-j">Region II: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial Y_j\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-energy-contribution">Binding energy contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-rate-energy-contribution">Weak rate energy contribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-y-dependence">Explicit Y dependence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#electron-fraction-dependence">Electron fraction dependence</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#status-of-these-terms">Status of these terms</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-neutrinos">Thermal neutrinos</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-iii-partial-dot-y-i-partial-e">Region III: <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial e\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Screening</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Status of these terms</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#as-energy-derivative">As energy derivative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#region-iv-partial-dot-e-partial-e">Region IV: <span class="math notranslate nohighlight">\(\partial \dot{e}/\partial e\)</span></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Binding energy contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weak-rate-neutrino-contribution">Weak-rate neutrino contribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Thermal neutrinos</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">As energy derivative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-conversion-to-energy">Final conversion to energy</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
