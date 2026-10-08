@@ -71,13 +71,6 @@ class ModifiedRate(Rate):
         self.update_screening = update_screening
         self.description = description
 
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill modified
-        # rates only after the original rate is filled.
-        assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
         if new_reactants is not None:
             reactants = new_reactants
         else:

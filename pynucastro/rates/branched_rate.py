@@ -69,20 +69,6 @@ class BranchedRate(Rate):
         self.other_branch = other_branch
         self.description = description
 
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill branched rates
-        # only after the other rates are filled and screened.
-
-        assert isinstance(underlying_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
-        assert isinstance(primary_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
-        assert isinstance(other_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
         # the reactants come from the underlying rate
         reactants = self.underlying_rate.reactants
 
