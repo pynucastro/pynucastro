@@ -8,6 +8,7 @@ from operator import mul
 from pathlib import Path
 
 import numpy as np
+from scipy.special import logsumexp
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
@@ -26,7 +27,7 @@ class BaryonConservationError(Exception):
 
 def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
     """Given a rate, give the list of arguments that are needed to
-    define the function arguments or call the function.
+    define the C++ function arguments or call the C++ function.
 
     Parameters
     ----------
@@ -94,6 +95,65 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
             args.append("dlog_scor_dT")
         if r.rate_eval_needs_pfcache:
             args.append("pf_cache")
+
+    return args
+
+
+def py_rate_func_args(r, *, mode="definition"):
+    """Given a rate, give the list of arguments that are needed to
+    define the python function arguments or call the python function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if mode == "definition":
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=None")
+        if r.rate_eval_needs_rho:
+            args.append("rho=None")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=None")
+        if r.rate_eval_needs_comp:
+            args.append("Y=None")
+        if r.screening_pairs:
+            args.append("log_scor=0")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=log_T")
+        if r.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=log_rhoY")
+        if r.rate_eval_needs_comp:
+            args.append("Y=Y")
+        if r.screening_pairs:
+            screen_terms = [f"log_scor_{r1}_{r2}"
+                            for r1, r2 in r.screening_pairs]
+            args.append("log_scor=" + " + ".join(screen_terms))
 
     return args
 
@@ -423,7 +483,7 @@ class Rate:
         return self.string
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
 
     def __copy__(self):
         """Make a copy of the rate via copy.copy().  This is mostly
@@ -448,9 +508,18 @@ class Rate:
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
-        equal if they contain identical reactants and products
+        equal if they use the same equality implementation and contain
+        identical reactants, products, and weak types.
 
         """
+
+        if not isinstance(other, Rate):
+            return NotImplemented
+
+        # Subclasses with more restrictive equality must not compare equal
+        # in only one direction to rates using the base implementation.
+        if type(self).__eq__ is not type(other).__eq__:
+            return False
 
         test1 = self.weak_type == other.weak_type
         test2 = (self.reactants, self.products) == (other.reactants, other.products)
@@ -1013,6 +1082,66 @@ class Rate:
         # 2) A list of log_rates, e.g. ReacLib
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
+
+    def get_rate_exponent(self, T0, *, rho=None, comp=None,
+                          screen_func=None):
+        """For a rate written as a power law, r = r_0 (T/T0)**nu,
+        return nu corresponding to T0. This also considers electron
+        screening effect if screen_func is passed in. The derivative is
+        evaluated in logarithmic space so finite logarithmic rates remain
+        usable even when the linear rate underflows or overflows.
+
+        Parameters
+        ----------
+        T0 : float
+            the temperature to base the power law from
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates), but needed for evaluating screening effects.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates),
+            but needed for evaluating screening effects.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate exponent will include screening correction.
+
+        Returns
+        -------
+        float
+            The dimensionless logarithmic temperature derivative.
+
+        Raises
+        ------
+        ValueError
+            If T0 is not positive and finite, or the summed logarithmic
+            rate is nonfinite at either finite-difference temperature.
+            Empty fits and fits with only negative-infinite logarithmic
+            rates represent zero rates and have no defined exponent.
+
+        """
+
+        if not np.isfinite(T0) or T0 <= 0.0:
+            raise ValueError("T0 must be positive and finite.")
+
+        # nu = dlog(λ)/dlog(T). Sum the sets before differencing,
+        # without requiring the linear rate to be representable (i.e.,
+        # λ might underflow but log(λ) is okay).
+        dlogT = 1.e-5
+        log_rates = []
+        for T in (T0 * np.exp(-dlogT), T0 * np.exp(dlogT)):
+            # we are differencing in logT.  If there are multiple
+            # sets, then logsumexp is a stable sum of exponential
+            # terms
+            log_rate = logsumexp(self.log_eval(T, rho=rho, comp=comp,
+                                               screen_func=screen_func))
+            if not np.isfinite(log_rate):
+                raise ValueError("Rate exponent requires a finite summed logarithmic rate.")
+            log_rates.append(log_rate)
+
+        # compute dlog(λ)/dlog(T)
+        return (log_rates[1] - log_rates[0]) / (2.0 * dlogT)
 
     @need_state
     def eval_full_rate(self, state, *,

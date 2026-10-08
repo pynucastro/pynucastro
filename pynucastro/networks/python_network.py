@@ -15,6 +15,7 @@ from pynucastro.eos import StellarEOS
 from pynucastro.networks.rate_collection import RateCollection
 from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition, Nucleus
+from pynucastro.rates.rate import py_rate_func_args
 from pynucastro.screening import get_screening_func, get_screening_pair_set
 
 
@@ -964,25 +965,6 @@ class PythonNetwork(RateCollection):
 
         """
 
-        def format_rate_call(r):
-            args = ["rate_eval"]
-            if r.rate_eval_needs_tfactors:
-                args.append("tf")
-            elif r.rate_eval_needs_temp:
-                args.append("T")
-            if r.rate_eval_needs_logtemp:
-                args.append("log_T=log_T")
-            if r.rate_eval_needs_rho:
-                args.append("rho=rho")
-            if r.rate_eval_needs_logrhoye:
-                args.append("log_rhoY=log_rhoY")
-            if r.rate_eval_needs_comp:
-                args.append("Y=Y")
-            if r.screening_pairs:
-                screen_terms = [f"log_scor_{r1}_{r2}" for r1, r2 in r.screening_pairs]
-                args.append("log_scor=" + " + ".join(screen_terms))
-            return f"{indent}{r.fname}({', '.join(args)})\n"
-
         ostr = ""
 
         # Precompute screening terms. Note here we compute log_screening
@@ -993,29 +975,35 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
         ostr += f"{indent}log_T = np.log10(T)\n\n"
 
-        ostr += f"{indent}# reaclib rates\n"
+        if self.reaclib_rates:
+            ostr += f"{indent}# reaclib rates\n"
         for r in self.reaclib_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.tabular_rates:
             ostr += f"\n{indent}# tabular rates\n"
         for r in self.tabular_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.temperature_tabular_rates:
             ostr += f"\n{indent}# temperature tabular rates\n"
         for r in self.temperature_tabular_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.starlib_rates:
             ostr += f"\n{indent}# starlib rates\n"
         for r in self.starlib_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.custom_rates:
             ostr += f"\n{indent}# custom rates\n"
         for r in self.custom_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.beta_limited_rates:
             ostr += f"\n{indent}# beta-limited rates\n"
@@ -1028,24 +1016,28 @@ class PythonNetwork(RateCollection):
         if self.modified_rates:
             ostr += f"\n{indent}# modified rates\n"
         for r in self.modified_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.branched_rates:
             ostr += f"\n{indent}# branched rates\n"
         for r in self.branched_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         # Derived rate should go last (before approx rates)
         # since the inverse rate should be evaluated first.
         if self.derived_rates:
             ostr += f"\n{indent}# derived rates\n"
         for r in self.derived_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         if self.approx_rates:
             ostr += f"\n{indent}# approximate rates\n"
         for r in self.approx_rates:
-            ostr += format_rate_call(r)
+            call_args = py_rate_func_args(r, mode="call")
+            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         return ostr
 

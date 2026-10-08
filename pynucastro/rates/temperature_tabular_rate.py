@@ -268,7 +268,7 @@ class TemperatureTabularRate(Rate):
         return self.reactants == other.reactants and self.products == other.products
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products)))
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
