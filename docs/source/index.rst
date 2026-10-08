@@ -180,6 +180,7 @@ and interactively exploring nuclear reaction networks.
    rates-devel
    adding-rates
    nets-devel
+   jac-devel
    testing
 
 .. toctree::
