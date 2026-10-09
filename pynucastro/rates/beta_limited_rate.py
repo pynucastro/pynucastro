@@ -182,6 +182,9 @@ class BetaLimitedRate(Rate):
 
         """
 
+        if rho is None or comp is None:
+            raise ValueError("density and composition need to be provided for beta-limited rate log_eval")
+
         # evaluate the underlying rate -- this will just be
         # N_A <σv>
         r0 = self.underlying_rate.eval(T, rho=rho, comp=comp,
