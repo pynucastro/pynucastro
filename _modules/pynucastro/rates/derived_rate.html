@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.derived_rate &#8212; pynucastro 3.1.0.post50+g5aa81c4d7 documentation</title>
+    <title>pynucastro.rates.derived_rate &#8212; pynucastro 3.1.0.post52+gf77b0332d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=b7d81da5"></script>
+    <script src="../../../_static/documentation_options.js?v=de5748d9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -541,7 +541,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.nucdata</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.modified_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModifiedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Rate</span><span class="p">,</span> <span class="n">Tfactors</span><span class="p">,</span> <span class="n">ThermoState</span><span class="p">,</span>
-                                   <span class="n">cxx_rate_func_args</span><span class="p">)</span>
+                                   <span class="n">cxx_rate_func_args</span><span class="p">,</span> <span class="n">py_rate_func_args</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">SingleSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularWeakRate</span>
@@ -734,9 +734,12 @@
 
 <span class="sd">        """</span>
 
+        <span class="n">args</span> <span class="o">=</span> <span class="n">py_rate_func_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">)</span>
+        <span class="n">args_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf, log_scor=0.0):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">args_str</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="c1"># Evaluate partition function terms</span>
@@ -772,7 +775,9 @@
                 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">set_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
                     <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    "</span> <span class="o">+</span> <span class="n">t</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate += net_log_pf + log_scor</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate += net_log_pf</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+                    <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    ln_set_rate += log_scor</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    set_rate = np.exp(ln_set_rate)</span><span class="se">\n</span><span class="s2">"</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    rate += set_rate</span><span class="se">\n\n</span><span class="s2">"</span>
 
@@ -783,16 +788,20 @@
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    log_r = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">_interpolator.interpolate(tf.T9 * 1.0e9)</span><span class="se">\n\n</span><span class="s2">"</span>
 
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    # Apply equilibrium ratio and screening</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    log_r += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf + log_scor</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    log_r += </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    log_r += log_scor</span><span class="se">\n</span><span class="s2">"</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    log_r += </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tf.lnT9</span><span class="se">\n\n</span><span class="s2">"</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = np.exp(log_r)</span><span class="se">\n\n</span><span class="s2">"</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    # Evaluate the equilibrium ratio and screening</span><span class="se">\n</span><span class="s2">"</span>
-            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    ratio = np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf + log_scor"</span>
+            <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    ratio = np.exp(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_factor</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Q_kBGK</span><span class="si">}</span><span class="s2"> * tf.T9i + net_log_pf</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    + log_scor</span><span class="se">\n</span><span class="s2">"</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tf.lnT9"</span>
+                <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    + </span><span class="si">{</span><span class="mf">1.5</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">net_stoich</span><span class="si">}</span><span class="s2"> * tf.lnT9"</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">")</span><span class="se">\n\n</span><span class="s2">"</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> * ratio</span><span class="se">\n</span><span class="s2">"</span>
 

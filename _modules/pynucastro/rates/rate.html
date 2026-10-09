@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post50+g5aa81c4d7 documentation</title>
+    <title>pynucastro.rates.rate &#8212; pynucastro 3.1.0.post52+gf77b0332d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=b7d81da5"></script>
+    <script src="../../../_static/documentation_options.js?v=de5748d9"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -635,7 +635,7 @@
 
 <div class="viewcode-block" id="py_rate_func_args">
 <a class="viewcode-back" href="../../../pynucastro.rates.rate.html#pynucastro.rates.rate.py_rate_func_args">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">py_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">py_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">,</span> <span class="n">screen_term_pass</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Given a rate, give the list of arguments that are needed to</span>
 <span class="sd">    define the python function arguments or call the python function.</span>
 
@@ -646,6 +646,10 @@
 <span class="sd">    mode : str</span>
 <span class="sd">        "definition" if it is for writing the function,</span>
 <span class="sd">        "call" if it is for calling the function</span>
+<span class="sd">    screen_term_pass : str</span>
+<span class="sd">        The name of a screening variable to pass onto the function</span>
+<span class="sd">        when calling.  If it is None, then it will automatically be</span>
+<span class="sd">        generated via the screening pairs.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -670,7 +674,7 @@
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y=None"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_scor=0"</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_scor=0.0"</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"rate_eval"</span><span class="p">]</span>
@@ -687,8 +691,11 @@
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_eval_needs_comp</span><span class="p">:</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Y=Y"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
-            <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"log_scor_</span><span class="si">{</span><span class="n">r1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r2</span><span class="si">}</span><span class="s2">"</span>
-                            <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">screen_term_pass</span><span class="p">:</span>
+                <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">screen_term_pass</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">screen_terms</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"log_scor_</span><span class="si">{</span><span class="n">r1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">r2</span><span class="si">}</span><span class="s2">"</span>
+                                <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">]</span>
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"log_scor="</span> <span class="o">+</span> <span class="s2">" + "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">screen_terms</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">args</span></div>

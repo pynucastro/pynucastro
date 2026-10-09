@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.1.0.post50+g5aa81c4d7 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.1.0.post52+gf77b0332d documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=b7d81da5"></script>
+    <script src="_static/documentation_options.js?v=de5748d9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -967,14 +967,13 @@ def C13_p_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.C13_p_to_N14_reaclib = rate
 
 @numba.njit()
-def N13_to_C13_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
+def N13_to_C13_beta_pos_reaclib(rate_eval, tf):
     # N13 --&gt; C13
     rate = 0.0
 
     # wc12w
     ln_set_rate =  -6.7601
 
-    ln_set_rate += log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
@@ -1082,28 +1081,26 @@ def N15_p_to_He4_C12_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.N15_p_to_He4_C12_reaclib = rate
 
 @numba.njit()
-def O14_to_N14_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
+def O14_to_N14_beta_pos_reaclib(rate_eval, tf):
     # O14 --&gt; N14
     rate = 0.0
 
     # wc12w
     ln_set_rate =  -4.62354
 
-    ln_set_rate += log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
     rate_eval.O14_to_N14_beta_pos_reaclib = rate
 
 @numba.njit()
-def O15_to_N15_beta_pos_reaclib(rate_eval, tf, log_scor=0.0):
+def O15_to_N15_beta_pos_reaclib(rate_eval, tf):
     # O15 --&gt; N15
     rate = 0.0
 
     # wc12w
     ln_set_rate =  -5.17053
 
-    ln_set_rate += log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
@@ -1500,7 +1497,7 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon(t=         0) =          117.7738358
 epsilon(t=  2.55e+14) =          2.990307739
-epsilon(t=     1e+20) =      4.503996655e-10
+epsilon(t=     1e+20) =      4.503996597e-10
 </pre></div>
 </div>
 </div>

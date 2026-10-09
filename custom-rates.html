@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 3.1.0.post50+g5aa81c4d7 documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 3.1.0.post52+gf77b0332d documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=b7d81da5"></script>
+    <script src="_static/documentation_options.js?v=de5748d9"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -653,7 +653,7 @@
 </div>
 </div>
 <p>We can get the values of <span class="math notranslate nohighlight">\(r_0\)</span> and <span class="math notranslate nohighlight">\(\nu\)</span> about this temperature from the rate</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">T0</span> <span class="o">=</span> <span class="mf">3.e7</span>
 <span class="n">nu</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">get_rate_exponent</span><span class="p">(</span><span class="n">T0</span><span class="p">)</span>
@@ -663,7 +663,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.416655077954945e-13 15.601858115843468
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.416655077954945e-13 15.601858116021104
 </pre></div>
 </div>
 </div>
@@ -680,7 +680,9 @@
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyRate</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Rate</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">py_rate_func_args</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyRate</span><span class="p">(</span><span class="n">pyna</span><span class="o">.</span><span class="n">Rate</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactants</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">products</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">r0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
@@ -697,9 +699,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">function_string_py</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""return a string containing a python function that computes</span>
 <span class="sd">        the rate"""</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="n">py_rate_func_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"definition"</span><span class="p">)</span>
+        <span class="n">args_str</span> <span class="o">=</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(rate_eval, tf):</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">args_str</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">r0</span><span class="si">}</span><span class="s2"> * (tf.T9 * 1.e9 / </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">T0</span><span class="si">}</span><span class="s2"> )**(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">nu</span><span class="si">}</span><span class="s2">)</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstring</span>
 
@@ -720,6 +726,11 @@
 </pre></div>
 </div>
 </div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>When we write our function in <code class="docutils literal notranslate"><span class="pre">function_string_py</span></code>, we generate the arguments automatically
+from <code class="docutils literal notranslate"><span class="pre">py_rate_func_args</span></code>.  This uses the various attributes defined in a <code class="docutils literal notranslate"><span class="pre">Rate</span></code> to figure out what thermodynamic information needs to be passed into the function.  See <a class="reference internal" href="rates-devel.html#sec-rate-function-args"><span class="std std-ref">Function arguments</span></a> for more details.</p>
 </div>
 <p>Now we can create our custom rate</p>
 <div class="cell docutils container">
@@ -744,7 +755,7 @@
 </div>
 </div>
 <p>Notice that it can write out the function needed to evaluate this rate in a python module</p>
-<div class="cell docutils container">
+<div class="cell tag_nbval-ignore-output docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">r_custom</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
 </pre></div>
@@ -752,8 +763,8 @@
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
-def N14_p_to_O15_generic(rate_eval, tf):
-    rate_eval.N14_p_to_O15_generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858115843468)
+def N14_p_to_O15_generic(rate_eval, tf, log_scor=0.0):
+    rate_eval.N14_p_to_O15_generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858116021104)
 </pre></div>
 </div>
 </div>
@@ -827,20 +838,22 @@ def N14_p_to_O15_generic(rate_eval, tf):
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
-<span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="n">ydots</span> <span class="o">=</span> <span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">nuc</span><span class="p">,</span> <span class="n">ydot</span> <span class="ow">in</span> <span class="n">ydots</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nuc</span><span class="si">!s}</span><span class="s2"> : </span><span class="si">{</span><span class="n">ydot</span><span class="si">:</span><span class="s2">12.8g</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{p: np.float64(-140.31574477898076),
- He4: 124.10404295119419,
- C12: 124.09500217697241,
- C13: -0.017818574032238365,
- N13: 0.00701794538740977,
- N14: np.float64(-16.16499881824663),
- N15: -124.1040418689929,
- O14: 0.002020570415053316,
- O15: np.float64(16.182818568496888)}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p :   -140.31574
+He4 :    124.10404
+C12 :      124.095
+C13 : -0.017818574
+N13 : 0.0070179454
+N14 :   -16.164999
+N15 :   -124.10404
+O14 : 0.0020205704
+O15 :    16.182819
 </pre></div>
 </div>
 </div>
