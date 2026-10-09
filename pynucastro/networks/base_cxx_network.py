@@ -114,6 +114,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<rate_struct>'] = self._rate_struct
         self.ftags['<fill_all_rates>'] = self._fill_all_rates
+        self.ftags['<fill_all_weak_rates>'] = self._fill_all_weak_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
@@ -468,10 +469,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
-    def _ydot_weak(self, n_indent, of):
-        # Writes ydot for weak reactions and computes corresponding neutrino loss term
-
-        # Fill all the weak rates
+    def _get_weak_rates(self):
+        # helper function that gets just the rates that may affect Ye
 
         # Consider possible cases for weak rates in realicb, modified,
         # branched, and starlib rates.  Here we leave out derived rate
@@ -495,6 +494,16 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         weak_rates += weak_branched_rates_children
 
+        # include all tabular rates
+        weak_rates += self.tabular_rates
+
+        return weak_rates
+
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+
+        weak_rates = self._get_weak_rates()
+
         # Compute necessary screening term.
         # This is really only possible for weak ModifiedRates and BranchedRates
         screening_pair_set = get_screening_pair_set(weak_rates)
@@ -508,28 +517,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                    do_T_derivatives=False)
             of.write(f'{self.indent*n_indent}}}\n')
             of.write('#endif\n\n')
-
-        # Call different rate functions to evaluate the rates.
-        if len(weak_rates) > 0:
-
-            of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
-
-            # there can be many different types and each type is in a
-            # different namespace, so fill them by namespace
-            names = {type(r).__name__ for r in weak_rates}
-            for nm in names:
-                self._fill_rates_helper(n_indent, of, [r for r in weak_rates if type(r).__name__ == nm],
-                                        do_T_derivatives=False,
-                                        namespace=namespaces[nm])
-
-        if len(weak_branched_rates) > 0:
-            self._fill_rates_helper(n_indent, of, weak_branched_rates,
-                                    do_T_derivatives=False,
-                                    namespace="branched_rates")
-
-        # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);\n")
-        of.write('\n')
 
         # Compose and write ydot for all weak reactions
         if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
@@ -720,6 +707,13 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write("\n")
 
         sorted_rates = topo_sort(self.all_rates)
+        self._fill_rates_helper(n_indent, of, sorted_rates, namespace="auto")
+
+    def _fill_all_weak_rates(self, n_indent, of):
+        # Fill all the weak rates
+
+        weak_rates = self._get_weak_rates()
+        sorted_rates = topo_sort(weak_rates)
         self._fill_rates_helper(n_indent, of, sorted_rates, namespace="auto")
 
     def _fill_partition_function_data(self, n_indent, of):

@@ -114,6 +114,48 @@ namespace rate_util {
 
     }
 
+    template <typename T>
+    AMREX_GPU_DEVICE AMREX_INLINE
+    void
+    fill_weak_rates([[maybe_unused]] const tf_t& tfactors,
+                    [[maybe_unused]] const amrex::Real temp,
+                    [[maybe_unused]] const amrex::Real rho,
+                    [[maybe_unused]] const amrex::Real rhoy,
+                    [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
+                    [[maybe_unused]] T& rate_eval)
+    {
+
+        [[maybe_unused]] amrex::Real rate{};
+        [[maybe_unused]] amrex::Real drate_dT{};
+
+        [[maybe_unused]] const amrex::Real log_temp = std::log10(temp);
+        [[maybe_unused]] const amrex::Real log_rhoy = std::log10(rhoy);
+
+        // we are not doing derivatives
+        static_assert(std::is_same_v<T, rate_t>);
+
+        rate_eval.enuc_weak = 0.0_rt;
+
+        // rates are filled in a topologically-sorted order
+
+        {
+            // n_to_p_beta_neg_reaclib
+            reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors);
+        }
+
+        {
+            // Na23_to_Ne23_electron_capture_weaktab
+            tabular_weak_rates::rate_Na23_to_Ne23_electron_capture_weaktab(rate_eval, temp, log_temp, rho, rhoy, log_rhoy, Y);
+        }
+
+        {
+            // Ne23_to_Na23_beta_neg_weaktab
+            tabular_weak_rates::rate_Ne23_to_Na23_beta_neg_weaktab(rate_eval, temp, log_temp, rho, rhoy, log_rhoy, Y);
+        }
+
+
+    }
+
 }
 
 #endif

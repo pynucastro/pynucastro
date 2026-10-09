@@ -145,14 +145,17 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
     [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
-    rate_eval.enuc_weak = 0.0_rt;
+    const tf_t tfactors = evaluate_tfactors(state.T);
 
-    // Compute all weak rates and get ydot_weak
+    // fill only the weak rates
+    rate_util::fill_weak_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
+
+    // assemble Ydot for just the weak rate evolution
 
     <ydot_weak>(1)
+
     enuc_weak = rate_eval.enuc_weak;
 }
 #endif

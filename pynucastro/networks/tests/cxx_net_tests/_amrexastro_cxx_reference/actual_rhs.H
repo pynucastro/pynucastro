@@ -163,21 +163,14 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
     [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
-
-    rate_eval.enuc_weak = 0.0_rt;
-
-    // Compute all weak rates and get ydot_weak
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 
-    {
-        // n_to_p_beta_neg_reaclib
-        reaclib_rates::rate_n_to_p_beta_neg_reaclib(rate_eval, tfactors);
-    }
+    // fill only the weak rates
+    rate_util::fill_weak_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
 
-    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
+    // assemble Ydot for just the weak rate evolution
 
     const auto& screened_rates = rate_eval.screened_rates;
 
@@ -202,6 +195,7 @@ void get_ydot_weak(const burn_t& state,
         (screened_rates(k_Ne23_to_Na23_beta_neg_weaktab)*Y(Ne23) + -screened_rates(k_Na23_to_Ne23_electron_capture_weaktab)*Y(Na23));
 
     ydot_nuc(Mg23) = 0.0_rt;
+
 
     enuc_weak = rate_eval.enuc_weak;
 }
