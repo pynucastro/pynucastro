@@ -148,6 +148,8 @@ The following rate attributes are defined:
   * ``pep.fname`` is ``'p_p_to_d_electron_capture_reaclib'``
 
 
+.. _sec:rate_function_args:
+
 Function arguments
 ==================
 
