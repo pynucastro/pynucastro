@@ -37,7 +37,7 @@
     * add `NetworkSolution.comp_at` (#1578)
     * fix def for `ye()` in exported networks (#1581)
     * automate the construction of python rate function arguments
-      (#1583)
+      (#1583, #1623)
     * fix NetworkSolution.X_at when a numpy scalar array is passed
       (#1590)
     * fix mismatch in `NSENetwork` description of
@@ -89,6 +89,8 @@
   * documentation:
 
     * fix inaccuracies / typos in rate dev docs (#1576)
+    * add developer docs explaining the Jacobian (#1543)
+    * explain `rate_eval_needs_*` attributes in the docs (#1618)
 
   * testing:
 
