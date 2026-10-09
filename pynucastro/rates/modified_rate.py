@@ -7,8 +7,8 @@ import copy
 
 import numpy as np
 
+from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
 from pynucastro.rates.beta_limited_rate import BetaLimitedRate
-from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -96,6 +96,12 @@ class ModifiedRate(Rate):
                          stoichiometry=stoichiometry,
                          not_in_ydot_term=not_in_ydot_term,
                          rate_source=rate_source)
+
+        # right now we assume that if the original rate is screened,
+        # then the modified rate is too.  And likewise, if the
+        # original is not screened, then the modified is not screened.
+        assert ((not self.screening_pairs and not self.original_rate.screening_pairs) or
+                (self.screening_pairs and self.original_rate.screening_pairs))
 
         # set the function string args to be those of the original rate
         self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
@@ -219,27 +225,18 @@ class ModifiedRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        args = ["tf"]
-        if self.rate_eval_needs_rho:
-            args.append("rho=None")
-        if self.rate_eval_needs_comp:
-            args.append("Y=None")
-        args.append("log_scor=0.0")
-        fstring += f"def {self.fname}(rate_eval, {', '.join(args)}):\n"
+
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-
-        args = ["tf"]
-        if self.rate_eval_needs_rho:
-            args.append("rho=rho")
-        if self.rate_eval_needs_comp:
-            args.append("Y=Y")
-        args.append("log_scor=log_scor")
-
-        fstring += f"    {self.original_rate.fname}(rate_eval, {', '.join(args)})\n"
+        cargs = py_rate_func_args(self.original_rate, mode="call", screen_term_pass="log_scor")
+        fstring += f"    {self.original_rate.fname}({', '.join(cargs)})\n"
         fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
         return fstring
 
