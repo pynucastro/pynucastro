@@ -99,10 +99,9 @@ class ModifiedRate(Rate):
                          rate_source=rate_source)
 
         # right now we assume that if the original rate is screened,
-        # then the modified rate is too.  And likewise, if the
-        # original is not screened, then the modified is not screened.
-        assert ((not self.screening_pairs and not self.original_rate.screening_pairs) or
-                (self.screening_pairs and self.original_rate.screening_pairs))
+        # then the modified rate should be too.
+        if self.original_rate.screening_pairs:
+            assert self.screening_pairs, "original_rate is screened, so the caller should be too"
 
         # set the function string args to be those of the original rate
         self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
