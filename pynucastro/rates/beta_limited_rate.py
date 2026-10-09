@@ -221,7 +221,7 @@ class BetaLimitedRate(Rate):
         fstring += f"def {self.fname}(rate_eval, tf, rho=None, Y=None, log_scor=0.0):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
-            fstring += f"    # represents the beta limiting: {self.description}\n\n"
+            fstring += f"    # represents the beta-limiting: {self.description}\n\n"
         fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
         fstring += "    lambda_beta_tot = 0.0\n"
         for lam in self.beta_limiting_rates:
@@ -268,6 +268,9 @@ class BetaLimitedRate(Rate):
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid} (beta-limited rate rate)\n\n"
+        if self.description:
+            fstring += f"    // represents the beta-limiting: {self.description}\n\n"
+
         fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
 
         fstring += "    // get the molar fraction of the species we care about\n"
