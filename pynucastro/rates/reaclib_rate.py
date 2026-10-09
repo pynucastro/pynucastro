@@ -13,7 +13,7 @@ import numpy as np
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
 from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
-                                   cxx_rate_func_args)
+                                   cxx_rate_func_args, py_rate_func_args)
 
 
 class SingleSet:
@@ -645,9 +645,12 @@ class ReacLibRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -657,7 +660,8 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor\n"
             fstring += "    set_rate = np.exp(ln_set_rate)\n"
             fstring += "    rate += set_rate\n\n"
 
