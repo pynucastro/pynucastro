@@ -4,6 +4,7 @@ library.
 """
 
 import io
+from collections import Counter
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -12,10 +13,10 @@ import numpy as np
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
 from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
-                                   cxx_rate_func_args)
+                                   cxx_rate_func_args, py_rate_func_args)
 
 
-class SingleSet:  # noqa: PLW1641 (not hashable)
+class SingleSet:
     """A single ReacLib set for a reaction in the form:
 
     λ = exp[ a_0 + sum_{i=1}^5  a_i T_9**(2i-5)/3  + a_6 log T_9]
@@ -66,16 +67,25 @@ class SingleSet:  # noqa: PLW1641 (not hashable)
         self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
-        x = True
 
-        for ai, aj in zip(self.a, other.a):
-            x = x and (ai == aj)
+        if not isinstance(other, SingleSet):
+            return NotImplemented
+
+        # coefficients should be the same
+        x = tuple(self.a) == tuple(other.a)
 
         x = x and (self.label == other.label)
         x = x and (self.resonant == other.resonant)
         x = x and (self.weak == other.weak)
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
+
+    def __hash__(self):
+        return hash((tuple(self.a),
+                     self.label,
+                     self.resonant,
+                     self.weak,
+                     self.derived_from_inverse))
 
     def log_f(self):
         """Return a function for ``log_rate(tf)`` where ``tf`` is a
@@ -324,7 +334,9 @@ class ReacLibRate(Rate):
                          use_identical_particle_factor=True)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        # Match the order-independent, multiplicity-sensitive set comparison.
+        return hash((super().__hash__(), self.chapter,
+                     frozenset(Counter(self.sets).items())))
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
@@ -334,30 +346,16 @@ class ReacLibRate(Rate):
 
         """
 
-        x = super().__eq__(other)
-        if not x:
-            return x
-
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = self.chapter == other.chapter
-        if not x:
-            return x
+        # we use Counter to compare the sets -- this works because
+        # SingleSets are hashable.  It ignores ordering and will catch
+        # differences in the number of sets, contents, and duplication.
 
-        x = len(self.sets) == len(other.sets)
-        if not x:
-            return x
-
-        for si in self.sets:
-            scomp = False
-            for sj in other.sets:
-                if si == sj:
-                    scomp = True
-                    break
-            x = x and scomp
-
-        return x
+        return (super().__eq__(other) and
+                self.chapter == other.chapter and
+                Counter(self.sets) == Counter(other.sets))
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the
@@ -647,9 +645,12 @@ class ReacLibRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -659,7 +660,8 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor\n"
             fstring += "    set_rate = np.exp(ln_set_rate)\n"
             fstring += "    rate += set_rate\n\n"
 
@@ -828,42 +830,6 @@ class ReacLibRate(Rate):
             drdT += dfdT(tf)
 
         return drdT
-
-    def get_rate_exponent(self, T0, *, rho=None, comp=None,
-                          screen_func=None):
-        """For a rate written as a power law, r = r_0 (T/T0)**nu,
-        return nu corresponding to T0. This also considers electron
-        screening effect if screen_func is passed in.
-
-        Parameters
-        ----------
-        T0 : float
-            the temperature to base the power law from
-        rho : float
-            the density to evaluate the rate at (not needed for ReacLib
-            rates), but needed for evaluating screening effects.
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates),
-            but needed for evaluating screening effects.
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-            -- if provided, then the rate exponent will include screening correction.
-
-        Returns
-        -------
-        float
-
-        """
-
-        # nu = dln r /dln T, so we need dr/dT
-        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func)
-        dT = 1.e-8*T0
-        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func)
-
-        drdT = (r2 - r1)/dT
-        return (T0/r1)*drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
              figsize=(10, 10), *, rho=None, comp=None, screen_func=None):

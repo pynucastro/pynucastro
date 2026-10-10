@@ -8,7 +8,8 @@ import numpy as np
 
 import pynucastro.numba_util as numba
 from pynucastro.numba_util import jitclass
-from pynucastro.rates.rate import Rate, ThermoState, cxx_rate_func_args
+from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
+                                   py_rate_func_args)
 
 
 @jitclass([
@@ -268,7 +269,7 @@ class TemperatureTabularRate(Rate):
         return self.reactants == other.reactants and self.products == other.products
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products)))
 
     def function_string_py(self):
         """Construct the python function that computes the rate.
@@ -279,14 +280,20 @@ class TemperatureTabularRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         fstring += f"    {self.fname}_interpolator = TempTableInterpolator(*{self.fname}_info)\n"
         fstring += "    T = tf.T9 * 1.e9\n"
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
-        fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
+        if self.screening_pairs:
+            fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
+        else:
+            fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         return fstring
 
