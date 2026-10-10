@@ -57,35 +57,43 @@ void evaluate_screening(const burn_t& state,
 
     // Evaluate screening terms
 
-    using number_t = std::conditional_t<do_T_derivatives, autodiff::dual, amrex::Real>;
-    number_t temp = state.T;
-    if constexpr (do_T_derivatives) {
-        // seed the dual number for temperature before calculating anything with it
-        autodiff::seed(temp);
-    }
+    using number_t = std::conditional_t<do_T_derivatives, screening_dual_t, amrex::Real>;
+    amrex::Real temp = state.T;
 
     plasma_state_t<number_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
 
-    amrex::Real log_scor, dlog_scor_dT;
+    amrex::Real log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2;
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 26.0_rt, 52.0_rt);
         static_assert(scn_fac.z1 == 2.0_rt);
-        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);
+        } else {
+            actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        }
         rate_eval.log_screen(k_He4_Fe52) = log_scor;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_He4_Fe52) = dlog_scor_dT;
+            rate_eval.dlog_screen_dYe(k_He4_Fe52) = dlog_scor_dYe;
+            rate_eval.dlog_screen_dZ2(k_He4_Fe52) = dlog_scor_dZ2;
         }
     }
 
     {
         constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 27.0_rt, 55.0_rt);
         static_assert(scn_fac.z1 == 1.0_rt);
-        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);
+        } else {
+            actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+        }
         rate_eval.log_screen(k_p_Co55) = log_scor;
         if constexpr (std::is_same_v<T, rate_derivs_t>) {
             rate_eval.dlog_screen_dT(k_p_Co55) = dlog_scor_dT;
+            rate_eval.dlog_screen_dYe(k_p_Co55) = dlog_scor_dYe;
+            rate_eval.dlog_screen_dZ2(k_p_Co55) = dlog_scor_dZ2;
         }
     }
 
@@ -316,6 +324,32 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(H1, Ni56, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        {
+            const amrex::Real flux = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(H1, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // He4 row
 
@@ -336,6 +370,32 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Ni56_to_He4_Fe52_derived);
     jac.set(He4, Ni56, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(He4, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // Fe52 row
 
@@ -356,6 +416,32 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Ni56_to_He4_Fe52_derived);
     jac.set(Fe52, Ni56, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(Fe52, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // Co55 row
 
@@ -376,6 +462,32 @@ void jac_nuc(const burn_t& state,
     scratch = screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(Co55, Ni56, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = -screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        {
+            const amrex::Real flux = screened_rates(k_Fe52_He4_to_p_Co55_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = -screened_rates(k_Co55_p_to_He4_Fe52_derived)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(Co55, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
     // Ni56 row
 
@@ -395,6 +507,27 @@ void jac_nuc(const burn_t& state,
               - screened_rates(k_Ni56_to_p_Co55_derived);
     jac.set(Ni56, Ni56, scratch);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).
+        amrex::Real dscreen_ydot_dYe{};
+        amrex::Real dscreen_ydot_dZ2{};
+        {
+            const amrex::Real flux = screened_rates(k_Fe52_He4_to_Ni56_reaclib)*Y(Fe52)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Fe52));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_He4_Fe52));
+        }
+        {
+            const amrex::Real flux = screened_rates(k_Co55_p_to_Ni56_reaclib)*Y(Co55)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Co55));
+            dscreen_ydot_dZ2 += flux * (rate_eval.dlog_screen_dZ2(k_p_Co55));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const amrex::Real Z = zion[jcol-1];
+            jac.add(Ni56, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);
+        }
+    }
+#endif
 
 
     // add ∂λ_weak / ∂Y_e terms now

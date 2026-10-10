@@ -69,6 +69,14 @@ class BaseCxxNetwork(ABC, RateCollection):
     interprets the collection of rates and nuclei to produce the C++
     code needed to integrate the network.
 
+    Parameters
+    ----------
+    do_screeening_comp_derivs : bool
+        Do we take into account the Jacobian corrections due to
+        composition dependence in screening function?  This requires a
+        screening function that returns derivatives with respect to Ye
+        and Z2.
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -91,6 +99,11 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.gpu_device_specifier = ""
         self.dtype = "double"
         self.array_namespace = ""
+
+        # we only support Jacobian corrections due to the Ye and Z2
+        # composition dependence in the screening function if the
+        # screening implementation returns these derivatives
+        self.do_comp_screening_derivs = False
 
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
@@ -284,7 +297,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = True
 
     def _compute_screening_factors_helper(self, n_indent, of, rates,
-                                          do_T_derivatives=True):
+                                          do_T_derivatives=True, do_screening_comp_derivatives=True):
         """Compose the screening factors string given a list of rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
@@ -301,11 +314,25 @@ class BaseCxxNetwork(ABC, RateCollection):
             # Insert a static assert (which will always pass) to require the
             # compiler to evaluate the screen factor at compile time.
             of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
-            of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+            if do_T_derivatives:
+                of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);\n')
+                else:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+
+                of.write(f'{self.indent*(n_indent+1)}}} else {{\n')
+                of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+                of.write(f'{self.indent*(n_indent+1)}}}\n')
+            else:
+                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
             of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
             if do_T_derivatives:
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                 of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dYe(k_{n1}_{n2}) = dlog_scor_dYe;\n')
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dZ2(k_{n1}_{n2}) = dlog_scor_dZ2;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
             of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -592,7 +619,61 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
+            if self.do_comp_screening_derivs:
+                self._jacnuc_screening(n_indent, of, nj)
             of.write("\n")
+
+    def _jacnuc_screening(self, n_indent, of, nuc):
+        """Add screening composition derivatives to one molar Jacobian row.
+
+        The signed, screened flux includes the net stoichiometric coefficient.
+        Logarithmic derivatives add over all screening pairs of a rate.
+        """
+        contributions = []
+        for rate in self.rates:
+            # for approximate rates, we want to look at the effective
+            # screening pairs to capture the overall screening
+            # dependence.  This reduces to screening_pairs for regular
+            # rates.
+            if not rate.get_effective_screening_pairs():
+                continue
+            flux = self.symbol_rates.ydot_term_symbol(rate, nuc)
+            if flux is not None:
+                contributions.append((rate, flux))
+
+        if not contributions:
+            return
+
+        of.write("#ifdef SCREENING\n")
+        of.write(f"{self.indent*n_indent}{{\n")
+        indent = self.indent * (n_indent + 1)
+        of.write(f"{indent}// Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).\n")
+
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dYe{{}};\n")
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dZ2{{}};\n")
+
+        for rate, flux in contributions:
+            flux_cxx = self._cxxify(sympy.cxxcode(flux, precision=15, standard="c++11"))
+            of.write(f"{indent}{{\n")
+            of.write(f"{indent}    const {self.dtype} flux = {flux_cxx};\n")
+
+            # we are storing d(log f)/dYe, where f is the screening
+            # factor, so the we can just multiply by the flux to get
+            # the derivative of the screening portion of the flux with
+            # respect to Ye, since dlogf = df/f, the screening factor
+            # cancels.
+            for variable in ("Ye", "Z2"):
+                derivative = " + ".join(f"rate_eval.dlog_screen_d{variable}(k_{n1}_{n2})"
+                                        for n1, n2 in rate.get_effective_screening_pairs())
+                of.write(f"{indent}    dscreen_ydot_d{variable} += flux * ({derivative});\n")
+            of.write(f"{indent}}}\n")
+
+        of.write(f"{indent}for (int jcol = 1; jcol <= NumSpec; ++jcol) {{\n")
+        of.write(f"{indent}    const {self.dtype} Z = zion[jcol-1];\n")
+        of.write(f"{indent}    jac.add({nuc.cindex()}, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);\n")
+        of.write(f"{indent}}}\n")
+        of.write(f"{self.indent*n_indent}}}\n")
+        of.write("#endif\n")
 
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -611,6 +692,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#ifdef SCREENING\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
+        if self.do_comp_screening_derivs:
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dYe{{}};\n")
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dZ2{{}};\n")
         of.write("#endif\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec>  dweak_ydot_dYe;\n")
         of.write(f"    {self.dtype} enuc_weak;\n")

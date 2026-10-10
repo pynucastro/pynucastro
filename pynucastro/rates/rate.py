@@ -834,6 +834,22 @@ class Rate:
         self.screening_pairs = []
         self._set_screening_pairs()
 
+    def get_effective_screening_pairs(self):
+        """Return the net set of screening pairs for a rate, after
+        canceling out any other pairs.  This will be used in computing
+        the Jacobian composition derivatives of the screening factors.
+        This comes into play with approximations, where multiple
+        screened rates may be used in the approximation, but only a
+        single screening pair should be used for the Jacobian term.
+
+        Returns
+        -------
+        list((Nucleus, Nucleus))
+
+        """
+
+        return self.screening_pairs
+
     def get_child_rates(self):
         """Return any rates that this rate depends on."""
         return

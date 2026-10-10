@@ -576,6 +576,45 @@ class ApproximateRate(Rate):
         self.ion_screen = []
         self.screening_pairs = []
 
+    def get_effective_screening_pairs(self):
+        """Return the net set of screening pairs for a rate, after
+        canceling out any other pairs.  For ApproximateRate, when doing
+        charged reactions, there is a cancelation of a common screening
+        factor in the numerator and denominator.  The surviving pair is
+        what should be differentiated in the Jacobian for the screening
+        composition term.
+
+        Returns
+        -------
+        list((Nucleus, Nucleus))
+
+        """
+
+        effective_screening_pairs = []
+
+        if self.approx_type == "ap_pg":
+
+            if not self.is_reverse:
+                effective_screening_pairs = self.rates["A(a,g)B"].screening_pairs
+
+        elif self.approx_type == "nn_g":
+            # there are no charged particle interactions
+            pass
+
+        elif self.approx_type == "Yp_pg":
+
+            if not self.is_reverse:
+                effective_screening_pairs = self.rates["A(Y,p)X"].screening_pairs
+
+        elif self.approx_type == "Yp_pa":
+
+            if not self.is_reverse:
+                effective_screening_pairs = self.rates["A(Y,p)X"].screening_pairs
+            else:
+                effective_screening_pairs = self.rates["B(a,p)X"].screening_pairs
+
+        return effective_screening_pairs
+
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
         """Evaluate the natural log of reaction rate for approximate rate.

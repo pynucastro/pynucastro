@@ -17,6 +17,8 @@ struct rate_derivs_t {
 #ifdef SCREENING
     amrex::Array1D<amrex::Real, 1, Rates::NumScreenPairs>  log_screen;
     amrex::Array1D<amrex::Real, 1, Rates::NumScreenPairs>  dlog_screen_dT;
+    amrex::Array1D<amrex::Real, 1, Rates::NumScreenPairs>  dlog_screen_dYe{};
+    amrex::Array1D<amrex::Real, 1, Rates::NumScreenPairs>  dlog_screen_dZ2{};
 #endif
     amrex::Array1D<amrex::Real, 1, NumSpec>  dweak_ydot_dYe;
     amrex::Real enuc_weak;
