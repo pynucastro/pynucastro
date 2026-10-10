@@ -8,7 +8,7 @@ import copy
 import numpy as np
 
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates.rate import Rate, cxx_rate_func_args
+from pynucastro.rates.rate import Rate, cxx_rate_func_args, py_rate_func_args
 from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
@@ -218,10 +218,12 @@ class BetaLimitedRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        # we keep log_scor here just for uniformity, but it is not used.
-        fstring += f"def {self.fname}(rate_eval, tf, rho=None, Y=None, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the beta-limiting: {self.description}\n\n"
