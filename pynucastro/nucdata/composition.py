@@ -374,7 +374,11 @@ class Composition(collections.UserDict):
         -------
         float
         """
-        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self) / self.get_sum_X()
+
+        # we'll use a relatively loose check on normalization, since we sometimes
+        # do a finite-difference approx to derivatives at O(1.e-8)
+        assert abs(self.get_sum_X() - 1.0) < 1.e-6, f"mass fractions must sum to 1; sum error = {self.get_sum_X() - 1.0}"
+        electron_frac = math.fsum(self[n] * n.Z / n.A for n in self)
         return electron_frac
 
     @property
