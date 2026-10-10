@@ -7,6 +7,7 @@ import copy
 
 import numpy as np
 
+from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
                                    py_rate_func_args)
 from pynucastro.rates.reaclib_rate import ReacLibRate
@@ -77,7 +78,8 @@ class ModifiedRate(Rate):
         # important in the C++ code generation the we fill modified
         # rates only after the original rate is filled.
         assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
+                          (ReacLibRate, StarLibRate,
+                           TemperatureTabularRate, BetaLimitedRate))
 
         if new_reactants is not None:
             reactants = new_reactants
@@ -97,10 +99,9 @@ class ModifiedRate(Rate):
                          rate_source=rate_source)
 
         # right now we assume that if the original rate is screened,
-        # then the modified rate is too.  And likewise, if the
-        # original is not screened, then the modified is not screened.
-        assert ((not self.screening_pairs and not self.original_rate.screening_pairs) or
-                (self.screening_pairs and self.original_rate.screening_pairs))
+        # then the modified rate should be too.
+        if self.original_rate.screening_pairs:
+            assert self.screening_pairs, "original_rate is screened, so the caller should be too"
 
         # set the function string args to be those of the original rate
         self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
@@ -229,6 +230,7 @@ class ModifiedRate(Rate):
 
         fstring = ""
         fstring += "@numba.njit()\n"
+
         fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
