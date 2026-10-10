@@ -23,6 +23,7 @@
 #include <temperature_table_rates.H>
 #include <tabular_weak_rates.H>
 #include <derived_rates.H>
+#include <fill_rates.H>
 
 using namespace amrex::literals;
 
@@ -135,30 +136,10 @@ void evaluate_rates(const burn_t& state,
 
     // Fill in different rates
 
-    reaclib_rates::fill_rates(tfactors, rate_eval);
+    rate_util::fill_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
 
-    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
+    // Apply any parameters to disable rates
 
-    temp_tabular::fill_rates(tfactors, rate_eval);
-
-    // fill modified rates next -- these can have ReacLib or
-    // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates(tfactors, rate_eval);
-
-    // fill branched rates -- these can have ReacLib or
-    // TemperatureTabular/StarLib as the underlying rate or branches.
-    branched_rates::fill_rates(tfactors, rate_eval);
-
-    // Calculate Derived Rates next. This should go last but before
-    // approx rates, since those may have ReacLibRate,
-    // TemperatureTabularRate / StarLibRate, or DerivedRate as the
-    // underlying rate.
-    derived_rates::fill_rates(tfactors, rate_eval);
-
-
-
-    // Fill approximate rates
-    approximate_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
 
 }
 
@@ -202,14 +183,14 @@ void get_ydot_weak(const burn_t& state,
 
     rate_t rate_eval;
 
-    [[maybe_unused]] amrex::Real rate, drate_dT, edot_nu, edot_gamma;
     [[maybe_unused]] const amrex::Real rhoy = state.rho * state.y_e;
 
-    rate_eval.enuc_weak = 0.0_rt;
+    const tf_t tfactors = evaluate_tfactors(state.T);
 
-    // Compute all weak rates and get ydot_weak
+    // fill only the weak rates
+    rate_util::fill_weak_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
 
-    tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);
+    // assemble Ydot for just the weak rate evolution
 
     ydot_nuc(He4) = 0.0_rt;
 
@@ -218,6 +199,7 @@ void get_ydot_weak(const burn_t& state,
     ydot_nuc(Si28) = 0.0_rt;
 
     ydot_nuc(S32) = 0.0_rt;
+
 
     enuc_weak = rate_eval.enuc_weak;
 }

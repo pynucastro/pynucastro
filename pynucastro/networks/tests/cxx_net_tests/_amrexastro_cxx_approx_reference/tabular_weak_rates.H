@@ -19,34 +19,5 @@ namespace tabular_weak_rates {
     using namespace rate_tables;
 
 
-    template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
-    void
-    fill_rates([[maybe_unused]] const amrex::Real temp,
-               [[maybe_unused]] const amrex::Real rho,
-               [[maybe_unused]] const amrex::Real rhoy,
-               [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        // Calculate tabular weak rates
-
-        [[maybe_unused]] const amrex::Real log_temp = std::log10(temp);
-        [[maybe_unused]] const amrex::Real log_rhoy = std::log10(rhoy);
-
-        rate_eval.enuc_weak = 0.0_rt;
-
-        if constexpr (std::is_same_v<T, rate_derivs_t>) {
-            for (int n = 1; n <= NumSpec; ++n) {
-                rate_eval.dweak_ydot_dYe(n) = 0.0_rt;
-                rate_eval.denuc_weak_dY(n) = 0.0_rt;
-            }
-            rate_eval.denuc_weak_dT = 0.0_rt;
-            rate_eval.denuc_weak_dYe = 0.0_rt;
-
-        }
-
-    }
-
 }
 #endif

@@ -85,32 +85,5 @@ namespace temp_tabular {
     }
 
 
-    template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        [[maybe_unused]] amrex::Real rate;
-        [[maybe_unused]] amrex::Real drate_dT;
-
-        {
-            // O16_p_to_F17_iliadis
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
-#ifdef SCREENING
-            log_scor = rate_eval.log_screen(k_p_O16);
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_O16);
-            }
-#endif
-            rate_O16_p_to_F17_iliadis(rate_eval, tfactors, log_scor, dlog_scor_dT);
-        }
-
-
-
-    }
-
 }
 #endif

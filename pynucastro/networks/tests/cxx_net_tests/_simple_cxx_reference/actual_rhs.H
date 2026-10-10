@@ -14,7 +14,7 @@
 #include <derived_rates.H>
 #include <table_rates.H>
 #include <tabular_weak_rates.H>
-
+#include <fill_rates.H>
 
 template<class T>
 inline
@@ -106,25 +106,9 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 
-    // Calculate Reaclib rates
-    reaclib_rates::fill_rates(tfactors, rate_eval);
+    // Fill in different rates
 
-    // Calculate tabular rates
-    tabular_weak_rates::fill_rates<T>(state.T, state.rho, rhoy, Y, rate_eval);
-
-    // fill modified rates next -- these can have ReacLib or
-    // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates(tfactors, rate_eval);
-
-    // fill branched rates -- these can have ReacLib or
-    // TemperatureTabular/StarLib as the underlying rate or branches.
-    branched_rates::fill_rates(tfactors, rate_eval);
-
-    // Calculate Derived Rates. This should go last but before approx rates.
-    derived_rates::fill_rates(tfactors, rate_eval);
-
-    // Fill approximate rates
-    approximate_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
+    rate_util::fill_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
 
 }
 
