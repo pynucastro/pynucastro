@@ -7,7 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.rate import Rate, cxx_rate_func_args
+from pynucastro.rates.rate import Rate, cxx_rate_func_args, py_rate_func_args
 
 
 class BranchedRate(Rate):
@@ -204,9 +204,12 @@ class BranchedRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"

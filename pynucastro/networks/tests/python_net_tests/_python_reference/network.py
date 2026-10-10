@@ -202,14 +202,13 @@ def C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.C12_He4_to_O16_reaclib = rate
 
 @numba.njit()
-def n_to_p_beta_neg_reaclib(rate_eval, tf, log_scor=0.0):
+def n_to_p_beta_neg_reaclib(rate_eval, tf):
     # n --> p
     rate = 0.0
 
     # wc12w
     ln_set_rate =  -6.78161
 
-    ln_set_rate += log_scor
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
@@ -247,7 +246,7 @@ def He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=0.0):
     rate_eval.He4_He4_He4_to_C12_reaclib = rate
 
 @numba.njit()
-def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T, rho, log_rhoY, Y):
+def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=None, rho=None, log_rhoY=None, Y=None):
     # Na23 --> Ne23
     Na23_to_Ne23_electron_capture_weaktab_interpolator = TableInterpolator(*Na23_to_Ne23_electron_capture_weaktab_info)
     r = Na23_to_Ne23_electron_capture_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
@@ -266,7 +265,7 @@ def Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T, rho, log_rhoY, Y)
     rate_eval.dweak_ydot_dYe[jne23] += rho * Y[jna23] * drate_drhoye;
 
 @numba.njit()
-def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T, rho, log_rhoY, Y):
+def Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=None, rho=None, log_rhoY=None, Y=None):
     # Ne23 --> Na23
     Ne23_to_Na23_beta_neg_weaktab_interpolator = TableInterpolator(*Ne23_to_Na23_beta_neg_weaktab_info)
     r = Ne23_to_Na23_beta_neg_weaktab_interpolator.interpolate(log_rhoY, log_T, TableIndex.RATE.value)
