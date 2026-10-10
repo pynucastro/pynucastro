@@ -46,7 +46,7 @@ class BetaLimitedRate(Rate):
     """
 
     def __init__(self, underlying_rate, beta_limiting_rates, *,
-                 limiter_nucleus=None, description=None):
+                 limiter_nucleus, description=None):
 
         self.underlying_rate = underlying_rate
 
