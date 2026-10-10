@@ -873,7 +873,11 @@ namespace starlib {{
             of.write(sl_str)
 
     def _fill_starlib_random(self, _, of):
-        sl_random_str = """
+        num_sl = len(self.starlib_rates)
+        if num_sl <= 0:
+            return
+
+        of.write("""
     if (network_rp::starlib_seed > 0) {
         // generate Gaussian random numbers
         std::mt19937 generator(network_rp::starlib_seed);
@@ -887,11 +891,26 @@ namespace starlib {{
         for (int n = 1; n <= starlib::NumStarLibRates; ++n) {
             starlib::prand(n) = rn(generator);
         }
-    }"""
+    }""")
 
-        num_sl = len(self.starlib_rates)
-        if num_sl > 0:
-            of.write(sl_random_str)
+        _map = "\n".join(
+        f'            {{"{rate.fname}", {n + 1}}},'
+        for n, rate in enumerate(self.starlib_rates))
+
+        of.write(f"""
+    if (!network_rp::modify_rate.empty()) {{
+        // Allows modifying the deviate of a single rate
+        // Used to isolate or mute
+        // the effects of a particular rate's sampling
+
+         //compile time map of rate -> index
+         static const std::map<std::string, int> rate_to_idx = {{
+{_map}
+        }};
+         auto it = rate_to_idx.find(network_rp::modify_rate);
+         AMREX_ALWAYS_ASSERT_WITH_MESSAGE(it != rate_to_idx.end(), "Rate to modify not recognized");
+         starlib::prand(it->second) = network_rp::new_deviate;
+    }}""")
 
     def _fill_starlib_func(self, n_indent, of):
 
