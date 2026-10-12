@@ -307,8 +307,8 @@ class Composition(collections.UserDict):
             values : input values of mass fractions
         """
 
-        for nuc, molar in d.items():
-            self.set_molar(Nucleus.cast(nuc), molar)
+        for nuc, yval in d.items():
+            self.set_molar(Nucleus.cast(nuc), yval)
 
     def set_all(self, xval: float):
         """Set all species to the same scalar value.
@@ -361,8 +361,8 @@ class Composition(collections.UserDict):
         """
         self[name] = xval
 
-    def set_molar(self, name, molar: float):
-        """Set nuclei name to the molar fraction 'molar'.
+    def set_molar(self, name, yval: float):
+        """Set nuclei name to the molar fraction yval.
 
         Parameters
         ----------
@@ -370,7 +370,7 @@ class Composition(collections.UserDict):
             the nucleus to set
         molar: float
         """
-        self[name] = molar * self[name].A
+        self[name] = yval * self[name].A
 
     def normalize(self, *, half_life_thresh=None):
         """Normalize the mass fractions to sum to 1.
