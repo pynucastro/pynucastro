@@ -264,6 +264,9 @@ class Composition(collections.UserDict):
             values : input values of mass fractions
         """
 
+        for nuc, xval in d.items():
+            self.set_nuc(Nucleus.cast(nuc), xval)
+
     def set_molar_array(self, arr):
         """Set the molar fractions of all species to the values
         in arr, ordered the same as `get_nuclei()`
@@ -297,6 +300,9 @@ class Composition(collections.UserDict):
             keys : Nucleus, str
             values : input values of mass fractions
         """
+
+        for nuc, molar in d.items():
+            self.set_molar(Nucleus.cast(nuc), molar)
 
     def set_all(self, xval: float):
         """Set all species to the same scalar value.
