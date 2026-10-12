@@ -252,7 +252,7 @@ class Composition(collections.UserDict):
 
         """
 
-        warnings.warn("set_array is deprecated, use set_nuc instead",
+        warnings.warn("set_array is deprecated, use set_nuc or set_dict instead",
                       DeprecationWarning,
                       stacklevel=2)
 
@@ -286,7 +286,7 @@ class Composition(collections.UserDict):
 
         """
 
-        warnings.warn("set_molar_array is deprecated, use set_molar instead",
+        warnings.warn("set_molar_array is deprecated, use set_molar or set_molar_dict instead",
                       DeprecationWarning,
                       stacklevel=2)
 
