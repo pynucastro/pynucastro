@@ -107,14 +107,14 @@ class TestComposition:
                         rtol=1.e-7, atol=1.e-20)
 
     def test_set_dict(self, comp):
-        Xs = np.random(6)
+        Xs = np.random.rand(6)
         d = dict(zip(["h1", "he4", "c12", "o16", "n14", "ca40"], Xs))
         comp.set_dict(d)
         got_Xs = comp.get_array()
         assert_allclose(got_Xs, Xs, rtol=1.e-14, atol=1.e-30)
 
     def test_set_molar_dict(self, comp):
-        Ys = np.random(6)
+        Ys = np.random.rand(6)
         d = dict(zip(["h1", "he4", "c12", "o16", "n14", "ca40"], Ys))
         comp.set_molar_dict(d)
         got_Ys = comp.get_molar_array()
