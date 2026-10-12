@@ -95,6 +95,12 @@ class Composition(collections.UserDict):
             super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
+        if type(nuclei) is dict:
+            self.set_dict(nuclei)
+            if init is not None:
+                warnings.warn(f"nuclei mass fractions are being overwritten by init method {init}",
+                      UserWarning,
+                      stacklevel=2)
 
         if init == "uniform":
             self.set_equal()
