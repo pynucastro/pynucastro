@@ -268,6 +268,8 @@ class Composition(collections.UserDict):
         """Set the molar fractions of all species to the values
         in arr, ordered the same as `get_nuclei()`
 
+        .. deprecated
+
         Parameters
         ----------
         arr : list, tuple, numpy.ndarray
@@ -275,7 +277,7 @@ class Composition(collections.UserDict):
 
         """
 
-        warnings.warn("set_molar_array is deprecated, use set_nuc instead",
+        warnings.warn("set_molar_array is deprecated, use set_molar instead",
                       DeprecationWarning,
                       stacklevel=2)
 
@@ -346,6 +348,17 @@ class Composition(collections.UserDict):
         xval: float
         """
         self[name] = xval
+
+    def set_molar(self, name, molar: float):
+        """Set nuclei name to the molar fraction 'molar'.
+
+        Parameters
+        ----------
+        name : Nucleus
+            the nucleus to set
+        molar: float
+        """
+        self[name] = molar * self[name].A
 
     def normalize(self, *, half_life_thresh=None):
         """Normalize the mass fractions to sum to 1.
