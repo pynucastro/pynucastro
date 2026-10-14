@@ -285,7 +285,7 @@ class Composition(collections.UserDict):
         """
 
         # deprecate at will. Function is unsafe, as we have
-        # no guarantee that the input array uses the same 
+        # no guarantee that the input array uses the same
         # ordering as the internal array.
 
         As = np.array([n.A for n in self])
