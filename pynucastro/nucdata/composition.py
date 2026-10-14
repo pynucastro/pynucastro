@@ -370,7 +370,7 @@ class Composition(collections.UserDict):
             the nucleus to set
         molar: float
         """
-        self[name] = yval * self[name].A
+        self[name] = yval * Nucleus.cast(name).A
 
     def normalize(self, *, half_life_thresh=None):
         """Normalize the mass fractions to sum to 1.
