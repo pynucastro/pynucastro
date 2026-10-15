@@ -10,6 +10,7 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
+#include <beta_limited_rates.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>

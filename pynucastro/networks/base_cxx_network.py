@@ -27,6 +27,7 @@ from pynucastro.utils import pynucastro_version
 
 # dict to convert rate type to the C++ namespace
 namespaces = {"ApproximateRate": "approximate_rates",
+              "BetaLimitedRate": "beta_limited_rates",
               "BranchedRate": "branched_rates",
               "DerivedRate": "derived_rates",
               "ModifiedRate": "modified_rates",
@@ -116,6 +117,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<fill_all_rates>'] = self._fill_all_rates
         self.ftags['<fill_all_weak_rates>'] = self._fill_all_weak_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
+        self.ftags['<beta_limited_rate_functions>'] = self._beta_limited_rate_functions
         self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
         self.ftags['<derived_rate_functions>'] = self._derived_rate_functions
         self.ftags['<modified_rate_functions>'] = self._modified_rate_functions
@@ -477,22 +479,22 @@ class BaseCxxNetwork(ABC, RateCollection):
         # since we don't expect derived rate to be a weak rate.  Also
         # handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates +
-                      self.starlib_rates +
-                      self.temperature_tabular_rates
+                      self.starlib_rates + self.temperature_tabular_rates
                       if r.weak]
 
-        # BranchedRate rates don't evaluate their underlying rates
-        # directly (and the interface doesn't need screening or
-        # templates parameters).  This means we need to first evaluate
-        # all of the rates the BranchedRate depends on (whether or not
-        # they are weak, since the final rate is a weak rate)
-        weak_branched_rates = [r for r in self.branched_rates
-                               if r.weak]
+        # BranchedRate and BetaLimitedRates rates don't evaluate their
+        # underlying rates directly (and the interface doesn't need
+        # screening or templates parameters).  This means we need to
+        # first evaluate all of the rates the parent depends on
+        # (whether or not they are weak, since the final rate is a
+        # weak rate)
+        weak_branched_beta_rates = [r for r in self.branched_rates + self.beta_limited_rates
+                                    if r.weak]
 
-        weak_branched_rates_children = {cr for br in weak_branched_rates
+        weak_branched_beta_rates_children = {cr for br in weak_branched_beta_rates
                                         for cr in br.get_child_rates()}
 
-        weak_rates += weak_branched_rates_children
+        weak_rates += weak_branched_beta_rates_children
 
         # include all tabular rates
         weak_rates += self.tabular_rates
@@ -505,7 +507,6 @@ class BaseCxxNetwork(ABC, RateCollection):
         weak_rates = self._get_weak_rates()
 
         # Compute necessary screening term.
-        # This is really only possible for weak ModifiedRates and BranchedRates
         screening_pair_set = get_screening_pair_set(weak_rates)
         if len(screening_pair_set) > 0:
             of.write('#ifdef SCREENING\n')
@@ -627,6 +628,9 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _branched_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.branched_rates)
+
+    def _beta_limited_rate_functions(self, n_indent, of):
+        self._write_rate_functions(n_indent, of, self.beta_limited_rates)
 
     def _derived_rate_functions(self, n_indent, of):
         self._write_rate_functions(n_indent, of, self.derived_rates)

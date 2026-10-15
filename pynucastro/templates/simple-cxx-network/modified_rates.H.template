@@ -7,11 +7,13 @@
 #include <actual_network.H>
 #include <rate_type.H>
 #include <reaclib_rates.H>
+#include <beta_limited_rates.H>
 
 namespace modified_rates {
 
     using namespace reaclib_rates;
     using namespace Rates;
+    using namespace beta_limited_rates;
 
     <modified_rate_functions>(1)
 
