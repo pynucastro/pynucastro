@@ -25,6 +25,7 @@ namespace beta_limited_rates {
         [[maybe_unused]] amrex::Real rate;
         [[maybe_unused]] amrex::Real drate_dT;
 
+        <fill_beta_limited_rates>(2)
 
     }
 }

@@ -24,6 +24,7 @@ namespace beta_limited_rates {
         [[maybe_unused]] Real rate;
         [[maybe_unused]] Real drate_dT;
 
+        <fill_beta_limited_rates>(2)
 
     }
 }

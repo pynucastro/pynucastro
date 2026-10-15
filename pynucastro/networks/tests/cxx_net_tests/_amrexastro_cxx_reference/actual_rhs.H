@@ -121,34 +121,6 @@ void evaluate_rates(const burn_t& state,
 
     // Apply any parameters to disable rates
 
-<<<<<<< HEAD
-=======
-    temp_tabular::fill_rates(tfactors, rate_eval);
-
-    // fill modified rates next -- these can have ReacLib or
-    // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
-
-    // fill beta-limited rates -- these can have ReacLib or
-    // TemperatureTabular/StarLib as the underlying rate or branches.
-    beta_limited_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
-
-    // fill branched rates -- these can have ReacLib,
-    // TemperatureTabular/StarLib or BetaLimitedRate as the underlying
-    // rate or branches.
-    branched_rates::fill_rates(tfactors, rate_eval);
-
-    // Calculate Derived Rates next. This should go last but before
-    // approx rates, since those may have ReacLibRate,
-    // TemperatureTabularRate / StarLibRate, or DerivedRate as the
-    // underlying rate.
-    derived_rates::fill_rates(tfactors, rate_eval);
-
-
-
-    // Fill approximate rates
-    approximate_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
->>>>>>> main
 
 }
 
