@@ -1,12 +1,25 @@
-from numba import float64
-from numba.experimental import jitclass
+"""Scalar forward-mode derivatives, usable from Python and Numba.
+
+Seed the independent variable with ``Dual(value, 1.0)`` and constants with
+``Dual(value, 0.0)``. Use this module's math helpers in place of NumPy ufuncs
+when an argument may be dual. CPU Numba overloads support scalar-left
+arithmetic, value comparisons, and two-argument ``min``/``max``. Compiled
+``min``/``max`` return a Dual if either operand is dual, with zero derivative
+when a scalar bound is selected. Ties select the first operand, as in Python.
+Other branches must likewise keep dual-valued variables consistently typed.
+"""
+
+import operator
 
 import numpy as np
+from numba import float64, njit, types
+from numba.experimental import jitclass
+from numba.extending import overload
 
 
 @jitclass([("value", float64), ("deriv", float64)])
-class Dual:
-    """Carry a quantity that can propagate its derivatve.
+class Dual:  # noqa: PLW1641 -- mutable duals are intentionally unhashable
+    """Carry a quantity that can propagate its derivative.
 
     We carry a scalar derivative, so that means we are always
     differentiating with respect to the same quantity.
@@ -97,8 +110,8 @@ class Dual:
             if self.value <= 0:
                 raise ValueError("Dual exponents require a positive base")
             value = self.value**y.value
-            deriv = value * (y.deriv * np.log(self.value)
-                             + y.value * self.deriv / self.value)
+            deriv = value * (y.deriv * np.log(self.value) +
+                             y.value * self.deriv / self.value)
             return Dual(value, deriv)
 
         if y == 0:
@@ -107,6 +120,7 @@ class Dual:
                     y * self.value**(y - 1.0) * self.deriv)
 
 
+@njit
 def exp(x):
     """Compute exp(x)."""
     if isinstance(x, Dual):
@@ -115,6 +129,7 @@ def exp(x):
     return np.exp(x)
 
 
+@njit
 def log(x):
     """Compute log(x), the natural logarithm."""
     if isinstance(x, Dual):
@@ -123,6 +138,7 @@ def log(x):
     return np.log(x)
 
 
+@njit
 def log1p(x):
     """Compute log(1 + x), using the natural logarithm."""
     if isinstance(x, Dual):
@@ -131,6 +147,7 @@ def log1p(x):
     return np.log1p(x)
 
 
+@njit
 def sqrt(x):
     """Compute sqrt(x)."""
     if isinstance(x, Dual):
@@ -139,6 +156,7 @@ def sqrt(x):
     return np.sqrt(x)
 
 
+@njit
 def cbrt(x):
     """Compute cbrt(x)."""
     if isinstance(x, Dual):
@@ -147,6 +165,7 @@ def cbrt(x):
     return np.cbrt(x)
 
 
+@njit
 def cos(x):
     """Compute cos(x), with x in radians."""
     if isinstance(x, Dual):
@@ -155,6 +174,7 @@ def cos(x):
     return np.cos(x)
 
 
+@njit
 def sin(x):
     """Compute sin(x), with x in radians."""
     if isinstance(x, Dual):
@@ -163,9 +183,108 @@ def sin(x):
     return np.sin(x)
 
 
+@njit
 def arctan(x):
     """Compute arctan(x)."""
     if isinstance(x, Dual):
         value = np.arctan(x.value)
         return Dual(value, x.deriv / (1.0 + x.value**2))
     return np.arctan(x)
+
+
+# jitclass adds class_type dynamically.
+_DUAL_TYPE = Dual.class_type.instance_type  # pylint: disable=no-member
+_REAL_TYPES = (types.Integer, types.Float, types.Boolean)
+
+
+# Call the reflected methods directly: converting the scalar to Dual here
+# can recursively compile the dual/dual operator before type pruning.
+@overload(operator.add)
+def _scalar_add(a, b):
+    if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+        def impl(a, b):
+            return b.__radd__(a)  # pylint: disable=unnecessary-dunder-call
+        return impl
+    return None
+
+
+@overload(operator.sub)
+def _scalar_sub(a, b):
+    if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+        def impl(a, b):
+            return b.__rsub__(a)  # pylint: disable=unnecessary-dunder-call
+        return impl
+    return None
+
+
+@overload(operator.mul)
+def _scalar_mul(a, b):
+    if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+        def impl(a, b):
+            return b.__rmul__(a)  # pylint: disable=unnecessary-dunder-call
+        return impl
+    return None
+
+
+@overload(operator.truediv)
+def _scalar_div(a, b):
+    if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+        def impl(a, b):
+            return b.__rtruediv__(a)  # pylint: disable=unnecessary-dunder-call
+        return impl
+    return None
+
+
+def _register_comparison(op):
+    """Compare values independently of the derivative seeds."""
+    # CPU specificity gives these overloads priority over Numba's generic
+    # jitclass comparisons, which assume both operands have jit_methods.
+    @overload(op, target="cpu")
+    def compare(a, b):
+        if a == _DUAL_TYPE and b == _DUAL_TYPE:
+            def dual_dual(a, b):
+                return op(a.value, b.value)
+            return dual_dual
+        if a == _DUAL_TYPE and isinstance(b, _REAL_TYPES):
+            def dual_scalar(a, b):
+                return op(a.value, b)
+            return dual_scalar
+        if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+            def scalar_dual(a, b):
+                return op(a, b.value)
+            return scalar_dual
+        return None
+
+
+for _op in (operator.lt, operator.le, operator.gt, operator.ge,
+            operator.eq, operator.ne):
+    _register_comparison(_op)
+
+
+def _register_minmax(func, compare):
+    """Keep both branches of binary clipping dual-valued."""
+    @overload(func)
+    def minmax(a, b):
+        if a == _DUAL_TYPE and b == _DUAL_TYPE:
+            def dual_dual(a, b):
+                if compare(b.value, a.value):
+                    return b
+                return a
+            return dual_dual
+        if a == _DUAL_TYPE and isinstance(b, _REAL_TYPES):
+            def dual_scalar(a, b):
+                if compare(b, a.value):
+                    return Dual(b, 0.0)
+                return a
+            return dual_scalar
+        if isinstance(a, _REAL_TYPES) and b == _DUAL_TYPE:
+            def scalar_dual(a, b):
+                if compare(b.value, a):
+                    return b
+                return Dual(a, 0.0)
+            return scalar_dual
+        return None
+
+
+_register_minmax(min, operator.lt)
+_register_minmax(max, operator.gt)
