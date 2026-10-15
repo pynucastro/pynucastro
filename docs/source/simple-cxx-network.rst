@@ -40,6 +40,11 @@ A simple C++ network can be created as:
 
    A C++20 compiler is required
 
+.. important::
+
+   Derivatives of the screening factor with respect to composition
+   are not currently implemented in the Jacobian.
+
 
 This will output the following files:
 
@@ -131,4 +136,3 @@ By default screening is included.  To disable screening, compile as:
 .. prompt:: bash
 
    make DISABLE_SCREENING=TRUE
-
