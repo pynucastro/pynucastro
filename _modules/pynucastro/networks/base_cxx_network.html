@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post54+gfc0743867 documentation</title>
+    <title>pynucastro.networks.base_cxx_network &#8212; pynucastro 3.1.0.post55+ge2baa29a0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=1accbda2"></script>
+    <script src="../../../_static/documentation_options.js?v=a788d1c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -205,6 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../co-approximations.html">Approximating C and O Burning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beta-limited-rates.html">β-limited Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
@@ -333,6 +334,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
@@ -553,7 +555,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">pynucastro_version</span>
 
 <span class="c1"># dict to convert rate type to the C++ namespace</span>
-<span class="n">namespaces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"BranchedRate"</span><span class="p">:</span> <span class="s2">"branched_rates"</span><span class="p">,</span>
+<span class="n">namespaces</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"BetaLimitedRate"</span><span class="p">:</span> <span class="s2">"beta_limited_rates"</span><span class="p">,</span>
+              <span class="s2">"BranchedRate"</span><span class="p">:</span> <span class="s2">"branched_rates"</span><span class="p">,</span>
               <span class="s2">"DerivedRate"</span><span class="p">:</span> <span class="s2">"derived_rates"</span><span class="p">,</span>
               <span class="s2">"ModifiedRate"</span><span class="p">:</span> <span class="s2">"modified_rates"</span><span class="p">,</span>
               <span class="s2">"ReacLibRate"</span><span class="p">:</span> <span class="s2">"reaclib_rates"</span><span class="p">,</span>
@@ -641,6 +644,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;jacnuc&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jacnuc</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;rate_struct&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rate_struct</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_approx_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_approx_rates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_beta_limited_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_beta_limited_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_branched_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_branched_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_derived_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_derived_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_modified_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_modified_rates</span>
@@ -649,6 +653,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_tabular_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_tabular_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;fill_temp_tabular_rates&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_temp_tabular_rates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;approx_rate_functions&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_approx_rate_functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;beta_limited_rate_functions&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_beta_limited_rate_functions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;branched_rate_functions&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_branched_rate_functions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;derived_rate_functions&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_derived_rate_functions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ftags</span><span class="p">[</span><span class="s1">'&lt;modified_rate_functions&gt;'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modified_rate_functions</span>
@@ -1184,6 +1189,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_branched_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_rate_functions</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_beta_limited_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_rate_functions</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_limited_rates</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_derived_rate_functions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_rate_functions</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">)</span>
 
@@ -1268,6 +1276,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_branched_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branched_rates</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_beta_limited_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fill_rates</span><span class="p">(</span><span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta_limited_rates</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fill_derived_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_indent</span><span class="p">,</span> <span class="n">of</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derived_rates</span><span class="p">:</span>

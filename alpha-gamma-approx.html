@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating alpha-capture &#8212; pynucastro 3.1.0.post54+gfc0743867 documentation</title>
+    <title>Approximating alpha-capture &#8212; pynucastro 3.1.0.post55+ge2baa29a0 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=1accbda2"></script>
+    <script src="_static/documentation_options.js?v=a788d1c6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -208,6 +208,7 @@
 <li class="toctree-l1"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="beta-limited-rates.html">β-limited Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
@@ -336,6 +337,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
@@ -716,7 +718,7 @@ combining them into a single effective rate by assuming that the protons and nuc
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/ad829df14f2d6eab539707e7150a4e01a181f47d8fca1a33e7dee87ad5d596de.png" src="_images/ad829df14f2d6eab539707e7150a4e01a181f47d8fca1a33e7dee87ad5d596de.png" />
+<img alt="_images/4ce369fbf5648daf9d9115fb55a431ef3f321f4815c90e7661b2f3a7d365315c.png" src="_images/4ce369fbf5648daf9d9115fb55a431ef3f321f4815c90e7661b2f3a7d365315c.png" />
 </div>
 </div>
 </section>
@@ -971,7 +973,7 @@ def Mg24_He4_to_Si28_approx(rate_eval):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4d0ced7ccc3ee810c187850736c5de4811de04de08cb2b017e30d177b8bf881b.png" src="_images/4d0ced7ccc3ee810c187850736c5de4811de04de08cb2b017e30d177b8bf881b.png" />
+<img alt="_images/4c0017352bf4def361f84cde5f32da7e39580d7cff5b97e95155e8369492a918.png" src="_images/4c0017352bf4def361f84cde5f32da7e39580d7cff5b97e95155e8369492a918.png" />
 </div>
 </div>
 <p>Here the dotted line is the approximate network.  We see that the results agree well.</p>
@@ -1061,7 +1063,7 @@ def Mg24_He4_to_Si28_approx(rate_eval):
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1447cb4d31d0c5b5da999b919801f4bace60a14951d05de3ae45603c393392d7.png" src="_images/1447cb4d31d0c5b5da999b919801f4bace60a14951d05de3ae45603c393392d7.png" />
+<img alt="_images/318b72668e7456680828ccab685e2c7420f093e72899bdbbc79a878a8225d266.png" src="_images/318b72668e7456680828ccab685e2c7420f093e72899bdbbc79a878a8225d266.png" />
 </div>
 </div>
 <p>Here we see all 3 networks.  The full network (7 nuclei) is the solid lines.  The approximate version of that is the dotted line.  We see that they track reasonably well, especially when the abundance is high.  The dashed line is the version of the network that has the same 4 nuclei as the approximate network, but with out approximating the <span class="math notranslate nohighlight">\((\alpha, p)(p,\gamma)\)</span> links, so we see that the <span class="math notranslate nohighlight">\({}^{24}\mathrm{Mg}\)</span> takes longer to burn.</p>

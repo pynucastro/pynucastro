@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.1.0.post54+gfc0743867 documentation</title>
+    <title>pynucastro.rates.modified_rate &#8212; pynucastro 3.1.0.post55+ge2baa29a0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=1accbda2"></script>
+    <script src="../../../_static/documentation_options.js?v=a788d1c6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -205,6 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../co-approximations.html">Approximating C and O Burning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beta-limited-rates.html">β-limited Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
@@ -333,6 +334,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
@@ -535,6 +537,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.beta_limited_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">BetaLimitedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Rate</span><span class="p">,</span> <span class="n">ThermoState</span><span class="p">,</span> <span class="n">cxx_rate_func_args</span><span class="p">,</span>
                                    <span class="n">py_rate_func_args</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
@@ -607,7 +610,8 @@
         <span class="c1"># important in the C++ code generation the we fill modified</span>
         <span class="c1"># rates only after the original rate is filled.</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">original_rate</span><span class="p">,</span>
-                          <span class="p">(</span><span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">))</span>
+                          <span class="p">(</span><span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span>
+                           <span class="n">TemperatureTabularRate</span><span class="p">,</span> <span class="n">BetaLimitedRate</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">new_reactants</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">reactants</span> <span class="o">=</span> <span class="n">new_reactants</span>
@@ -627,10 +631,9 @@
                          <span class="n">rate_source</span><span class="o">=</span><span class="n">rate_source</span><span class="p">)</span>
 
         <span class="c1"># right now we assume that if the original rate is screened,</span>
-        <span class="c1"># then the modified rate is too.  And likewise, if the</span>
-        <span class="c1"># original is not screened, then the modified is not screened.</span>
-        <span class="k">assert</span> <span class="p">((</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">)</span> <span class="ow">or</span>
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">))</span>
+        <span class="c1"># then the modified rate should be too.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">,</span> <span class="s2">"original_rate is screened, so the caller should be too"</span>
 
         <span class="c1"># set the function string args to be those of the original rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_rate</span><span class="o">.</span><span class="n">rate_eval_needs_tfactors</span>
@@ -767,6 +770,7 @@
 
         <span class="n">fstring</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"@numba.njit()</span><span class="se">\n</span><span class="s2">"</span>
+
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"def </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">args_str</span><span class="si">}</span><span class="s2">):</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>

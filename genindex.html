@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 3.1.0.post54+gfc0743867 documentation</title>
+    <title>Index &#8212; pynucastro 3.1.0.post55+ge2baa29a0 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=1accbda2"></script>
+    <script src="_static/documentation_options.js?v=a788d1c6"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -203,6 +203,7 @@
 <li class="toctree-l1"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="beta-limited-rates.html">β-limited Rates</a></li>
 <li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
@@ -331,6 +332,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
@@ -610,6 +612,8 @@
 </li>
       <li><a href="pynucastro.networks.base_cxx_network.html#pynucastro.networks.base_cxx_network.BaseCxxNetwork">BaseCxxNetwork (class in pynucastro.networks.base_cxx_network)</a>
 </li>
+      <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate">BetaLimitedRate (class in pynucastro.rates.beta_limited_rate)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition.bin_as">bin_as() (pynucastro.nucdata.composition.Composition method)</a>
@@ -763,6 +767,8 @@
       <ul>
         <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.eval">(pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 </li>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate.eval">(pynucastro.rates.beta_limited_rate.BetaLimitedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.eval">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.eval">(pynucastro.rates.rate.Rate method)</a>
@@ -852,10 +858,10 @@
 </li>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.ReacLibRate.from_file">from_file() (pynucastro.rates.reaclib_rate.ReacLibRate class method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.from_Z_A">from_Z_A() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork.full_jacobian_element_string">full_jacobian_element_string() (pynucastro.networks.python_network.PythonNetwork method)</a>
 </li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.full_library">full_library() (in module pynucastro.rates.library)</a>
@@ -865,6 +871,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_cxx">function_string_cxx() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate.function_string_cxx">(pynucastro.rates.beta_limited_rate.BetaLimitedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.function_string_cxx">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_cxx">(pynucastro.rates.derived_rate.DerivedRate method)</a>
@@ -883,6 +891,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.function_string_py">function_string_py() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate.function_string_py">(pynucastro.rates.beta_limited_rate.BetaLimitedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.function_string_py">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.function_string_py">(pynucastro.rates.derived_rate.DerivedRate method)</a>
@@ -923,6 +933,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.get_child_rates">get_child_rates() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate.get_child_rates">(pynucastro.rates.beta_limited_rate.BetaLimitedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.get_child_rates">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate.get_child_rates">(pynucastro.rates.modified_rate.ModifiedRate method)</a>
@@ -1161,6 +1173,8 @@
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.log_eval">log_eval() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate.log_eval">(pynucastro.rates.beta_limited_rate.BetaLimitedRate method)</a>
+</li>
         <li><a href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate.log_eval">(pynucastro.rates.branched_rate.BranchedRate method)</a>
 </li>
         <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.log_eval">(pynucastro.rates.derived_rate.DerivedRate method)</a>
@@ -1343,6 +1357,8 @@
         <li><a href="pynucastro.rates.approximate_rates.html#module-pynucastro.rates.approximate_rates">pynucastro.rates.approximate_rates</a>
 </li>
         <li><a href="pynucastro.rates.aprox_family_rates.html#module-pynucastro.rates.aprox_family_rates">pynucastro.rates.aprox_family_rates</a>
+</li>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#module-pynucastro.rates.beta_limited_rate">pynucastro.rates.beta_limited_rate</a>
 </li>
         <li><a href="pynucastro.rates.branched_rate.html#module-pynucastro.rates.branched_rate">pynucastro.rates.branched_rate</a>
 </li>
@@ -1810,6 +1826,13 @@
 
       <ul>
         <li><a href="pynucastro.rates.aprox_family_rates.html#module-pynucastro.rates.aprox_family_rates">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.rates.beta_limited_rate
+
+      <ul>
+        <li><a href="pynucastro.rates.beta_limited_rate.html#module-pynucastro.rates.beta_limited_rate">module</a>
 </li>
       </ul></li>
       <li>

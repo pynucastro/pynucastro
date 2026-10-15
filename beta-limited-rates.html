@@ -1,0 +1,1414 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>β-limited Rates &#8212; pynucastro 3.1.0.post55+ge2baa29a0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="_static/myfile.css?v=15ab05d9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="_static/documentation_options.js?v=a788d1c6"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'beta-limited-rates';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Rate Sequences with Extra Reactants" href="not_in_ydot_term.html" />
+    <link rel="prev" title="BranchedRate" href="branched-rates.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.1" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt=""/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">pynucastro 3.1</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_composition.html">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="starlib.html">Networks with StarLib rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="finding-rates.html">Finding Available Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="inert-nuclei.html">Inert Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="documenting-networks.html">Documenting Networks</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="derived-rates.html">Derived Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Approximating Rates</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="co-approximations.html">Approximating C and O Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">β-limited Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="nse-intro.html">NSE Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling.html">Neutrino Cooling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neutrino-cooling-effects.html">Effects of Thermal Neutrino Cooling in Network Integrations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="common-nets.html">Common Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cno-network.html">CNO burning network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aprox13.html">The “aprox13” network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working With Simulation Codes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="mesa-nova.html">Importing MESA Models and Visualizing Reactive Flow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/c-burning-products.html">Products of Carbon Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adding-rates.html">Adding Rates from the Literature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jac-devel.html">Form of the Jacobian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.common_networks.html">pynucastro.networks.common_networks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mesa_utils.html">pynucastro.mesa_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.sort_utils.html">pynucastro.sort_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/blob/main/docs/source/beta-limited-rates.ipynb?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/edit/main/docs/source/beta-limited-rates.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2Fbeta-limited-rates.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/beta-limited-rates.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>β-limited Rates</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-vs-hot-cno">CNO vs. hot-CNO</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#our-approximation">Our approximation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-limit">Where to β-limit?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betalimitedrate"><code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-a-limited-rate">Exploring a limited rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-hot-cno-approximate-network">CNO/hot-CNO approximate network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-our-network">Integrating our network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-network-comparison">Full network comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#non-beta-limited-approximation-comparison">Non-<span class="math notranslate nohighlight">\(\beta\)</span>-limited approximation comparison</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="limited-rates">
+<h1>β-limited Rates<a class="headerlink" href="#limited-rates" title="Link to this heading">#</a></h1>
+<p>In <a class="reference internal" href="branched-rates.html"><span class="doc">BranchedRate</span></a> we did an approximation to the CNO cycle that only required 3 heavy nuclei.  Now we want to revisit this and add an approximation to the hot-CNO.</p>
+<section id="cno-vs-hot-cno">
+<h2>CNO vs. hot-CNO<a class="headerlink" href="#cno-vs-hot-cno" title="Link to this heading">#</a></h2>
+<p>The normal CNO cycle proceeds as:</p>
+<div class="math notranslate nohighlight">
+\[{}^{12}\mathrm{C}(p,\gamma){}^{13}\mathrm{N}(\beta+){}^{13}\mathrm{C}(p,\gamma){}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}(\beta+){}^{15}\mathrm{N}(p,\alpha){}^{12}\mathrm{C}\]</div>
+<p>and the hot-CNO cycle captures a proton onto <span class="math notranslate nohighlight">\({}^{13}\mathrm{N}\)</span>, making <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[{}^{12}\mathrm{C}(p,\gamma){}^{13}\mathrm{N}(p,\gamma){}^{14}\mathrm{O}(\beta+){}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}(\beta+){}^{15}\mathrm{N}(p,\alpha){}^{12}\mathrm{C}\]</div>
+<p>At low temperatures, when the normal CNO cycle operates, <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> is the bottleneck, and we build up <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span>.</p>
+<p>As the temperature rises, we transition to the hot-CNO, and now the rate-limiting
+steps in the cycle are the <span class="math notranslate nohighlight">\(\beta+\)</span>-decays, <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}(,e^+\nu){}^{14}\mathrm{N}\)</span> and <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}(,e^+\nu){}^{15}\mathrm{N}\)</span>, whose decay
+times are comparable.  So we want to limit the overall flow through the entire cycle by those waiting points.</p>
+<section id="our-approximation">
+<h3>Our approximation<a class="headerlink" href="#our-approximation" title="Link to this heading">#</a></h3>
+<p>Just like we did previously, we’ll model our approximation off of the widely-used <code class="docutils literal notranslate"><span class="pre">aprox19</span></code> / <code class="docutils literal notranslate"><span class="pre">aprox21</span></code> networks.  These networks use 4 effective rates:</p>
+<ol class="arabic">
+<li><p><span class="math notranslate nohighlight">\({}^{12}\mathrm{C}(p,\gamma){}^{13}\mathrm{N}(\beta^+)
+{}^{13}\mathrm{C}(p,\gamma){}^{14}\mathrm{N}\)</span></p>
+<p>Net: <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}+2p\rightarrow{}^{14}\mathrm{N}\)</span></p>
+</li>
+<li><p><span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}(\beta^+)
+{}^{15}\mathrm{N}(p,\alpha){}^{12}\mathrm{C}\)</span></p>
+<p>Net: <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}+2p\rightarrow{}^{12}\mathrm{C}+\alpha\)</span></p>
+</li>
+<li><p><span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}(\beta^+)
+{}^{15}\mathrm{N}(p,\gamma){}^{16}\mathrm{O}\)</span></p>
+<p>Net: <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}+2p\rightarrow{}^{16}\mathrm{O}\)</span></p>
+</li>
+<li><p><span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}(\beta^+)
+{}^{17}\mathrm{O}(p,\alpha){}^{14}\mathrm{N}\)</span></p>
+<p>Net: <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}+2p\rightarrow{}^{14}\mathrm{N}+\alpha\)</span></p>
+</li>
+</ol>
+<p>Sequences 1 and 2 represent the normal CNO cycle.</p>
+<p>Sequence 3 is an alternate branch, and sequence 4 represents part of the CNO-II cycle.  Without it, we
+would build up <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}\)</span>, which is unphysical.</p>
+</section>
+<section id="where-to-limit">
+<h3>Where to β-limit?<a class="headerlink" href="#where-to-limit" title="Link to this heading">#</a></h3>
+<p>Now for hot-CNO, we want to <span class="math notranslate nohighlight">\(\beta\)</span>-limit the overall sequence from <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> back to <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span>.  The <code class="docutils literal notranslate"><span class="pre">aprox19</span></code> network chooses
+to put the waiting into sequences 2 and 3, by capping the <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> rate.  In this sense, it keeps <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span>
+as the bottleneck nucleus (we don’t have <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}\)</span> or <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}\)</span> in our network, so we can’t use them as the bottleneck).</p>
+<p>We could instead choose to limit cycle 1 by <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}(\beta+){}^{14}\mathrm{N}\)</span>, which would split the bottleneck nucleus up between
+<span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span> and <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> (in an amount relative to the <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}\)</span> and <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}\)</span> waiting times).  But this is not the path
+the original approximation took.  So we will put all the waiting into <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span>.</p>
+</section>
+</section>
+<section id="betalimitedrate">
+<h2><code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code><a class="headerlink" href="#betalimitedrate" title="Link to this heading">#</a></h2>
+<p>A <a class="reference internal" href="pynucastro.rates.beta_limited_rate.html#pynucastro.rates.beta_limited_rate.BetaLimitedRate" title="pynucastro.rates.beta_limited_rate.BetaLimitedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code></a> represents a rate sequence by an effective rate capped by one or more <span class="math notranslate nohighlight">\(\beta\)</span>-decay times in the sequence.</p>
+<p>In our case, we want to use <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> as the main rate, but cap it at the total waiting time
+through <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}(\beta+){}^{14}\mathrm{N}\)</span> and <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}(\beta+){}^{15}\mathrm{N}\)</span></p>
+<p>For these weak rates, ReacLib gives us the decay constant, <span class="math notranslate nohighlight">\(\lambda_{\beta^+}\)</span>, so the timescale associated with the decay is
+<span class="math notranslate nohighlight">\(1 / \lambda_{\beta^+}\)</span>.  <code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code> accepts a list of decay rates and computes the total limiter as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{\lambda_\mathrm{\beta^+,\mbox{eff}}} = \sum_k \frac{1}{\lambda_{\beta^+,k}}\]</div>
+<p>In our case, this will be:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{\lambda_\mathrm{\beta^+,\mbox{eff}}} =
+  \frac{1}{\lambda_{\beta^+,{}^{14}{\rm O}}} +
+  \frac{1}{\lambda_{\beta^+,{}^{15}{\rm O}}}\]</div>
+<p>We want to compare the flux of each rate.  We’ll restrict ourselves to a 2-body reaction for the main rate.  For the general case, the flux of the main rate (which we’ll write as <span class="math notranslate nohighlight">\(X(\xi,\gamma)Z\)</span>) is</p>
+<div class="math notranslate nohighlight">
+\[F = \rho Y(\xi) Y(X) \lambda_{(\xi,\gamma)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda_{(\xi,\gamma)}\)</span> is the <span class="math notranslate nohighlight">\(T\)</span>-dependent portion of the rate (e.g. <span class="math notranslate nohighlight">\(N_A \langle \sigma v \rangle\)</span>) we want to cap.</p>
+<p>Our decay rate will have a flux of the form:</p>
+<div class="math notranslate nohighlight">
+\[F = Y(X) \lambda_{\beta^+}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In our CNO sequence, the main rate is <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> and (one of the) decay rate is <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}(\beta^+){}^{15}\mathrm{N}\)</span>.  But we don’t carry <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}\)</span>, instead all of the <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}\)</span> that we have arrives through the rate sequence, and <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> acts as the reservoir nucleus:</p>
+<div class="math notranslate nohighlight">
+\[{}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}
+;\xrightarrow{\beta^+};
+{}^{15}\mathrm{N}
+;\xrightarrow{(p,\alpha)\ \mathrm{or}\ (p,\gamma)}
+\cdots\]</div>
+<p>This is why we write the flux of the decay in terms of <span class="math notranslate nohighlight">\(Y(X)\)</span>.</p>
+</div>
+<p>We then want the smallest flux:</p>
+<div class="math notranslate nohighlight">
+\[F = \rho Y(\xi) Y(X) \lambda_\mbox{limited} =
+  \min \left (\rho Y(\xi) Y(X) \lambda_{(\xi,\gamma)},\,
+              Y(X) \lambda_{\beta^+} \right )\]</div>
+<p>So our <code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code> will return the rate as:</p>
+<div class="math notranslate nohighlight">
+\[\lambda_\mbox{limited} =
+  \min \left (\lambda_{(\xi,\gamma)},\,
+              \frac{\lambda_{\beta^+}}{\rho Y(\xi)} \right )\]</div>
+<p>Notice that we also need to give the nucleus, <span class="math notranslate nohighlight">\(\xi\)</span>, as part of the
+approximation.  This is passed into <code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code> as <code class="docutils literal notranslate"><span class="pre">limiter_nucleus</span></code>.</p>
+</section>
+<section id="exploring-a-limited-rate">
+<h2>Exploring a limited rate<a class="headerlink" href="#exploring-a-limited-rate" title="Link to this heading">#</a></h2>
+<p>Before building the <span class="math notranslate nohighlight">\(\beta\)</span>-limited CNO cycle, let’s first look at
+the behavior of the limited <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}(p,\gamma){}^{15}\mathrm{O}\)</span> rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyna</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Get all the rates we need to construct the limited rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rl</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ReacLibLibrary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n14(p,g)o15"</span><span class="p">)</span>
+<span class="n">ro15betap</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"o15(,)n15"</span><span class="p">)</span>
+<span class="n">ro14betap</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"o14(,)n14"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now construct the limited rate.  Notice that we pass in a list of
+the <span class="math notranslate nohighlight">\(\beta\)</span>-decay rates that will act as the limiter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14pg_betalim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">BetaLimitedRate</span><span class="p">(</span><span class="n">rn14pg</span><span class="p">,</span>
+                                            <span class="p">[</span><span class="n">ro15betap</span><span class="p">,</span> <span class="n">ro14betap</span><span class="p">],</span>
+                                            <span class="n">limiter_nucleus</span><span class="o">=</span><span class="s2">"p"</span><span class="p">,</span>
+                                            <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15 limited by O14(β+) and O15(β+)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see from the function that this rate produces that it follows
+the prescription described above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">rn14pg_betalim</span><span class="o">.</span><span class="n">function_string_py</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
+def N14_p_to_O15_betalimited(rate_eval, rho=None, Y=None):
+    # N14 + p --&gt; O15
+    # represents the beta-limiting: N14(p,g)O15 limited by O14(β+) and O15(β+)
+
+    r0 = rate_eval.N14_p_to_O15_reaclib
+    lambda_beta_tot = 0.0
+    lambda_beta_tot += 1.0 / rate_eval.O15_to_N15_beta_pos_reaclib
+    lambda_beta_tot += 1.0 / rate_eval.O14_to_N14_beta_pos_reaclib
+    lambda_beta_tot = 1.0 / lambda_beta_tot
+
+    limited_rate = min(r0, lambda_beta_tot / (rho * Y[jp]))
+    rate_eval.N14_p_to_O15_betalimited = limited_rate
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s plot the temperature sensitivity of these.  We’ll evaluate the <span class="math notranslate nohighlight">\(\lambda\)</span>’s over a range of temperatures.  To make the comparison valid,
+we’ll scale the decay rates by <span class="math notranslate nohighlight">\(\rho Y(p)\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12"</span><span class="p">,</span> <span class="s2">"n14"</span><span class="p">,</span>
+                         <span class="s2">"n15"</span><span class="p">,</span> <span class="s2">"o15"</span><span class="p">,</span> <span class="s2">"o16"</span><span class="p">],</span>
+                        <span class="n">init</span><span class="o">=</span><span class="s2">"solar"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Yp</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()[</span><span class="n">pyna</span><span class="o">.</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>First get the original rates</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lam_n14pg</span> <span class="o">=</span> <span class="p">[</span><span class="n">rn14pg</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">]</span>
+<span class="n">lam_o15betap</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro15betap</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">Yp</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">]</span>
+<span class="n">lam_o14betap</span> <span class="o">=</span> <span class="p">[</span><span class="n">ro14betap</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">Yp</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now our limited rate</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lam_n14pg_betalim</span> <span class="o">=</span> <span class="p">[</span><span class="n">rn14pg_betalim</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">Ts</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally, plot it</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">lam_n14pg</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\lambda_{{}^</span><span class="si">{14}</span><span class="s2">\mathrm</span><span class="si">{N}</span><span class="s2">(p,\gamma)}$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">lam_o15betap</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\lambda_{{}^</span><span class="si">{15}</span><span class="s2">\mathrm</span><span class="si">{O}</span><span class="s2">(\beta^+)} / (\rho Y(p))$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">lam_o14betap</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\lambda_{{}^</span><span class="si">{14}</span><span class="s2">\mathrm</span><span class="si">{O}</span><span class="s2">(\beta^+)} / (\rho Y(p))$"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">lam_n14pg_betalim</span><span class="p">,</span>
+          <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\lambda_{{}^</span><span class="si">{14}</span><span class="s2">\mathrm</span><span class="si">{N}</span><span class="s2">(p,\gamma)}\, \beta \rm{-limited}$"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-15</span><span class="p">,)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$T$ (K)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7f4a6971a900&gt;
+</pre></div>
+</div>
+<img alt="_images/67d4c2e59ddabfaa9026e7004c64413d31ec342753e895c537fc2afc0ecc5b11.png" src="_images/67d4c2e59ddabfaa9026e7004c64413d31ec342753e895c537fc2afc0ecc5b11.png" />
+</div>
+</div>
+<p>The red curve is our limited rate.  We see the expected behavior—it follows the <span class="math notranslate nohighlight">\((p,\gamma)\)</span> rate until it reaches the <span class="math notranslate nohighlight">\(\beta\)</span>-decay limit, and then it is flat afterwards.</p>
+<p>This is why the hot-CNO cycle is essentially insensitive to temperature—you are just waiting on the <span class="math notranslate nohighlight">\(\beta\)</span>-decays.</p>
+</section>
+<section id="cno-hot-cno-approximate-network">
+<h2>CNO/hot-CNO approximate network<a class="headerlink" href="#cno-hot-cno-approximate-network" title="Link to this heading">#</a></h2>
+<p>We will follow the approach used for low-temperature CNO in  <a class="reference internal" href="branched-rates.html"><span class="doc">BranchedRate</span></a>, but now add the <span class="math notranslate nohighlight">\(\beta\)</span>-limiting to capture the transition to hot-CNO.</p>
+<p>In addition to the limiting above, we will also <span class="math notranslate nohighlight">\(\beta\)</span>-limit the <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}(p,\gamma){}^{17}\mathrm{F}\)</span> rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nucleus</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Get all the rates we will need for the approximations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc12pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"c12(p,g)n13"</span><span class="p">)</span>
+<span class="n">rn15pa</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n15(p,a)c12"</span><span class="p">)</span>
+<span class="n">rn15pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"n15(p,g)o16"</span><span class="p">)</span>
+<span class="n">ro16pg</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"o16(p,g)f17"</span><span class="p">)</span>
+<span class="n">rf17betap</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"f17(,)o17"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our effective rate for <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}+2p\rightarrow{}^{14}\mathrm{N}\)</span> is unchanged from our earlier approximation,
+and uses <a class="reference internal" href="pynucastro.rates.modified_rate.html#pynucastro.rates.modified_rate.ModifiedRate" title="pynucastro.rates.modified_rate.ModifiedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModifiedRate</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rc12_2p_n14</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">rc12pg</span><span class="p">,</span>
+                                <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)],</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                <span class="n">description</span><span class="o">=</span><span class="s2">"C12(p,g)N13(,e+nu)C13(p,g)N14"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now the <span class="math notranslate nohighlight">\({}^{14}\mathrm{N} + 2p\)</span> branches.  These are <a class="reference internal" href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate" title="pynucastro.rates.branched_rate.BranchedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BranchedRate</span></code></a>, and will use our new <span class="math notranslate nohighlight">\(\beta\)</span>-limited rate constructed above</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14_2p_c12</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg_betalim</span><span class="p">,</span>
+                                <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
+                                <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,a)C12"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14_2p_o16</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg_betalim</span><span class="p">,</span>
+                                <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
+                                <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
+                                <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,g)O16"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Finally for <span class="math notranslate nohighlight">\({}^{16}\mathrm{O} + 2 p \rightarrow {}^{14}\mathrm{N} + \alpha\)</span>
+we first <span class="math notranslate nohighlight">\(\beta\)</span>-limit the initial rate in the sequence.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ro16pg_betalim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">rates</span><span class="o">.</span><span class="n">BetaLimitedRate</span><span class="p">(</span><span class="n">ro16pg</span><span class="p">,</span>
+                                            <span class="p">[</span><span class="n">rf17betap</span><span class="p">],</span>
+                                            <span class="n">limiter_nucleus</span><span class="o">=</span><span class="s2">"p"</span><span class="p">,</span>
+                                            <span class="n">description</span><span class="o">=</span><span class="s2">"O16(p,g)F17 limited by F17(β+)"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and then use this in a <code class="docutils literal notranslate"><span class="pre">ModifiedRate</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ro16_2p_n14_a</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">ro16pg_betalim</span><span class="p">,</span>
+                                  <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">),</span>
+                                                <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
+                                  <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                  <span class="n">description</span><span class="o">=</span><span class="s2">"O16(p,g)F15(e+nu)O17(p,a)N14"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Putting them all together, we have our approximate CNO/hot-CNO network:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_reduced</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rc12_2p_n14</span><span class="p">,</span>
+                                        <span class="n">rn14_2p_c12</span><span class="p">,</span>
+                                        <span class="n">rn14_2p_o16</span><span class="p">,</span>
+                                        <span class="n">ro16_2p_n14_a</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_reduced</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Network summary
+---------------
+  explicitly carried nuclei: 5
+  approximated-out nuclei: 0
+  inert nuclei (included in carried): 0
+
+  NSE compatible? False
+
+  total number of rates: 14
+
+  rates explicitly connecting nuclei: 4
+  hidden rates: 5
+
+  reaclib rates: 8
+  starlib rates: 0
+  temperature tabular rates: 0
+  weak tabular rates: 0
+  beta-limited rates: 2
+  approximate rates: 0
+  derived rates: 0
+  branched rates: 2
+  modified rates: 2
+  custom rates: 0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">net_reduced</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/812d5e2d4882fb67a395fab5794eb3cc0e4768d018153edc435a4d7e428f4b7e.png" src="_images/812d5e2d4882fb67a395fab5794eb3cc0e4768d018153edc435a4d7e428f4b7e.png" />
+</div>
+</div>
+</section>
+<section id="integrating-our-network">
+<h2>Integrating our network<a class="headerlink" href="#integrating-our-network" title="Link to this heading">#</a></h2>
+<p>Now we can build our network</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp_reduced</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">comp_reduced</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll pick a temperature high enough that we expect hot-CNO to operate.
+To avoid triggering 3-<span class="math notranslate nohighlight">\(\alpha\)</span> (which will be present in the full network we compare with), we’ll use a low density.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rho</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">3.e8</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll integrate until H is depleted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tmax</span> <span class="o">=</span> <span class="mf">1.e20</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_reduced</span> <span class="o">=</span> <span class="n">net_reduced</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp_reduced</span><span class="p">,</span>
+                                            <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span>
+                                            <span class="n">stopping_condition</span><span class="o">=</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">plot_evolution</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">1.e-8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.8/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:538: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+  ax.set_xlim(tmin, tmax)
+</pre></div>
+</div>
+<img alt="_images/c4c5474a776ee82468dcfa1d4a07811e9d0eff890fa152232eb5ea453e3c3253.png" src="_images/c4c5474a776ee82468dcfa1d4a07811e9d0eff890fa152232eb5ea453e3c3253.png" />
+</div>
+</div>
+<section id="full-network-comparison">
+<h3>Full network comparison<a class="headerlink" href="#full-network-comparison" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">network_helper</span><span class="p">([</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"he4"</span><span class="p">,</span> <span class="s2">"c12,13"</span><span class="p">,</span>
+                           <span class="s2">"n13-15"</span><span class="p">,</span>
+                           <span class="s2">"o14-17"</span><span class="p">,</span>
+                           <span class="s2">"f17"</span><span class="p">],</span>
+                          <span class="n">tabular_ordering</span><span class="o">=</span><span class="p">[</span><span class="s2">"ffn"</span><span class="p">,</span> <span class="s2">"oda"</span><span class="p">],</span>
+                          <span class="n">with_reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">Composition</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">small</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.74</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.24</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"c12"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.003</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="n">comp</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.016</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol</span> <span class="o">=</span> <span class="n">net</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span>
+                            <span class="n">stopping_condition</span><span class="o">=</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll plot the full network and our reduced network on the same axes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">"2"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">"X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-6</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+<span class="n">leg1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">leg1</span><span class="p">)</span>
+
+<span class="n">style_handles</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="s2">"full network"</span><span class="p">),</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\beta$-limited reduced"</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">style_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1934503f1b74e68f3ae28cb4bc1c1babac38dabc4a3be25fe5629cb182fabaff.png" src="_images/1934503f1b74e68f3ae28cb4bc1c1babac38dabc4a3be25fe5629cb182fabaff.png" />
+</div>
+</div>
+<p>We see excellent agreement in the <span class="math notranslate nohighlight">\(p\)</span>, <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span>, and <span class="math notranslate nohighlight">\({}^{12}\mathrm{C}\)</span>, but the <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> and <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}\)</span> do not agree.</p>
+<p>This is not an error, but it instead reflects the choices we made in where to put the waiting-point nuclei.  In the full network, there will be a bottleneck at <span class="math notranslate nohighlight">\({}^{14}\mathrm{O}\)</span> and <span class="math notranslate nohighlight">\({}^{15}\mathrm{O}\)</span>, but we don’t carry those nuclei and instead choose to add those waiting points to the <span class="math notranslate nohighlight">\({}^{14}\mathrm{N}\)</span> sequence.  So we should compare <span class="math notranslate nohighlight">\(X({}^{14}\mathrm{N})\)</span> in the reduceed network to <span class="math notranslate nohighlight">\(X({}^{14}\mathrm{N}) + X({}^{14}\mathrm{O}) + X({}^{15}\mathrm{O})\)</span> oin the full network.  Likewise, we should compare <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}\)</span> in the reduced network to
+<span class="math notranslate nohighlight">\(X({}^{16}\mathrm{O}) + X({}^{17}\mathrm{F})\)</span> in the full network.</p>
+<p>Let’s plot that comparison now.</p>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="n">in14_reduced</span> <span class="o">=</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">))</span>
+<span class="n">io16_reduced</span> <span class="o">=</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">in14_reduced</span><span class="p">,</span> <span class="p">:],</span>
+          <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{14}</span><span class="s2">{\rm N})$ reduced"</span><span class="p">,</span>              
+          <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C0"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">io16_reduced</span><span class="p">,</span> <span class="p">:],</span>
+          <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{16}</span><span class="s2">{\rm O})$ reduced"</span><span class="p">,</span>              
+          <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C1"</span><span class="p">)</span>
+
+<span class="n">in14</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">))</span>
+<span class="n">io14</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o14"</span><span class="p">))</span>
+<span class="n">io15</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o15"</span><span class="p">))</span>
+
+<span class="n">io16</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"o16"</span><span class="p">))</span>
+<span class="n">if17</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"f17"</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">in14</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">io14</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">io15</span><span class="p">,</span> <span class="p">:],</span>
+          <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{14}</span><span class="s2">{\rm N}) + X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{14}</span><span class="s2">{\rm O}) + X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{15}</span><span class="s2">{\rm O})$ full"</span><span class="p">,</span>              
+          <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C0"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">io16</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">if17</span><span class="p">,</span> <span class="p">:],</span>
+          <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{16}</span><span class="s2">{\rm O}) + X(</span><span class="si">{}</span><span class="s2">^</span><span class="si">{17}</span><span class="s2">{\rm F})$ full"</span><span class="p">,</span>              
+          <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C1"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+<span class="n">leg1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">ls</span><span class="o">=</span><span class="s2">":"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/481add54eb534ceae56fdf59fa7cc40aa5f7f85b382d2e98896c1b382c511afb.png" src="_images/481add54eb534ceae56fdf59fa7cc40aa5f7f85b382d2e98896c1b382c511afb.png" />
+</div>
+</div>
+<p>Now we see really good agreement.</p>
+</section>
+<section id="non-beta-limited-approximation-comparison">
+<h3>Non-<span class="math notranslate nohighlight">\(\beta\)</span>-limited approximation comparison<a class="headerlink" href="#non-beta-limited-approximation-comparison" title="Link to this heading">#</a></h3>
+<p>As a final comparison, let’s compare to a network that does not
+<span class="math notranslate nohighlight">\(\beta\)</span>-limit the approximate rates (this is what we used in
+<a class="reference internal" href="branched-rates.html"><span class="doc">BranchedRate</span></a>.</p>
+<p>We’ll redo the <code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code> without the <code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code> as the underlying rate.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rn14_2p_c12_nolim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg</span><span class="p">,</span>
+                                      <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
+                                      <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
+                                      <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                      <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,a)C12"</span><span class="p">)</span>
+
+<span class="n">rn14_2p_o16_nolim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">BranchedRate</span><span class="p">(</span><span class="n">rn14pg</span><span class="p">,</span>
+                                      <span class="n">primary_branch</span><span class="o">=</span><span class="n">rn15pg</span><span class="p">,</span>
+                                      <span class="n">other_branch</span><span class="o">=</span><span class="n">rn15pa</span><span class="p">,</span>
+                                      <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">},</span>
+                                      <span class="n">description</span><span class="o">=</span><span class="s2">"N14(p,g)O15(,e+nu)N15(p,g)O16"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and the same with the <span class="math notranslate nohighlight">\({}^{16}\mathrm{O}\)</span> sequence:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ro16_2p_n14_a_nolim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">ModifiedRate</span><span class="p">(</span><span class="n">ro16pg</span><span class="p">,</span>
+                                        <span class="n">new_products</span><span class="o">=</span><span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n14"</span><span class="p">),</span>
+                                                      <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)],</span>
+                                        <span class="n">stoichiometry</span><span class="o">=</span><span class="p">{</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">):</span> <span class="mi">2</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">net_nolim</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">PythonNetwork</span><span class="p">(</span><span class="n">rates</span><span class="o">=</span><span class="p">[</span><span class="n">rc12_2p_n14</span><span class="p">,</span>
+                                      <span class="n">rn14_2p_c12_nolim</span><span class="p">,</span>
+                                      <span class="n">rn14_2p_o16_nolim</span><span class="p">,</span>
+                                      <span class="n">ro16_2p_n14_a_nolim</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The composition is the same as the reduced network, so we can just reuse
+that for our integration.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sol_nolim</span> <span class="o">=</span> <span class="n">net_nolim</span><span class="o">.</span><span class="n">integrate_network</span><span class="p">(</span><span class="n">tmax</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">comp_reduced</span><span class="p">,</span>
+                                        <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-10</span><span class="p">,</span>
+                                        <span class="n">stopping_condition</span><span class="o">=</span><span class="p">(</span><span class="s2">"h1"</span><span class="p">,</span> <span class="mf">1.e-3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_nbval-ignore-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_reduced</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_reduced</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="s2">"2"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol_nolim</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol_nolim</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>    
+    
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">nuc</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s2">"X$(</span><span class="si">{</span><span class="n">nuc</span><span class="o">.</span><span class="n">pretty</span><span class="si">}</span><span class="s2">)$"</span><span class="p">,</span>              
+              <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s2">"C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1.e-4</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"time (s)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+<span class="n">leg1</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">leg1</span><span class="p">)</span>
+
+<span class="n">style_handles</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="s2">"full network"</span><span class="p">),</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"non-$\beta$-limited reduced"</span><span class="p">),</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">"$\beta$-limited reduced"</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">style_handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/f3451d9adeac6086a0c84650a2ab9d05fbbfdf33b88693057f248e1b9d80272d.png" src="_images/f3451d9adeac6086a0c84650a2ab9d05fbbfdf33b88693057f248e1b9d80272d.png" />
+</div>
+</div>
+<p>Here we see that the non-<span class="math notranslate nohighlight">\(\beta\)</span>-limited reduced network burns the H
+far too fast.  It gets the evolution completely wrong.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="branched-rates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="not_in_ydot_term.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Rate Sequences with Extra Reactants</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-vs-hot-cno">CNO vs. hot-CNO</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#our-approximation">Our approximation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-limit">Where to β-limit?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#betalimitedrate"><code class="docutils literal notranslate"><span class="pre">BetaLimitedRate</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exploring-a-limited-rate">Exploring a limited rate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cno-hot-cno-approximate-network">CNO/hot-CNO approximate network</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#integrating-our-network">Integrating our network</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#full-network-comparison">Full network comparison</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#non-beta-limited-approximation-comparison">Non-<span class="math notranslate nohighlight">\(\beta\)</span>-limited approximation comparison</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
