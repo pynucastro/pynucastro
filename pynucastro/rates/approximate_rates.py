@@ -578,11 +578,11 @@ class ApproximateRate(Rate):
 
     def get_effective_screening_pairs(self):
         """Return the net set of screening pairs for a rate, after
-        canceling out any other pairs.  For ApproximateRate, when doing
-        charged reactions, there is a cancelation of a common screening
-        factor in the numerator and denominator.  The surviving pair is
-        what should be differentiated in the Jacobian for the screening
-        composition term.
+        canceling out any other pairs.  For ApproximateRate, when
+        doing charged reactions, there is a cancellation of a common
+        screening factor in the numerator and denominator.  The
+        surviving pair is what should be differentiated in the
+        Jacobian for the screening composition term.
 
         Returns
         -------

@@ -69,14 +69,6 @@ class BaseCxxNetwork(ABC, RateCollection):
     interprets the collection of rates and nuclei to produce the C++
     code needed to integrate the network.
 
-    Parameters
-    ----------
-    do_screeening_comp_derivs : bool
-        Do we take into account the Jacobian corrections due to
-        composition dependence in screening function?  This requires a
-        screening function that returns derivatives with respect to Ye
-        and Z2.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -297,7 +289,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.solved_jacobian = True
 
     def _compute_screening_factors_helper(self, n_indent, of, rates,
-                                          do_T_derivatives=True, do_screening_comp_derivatives=True):
+                                          do_T_derivatives=True):
         """Compose the screening factors string given a list of rates.
         It evaluates log(screening) and stores them to rate_eval.log_screen.
 
