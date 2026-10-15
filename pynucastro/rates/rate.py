@@ -99,7 +99,7 @@ def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
     return args
 
 
-def py_rate_func_args(r, *, mode="definition"):
+def py_rate_func_args(r, *, mode="definition", screen_term_pass=None):
     """Given a rate, give the list of arguments that are needed to
     define the python function arguments or call the python function.
 
@@ -110,6 +110,10 @@ def py_rate_func_args(r, *, mode="definition"):
     mode : str
         "definition" if it is for writing the function,
         "call" if it is for calling the function
+    screen_term_pass : str
+        The name of a screening variable to pass onto the function
+        when calling.  If it is None, then it will automatically be
+        generated via the screening pairs.
 
     Returns
     -------
@@ -134,7 +138,7 @@ def py_rate_func_args(r, *, mode="definition"):
         if r.rate_eval_needs_comp:
             args.append("Y=None")
         if r.screening_pairs:
-            args.append("log_scor=0")
+            args.append("log_scor=0.0")
 
     else:
         args = ["rate_eval"]
@@ -151,8 +155,11 @@ def py_rate_func_args(r, *, mode="definition"):
         if r.rate_eval_needs_comp:
             args.append("Y=Y")
         if r.screening_pairs:
-            screen_terms = [f"log_scor_{r1}_{r2}"
-                            for r1, r2 in r.screening_pairs]
+            if screen_term_pass:
+                screen_terms = [screen_term_pass]
+            else:
+                screen_terms = [f"log_scor_{r1}_{r2}"
+                                for r1, r2 in r.screening_pairs]
             args.append("log_scor=" + " + ".join(screen_terms))
 
     return args
