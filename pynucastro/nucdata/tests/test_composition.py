@@ -336,3 +336,45 @@ class TestCompBinning3:
 
         # only ni56 should be ni56
         assert c_new["ni56"] == approx(orig_X)
+
+    def test_bin_as_ye(self, nuclei, comp):
+        """bin using mode='ye' to map according to electron fraction"""
+
+        new_nuclei = [Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
+
+        c_new = comp.bin_as(new_nuclei, mode="ye")
+
+        assert c_new.get_sum_X() == approx(comp.get_sum_X())
+
+        orig_X = 1.0 / len(nuclei)
+
+        # fe52 and fe53 map to fe52 (Ye=0.5)
+        assert c_new["fe52"] == approx(2.0 * orig_X)
+
+        # fe54, fe55, fe56, fe57, fe58, and ni58 map to fe54 (Ye=0.4815)
+        assert c_new["fe54"] == approx(6.0 * orig_X)
+
+        # ni56 and ni57 map to ni56 (Ye=0.5)
+        assert c_new["ni56"] == approx(2.0 * orig_X)
+
+        # Ye should be closer to original composition than standard binning
+        c_std = comp.bin_as(new_nuclei)
+        assert abs(c_new.ye - comp.ye) < abs(c_std.ye - comp.ye)
+
+    def test_bin_as_invalid_mode(self, comp):
+        new_nuclei = [Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
+        with pytest.raises(ValueError, match="unknown binning mode"):
+            comp.bin_as(new_nuclei, mode="invalid")
+
+    def test_bin_as_ye_multigroup(self):
+        """test that binning with mode='ye' preserves mass locality across groups"""
+        orig_nuclei = [Nucleus("c12"), Nucleus("c14"), Nucleus("fe54"), Nucleus("fe56")]
+        comp = Composition(orig_nuclei)
+        comp.set_equal()
+        targets = [Nucleus("c12"), Nucleus("c13"), Nucleus("fe54"), Nucleus("ni56")]
+        c_new = comp.bin_as(targets, mode="ye")
+        assert c_new["c12"] == approx(0.25)
+        assert c_new["c13"] == approx(0.25)
+        assert c_new["fe54"] == approx(0.50)
+        assert c_new["ni56"] == approx(0.0)
+
