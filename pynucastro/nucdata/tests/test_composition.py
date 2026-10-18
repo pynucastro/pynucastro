@@ -377,4 +377,3 @@ class TestCompBinning3:
         assert c_new["c13"] == approx(0.25)
         assert c_new["fe54"] == approx(0.50)
         assert c_new["ni56"] == approx(0.0)
-
