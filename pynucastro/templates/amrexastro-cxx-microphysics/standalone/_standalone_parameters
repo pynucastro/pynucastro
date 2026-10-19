@@ -3,3 +3,12 @@
 density       real       1.e7
 
 temperature   real       3.e9
+
+
+
+@namespace: unit_test
+
+# override the unit test small_dens so we can test
+# H-burning nets
+small_dens    real       1.e0   100
+
