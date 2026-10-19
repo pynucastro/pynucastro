@@ -144,9 +144,13 @@ namespace interp_net {
         const auto f_ip1 = f_array(ip1);
         const auto f_ip2 = f_array(ip2);
 
+        // the main interval we are working with
+        const amrex::Real h = x_ip1 - x_idx;
+        const amrex::Real h_inv = 1.0_rt / h;
+
         // Compute the slope at i0 and i0 + 1
         amrex::Real m0, m1;
-        m1 = m0 = (f_ip1 - f_idx) / (x_ip1 - x_idx);
+        m1 = m0 = (f_ip1 - f_idx) * h_inv;
 
         // If NOT on the edge, compute the slope from the other side
         // and limit the slope to preserve monotonicity
@@ -161,8 +165,7 @@ namespace interp_net {
         }
 
         // Compute cubic Hermite polynomial basis
-        const amrex::Real h = x_ip1 - x_idx;
-        const amrex::Real t = (xv - x_idx) / h;
+        const amrex::Real t = (xv - x_idx) * h_inv;
         const amrex::Real t2 = t * t;
         const amrex::Real t3 = t2 * t;
 
@@ -179,7 +182,7 @@ namespace interp_net {
         // Compute the derivative if necessary
         amrex::Real dfdx {0.0_rt};
         if constexpr (do_derivative) {
-            const amrex::Real dH1dx = -6.0_rt * (t2 - t) / h;
+            const amrex::Real dH1dx = -6.0_rt * (t2 - t) * h_inv;
             const amrex::Real dH0dx = -dH1dx;
             const amrex::Real dHhat1dx = 3.0_rt * t2 - 2.0_rt * t;
             const amrex::Real dHhat0dx = 3.0_rt * t2 - 4.0_rt * t + 1.0_rt;

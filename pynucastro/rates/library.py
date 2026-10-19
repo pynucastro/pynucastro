@@ -448,9 +448,15 @@ class Library:
 
         """
 
-        diff_rates = set(self.get_rates()) - set(other.get_rates())
-        new_library = Library(rates=diff_rates)
-        return new_library
+        remaining = {rid: rate for rid, rate in self._rates.items()
+                     if rid not in other._rates}
+        return Library(rates=remaining)
+
+    def __contains__(self, rate):
+        """Return true if rate is in our library"""
+
+        # we store rates as a dict keyed by rate.id
+        return rate.id in self._rates
 
     def get_rate_by_nuclei(self, reactants, products):
         """Given a list of reactants and products, return any matching

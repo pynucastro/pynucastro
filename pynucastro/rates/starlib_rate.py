@@ -103,7 +103,7 @@ class StarLibRate(TemperatureTabularRate):
                 self.weak_type == other.weak_type)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
                             leave_open=False, extra_args=None):

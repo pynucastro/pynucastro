@@ -10,6 +10,7 @@
 #include <approximate_rates.H>
 #include <modified_rates.H>
 #include <branched_rates.H>
+#include <beta_limited_rates.H>
 #include <reaclib_rates.H>
 #include <derived_rates.H>
 #include <table_rates.H>
@@ -114,7 +115,11 @@ void evaluate_rates(const burn_t& state, T& rate_eval) {
 
     // fill modified rates next -- these can have ReacLib or
     // TemperatureTabular/StarLib rates as the original rate
-    modified_rates::fill_rates(tfactors, rate_eval);
+    modified_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
+
+    // fill beta-limited ratesranched rates -- these can have ReacLib or
+    // TemperatureTabular/StarLib as the underlying rate or branches.
+    beta_limited_rates::fill_rates(tfactors, state.rho, Y, rate_eval);
 
     // fill branched rates -- these can have ReacLib or
     // TemperatureTabular/StarLib as the underlying rate or branches.
@@ -405,6 +410,14 @@ void jac_nuc(const burn_t& state,
     jac.set(Mg23, Mg23, 0.0);
 
 
+
+    // add ∂λ_weak / ∂Y_e terms now
+    // this uses ∂Y_e/∂Y_i = Z_i
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            jac.set(irow, jcol, jac.get(irow, jcol) + rate_eval.dweak_ydot_dYe(irow) * zion[jcol-1]);
+        }
+    }
 
 }
 

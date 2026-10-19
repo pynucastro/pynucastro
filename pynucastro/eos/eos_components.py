@@ -39,6 +39,15 @@ class EOSComponentState:
         self.de_drho = de_drho
         self.de_dT = de_dT
 
+    def __str__(self):
+
+        fstr = ""
+        fstr += f"η = {self.eta:12.6g}\n"
+        fstr += f"n = {self.n:12.6g} ; ∂n/∂ρ = {self.dn_drho:12.6g} ; ∂n/∂T = {self.dn_dT:12.6g}\n"
+        fstr += f"p = {self.p:12.6g} ; ∂p/∂ρ = {self.dp_drho:12.6g} ; ∂p/∂T = {self.dp_dT:12.6g}\n"
+        fstr += f"e = {self.e:12.6g} ; ∂e/∂ρ = {self.de_drho:12.6g} ; ∂e/∂T = {self.de_dT:12.6g}\n\n"
+        return fstr
+
 
 class IdealGasEOS:
     """An ideal gas equation of state for ions (and optionally

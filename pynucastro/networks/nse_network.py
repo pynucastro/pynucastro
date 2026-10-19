@@ -36,10 +36,9 @@ class NSETableEntry:
         the weak rate neutrino energy loss
     comp_reduction_function : Callable
         a function that converts the NSE composition into a smaller set
-        of nuclei.  It takes a Composition object and returns a dictionary
-        with the nucleus name (like "Ni56") as the key and the corresponding
-        mass fraction as the value.  It should be ordered in the way you
-        want the nuclei output into the NSE table file.
+        of nuclei.  It takes a Composition object and returns a new Composition
+        object representing the reduced set of nuclei and their abundances.
+
     """
 
     def __init__(self, rho, T, Ye, *,
@@ -353,8 +352,8 @@ class NSENetwork(RateCollection):
         Ye_values : numpy.ndarray
             values of electron fraction to use in the tabulation
         comp_reduction_func : Callable
-            a function that takes the NSE composition and return a reduced
-            composition
+            a function that takes the NSE ``Composition`` object and returns
+            a new ``Composition`` representing a reduced set of nuclei.
         verbose : bool
             output progress on creating the table as we go along
         outfile : str
@@ -414,7 +413,7 @@ class NSENetwork(RateCollection):
             of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'d<B/A>/dt':^15} {'e_nu':^15} ")
 
             if nse_states[0].X:
-                for nuc, _ in nse_states[0].X:
+                for nuc, _ in nse_states[0].X.items():
                     _tmp = f"X({nuc})"
                     of.write(f"{_tmp:^15} ")
 
@@ -425,6 +424,6 @@ class NSENetwork(RateCollection):
                 of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dbeadt:15.8g} {entry.enu:15.8g} ")
 
                 if entry.X:
-                    for _, val in entry.X:
+                    for _, val in entry.X.items():
                         of.write(f"{val:15.10g} ")
                 of.write("\n")
