@@ -15,7 +15,8 @@ import pynucastro.numba_util as numba
 from pynucastro.nucdata import Nucleus, UnsupportedNucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, cxx_rate_func_args, need_state
+from pynucastro.rates.rate import (Rate, cxx_rate_func_args, need_state,
+                                   py_rate_func_args)
 
 
 class TableIndex(Enum):
@@ -315,7 +316,7 @@ class TabularWeakRate(Rate):
                                               self.tabular_data_table)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products)))
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
@@ -424,9 +425,12 @@ class TabularWeakRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, T, log_T, rho, log_rhoY, Y):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
 
         fstring += f"    {self.fname}_interpolator = TableInterpolator(*{self.fname}_info)\n"
