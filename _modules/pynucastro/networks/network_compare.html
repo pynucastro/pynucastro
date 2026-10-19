@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.1.0.post56+gb4f59ba80 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.1.0.post57+g3f89ebe0d documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=f2903be8"></script>
+    <script src="../../../_static/documentation_options.js?v=9fac2a24"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -530,15 +530,13 @@
   <h1>Source code for pynucastro.networks.network_compare</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Helper functions for comparing the output of different backends</span>
 <span class="sd">(python, C++) for the same network.  This will build and run each net</span>
-<span class="sd">and return the ydots.</span>
+<span class="sd">and return the ydots, rates, jacobian, and energy generation</span>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.amrexastro_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmrexAstroCxxNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.networks.python_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonNetwork</span>
@@ -553,6 +551,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">NetworkCompare</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""A simple class to manage building a network with different</span>
 <span class="sd">    backends to facilitate comparisons.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">       For the Jacobian, only the species terms are compared.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -586,6 +588,21 @@
 <span class="sd">        &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`.</span>
 <span class="sd">    ydots_cxx : dict(Nucleus)</span>
 <span class="sd">        The dYdt terms parsed from a build of a</span>
+<span class="sd">        :py:class:`SimpleCxxNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`.</span>
+<span class="sd">    jac_py_inline : dict((Nucleus, Nucleus))</span>
+<span class="sd">        The Jacobian terms from the python inline network</span>
+<span class="sd">        (:py:func:`RateCollection.evaluate_jacobian</span>
+<span class="sd">        &lt;pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian&gt;`).</span>
+<span class="sd">    jac_py_module : dict((Nucleus, Nucleus))</span>
+<span class="sd">        The Jacobian terms from a :py:class:`PythonNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.python_network.PythonNetwork&gt;` module.</span>
+<span class="sd">    jac_amrex : dict((Nucleus, Nucleus))</span>
+<span class="sd">        The Jacobian terms parsed from a build of an</span>
+<span class="sd">        :py:class:`AmrexAstroCxxNetwork</span>
+<span class="sd">        &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`.</span>
+<span class="sd">    jac_cxx : dict((Nucleus, Nucleus))</span>
+<span class="sd">        The Jacobian terms parsed from a build of a</span>
 <span class="sd">        :py:class:`SimpleCxxNetwork</span>
 <span class="sd">        &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`.</span>
 <span class="sd">    rates_py_inline : dict(Rate)</span>
@@ -682,6 +699,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span> <span class="o">=</span> <span class="kc">None</span>
 
+        <span class="c1"># storage for the Jacobian</span>
+        <span class="c1"># we will not include the energy terms, since most networks</span>
+        <span class="c1"># don't consider those.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_amrex</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_cxx</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="c1"># storage for the rates -- without the</span>
         <span class="c1"># density or composition factors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span> <span class="o">=</span> <span class="kc">None</span>
@@ -713,6 +738,13 @@
         <span class="n">state</span> <span class="o">=</span> <span class="n">ThermoState</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_ydots</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
                                                          <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">_jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">evaluate_jacobian</span><span class="p">(</span><span class="n">state</span><span class="p">,</span>
+                                            <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">irow</span><span class="p">,</span> <span class="n">inuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">jcol</span><span class="p">,</span> <span class="n">jnuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span><span class="p">[(</span><span class="n">inuc</span><span class="p">,</span> <span class="n">jnuc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_jac</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span> <span class="n">jcol</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">comp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="p">,</span>
                                           <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
                                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
@@ -738,11 +770,18 @@
         <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
 
         <span class="c1"># we can now compute the ydots via cn.rhs()</span>
-        <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comp</span><span class="o">.</span><span class="n">get_molar_array</span><span class="p">()</span>
         <span class="n">_tmp</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">,</span> <span class="n">_tmp</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+
+        <span class="c1"># and the Jacobian via cn.jacobian()</span>
+        <span class="n">_jac</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">jacobian</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">irow</span><span class="p">,</span> <span class="n">inuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">jcol</span><span class="p">,</span> <span class="n">jnuc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span><span class="p">[(</span><span class="n">inuc</span><span class="p">,</span> <span class="n">jnuc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_jac</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span> <span class="n">jcol</span><span class="p">]</span>
 
         <span class="n">rate_eval</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">do_rate_eval</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rate_eval</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
@@ -797,6 +836,21 @@
             <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">ydot_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
+        <span class="c1"># the Jacobian has lints of the form:</span>
+        <span class="c1">#   jac(X, Y) = ...</span>
+        <span class="c1"># for nuclei X, Y</span>
+        <span class="n">jac_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_amrex</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">jac_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="n">inuc_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">jnuc_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">inuc_str</span> <span class="o">==</span> <span class="s2">"e"</span> <span class="ow">or</span> <span class="n">jnuc_str</span> <span class="o">==</span> <span class="s2">"e"</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">inuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">inuc_str</span><span class="p">)</span>
+                <span class="n">jnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">jnuc_str</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jac_amrex</span><span class="p">[(</span><span class="n">inuc</span><span class="p">,</span> <span class="n">jnuc</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
 
         <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
@@ -857,6 +911,21 @@
                 <span class="n">nuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
+        <span class="c1"># the Jacobian has lints of the form:</span>
+        <span class="c1">#   jac(X, Y) = ...</span>
+        <span class="c1"># for nuclei X, Y</span>
+        <span class="n">jac_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jac_cxx</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="o">:=</span> <span class="n">jac_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="n">inuc_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">jnuc_str</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">inuc_str</span> <span class="o">==</span> <span class="s2">"e"</span> <span class="ow">or</span> <span class="n">jnuc_str</span> <span class="o">==</span> <span class="s2">"e"</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">inuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">inuc_str</span><span class="p">)</span>
+                <span class="n">jnuc</span> <span class="o">=</span> <span class="n">Nucleus</span><span class="p">(</span><span class="n">jnuc_str</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jac_cxx</span><span class="p">[(</span><span class="n">inuc</span><span class="p">,</span> <span class="n">jnuc</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span>
+
         <span class="n">rate_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)"</span><span class="p">,</span>
                              <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
@@ -878,7 +947,8 @@
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">2.e8</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1.e9</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Evaluate the ydots from all the backends we are</span>
-<span class="sd">        considering</span>
+<span class="sd">        considering.  This will compile the C++ networks if they have</span>
+<span class="sd">        not already been built.  This does not do any comparisons.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -902,11 +972,104 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">rho_eval</span> <span class="o">=</span> <span class="n">rho</span></div>
 
 
+<div class="viewcode-block" id="NetworkCompare.compare_results">
+<a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.compare_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compare_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="s2">"ydots"</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-11</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1.e-30</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Perform the comparison of quantity across the different network types.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        quantity : str</span>
+<span class="sd">            The quantity we are comparing.  Should be one of "ydots",</span>
+<span class="sd">            "rates", "jac", "enuc", "enu_weak"</span>
+<span class="sd">        rtol : float</span>
+<span class="sd">            The relative tolerance to use in the comparison.</span>
+<span class="sd">        atol : float</span>
+<span class="sd">            The absolute tolerance to use in the comparison.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+
+<span class="sd">        """</span>
+
+        <span class="c1"># import at the method-level so the module itself doesn't</span>
+        <span class="c1"># depend on pytest</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pytest</span><span class="w"> </span><span class="kn">import</span> \
+            <span class="n">approx</span>  <span class="c1"># pylint: disable=import-outside-toplevel  # noqa: PLC0415</span>
+
+        <span class="k">assert</span> <span class="n">quantity</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"ydots"</span><span class="p">,</span> <span class="s2">"rates"</span><span class="p">,</span> <span class="s2">"jac"</span><span class="p">,</span> <span class="s2">"enuc"</span><span class="p">,</span> <span class="s2">"enu_weak"</span><span class="p">)</span>
+
+        <span class="n">reference</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">others</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">quantity</span> <span class="o">==</span> <span class="s2">"ydots"</span><span class="p">:</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_cxx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">quantity</span> <span class="o">==</span> <span class="s2">"rates"</span><span class="p">:</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_inline</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">quantity</span> <span class="o">==</span> <span class="s2">"enuc"</span><span class="p">:</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_inline</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enuc_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enuc_cxx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">quantity</span> <span class="o">==</span> <span class="s2">"enu_weak"</span><span class="p">:</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_inline</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_cxx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">quantity</span> <span class="o">==</span> <span class="s2">"jac"</span><span class="p">:</span>
+            <span class="n">reference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span>
+            <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_amrex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_cxx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">others</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">reference</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"evaluate() must be run first"</span><span class="p">)</span>
+
+        <span class="c1"># now do the comparison</span>
+        <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">others</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">reference</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="n">o</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">reference</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">rel</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="n">o</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">reference</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># a scalar</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">o</span> <span class="o">==</span> <span class="n">approx</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">rel</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"scalar : </span><span class="si">{</span><span class="n">o</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">reference</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span></div>
+
+
 <div class="viewcode-block" id="NetworkCompare.print_summary">
 <a class="viewcode-back" href="../../../pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">jac_floor</span><span class="o">=</span><span class="mf">1.e-90</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Print a summary of the dY/dt comparison and errors for each</span>
 <span class="sd">        network type run.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        jac_floor : float</span>
+<span class="sd">            Value for abs(J_{i,j}) below which to switch to an absolute error</span>
+<span class="sd">            instead of relative error.  This helps deal with the different</span>
+<span class="sd">            ways nets floor rates.</span>
 
 <span class="sd">        """</span>
 
@@ -914,8 +1077,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"no ydots stored.  evaluate() must be run first"</span><span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"dYdt"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"===="</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"∂Y/∂t"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"====="</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
 
         <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"py (inline)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ydots_py_inline</span><span class="p">,</span>
@@ -946,6 +1109,48 @@
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Jacobian (∂Ẏ_i/∂Y_j)"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"===================="</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+
+        <span class="n">data_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"py (inline)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span><span class="p">,</span>
+                        <span class="s2">"py (module)"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_amrex</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"AMReX C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_amrex</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates_cxx</span><span class="p">:</span>
+            <span class="n">data_headers</span><span class="p">[</span><span class="s2">"simple C++"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_cxx</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="s1">'nuc_i'</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="s1">'nuc_j'</span><span class="si">:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> "</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">header</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">13</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">'error'</span><span class="si">:</span><span class="s2">11</span><span class="si">}</span><span class="s2"> "</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span><span class="p">:</span>
+            <span class="n">nuc_i</span><span class="p">,</span> <span class="n">nuc_j</span> <span class="o">=</span> <span class="n">entry</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">nuc_i</span><span class="si">!s:</span><span class="s2">5</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">nuc_j</span><span class="si">!s:</span><span class="s2">5</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">data_headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="n">entry</span><span class="p">]</span>
+                <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_inline</span><span class="p">[</span><span class="n">entry</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">jac_floor</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
@@ -983,7 +1188,10 @@
                 <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"py (inline)"</span><span class="p">:</span>
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> "</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">ref</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">ref</span><span class="p">)</span> <span class="o">/</span> <span class="n">ref</span><span class="p">)</span>
                     <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">13.6g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">err</span><span class="si">:</span><span class="s2">11.5g</span><span class="si">}</span><span class="s2"> "</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 

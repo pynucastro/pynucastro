@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Testing and Comparing Backends &#8212; pynucastro 3.1.0.post56+gb4f59ba80 documentation</title>
+    <title>Testing and Comparing Backends &#8212; pynucastro 3.1.0.post57+g3f89ebe0d documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=f2903be8"></script>
+    <script src="_static/documentation_options.js?v=9fac2a24"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -611,6 +611,7 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-comparison-data">Accessing comparison data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performing-the-comparison">Performing the comparison</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-unit-tests-comparing-networks">Current unit tests comparing networks</a></li>
 </ul>
             </nav>
@@ -632,54 +633,72 @@ interpolation, error)</p>
 helper class that takes a library and evaluates the ydots for different backends.
 Currently it can work with:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">RateCollection</span></code> / inline python networks: this uses
+<li><p><a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> / inline python networks: this uses
 the built-in <code class="docutils literal notranslate"><span class="pre">eval</span></code> methods to evaluate each of the rates.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">PythonNetwork</span></code> modules: this means writing out the network as a
+<li><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PythonNetwork</span></code></a> modules: this means writing out the network as a
 <code class="docutils literal notranslate"><span class="pre">.py</span></code> file, importing it, and then using the functions in the
 module to evaluate the rates.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code> : this uses the <code class="docutils literal notranslate"><span class="pre">standalone_build</span></code> option
+<li><p><a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a> : this uses the <code class="docutils literal notranslate"><span class="pre">standalone_build</span></code> option
 to <code class="docutils literal notranslate"><span class="pre">write_network()</span></code> to output a driver and makefile.  The output
 is then parsed to get the ydot values.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code> : we build a simple test driver and parse the output
+<li><p><a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a> : we build a simple test driver and parse the output
 to get the ydot values.</p></li>
 </ul>
 <p>Tests can be run with or without screening.  Once the <code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code>
 object is setup, the comparison can be run for a single density and temperature
-using the <a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate" title="pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate</span></code></a> method.  The data are then stored in the object.</p>
+using the <a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.evaluate" title="pynucastro.networks.network_compare.NetworkCompare.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate</span></code></a> method.  The data are then stored in the object.</p>
 <section id="accessing-comparison-data">
 <h2>Accessing comparison data<a class="headerlink" href="#accessing-comparison-data" title="Link to this heading">#</a></h2>
-<p>The <span class="math notranslate nohighlight">\(dY/dt\)</span> data for each network is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by
+<ul class="simple">
+<li><p>ODE righthand side: The <span class="math notranslate nohighlight">\(\partial Y/\partial t\)</span> data for each network is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by
 <a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><code class="xref py py-class docutils literal notranslate"><span class="pre">Nucleus</span></code></a> as
-<code class="docutils literal notranslate"><span class="pre">ydots_py_inline</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">ydots_cxx</span></code>.</p>
-<p>The individual rate data (just the <span class="math notranslate nohighlight">\(N_A\langle \sigma v \rangle\)</span> or
-equivalent) is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a> as <code class="docutils literal notranslate"><span class="pre">rates_py_inline</span></code>,
-<code class="docutils literal notranslate"><span class="pre">rates_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">rates_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">rates_cxx</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">ydots_py_inline</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">ydots_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">ydots_cxx</span></code>.</p></li>
+<li><p>Jacobian: The composition terms of the Jacobian, <span class="math notranslate nohighlight">\(\partial \dot{Y}_i/\partial Y_j\)</span>,
+are stored in a dict keyed by a tuple <code class="docutils literal notranslate"><span class="pre">(nuc_i,</span> <span class="pre">nuc_j)</span></code>, where <code class="docutils literal notranslate"><span class="pre">nuc_i</span></code> and
+<code class="docutils literal notranslate"><span class="pre">nuc_j</span></code> are <code class="docutils literal notranslate"><span class="pre">Nucleus</span></code> objects representing the row and column nucleus
+respectively.</p></li>
+<li><p>Raw rates : The individual rate data (just the <span class="math notranslate nohighlight">\(N_A\langle \sigma v
+\rangle\)</span> or equivalent) is stored as a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by
+<a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate" title="pynucastro.rates.rate.Rate"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rate</span></code></a> as <code class="docutils literal notranslate"><span class="pre">rates_py_inline</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rates_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">rates_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">rates_cxx</span></code>.</p></li>
+<li><p>Energy : The nuclear energy from mass changes is stored as a scalar,
+<code class="docutils literal notranslate"><span class="pre">enuc_py_inline</span></code>, <code class="docutils literal notranslate"><span class="pre">enuc_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">enuc_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">enuc_cxx</span></code>.</p></li>
+<li><p>Weak rate neutrino losses : The neutrino energy loss from weak rates
+is stored as a scalar, <code class="docutils literal notranslate"><span class="pre">enu_weak_py_inline</span></code>,
+<code class="docutils literal notranslate"><span class="pre">enu_weak_py_module</span></code>, <code class="docutils literal notranslate"><span class="pre">enu_weak_amrex</span></code>, and <code class="docutils literal notranslate"><span class="pre">enu_weak_cxx</span></code>.</p></li>
+</ul>
+</section>
+<section id="performing-the-comparison">
+<h2>Performing the comparison<a class="headerlink" href="#performing-the-comparison" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.compare_results" title="pynucastro.networks.network_compare.NetworkCompare.compare_results"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compare_results</span></code></a>
+method manages the comparison.  It accepts a relative and absolute
+tolerance and raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> if networks do not agree.</p>
 <p>A summary of the comparison (including errors) can be printed using
-<a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary" title="pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="xref py py-func docutils literal notranslate"><span class="pre">print_summary</span></code></a>.</p>
+<a class="reference internal" href="pynucastro.networks.network_compare.html#pynucastro.networks.network_compare.NetworkCompare.print_summary" title="pynucastro.networks.network_compare.NetworkCompare.print_summary"><code class="xref py py-meth docutils literal notranslate"><span class="pre">print_summary</span></code></a>.</p>
 </section>
 <section id="current-unit-tests-comparing-networks">
 <h2>Current unit tests comparing networks<a class="headerlink" href="#current-unit-tests-comparing-networks" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">NetworkCompare</span></code> is used in the following unit tests in
 <code class="docutils literal notranslate"><span class="pre">pynucastro/networks/tests/comparing_nets_tests</span></code>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_big_net.py</span></code> : this creates a network consisting of
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_bignet.py">test_compare_big_net.py</a> : this creates a network consisting of
 an <span class="math notranslate nohighlight">\(\alpha\)</span>-chain and an iron-group, with <span class="math notranslate nohighlight">\((\alpha,p)(p,\gamma)\)</span> and
 <span class="math notranslate nohighlight">\((nn,\gamma)\)</span> rate approximations, derived reverse rates, modified
 rates, and tabular weak rates.  It is modeled off of the <a class="reference external" href="https://amrex-astro.github.io/Microphysics/docs/networks.html#ase-iron">AMReX
 Astro Microphysics ase-iron network</a>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_branched.py</span></code> : this compares networks that use
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_branched.py">test_compare_branched.py</a> : this compares networks that use
 <a class="reference internal" href="pynucastro.rates.branched_rate.html#pynucastro.rates.branched_rate.BranchedRate" title="pynucastro.rates.branched_rate.BranchedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BranchedRate</span></code></a>
 for a reduced CNO cycle.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_co_approx.py</span></code> : this compares the approximate
-rates for carbon and oxygen burning.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> : this compares just strong
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_co_approx.py">test_compare_co_approx.py</a> : this compares the approximate
+rates for carbon and oxygen burning (as discussed in <a class="reference internal" href="co-approximations.html"><span class="doc">Approximating C and O Burning</span></a>).</p></li>
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_cxx_and_python.py">test_compare_cxx_and_python.py</a> : this compares just strong
 reaction rates, but includes derived reverse rates.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python_screened.py</span></code> : a simpler version of
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_cxx_and_python_screened.py">test_compare_cxx_and_python_screened.py</a> : a simpler version of
 <code class="docutils literal notranslate"><span class="pre">test_compare_cxx_and_python.py</span></code> (no derived reverse rates), but
 with screening enabled.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_compare_temp_tabular_starlib.py</span></code> : this compares the
-evaluation of a <code class="docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code> and several
-<code class="docutils literal notranslate"><span class="pre">StarLibRate</span></code>.  Note that simple-C++ networks are not currently
+<li><p><a class="reference external" href="https://github.com/pynucastro/pynucastro/blob/main/pynucastro/networks/tests/comparing_nets_tests/test_compare_temp_tabular_starlib.py">test_compare_temp_tabular_starlib.py</a> : this compares the
+evaluation of a <a class="reference internal" href="pynucastro.rates.temperature_tabular_rate.html#pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate" title="pynucastro.rates.temperature_tabular_rate.TemperatureTabularRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemperatureTabularRate</span></code></a> and several
+<a class="reference internal" href="pynucastro.rates.starlib_rate.html#pynucastro.rates.starlib_rate.StarLibRate" title="pynucastro.rates.starlib_rate.StarLibRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StarLibRate</span></code></a>.  Note that simple-C++ networks are not currently
 included.</p></li>
 </ul>
 <p>As more features are ported to <code class="docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code>, we should extend
@@ -735,6 +754,7 @@ the testing to compare with python rates.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-comparison-data">Accessing comparison data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performing-the-comparison">Performing the comparison</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#current-unit-tests-comparing-networks">Current unit tests comparing networks</a></li>
 </ul>
   </nav></div>
