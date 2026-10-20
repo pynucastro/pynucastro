@@ -24,6 +24,7 @@ from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
 from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.rauscher_rate import RauscherRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularWeakRate
 
@@ -1051,6 +1052,48 @@ class ReacLibLibrary(Library):
         with filename.open("w") as f:
             for rate in self.get_rates():
                 rate.write_to_file(f)
+
+class RauscherLibrary(Library):
+    """Create a :py:class:`Library` containing rate fits from the Rauscher 2025
+    SMARAGD data for charged particles induced reactions."""
+
+    lib_path = get_rates_dir()/"rauscher_fits"
+
+    def __init__(self):
+        super().__init__()
+
+        for filename in ("fits_p.dat","fits_a.dat","fits_n.dat"):
+            self._read_library_file(self.lib_path/filename)
+
+    def _read_library_file(self, library_file):
+        with library_file.open() as rate_file:
+            line_number = 1
+
+            while True:
+                header = rate_file.readline()
+                if not header:
+                    break
+
+                forward_line = rate_file.readline()
+                reverse_line = rate_file.readline()
+
+                if not forward_line.strip() or not reverse_line.strip():
+                    raise ValueError(f"{library_file} has incomplete reaction"
+                                        f" at line {line_number}")
+
+                try:
+                    rate = RauscherRate.from_record(header, forward_line)
+                    rate.rfile_name.add(library_file.name)
+                    rate.rfile_path.add(library_file.resolve())
+                    rate.original_data = header + forward_line + reverse_line
+                    self.add_rate(rate)
+                except (ValueError, UnsupportedNucleus) as exc:
+                    raise ValueError(
+                        f"{library_file}, reaction starting "
+                        f"at line {line_number}: {exc}"
+                    ) from exc
+
+                line_number += 3
 
 
 class TabularWeakLibrary(Library):
