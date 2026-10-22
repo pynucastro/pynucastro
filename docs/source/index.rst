@@ -72,6 +72,7 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    screening-examples
+   autodiff
    custom-rates.ipynb
    derived-rates
 
