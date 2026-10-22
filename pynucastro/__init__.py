@@ -171,6 +171,9 @@ with some specialized library collections available as:
 * :py:obj:`ReacLibLibrary <pynucastro.rates.library.ReacLibLibrary>` :
   read in the entire collection of ReacLib rates.
 
+* :py:obj:`RauscherLibrary <pynucastro.rates.library.RauscherLibrary>` :
+  read in the entire collection of Rauscher rates.
+
 * :py:obj:`StarLibLibrary <pynucastro.rates.library.StarLibLibrary>` :
   read in the entire collection of StarLib rates.
 
@@ -209,8 +212,8 @@ from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
 from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
                               FFNLibrary, LangankeLibrary, Library,
                               ModifiedRate, OdaLibrary, PruetFullerLibrary,
-                              Rate, RateFilter, ReacLibLibrary, StarLibLibrary,
-                              SuzukiLibrary, TabularLibrary,
+                              Rate, RateFilter, ReacLibLibrary, RauscherLibrary,
+                              StarLibLibrary, SuzukiLibrary, TabularLibrary,
                               TabularWeakLibrary, Tfactors, ThermoState,
                               full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
