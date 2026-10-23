@@ -88,16 +88,46 @@ Two independent derivatives
 <pynucastro.autodiff.derivative_pair.DerivativePair>` differentiates
 with respect to two variables in one evaluation. Both components are
 scalar fields in a namedtuple, so this does not require a NumPy
-derivative array::
+derivative array
 
-    from pynucastro.autodiff.derivative_pair import DerivativePair
+.. code:: python
 
-    x = Dual(2.0, DerivativePair(1.0, 0.0))
-    y = Dual(3.0, DerivativePair(0.0, 1.0))
-    result = x * y
-    # result.value = 6; result.deriv.d1 = 3; result.deriv.d2 = 2
+   from pynucastro.autodiff.derivative_pair import DerivativePair
 
-All dual operands in an expression must use the same kind of seed.
-Constants may be ordinary real scalars. ``constant_like(x, value)`` creates
-a constant with the same scalar or dual representation as ``x``, including
-zero derivative components; this is useful for compiled clipping branches.
+   x = Dual(2.0, DerivativePair(1.0, 0.0))
+   y = Dual(3.0, DerivativePair(0.0, 1.0))
+   result = x * y
+
+This gives:
+
+.. code:: python
+
+   Dual(value=6.0, deriv=DerivativePair(d1=3.0, d2=2.0))
+
+.. important::
+
+   All dual operands in an expression must use the same kind of seed,
+   i.e., you cannot mix the representations:
+
+   .. code:: python
+
+      x = Dual(2.0, DerivativePair(1.0, 0.0))
+      y = Dual(3.0)  # defaults to scalar derivative 1.0
+      result = x * y  # unsupported mixture
+
+.. note::
+
+   Constants may be ordinary real scalars.  The helper function
+   :py:meth:`constant_like(x, value)
+   <pynucastro.autodiff.dual.constant_like>` creates a constant with
+   the same scalar or dual representation as ``x``, including zero
+   derivative components.  This is useful in Numba-compiled
+   functions that clamp values to bounds, like:
+
+   .. code:: python
+
+      @njit
+      def cap(x):
+          if x > 10.0:
+              return constant_like(x, 10.0)
+          return x
