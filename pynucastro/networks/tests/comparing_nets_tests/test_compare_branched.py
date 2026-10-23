@@ -6,7 +6,6 @@ import warnings
 from pathlib import Path
 
 import pytest
-from pytest import approx
 
 from pynucastro.networks.network_compare import NetworkCompare
 from pynucastro.nucdata.nucleus import Nucleus
@@ -73,12 +72,14 @@ class TestNetworkCompare:
                             cxx_test_path=cxx_test_path)
         return nc
 
-    @pytest.fixture(scope="class")
+    @pytest.fixture(scope="class",
+                    params=[(200, 2.e7)],
+                    ids=["rho200-T2e7"])
     @classmethod
-    def eval_cond1(cls, nc):
-        # thermodynamic conditions
-        rho = 200
-        T = 2.e7
+    def eval_cond(cls, nc, request):
+        # thermodynamic conditions come from the fixture
+        # we group them as (rho, T)
+        rho, T = request.param
 
         if not _skip_build():
             with warnings.catch_warnings():
@@ -89,39 +90,31 @@ class TestNetworkCompare:
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
-    def test_compare_ydots(self, eval_cond1):
-
-        # compare the simple C++, AMReX, and python module nets to the
-        # python inline version
-
-        for other in [eval_cond1.ydots_cxx, eval_cond1.ydots_amrex, eval_cond1.ydots_py_module]:
-            for nuc in eval_cond1.ydots_py_inline:
-                assert other[nuc] == approx(eval_cond1.ydots_py_inline[nuc],
-                                            rel=1.e-11, abs=1.e-30)
+    def test_compare_ydots(self, eval_cond):
+        eval_cond.compare_results(quantity="ydots",
+                                  rtol=1.e-11, atol=1.e-30)
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
-    def test_compare_rates(self, eval_cond1):
-
-        # compare the simple C++, AMReX, and python module nets to the
-        # python inline version
-
-        for other in [eval_cond1.rates_cxx, eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
-            for nuc in eval_cond1.rates_py_inline:
-                assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
-                                            rel=1.e-11, abs=1.e-30)
+    def test_compare_jac(self, eval_cond):
+        eval_cond.compare_results(quantity="jac",
+                                  rtol=1.e-11, atol=1.e-80)
 
     @pytest.mark.skipif(_skip_build(),
                         reason="We do not build C++ on Mac or Windows")
-    def test_compare_energy(self, eval_cond1):
+    def test_compare_rates(self, eval_cond):
+        eval_cond.compare_results(quantity="rates",
+                                  rtol=1.e-11, atol=1.e-30)
+
+    @pytest.mark.skipif(_skip_build(),
+                        reason="We do not build C++ on Mac or Windows")
+    def test_compare_energy(self, eval_cond):
 
         # we use a relaxed tolerance here because of differences
         # in constants in simple C++ nets (N_A)
-        for other in [eval_cond1.enuc_cxx, eval_cond1.enuc_amrex, eval_cond1.enuc_py_module]:
-            assert other == approx(eval_cond1.enuc_py_inline,
-                                   rel=1.e-7, abs=1.e-30)
-        for other in [eval_cond1.enu_weak_cxx, eval_cond1.enu_weak_amrex, eval_cond1.enu_weak_py_module]:
-            assert other == approx(eval_cond1.enu_weak_py_inline,
-                                   rel=1.e-7, abs=1.e-30)
+        eval_cond.compare_results(quantity="enuc",
+                                  rtol=1.e-7, atol=1.e-30)
+        eval_cond.compare_results(quantity="enu_weak",
+                                  rtol=1.e-7, atol=1.e-30)
 
     # pylint: enable=duplicate-code
