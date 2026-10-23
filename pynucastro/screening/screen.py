@@ -1,8 +1,12 @@
 """Python implementations of common electron screening routines."""
 
+from collections import namedtuple
+
 import numpy as np
 
 import pynucastro.numba_util as numba
+from pynucastro.autodiff import dual
+from pynucastro.autodiff.derivative_pair import DerivativePair
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.numba_util import jitclass, njit
@@ -19,12 +23,60 @@ __all__ = [
     "f0",
     "get_screening_func",
     "make_plasma_state",
+    "make_plasma_state_with_derivatives",
     "make_screen_factors",
     "potekhin_1998",
     "screen5",
     "screening_check",
     "smooth_clip",
 ]
+
+
+# A native tuple can carry either floats or dual-valued composition factors.
+_PlasmaStateData = namedtuple("PlasmaStateData",
+                             "temp dens qlam0z taufac aa abar zbar z2bar n_e gamma_e_fac")
+
+
+@njit
+def _plasma_state_from_moments(temp, dens, ytot, ye, s2):
+    """Compute state factors at fixed total molar abundance."""
+    abar = 1 / ytot
+    zbar = ye / ytot
+    z2bar = s2 / ytot
+
+    # ntot
+    rr = dens * ytot
+
+    # Part version of Eq. 19 in Graboske:1973
+    # pp = sqrt( \tilde{z}*(rho/u_I/T) )
+    pp = dual.sqrt(rr/temp*(z2bar + zbar))
+    qlam0z = 1.88e8 / temp * pp
+
+    # Part of Eq.6 in Itoh:1979
+    # 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)
+    # the extra (1/3) to make tau -> tau/3
+    co2 = dual.cbrt(27*np.pi**2*constants.q_e**4*constants.m_u_C18 /
+                    (2*constants.k*constants.hbar**2)) / 3
+    taufac = co2 / dual.cbrt(temp)
+
+    xni = dual.cbrt(rr * zbar)
+
+    # Part of Eq.4 in Itoh:1979
+    # 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )
+    aa_factor = constants.q_e**2 / (dual.cbrt(3*constants.m_u_C18/(4*np.pi)) *
+                                    constants.k)
+    aa = aa_factor / temp * xni
+
+    # Average mass and total number density
+    mbar = abar * constants.m_u_C18
+    ntot = dens / mbar
+    # Electron number density
+    # zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
+    n_e = zbar * ntot
+
+    # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
+    gamma_e_fac = constants.q_e**2 / constants.k * dual.cbrt(4 * np.pi / 3) * dual.cbrt(n_e)
+    return _PlasmaStateData(temp, dens, qlam0z, taufac, aa, abar, zbar, z2bar, n_e, gamma_e_fac)
 
 
 @jitclass([
@@ -76,45 +128,18 @@ class PlasmaState:
     """
 
     def __init__(self, temp, dens, Ys, Zs):
-        self.temp = temp
-        self.dens = dens
-        ytot = np.sum(Ys)
-        self.abar = 1 / ytot
-        self.zbar = np.sum(Zs * Ys) / ytot
-        self.z2bar = np.sum(Zs**2 * Ys) / ytot
-
-        # ntot
-        rr = dens * ytot
-
-        # Part version of Eq. 19 in Graboske:1973
-        # pp = sqrt( \tilde{z}*(rho/u_I/T) )
-        pp = np.sqrt(rr/temp*(self.z2bar + self.zbar))
-        self.qlam0z = 1.88e8 / temp * pp
-
-        # Part of Eq.6 in Itoh:1979
-        # 4.248719e3 = (27*pi^2*e^4*m_u/(2*k_B*hbar^2))^(1/3)
-        # the extra (1/3) to make tau -> tau/3
-        co2 = np.cbrt(27*np.pi**2*constants.q_e**4*constants.m_u_C18 /
-                      (2*constants.k*constants.hbar**2)) / 3
-        self.taufac = co2 / np.cbrt(temp)
-
-        xni = np.cbrt(rr * self.zbar)
-
-        # Part of Eq.4 in Itoh:1979
-        # 2.27493e5 = e^2 / ( (3*m_u/(4pi))^(1/3) *k_B )
-        aa_factor = constants.q_e**2 / (np.cbrt(3*constants.m_u_C18/(4*np.pi)) *
-                                        constants.k)
-        self.aa = aa_factor / temp * xni
-
-        # Average mass and total number density
-        mbar = self.abar * constants.m_u_C18
-        ntot = self.dens / mbar
-        # Electron number density
-        # zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
-        self.n_e = self.zbar * ntot
-
-        # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
-        self.gamma_e_fac = constants.q_e**2 / constants.k * np.cbrt(4 * np.pi / 3) * np.cbrt(self.n_e)
+        state = _plasma_state_from_moments(temp, dens, np.sum(Ys),
+                                           np.sum(Zs * Ys), np.sum(Zs**2 * Ys))
+        self.temp = state.temp
+        self.dens = state.dens
+        self.qlam0z = state.qlam0z
+        self.taufac = state.taufac
+        self.aa = state.aa
+        self.abar = state.abar
+        self.zbar = state.zbar
+        self.z2bar = state.z2bar
+        self.n_e = state.n_e
+        self.gamma_e_fac = state.gamma_e_fac
 
 
 @jitclass([
@@ -148,10 +173,10 @@ class NseState:
         self.temp = temp
         self.dens = dens
         self.ye = ye
-        self.gamma_e_fac = constants.q_e**2 / constants.k * np.cbrt(4.0 * np.pi / 3.0)
+        self.gamma_e_fac = constants.q_e**2 / constants.k * dual.cbrt(4.0 * np.pi / 3.0)
 
 
-def make_plasma_state(temp, dens, molar_fractions):
+def make_plasma_state(temp, dens, molar_fractions, *, compute_derivatives=False):
     """Construct a PlasmaState object from simulation data.
 
     Parameters
@@ -163,16 +188,58 @@ def make_plasma_state(temp, dens, molar_fractions):
     molar_fractions : dict(Nucleus)
         dictionary of molar abundances for each ion,
         as returned by :meth:`.Composition.get_molar`
+    compute_derivatives : bool, optional
+        Seed derivatives with respect to Ye = sum(Z Y) and S2 = sum(Z**2 Y).
+        The default is False.
 
     Returns
     -------
-    PlasmaState
+    PlasmaState or namedtuple
+        With compute_derivatives=True, an immutable state whose
+        composition-dependent fields carry two derivatives.
 
     """
     nuclei = list(molar_fractions.keys())
     Ys = np.asarray([molar_fractions[n] for n in nuclei])
     Zs = np.asarray([n.Z for n in nuclei])
+    if compute_derivatives:
+        return make_plasma_state_with_derivatives(temp, dens, Ys, Zs)
     return PlasmaState(temp, dens, Ys, Zs)
+
+
+@njit
+def make_plasma_state_with_derivatives(temp, dens, Ys, Zs):
+    """Construct a state carrying two composition derivatives.
+
+    Parameters
+    ----------
+    temp : float
+        Temperature in K, held fixed during differentiation.
+    dens : float
+        Density in g/cm^3, held fixed during differentiation.
+    Ys : numpy.ndarray
+        Molar abundances, Y_i = X_i / A_i.
+    Zs : numpy.ndarray
+        Nuclear charges in the same order as Ys.
+
+    Returns
+    -------
+    namedtuple
+        State with the same attributes as PlasmaState. Composition-dependent
+        fields are Dual values with DerivativePair seeds: d1 corresponds to
+        Ye = sum(Z_i Y_i), and d2 to S2 = sum(Z_i**2 Y_i).
+
+    Notes
+    -----
+    The total molar abundance is held fixed when seeding these moments.
+    It cancels out of the screening expressions. For a returned log screening
+    factor h, dh/dY_i = Z_i * h.deriv.d1 + Z_i**2 * h.deriv.d2, without
+    renormalizing the abundances. Reuse this state for different ion pairs.
+
+    """
+    ye = dual.Dual(np.sum(Zs * Ys), DerivativePair(1.0, 0.0))
+    s2 = dual.Dual(np.sum(Zs**2 * Ys), DerivativePair(0.0, 1.0))
+    return _plasma_state_from_moments(temp, dens, np.sum(Ys), ye, s2)
 
 
 @jitclass([
@@ -224,12 +291,12 @@ class ScreenFactors:
         self.z2 = z2
         self.a1 = a1
         self.a2 = a2
-        self.zs13 = np.cbrt(z1 + z2)
+        self.zs13 = dual.cbrt(z1 + z2)
         self.zhat = (z1 + z2)**(5/3) - z1**(5/3) - z2**(5/3)
         self.zhat2 = (z1 + z2)**(5/12) - z1**(5/12) - z2**(5/12)
-        self.lzav = (5/3) * np.log(z1 * z2 / (z1 + z2))
-        self.aznut = np.cbrt(z1**2 * z2**2 * a1 * a2 / (a1 + a2))
-        self.ztilde = 0.5 * (np.cbrt(z1) + np.cbrt(z2))
+        self.lzav = (5/3) * dual.log(z1 * z2 / (z1 + z2))
+        self.aznut = dual.cbrt(z1**2 * z2**2 * a1 * a2 / (a1 + a2))
+        self.ztilde = 0.5 * (dual.cbrt(z1) + dual.cbrt(z2))
 
 
 def make_screen_factors(n1, n2):
@@ -254,7 +321,7 @@ def make_screen_factors(n1, n2):
 
 
 @njit
-def debye_huckel(state, scn_fac) -> float:
+def debye_huckel(state, scn_fac):
     """Calculate the Debye-Huckel enhancement factor for weak Coloumb
     coupling, following the appendix of :cite:t:`chugunov:2009`.
 
@@ -267,7 +334,9 @@ def debye_huckel(state, scn_fac) -> float:
 
     Returns
     -------
-    float
+    float or Dual
+        Logarithm of the screening enhancement, with derivatives when the
+        state was constructed with make_plasma_state_with_derivatives.
 
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
@@ -276,7 +345,7 @@ def debye_huckel(state, scn_fac) -> float:
     Gamma_e = state.gamma_e_fac / state.temp
 
     # eq. A1
-    h_DH = z1z2 * np.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
+    h_DH = z1z2 * dual.sqrt(3 * Gamma_e**3 * state.z2bar / state.zbar)
 
     return h_DH
 
@@ -299,10 +368,12 @@ def screen5(state: PlasmaState, scn_fac):
 
     Returns
     -------
-    float
+    float or Dual
+        Logarithm of the screening enhancement, with derivatives when the
+        state was constructed with make_plasma_state_with_derivatives.
 
     """
-    fact = np.cbrt(2)
+    fact = dual.cbrt(2)
     gamefx = 0.3e0  # lower gamma limit for intermediate screening
     gamefs = 0.8e0  # upper gamma limit for intermediate screening
 
@@ -338,11 +409,11 @@ def screen5(state: PlasmaState, scn_fac):
 
     # this should really be replaced by a pycnonuclear reaction rate formula
     if alph12 > 1.6:
-        alph12 = 1.6e0
+        alph12 = dual.constant_like(alph12, 1.6e0)
 
         # redetermine previous factors if 3*gamma_ij/tau_ij > 1.6
 
-        gamef = 1.6e0 * tau12
+        gamef = dual.constant_like(gamef, 1.6e0 * tau12)
 
         gamp = gamef * scn_fac.zs13/(fact * bb)
 
@@ -365,7 +436,7 @@ def screen5(state: PlasmaState, scn_fac):
         # See Eq. 25 Alastuey:1978, Eq. 16 and 17 in Jancovici:1977 for reference
         cc = (0.896434e0 * gamp * scn_fac.zhat +
               -3.44740e0 * gamp14 * scn_fac.zhat2 +
-              -0.5551e0 * (np.log(gamp) + scn_fac.lzav) +
+              -0.5551e0 * (dual.log(gamp) + scn_fac.lzav) +
               -2.996e0)
 
         # (3gamma_ij/tau_ij)^3
@@ -398,10 +469,10 @@ def screen5(state: PlasmaState, scn_fac):
         rr = 1.0 - 0.0562e0*a3
 
         # In extreme case, rr is 0.77, see conclusion in Alastuey:1978
-        xlgfac = max(0.77, rr)
+        xlgfac = max(dual.constant_like(rr, 0.77), rr)
 
         # Include the extra factor that accounts for quantum effects
-        h12 += np.log(xlgfac)
+        h12 = h12 + dual.log(xlgfac)
 
         # If gamma_ij < upper limit of intermediate regime
         # then it is in the intermediate regime, else strong screening.
@@ -419,7 +490,7 @@ def screen5(state: PlasmaState, scn_fac):
         # end of intermediate and strong screening
 
     # limit to avoid the pycnonuclear regime
-    log_scor = max(h12, 0.0)
+    log_scor = max(h12, dual.constant_like(h12, 0.0))
 
     return log_scor
 
@@ -446,12 +517,13 @@ def smooth_clip(x, limit, start):
     float
 
     """
+    bound = dual.constant_like(x, limit)
     if limit < start:
-        lower = limit
+        lower = bound
         upper = x
     else:
         lower = x
-        upper = limit
+        upper = bound
 
     if x < min(limit, start):
         return lower
@@ -459,7 +531,7 @@ def smooth_clip(x, limit, start):
         return upper
 
     tmp = np.pi * (x - min(limit, start)) / (start - limit)
-    f = (1 - np.cos(tmp)) / 2
+    f = (1 - dual.cos(tmp)) / 2
 
     return (1 - f) * lower + f * upper
 
@@ -480,7 +552,9 @@ def chugunov_2007(state, scn_fac):
 
     Returns
     -------
-    float
+    float or Dual
+        Logarithm of the screening enhancement, with derivatives when the
+        state was constructed with make_plasma_state_with_derivatives.
 
     """
     # Plasma temperature T_p
@@ -508,7 +582,7 @@ def chugunov_2007(state, scn_fac):
     n_i = state.n_e / scn_fac.ztilde**3
     m_i = 2 * mu12 * constants.m_u_C18
 
-    T_p = constants.hbar / constants.k * constants.q_e * np.sqrt(4 * np.pi * z_factor * n_i / m_i)
+    T_p = constants.hbar / constants.k * constants.q_e * dual.sqrt(4 * np.pi * z_factor * n_i / m_i)
 
     # Normalized temperature
     T_norm = state.temp / T_p
@@ -532,7 +606,7 @@ def chugunov_2007(state, scn_fac):
     Gamma = smooth_clip(Gamma, limit=Gamma_max, start=Gamma_fade)
 
     # Chugunov 2007 eq. 3
-    zeta = np.cbrt(4 / (3 * np.pi**2 * T_norm**2))
+    zeta = dual.cbrt(4 / (3 * np.pi**2 * T_norm**2))
 
     # Gamma tilde from Chugunov 2007 eq. 21
     fit_alpha = 0.022
@@ -542,12 +616,12 @@ def chugunov_2007(state, scn_fac):
     # Polynomial term in Gamma tilde
     poly = 1 + zeta*(fit_alpha + zeta*(fit_beta + fit_gamma*zeta))
 
-    gamtilde = Gamma / np.cbrt(poly)
+    gamtilde = Gamma / dual.cbrt(poly)
 
     # fit parameters just after Chugunov 2007 eq. 19
     A1 = 2.7822
     A2 = 98.34
-    A3 = np.sqrt(3) - A1 / np.sqrt(A2)
+    A3 = dual.sqrt(3) - A1 / dual.sqrt(A2)
     B1 = -1.7476
     B2 = 66.07
     B3 = 1.12
@@ -555,7 +629,7 @@ def chugunov_2007(state, scn_fac):
     gamtilde2 = gamtilde**2
 
     # Chugunov 2007 eq. 19
-    term1 = 1 / np.sqrt(A2 + gamtilde)
+    term1 = 1 / dual.sqrt(A2 + gamtilde)
     term2 = 1 / (1 + gamtilde)
     term3 = gamtilde**2 / (B2 + gamtilde)
     term4 = gamtilde2 / (B4 + gamtilde2)
@@ -563,7 +637,7 @@ def chugunov_2007(state, scn_fac):
     h = gamtilde**(3 / 2) * (A1 * term1 + A3 * term2) + B1 * term3 + B3 * term4
 
     # Assume h >= 0
-    log_scor = max(h, 0.0)
+    log_scor = max(h, dual.constant_like(h, 0.0))
 
     return log_scor
 
@@ -585,18 +659,18 @@ def f0(gamma):
     """
     A1 = -0.907
     A2 = 0.62954
-    A3 = -np.sqrt(3) / 2 - A1 / np.sqrt(A2)
+    A3 = -dual.sqrt(3) / 2 - A1 / dual.sqrt(A2)
     B1 = 0.00456
     B2 = 211.6
     B3 = -1e-4
     B4 = 0.00462
 
-    term1 = np.sqrt(gamma * (A2 + gamma))
-    term2 = np.log(np.sqrt(gamma / A2) + np.sqrt(1 + gamma / A2))
-    gamma_12 = np.sqrt(gamma)
-    term3 = gamma_12 - np.arctan(gamma_12)
-    term4 = np.log1p(gamma / B2)
-    term5 = np.log1p(gamma**2 / B4)
+    term1 = dual.sqrt(gamma * (A2 + gamma))
+    term2 = dual.log(dual.sqrt(gamma / A2) + dual.sqrt(1 + gamma / A2))
+    gamma_12 = dual.sqrt(gamma)
+    term3 = gamma_12 - dual.arctan(gamma_12)
+    term4 = dual.log1p(gamma / B2)
+    term5 = dual.log1p(gamma**2 / B4)
 
     return (
         A1 * (term1 - A2 * term2) +
@@ -619,7 +693,9 @@ def chugunov_2009(state, scn_fac):
 
     Returns
     -------
-    float
+    float or Dual
+        Logarithm of the screening enhancement, with derivatives when the
+        state was constructed with make_plasma_state_with_derivatives.
 
     """
     z1z2 = scn_fac.z1 * scn_fac.z2
@@ -636,8 +712,8 @@ def chugunov_2009(state, scn_fac):
     Gamma_12 = Gamma_e * z1z2 / scn_fac.ztilde
 
     # Coulomb barrier penetrability, eq. 10
-    tau_factor = np.cbrt(27 / 2 * (np.pi * constants.q_e**2 / constants.hbar)**2 * constants.m_u_C18 / constants.k)
-    tau_12 = tau_factor * scn_fac.aznut / np.cbrt(state.temp)
+    tau_factor = dual.cbrt(27 / 2 * (np.pi * constants.q_e**2 / constants.hbar)**2 * constants.m_u_C18 / constants.k)
+    tau_12 = tau_factor * scn_fac.aznut / dual.cbrt(state.temp)
 
     # eq. 12
     zeta = 3 * Gamma_12 / tau_12
@@ -649,7 +725,7 @@ def chugunov_2009(state, scn_fac):
     c3 = 0.062 * y_12**0.19 + 1.8 / Gamma_12
 
     poly = 1 + zeta*(c1 + zeta*(c2 + c3*zeta))
-    t_12 = np.cbrt(poly)
+    t_12 = dual.cbrt(poly)
 
     # strong screening enhancement factor, eq. 23, replacing tau_ij with t_ij
     # Using Gamma/tau_ij gives extremely low values, while Gamma/t_ij gives
@@ -661,7 +737,7 @@ def chugunov_2009(state, scn_fac):
 
     # weak screening correction term, eq. A3
     corr_C = (
-        3 * z1z2 * np.sqrt(state.z2bar / state.zbar) /
+        3 * z1z2 * dual.sqrt(state.z2bar / state.zbar) /
         (zcomp**2.5 - scn_fac.z1**2.5 - scn_fac.z2**2.5)
     )
 
@@ -672,7 +748,7 @@ def chugunov_2009(state, scn_fac):
     h12 = numer / denom * h_fit
 
     # Assume h >= 0
-    log_scor = max(h12, 0.0)
+    log_scor = max(h12, dual.constant_like(h12, 0.0))
 
     return log_scor
 
@@ -691,7 +767,9 @@ def potekhin_1998(state, scn_fac):
 
     Returns
     -------
-    float
+    float or Dual
+        Logarithm of the screening enhancement, with derivatives when the
+        state was constructed with make_plasma_state_with_derivatives.
 
     """
 
@@ -704,21 +782,21 @@ def potekhin_1998(state, scn_fac):
 
     A_1 = -0.9052
     A_2 = 0.6322
-    A_3 = -0.5 * np.sqrt(3) - A_1/np.sqrt(A_2)
+    A_3 = -0.5 * dual.sqrt(3) - A_1/dual.sqrt(A_2)
 
-    f1 = A_1 * (np.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * np.log(np.sqrt(Gamma_1 / A_2) +
-                  np.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_1) - np.arctan(np.sqrt(Gamma_1)))
+    f1 = A_1 * (dual.sqrt(Gamma_1 * (A_2 + Gamma_1)) - A_2 * dual.log(dual.sqrt(Gamma_1 / A_2) +
+                  dual.sqrt(1.0 + Gamma_1/A_2))) + 2.0 * A_3 * (dual.sqrt(Gamma_1) - dual.arctan(dual.sqrt(Gamma_1)))
 
-    f2 = A_1 * (np.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * np.log(np.sqrt(Gamma_2 / A_2) +
-                  np.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_2) - np.arctan(np.sqrt(Gamma_2)))
+    f2 = A_1 * (dual.sqrt(Gamma_2 * (A_2 + Gamma_2)) - A_2 * dual.log(dual.sqrt(Gamma_2 / A_2) +
+                  dual.sqrt(1.0 + Gamma_2/A_2))) + 2.0 * A_3 * (dual.sqrt(Gamma_2) - dual.arctan(dual.sqrt(Gamma_2)))
 
-    f12 = A_1 * (np.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * np.log(np.sqrt(Gamma_comp / A_2) +
-                  np.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (np.sqrt(Gamma_comp) - np.arctan(np.sqrt(Gamma_comp)))
+    f12 = A_1 * (dual.sqrt(Gamma_comp * (A_2 + Gamma_comp)) - A_2 * dual.log(dual.sqrt(Gamma_comp / A_2) +
+                  dual.sqrt(1.0 + Gamma_comp/A_2))) + 2.0 * A_3 * (dual.sqrt(Gamma_comp) - dual.arctan(dual.sqrt(Gamma_comp)))
 
     h12 = f1 + f2 - f12
 
     # Assume h >= 0
-    log_scor = max(h12, 0.0)
+    log_scor = max(h12, dual.constant_like(h12, 0.0))
 
     return log_scor
 

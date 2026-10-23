@@ -4,8 +4,9 @@ try:
     # the linters really don't like this
     # pylint: disable=unused-import, wildcard-import, unused-wildcard-import
     # flake8: noqa: F403
-    from numba import jit, njit
+    from numba import jit, njit, types
     from numba.experimental import jitclass
+    from numba.extending import overload
     from numba.types import *
 except ImportError:
     import functools
@@ -27,6 +28,10 @@ except ImportError:
 
     njit = jit
 
+    def overload(*_args, **_kwargs):
+        """Leave overload definitions inactive when Numba is unavailable."""
+        return lambda implementation: implementation
+
     def jitclass(*args, **kwargs):
         """Use just-in-time compilation for a class."""
         if len(args) == 1 and not kwargs and isinstance(args[0], type):
@@ -39,6 +44,12 @@ except ImportError:
     class _FakeNumbaType:
         def __getitem__(self, _key):
             return self
+
+    class _FakeTypes:
+        def __getattr__(self, _name):
+            return _FakeNumbaType
+
+    types = _FakeTypes()
 
     # assume everything not defined above is a type
     def __getattr__(_name):
