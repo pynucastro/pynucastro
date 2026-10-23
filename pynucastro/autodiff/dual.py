@@ -1,4 +1,4 @@
-"""Scalar forward-mode derivatives, usable from Python and Numba.
+"""Forward-mode derivatives of scalar values, usable from Python and Numba.
 
 Seed the independent variable with ``Dual(value, 1.0)`` and constants with
 ``Dual(value, 0.0)``. Use this module's math helpers in place of NumPy ufuncs
@@ -6,34 +6,40 @@ when an argument may be dual. CPU Numba overloads support scalar-left
 arithmetic, value comparisons, and two-argument ``min``/``max``. Compiled
 ``min``/``max`` return a Dual if either operand is dual, with zero derivative
 when a scalar bound is selected. Ties select the first operand, as in Python.
-Other branches must likewise keep dual-valued variables consistently typed.
+Use DerivativePair seeds to propagate two derivatives simultaneously. All dual
+operands in an expression must use the same seed kind. Other branches must
+likewise keep dual-valued variables consistently typed.
 """
 
 import operator
 from collections import namedtuple
 
 import numpy as np
-from numba import types
-from numba.extending import overload
+
+from pynucastro.autodiff.derivative_pair import zero_derivative
+from pynucastro.numba_util import overload, types
 
 
 class Dual(namedtuple("DualTuple", ("value", "deriv"), defaults=(1.0,))):
     """Carry a quantity that can propagate its derivative.
 
-    We carry a scalar derivative, so that means we are always
-    differentiating with respect to the same quantity. Instances are
-    immutable namedtuples, lowered by Numba to native tuple values.
+    A scalar seed carries one derivative; a DerivativePair seed carries
+    two independent derivatives. Instances are immutable namedtuples,
+    lowered by Numba to native tuple values.
 
     Parameters
     ----------
     value : float
         Scalar value.
-    deriv : float, optional
-        Derivative seed, defaulting to one.
+    deriv : float or DerivativePair, optional
+        Derivative seed, defaulting to one. Use the same seed kind for all
+        dual operands in an expression.
 
     """
 
     __slots__ = ()
+    # NumPy scalars must defer to our reflected arithmetic, not build arrays.
+    __array_priority__ = 1000
     __hash__ = None
 
     def __abs__(self):
@@ -41,7 +47,7 @@ class Dual(namedtuple("DualTuple", ("value", "deriv"), defaults=(1.0,))):
             return Dual(self.value, self.deriv)
         if self.value < 0:
             return Dual(-self.value, -self.deriv)
-        return Dual(abs(self.value), 0.0)
+        return Dual(abs(self.value), zero_derivative(self.deriv))
 
     def __lt__(self, other):
         if isinstance(other, Dual):
@@ -124,7 +130,7 @@ class Dual(namedtuple("DualTuple", ("value", "deriv"), defaults=(1.0,))):
             return Dual(value, deriv)
 
         if y == 0:
-            return Dual(1.0, 0.0)
+            return Dual(1.0, zero_derivative(self.deriv))
         return Dual(self.value**y,
                     y * self.value**(y - 1.0) * self.deriv)
 
@@ -394,7 +400,7 @@ def _ol_pow(a, b):
     if _is_dual(a) and isinstance(b, _REAL_TYPES):
         def scalar_impl(a, b):
             if b == 0:
-                return Dual(1.0, 0.0)
+                return Dual(1.0, zero_derivative(a.deriv))
             return Dual(a.value ** b, b * a.value ** (b - 1.0) * a.deriv)
         return scalar_impl
     return None
@@ -417,7 +423,7 @@ def _ol_abs(x):
                 return Dual(x.value, x.deriv)
             if x.value < 0:
                 return Dual(-x.value, -x.deriv)
-            return Dual(abs(x.value), 0.0)
+            return Dual(abs(x.value), zero_derivative(x.deriv))
         return impl
     return None
 
@@ -532,23 +538,57 @@ def _register_minmax(func, compare):
         if _is_dual(a) and _is_dual(b):
             def dual_dual(a, b):
                 if compare(b.value, a.value):
-                    return Dual(float(b.value), float(b.deriv))
-                return Dual(float(a.value), float(a.deriv))
+                    return Dual(float(b.value), b.deriv * 1.0)
+                return Dual(float(a.value), a.deriv * 1.0)
             return dual_dual
         if _is_dual(a) and isinstance(b, _REAL_TYPES):
             def dual_scalar(a, b):
                 if compare(b, a.value):
-                    return Dual(float(b), 0.0)
-                return Dual(float(a.value), float(a.deriv))
+                    return Dual(float(b), zero_derivative(a.deriv))
+                return Dual(float(a.value), a.deriv * 1.0)
             return dual_scalar
         if isinstance(a, _REAL_TYPES) and _is_dual(b):
             def scalar_dual(a, b):
                 if compare(b.value, a):
-                    return Dual(float(b.value), float(b.deriv))
-                return Dual(float(a), 0.0)
+                    return Dual(float(b.value), b.deriv * 1.0)
+                return Dual(float(a), zero_derivative(b.deriv))
             return scalar_dual
         return None
 
 
 _register_minmax(min, operator.lt)
 _register_minmax(max, operator.gt)
+
+
+def constant_like(x, value):
+    """Give a constant the same scalar or dual representation as x.
+
+    Parameters
+    ----------
+    x : float or Dual
+        Determines the result type and derivative seed shape.
+    value : float
+        Constant value, whose derivatives are zero.
+
+    Returns
+    -------
+    float or Dual
+        The constant with zero derivatives when x is dual.
+
+    """
+    if isinstance(x, Dual):
+        return Dual(float(value), zero_derivative(x.deriv))
+    return float(value)
+
+
+@overload(constant_like)
+def _ol_constant_like(x, value):
+    if _is_dual(x):
+        def dual_impl(x, value):
+            return Dual(float(value), zero_derivative(x.deriv))
+        return dual_impl
+    if isinstance(x, _REAL_TYPES):
+        def scalar_impl(x, value):  # pylint: disable=unused-argument
+            return float(value)
+        return scalar_impl
+    return None

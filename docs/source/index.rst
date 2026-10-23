@@ -72,7 +72,6 @@ and interactively exploring nuclear reaction networks.
    :hidden:
 
    screening-examples
-   autodiff
    custom-rates.ipynb
    derived-rates
 
@@ -182,6 +181,7 @@ and interactively exploring nuclear reaction networks.
    nets-devel
    jac-devel
    testing
+   autodiff
 
 .. toctree::
    :maxdepth: 1
