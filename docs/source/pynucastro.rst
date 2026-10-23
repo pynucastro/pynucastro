@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   pynucastro.autodiff
    pynucastro.constants
    pynucastro.eos
    pynucastro.networks
