@@ -182,6 +182,7 @@ and interactively exploring nuclear reaction networks.
    jac-devel
    testing
    autodiff
+   screening_derivs
 
 .. toctree::
    :maxdepth: 1
