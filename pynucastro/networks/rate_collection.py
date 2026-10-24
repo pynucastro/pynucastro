@@ -1569,6 +1569,35 @@ class RateCollection:
         return ydots
 
     @need_state
+    def evaluate_neutrino_energy_loss(self, state, *):
+        """Evaluate the energy loss from neutrinos for a specific density, 
+        temperature and composition
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate ydots. It knows about (rho, T, composition).
+        
+        Returns
+        -------
+        enu : float
+            the neutrino loss rate from weak reactions
+
+        """
+
+        enu = 0.0
+        for r in self.rates:
+            if isinstance(r, TabularWeakRate):
+                # get composition
+                ys = state.get_molar()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        return enu
+
+    @need_state
     def evaluate_energy_generation(self, state, *,
                                    screen_func=None, return_enu=False):
         """Evaluate the specific energy generation rate of the network for a specific
@@ -1608,15 +1637,7 @@ class RateCollection:
         enuc *= -1*constants.N_A
 
         # subtract neutrino losses for tabular weak reactions
-        enu = 0.0
-        for r in self.rates:
-            if isinstance(r, TabularWeakRate):
-                # get composition
-                ys = state.get_molar()
-
-                # need to get reactant nucleus
-                nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        enu = self.evaluate_neutrino_energy_loss(state)
 
         enuc -= enu
         if return_enu:
