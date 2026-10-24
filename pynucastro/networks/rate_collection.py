@@ -1569,7 +1569,7 @@ class RateCollection:
         return ydots
 
     @need_state
-    def evaluate_neutrino_energy_loss(self, state, *):
+    def evaluate_neutrino_energy_loss(self, state):
         """Evaluate the energy loss from neutrinos for a specific density, 
         temperature and composition
 
