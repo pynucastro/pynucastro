@@ -1570,7 +1570,7 @@ class RateCollection:
 
     @need_state
     def evaluate_neutrino_energy_loss(self, state):
-        """Evaluate the energy loss from neutrinos for a specific density, 
+        """Evaluate the energy loss from neutrinos for a specific density,
         temperature and composition
 
         Parameters
@@ -1578,7 +1578,7 @@ class RateCollection:
         state: ThermoState
             ThermoState containing relevant thermodynamic information used to
             evaluate ydots. It knows about (rho, T, composition).
-        
+
         Returns
         -------
         enu : float
