@@ -1534,7 +1534,15 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(state, screen_func=screen_func)
+        rvals = {}
+        ys = state.get_molar()
+        y_e = state.ye
+
+        for r in self.rates:
+            if rate_filter is None or rate_filter(r):
+                rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                            y_molar=ys, y_e=y_e)
+
         ydots = {}
 
         for nuc in self.unique_nuclei:
