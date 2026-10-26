@@ -14,4 +14,4 @@ Submodules
 
    pynucastro.autodiff.derivative_pair
    pynucastro.autodiff.dual
-   pynucastro.autodiff.repro_numba_radd
+

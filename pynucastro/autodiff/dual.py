@@ -31,7 +31,7 @@ class Dual(namedtuple("DualTuple", ("value", "deriv"), defaults=(1.0,))):
     ----------
     value : float
         Scalar value.
-    deriv : float or DerivativePair, optional
+    deriv : float or DerivativePair, *optional*
         Derivative seed, defaulting to one. Use the same seed kind for all
         dual operands in an expression.
 
