@@ -50,7 +50,9 @@
       `forward_for_detailed_balance` (#1574)
     * fix `Library.remove_rate` when an `id` is passed in (#1575)
 
-  * `ApproximateRate` / `ModifiedRate` :
+  * `ApproximateRate` / `ModifiedRate` / `BranchedRate` / `BetaLimitedRate` :
+
+     * add a β-limited rate class, `BetaLimitedRate` (#1508)
 
   * general rate changes:
 
@@ -83,20 +85,28 @@
 
   * git / project infrastructure:
 
+    * add python 3.15 CI testing (#1541)
     * split linkcheck off into its own action (#1545)
     * add concurrency group to pytest-random CI (#1585)
+    * add first-interaction workflow (#1632)
 
   * documentation:
 
     * fix inaccuracies / typos in rate dev docs (#1576)
     * add developer docs explaining the Jacobian (#1543)
     * explain `rate_eval_needs_*` attributes in the docs (#1618)
+    * update citation for 3.0 (#1627)
 
   * testing:
+
+    * add Jacobian testing to `NetworkCompare` + streamline the
+      interface (#1519)
 
   * helper functionality:
 
     * add a function to do a topological sort of rates (#1530)
+    * more `mesa_reader` fixes to catch different name variations
+      (#1625)
 
 ## 3.1.0
 
