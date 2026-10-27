@@ -7,9 +7,11 @@ ifeq ($(USE_REACT),TRUE)
   CEXE_headers += interp_tools.H
   CEXE_headers += partition_functions.H
   CEXE_headers += actual_rhs.H
+  CEXE_headers += fill_rates.H
   CEXE_headers += rate_type.H
   CEXE_headers += reaclib_rates.H
   CEXE_headers += approximate_rates.H
+  CEXE_headers += beta_limited_rates.H
   CEXE_headers += branched_rates.H
   CEXE_headers += modified_rates.H
   CEXE_headers += table_rates.H

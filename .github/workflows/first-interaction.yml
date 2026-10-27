@@ -1,0 +1,49 @@
+name: Greetings
+
+on:
+  # Allow greeting comments on PRs submitted from forks.
+  pull_request_target:
+    types:
+      - opened
+  issues:
+    types:
+      - opened
+
+permissions:
+  # give minimal permissions
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    name: Greet First-Time Contributors
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/first-interaction@v3
+        with:
+          issue_message: |
+            # Thank you for your first issue
+
+            Thank you for your first issue for pynucastro.  To help the
+            developers understand the motivation, please describe
+            your science application.
+
+            If this issue is a request for new rates, nuclear data, etc.,
+            please link to a source for the data.
+
+          pr_message: |
+            # Thank you for your first PR
+
+            Thank you for making your first contribution to
+            pynucastro.  As this is a community-oriented project in
+            astrophysics, please take a moment to introduce yourself
+            and share the motivation for your change (e.g., science
+            application need).
+
+            We recognize that AI tools are increasingly used in
+            drafting code changes.  Please check the appropriate box
+            in the PR description if you used an AI tool.  We require
+            that a human be the point of communication, and that you
+            understand and are able to explain the changes that have
+            been made in your PR.
