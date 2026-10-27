@@ -15,51 +15,106 @@ at fixed temperature and density. Here :math:`Y_i = X_i/A_i` is the molar
 abundance used by the network. These are unconstrained abundance derivatives:
 individual abundances are varied without renormalizing the composition.
 
-Construct a derivative-enabled state using arrays of abundances and charges::
+Below we show an example of computing the derivatives of the screening term.
+We'll consider a plasma consisting only of ${}^4\mathrm{He}$,
+${}^{12}\mathrm{C}$, and ${}^{16}\mathrm{O}$, and look at the
+screening factor for
+${}^{12}\mathrm{C}(\alpha,\gamma){}^{16}\mathrm{O}$.
 
-    import numpy as np
-    from pynucastro.autodiff import dual
-    from pynucastro.screening import (
-        make_plasma_state_with_derivatives, make_screen_factors, chugunov_2009,
-    )
+Plasma state
+------------
 
-    Y = np.array([0.125, 1.0 / 24.0])  # He4 and C12, equal mass fractions
-    Z = np.array([2, 6])
-    state = make_plasma_state_with_derivatives(1.e8, 1.e6, Y, Z)
-    pair = make_screen_factors("he4", "c12")
+First we setup a version of the plasma state that can be
+differentiated, using :py:func:`make_plasma_state
+<pynucastro.screening.screen.make_plasma_state>`.
+
+.. important::
+
+   When computing derivatives, the plasma state is stored as a
+   ``namedtuple``.  It has the same field names as the float-only
+   :py:obj:`PlasmaState <pynucastro.screening.screen.PlasmaState>`.
+
+Here's the construction of the plasma state:
+
+.. code:: python
+
+    from pynucastro.screening import (make_plasma_state,
+                                      make_screen_factors,
+                                      chugunov_2009)
+
+    comp = pyna.Composition(["he4", "c12", "o16"], init="uniform")
+    T = 1.e8  # K
+    rho = 1.e6  # g/cm^3
+
+    pstate = make_plasma_state(T, rho, comp, compute_derivatives=True)
+
+.. note::
+
+   This will create a :py:obj:`Dual <pynucastro.autodiff.dual.Dual>` seeded with a
+   :py:obj:`DerivativePair <pynucastro.autodiff.derivative_pair.DerivativePair>`,
+   with ``d1`` corresponding to the derivative with respect to $Y_e$ and ``d2``
+   corresponding to the derivative with respect to $S_2$.
+
+.. tip::
+
+   The plasma state, ``pstate``, only needs to be computed once, and can then
+   be used for all screening pairs, as long as density, temperature, and composition
+   are unchanged.
+
+.. important::
+
+   When working inside a ``@njit`` function, the explicit Numpy array
+   interface, :py:func:`make_plasma_state_with_derivatives
+   <pynucastro.screening.screen.make_plasma_state_with_derivatives>`
+   should be used.  This higher-level ``make_plasma_state`` interface
+   is only intended to be used outside of an ``@njit`` function.
+
+Screening pair
+--------------
+
+Next we create the :py:obj:`ScreenFactors <pynucastro.screening.screen.ScreenFactors>`,
+which describes the screening pair.  Note that this is fixed, so there are no derivatives
+with respect to the nuclei that are in the pair.
+
+.. code:: python
+
+   pair = make_screen_factors("he4", "c12")
+
+
+Screening factor
+----------------
+
+Finally, we can compute the screening factor and the composition derivatives.
+
+.. note::
+
+   The screening routines return the **logarithm** of the enhancement,
+   :math:`h = \log f`, so ``h.deriv.d1`` is :math:`\partial h/\partial Y_e`
+   and ``h.deriv.d2`` is :math:`\partial h/\partial S_2`.
+
+   The species derivatives follow from
+
+   .. math::
+
+      \frac{\partial h}{\partial Y_i}
+      &= Z_i\frac{\partial h}{\partial Y_e}
+        + Z_i^2\frac{\partial h}{\partial S_2} \\
+      \frac{\partial f}{\partial Y_i} &= f\frac{\partial h}{\partial Y_i}.
+
+
+.. code:: python
+
     h = chugunov_2009(state, pair)
 
     dh_dY = Z * h.deriv.d1 + Z**2 * h.deriv.d2
     factor = dual.exp(h)
     dfactor_dY = Z * factor.deriv.d1 + Z**2 * factor.deriv.d2
 
-The existing screening routines return the **logarithm** of the enhancement,
-:math:`h = \log f`, so ``h.deriv.d1`` is :math:`\partial h/\partial Y_e`
-and ``h.deriv.d2`` is :math:`\partial h/\partial S_2`. The species derivatives
-follow from
 
-.. math::
+.. note::
 
-   \frac{\partial h}{\partial Y_i}
-   = Z_i\frac{\partial h}{\partial Y_e}
-     + Z_i^2\frac{\partial h}{\partial S_2},
-   \qquad
-   \frac{\partial f}{\partial Y_i} = f\frac{\partial h}{\partial Y_i}.
+   Although intermediate plasma quantities depend on the mean
+   molecular weight, $\bar{A}$, this dependence cancels in the
+   supported screening expressions.  We therefore hold $\bar{A}$ fixed
+   when seeding derivatives with respect to $Y_e$ and $S_2$.
 
-The state is reusable across ion pairs, and array-based state construction
-and screening can run together inside ``@njit`` functions. For a molar-abundance
-dictionary, use ``make_plasma_state(T, rho, molar, compute_derivatives=True)``.
-The ordinary ``PlasmaState`` constructor and default ``make_plasma_state``
-behavior remain float-only. The derivative-enabled state is an immutable
-namedtuple with the same field names and dual-valued composition factors.
-
-State construction holds the total molar abundance fixed when seeding the
-two moments; that total cancels out of the supported screening expressions.
-Temperature and density are not differentiated by this constructor.
-Clipped quantities have zero derivatives on their constant branches, and
-comparisons select branches using primal values. Derivatives at a branch
-boundary follow the selected branch, rather than a finite difference across
-that boundary.
-
-This exposes screening derivatives for use in a composition Jacobian;
-generated network Jacobians do not yet include these new terms automatically.

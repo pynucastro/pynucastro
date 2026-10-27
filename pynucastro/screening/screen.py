@@ -8,7 +8,7 @@ import pynucastro.numba_util as numba
 from pynucastro.autodiff import dual
 from pynucastro.autodiff.derivative_pair import DerivativePair
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.numba_util import jitclass, njit
 
 # jit-decorated functions should be listed here so they
@@ -176,7 +176,7 @@ class NseState:
         self.gamma_e_fac = constants.q_e**2 / constants.k * dual.cbrt(4.0 * np.pi / 3.0)
 
 
-def make_plasma_state(temp, dens, molar_fractions, *, compute_derivatives=False):
+def make_plasma_state(temp, dens, composition, *, compute_derivatives=False):
     """Construct a PlasmaState object from simulation data.
 
     Parameters
@@ -185,8 +185,8 @@ def make_plasma_state(temp, dens, molar_fractions, *, compute_derivatives=False)
         temperature in K
     dens : float
         density in g/cm^3
-    molar_fractions : dict(Nucleus)
-        dictionary of molar abundances for each ion,
+    composition : Composition or dict(Nucleus)
+        a Composition object or a dictionary of molar abundances for each ion,
         as returned by :meth:`.Composition.get_molar`
     compute_derivatives : bool, optional
         Seed derivatives with respect to Ye = sum(Z Y) and S2 = sum(Z**2 Y).
@@ -199,9 +199,14 @@ def make_plasma_state(temp, dens, molar_fractions, *, compute_derivatives=False)
         composition-dependent fields carry two derivatives.
 
     """
-    nuclei = list(molar_fractions.keys())
-    Ys = np.asarray([molar_fractions[n] for n in nuclei])
-    Zs = np.asarray([n.Z for n in nuclei])
+
+    if isinstance(composition, Composition):
+        Ys = composition.get_molar_array()
+        Zs = np.asarray([nuc.Z for nuc in composition])
+    else:
+        nuclei = list(composition.keys())
+        Ys = np.asarray([composition[n] for n in nuclei])
+        Zs = np.asarray([n.Z for n in nuclei])
     if compute_derivatives:
         return make_plasma_state_with_derivatives(temp, dens, Ys, Zs)
     return PlasmaState(temp, dens, Ys, Zs)
