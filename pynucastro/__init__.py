@@ -105,7 +105,11 @@ reaction rates.  The core rate classes are:
 * :py:obj:`Rate <pynucastro.rates.rate.Rate>` : the base class for all rates.
 
 * :py:obj:`ReacLibRate <pynucastro.rates.reaclib_rate.ReacLibRate>` : a
-  temperature-depended rate from the ReacLib library, including
+  temperature-dependent rate from the ReacLib library, including
+  methods to visualize and evaluate it.
+
+* :py:obj:`RauscherRate <pynucastro.rates.rauscher_rate.RauscherRate>` : a
+  temperature-dependent rate from the Rauscher library, including
   methods to visualize and evaluate it.
 
 * :py:obj:`TabularWeakRate <pynucastro.rates.tabular_rate.TabularWeakRate>` :
@@ -212,7 +216,7 @@ from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
 from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
                               FFNLibrary, LangankeLibrary, Library,
                               ModifiedRate, OdaLibrary, PruetFullerLibrary,
-                              Rate, RateFilter, ReacLibLibrary, RauscherLibrary,
+                              Rate, RateFilter, RauscherLibrary, ReacLibLibrary,
                               StarLibLibrary, SuzukiLibrary, TabularLibrary,
                               TabularWeakLibrary, Tfactors, ThermoState,
                               full_library, load_rate)

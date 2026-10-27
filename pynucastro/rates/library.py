@@ -23,8 +23,8 @@ from pynucastro.rates.files import _find_rate_file, get_rates_dir
 from pynucastro.rates.known_duplicates import (find_duplicate_rates,
                                                is_allowed_dupe)
 from pynucastro.rates.rate import Rate
-from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.rauscher_rate import RauscherRate
+from pynucastro.rates.reaclib_rate import ReacLibRate
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularWeakRate
 
@@ -1056,7 +1056,9 @@ class ReacLibLibrary(Library):
 
 class RauscherLibrary(Library):
     """Create a :py:class:`Library` containing rate fits from the Rauscher 2025
-    SMARAGD data for charged particles induced reactions."""
+    SMARAGD data for charged particles induced reactions.
+
+    """
 
     lib_path = get_rates_dir()/"rauscher_fits"
 

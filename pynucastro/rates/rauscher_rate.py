@@ -1,4 +1,6 @@
-""" Classes and methods to describe reaction rates using Rasucher's 2025 SMARAGD calculations."""
+""" Classes and methods to describe reaction rates using Rasucher's 2025 SMARAGD calculations.
+
+"""
 
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 
