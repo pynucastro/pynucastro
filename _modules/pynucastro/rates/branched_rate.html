@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.1.0.post59+gf9bf306ba documentation</title>
+    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.1.0.post60+g92562f8fc documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=fdf7e881"></script>
+    <script src="../../../_static/documentation_options.js?v=c99c0b16"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -544,11 +544,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.beta_limited_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">BetaLimitedRate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rate</span><span class="p">,</span> <span class="n">cxx_rate_func_args</span><span class="p">,</span> <span class="n">py_rate_func_args</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.reaclib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReacLibRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.starlib_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">StarLibRate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.rates.temperature_tabular_rate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemperatureTabularRate</span>
 
 
 <div class="viewcode-block" id="BranchedRate">
@@ -608,21 +604,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">primary_branch</span> <span class="o">=</span> <span class="n">primary_branch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">other_branch</span> <span class="o">=</span> <span class="n">other_branch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
-
-        <span class="c1"># at the moment, this is only tested with ReacLibRate,</span>
-        <span class="c1"># TemperatureTabularRate, and StarLibRate rates.  It is</span>
-        <span class="c1"># important in the C++ code generation the we fill branched rates</span>
-        <span class="c1"># only after the other rates are filled and screened.</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">underlying_rate</span><span class="p">,</span>
-                          <span class="p">(</span><span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span>
-                           <span class="n">TemperatureTabularRate</span><span class="p">,</span> <span class="n">BetaLimitedRate</span><span class="p">))</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">primary_branch</span><span class="p">,</span>
-                          <span class="p">(</span><span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">))</span>
-
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_branch</span><span class="p">,</span>
-                          <span class="p">(</span><span class="n">ReacLibRate</span><span class="p">,</span> <span class="n">StarLibRate</span><span class="p">,</span> <span class="n">TemperatureTabularRate</span><span class="p">))</span>
 
         <span class="c1"># the reactants come from the underlying rate</span>
         <span class="n">reactants</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">reactants</span>
