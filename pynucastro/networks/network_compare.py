@@ -1,14 +1,12 @@
 """Helper functions for comparing the output of different backends
 (python, C++) for the same network.  This will build and run each net
-and return the ydots.
+and return the ydots, rates, jacobian, and energy generation
 """
 
 import importlib
 import re
 import subprocess
 from pathlib import Path
-
-import numpy as np
 
 from pynucastro.networks.amrexastro_cxx_network import AmrexAstroCxxNetwork
 from pynucastro.networks.python_network import PythonNetwork
@@ -21,6 +19,10 @@ from pynucastro.screening import chugunov_2007
 class NetworkCompare:
     """A simple class to manage building a network with different
     backends to facilitate comparisons.
+
+    .. note::
+
+       For the Jacobian, only the species terms are compared.
 
     Parameters
     ----------
@@ -54,6 +56,21 @@ class NetworkCompare:
         <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
     ydots_cxx : dict(Nucleus)
         The dYdt terms parsed from a build of a
+        :py:class:`SimpleCxxNetwork
+        <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
+    jac_py_inline : dict((Nucleus, Nucleus))
+        The Jacobian terms from the python inline network
+        (:py:func:`RateCollection.evaluate_jacobian
+        <pynucastro.networks.rate_collection.RateCollection.evaluate_jacobian>`).
+    jac_py_module : dict((Nucleus, Nucleus))
+        The Jacobian terms from a :py:class:`PythonNetwork
+        <pynucastro.networks.python_network.PythonNetwork>` module.
+    jac_amrex : dict((Nucleus, Nucleus))
+        The Jacobian terms parsed from a build of an
+        :py:class:`AmrexAstroCxxNetwork
+        <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`.
+    jac_cxx : dict((Nucleus, Nucleus))
+        The Jacobian terms parsed from a build of a
         :py:class:`SimpleCxxNetwork
         <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`.
     rates_py_inline : dict(Rate)
@@ -150,6 +167,14 @@ class NetworkCompare:
         self.ydots_amrex = None
         self.ydots_cxx = None
 
+        # storage for the Jacobian
+        # we will not include the energy terms, since most networks
+        # don't consider those.
+        self.jac_py_inline = None
+        self.jac_py_module = None
+        self.jac_amrex = None
+        self.jac_cxx = None
+
         # storage for the rates -- without the
         # density or composition factors
         self.rates_py_inline = None
@@ -181,6 +206,13 @@ class NetworkCompare:
         state = ThermoState(rho=rho, T=T, comp=self.comp)
         self.ydots_py_inline = self.pynet.evaluate_ydots(state,
                                                          screen_func=self.screen_func)
+        _jac = self.pynet.evaluate_jacobian(state,
+                                            screen_func=self.screen_func)
+        self.jac_py_inline = {}
+        for irow, inuc in enumerate(self.pynet.unique_nuclei):
+            for jcol, jnuc in enumerate(self.pynet.unique_nuclei):
+                self.jac_py_inline[(inuc, jnuc)] = _jac[irow, jcol]
+
         self.rates_py_inline = {r: r.eval(T, rho=rho, comp=self.comp,
                                           screen_func=self.screen_func)
                                 for r in self.pynet.all_rates}
@@ -206,11 +238,18 @@ class NetworkCompare:
         spec.loader.exec_module(cn)
 
         # we can now compute the ydots via cn.rhs()
-        Y = np.asarray(list(self.comp.get_molar().values()))
+        Y = self.comp.get_molar_array()
         _tmp = cn.rhs(0.0, Y, rho, T, screen_func=self.screen_func)
         self.ydots_py_module = {}
         for n, y in zip(self.pynet.unique_nuclei, _tmp):
             self.ydots_py_module[n] = y
+
+        # and the Jacobian via cn.jacobian()
+        _jac = cn.jacobian(0.0, Y, rho, T, screen_func=self.screen_func)
+        self.jac_py_module = {}
+        for irow, inuc in enumerate(self.pynet.unique_nuclei):
+            for jcol, jnuc in enumerate(self.pynet.unique_nuclei):
+                self.jac_py_module[(inuc, jnuc)] = _jac[irow, jcol]
 
         rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
         self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
@@ -265,6 +304,21 @@ class NetworkCompare:
             if match := ydot_re.search(line.strip()):
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_amrex[nuc] = float(match.group(6))
+
+        # the Jacobian has lints of the form:
+        #   jac(X, Y) = ...
+        # for nuclei X, Y
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)")
+        self.jac_amrex = {}
+        for line in stdout.split("\n"):
+            if match := jac_re.search(line.strip()):
+                inuc_str = match.group(2).strip()
+                jnuc_str = match.group(3).strip()
+                if inuc_str == "e" or jnuc_str == "e":
+                    continue
+                inuc = Nucleus(inuc_str)
+                jnuc = Nucleus(jnuc_str)
+                self.jac_amrex[(inuc, jnuc)] = float(match.group(7))
 
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
@@ -325,6 +379,21 @@ class NetworkCompare:
                 nuc = Nucleus(match.group(2).strip())
                 self.ydots_cxx[nuc] = float(match.group(6))
 
+        # the Jacobian has lints of the form:
+        #   jac(X, Y) = ...
+        # for nuclei X, Y
+        jac_re = re.compile(r"(jac)\((\s*\w*),(\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)")
+        self.jac_cxx = {}
+        for line in stdout.split("\n"):
+            if match := jac_re.search(line.strip()):
+                inuc_str = match.group(2).strip()
+                jnuc_str = match.group(3).strip()
+                if inuc_str == "e" or jnuc_str == "e":
+                    continue
+                inuc = Nucleus(inuc_str)
+                jnuc = Nucleus(jnuc_str)
+                self.jac_cxx[(inuc, jnuc)] = float(match.group(7))
+
         rate_re = re.compile(r"(rate)\((\s*\w*)\)(\s+)(=)(\s+)([\d\-e\+.]*)",
                              re.IGNORECASE | re.DOTALL)
 
@@ -344,7 +413,8 @@ class NetworkCompare:
 
     def evaluate(self, rho=2.e8, T=1.e9):
         """Evaluate the ydots from all the backends we are
-        considering
+        considering.  This will compile the C++ networks if they have
+        not already been built.  This does not do any comparisons.
 
         Parameters
         ----------
@@ -367,9 +437,99 @@ class NetworkCompare:
         self.T_eval = T
         self.rho_eval = rho
 
-    def print_summary(self):
+    def compare_results(self, *, quantity="ydots", rtol=1.e-11, atol=1.e-30):
+        """Perform the comparison of quantity across the different network types.
+
+        Parameters
+        ----------
+        quantity : str
+            The quantity we are comparing.  Should be one of "ydots",
+            "rates", "jac", "enuc", "enu_weak"
+        rtol : float
+            The relative tolerance to use in the comparison.
+        atol : float
+            The absolute tolerance to use in the comparison.
+
+        Raises
+        ------
+        ValueError
+
+        """
+
+        # import at the method-level so the module itself doesn't
+        # depend on pytest
+
+        from pytest import \
+            approx  # pylint: disable=import-outside-toplevel  # noqa: PLC0415
+
+        assert quantity in ("ydots", "rates", "jac", "enuc", "enu_weak")
+
+        reference = None
+        others = []
+
+        if quantity == "ydots":
+            reference = self.ydots_py_inline
+            candidates = [self.ydots_py_module, self.ydots_amrex, self.ydots_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "rates":
+            reference = self.rates_py_inline
+            candidates = [self.rates_py_module, self.rates_amrex, self.rates_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "enuc":
+            reference = self.enuc_py_inline
+            candidates = [self.enuc_py_module, self.enuc_amrex, self.enuc_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "enu_weak":
+            reference = self.enu_weak_py_inline
+            candidates = [self.enu_weak_py_module, self.enu_weak_amrex, self.enu_weak_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        elif quantity == "jac":
+            reference = self.jac_py_inline
+            candidates = [self.jac_py_module, self.jac_amrex, self.jac_cxx]
+            for c in candidates:
+                if c is not None:
+                    others.append(c)
+
+        if reference is None:
+            raise ValueError("evaluate() must be run first")
+
+        # now do the comparison
+        for o in others:
+            if isinstance(reference, dict):
+                for key in reference:
+                    try:
+                        assert o[key] == approx(reference[key], rel=rtol, abs=atol)
+                    except AssertionError as exc:
+                        raise ValueError(f"{key} : {o[key]} != {reference[key]}") from exc
+            else:
+                # a scalar
+                try:
+                    assert o == approx(reference, rel=rtol, abs=atol)
+                except AssertionError as exc:
+                    raise ValueError(f"scalar : {o} != {reference}") from exc
+
+    def print_summary(self, *, jac_floor=1.e-90):
         """Print a summary of the dY/dt comparison and errors for each
         network type run.
+
+        Parameters
+        ----------
+        jac_floor : float
+            Value for abs(J_{i,j}) below which to switch to an absolute error
+            instead of relative error.  This helps deal with the different
+            ways nets floor rates.
 
         """
 
@@ -377,8 +537,8 @@ class NetworkCompare:
         if self.ydots_py_inline is None:
             raise ValueError("no ydots stored.  evaluate() must be run first")
 
-        print("dYdt")
-        print("====")
+        print("∂Y/∂t")
+        print("=====")
         print()
 
         data_headers = {"py (inline)": self.ydots_py_inline,
@@ -409,6 +569,48 @@ class NetworkCompare:
                     line += f"| {val:13.6g} "
                 else:
                     err = abs((val - ref) / ref)
+                    line += f"| {val:13.6g} {err:11.5g} "
+            print(line)
+
+        print()
+        print()
+
+        print("Jacobian (∂Ẏ_i/∂Y_j)")
+        print("====================")
+        print()
+
+        data_headers = {"py (inline)": self.jac_py_inline,
+                        "py (module)": self.jac_py_module}
+
+        if self.rates_amrex:
+            data_headers["AMReX C++"] = self.jac_amrex
+
+        if self.rates_cxx:
+            data_headers["simple C++"] = self.jac_cxx
+
+        header = f" {'nuc_i':5}, {'nuc_j':5} "
+        for key in data_headers:
+            if key == "py (inline)":
+                header += f"| {key:13} "
+            else:
+                header += f"| {key:13} {'error':11} "
+
+        print(header)
+        print("-" * len(header))
+
+        for entry in self.jac_py_inline:
+            nuc_i, nuc_j = entry
+            line = f" {nuc_i!s:5}, {nuc_j!s:5} "
+            for key, source in data_headers.items():
+                val = source[entry]
+                ref = self.jac_py_inline[entry]
+                if key == "py (inline)":
+                    line += f"| {val:13.6g} "
+                else:
+                    if abs(ref) < jac_floor:
+                        err = abs(val - ref)
+                    else:
+                        err = abs((val - ref) / ref)
                     line += f"| {val:13.6g} {err:11.5g} "
             print(line)
 
@@ -446,7 +648,10 @@ class NetworkCompare:
                 if key == "py (inline)":
                     line += f"| {val:13.6g} "
                 else:
-                    err = abs((val - ref) / ref)
+                    if ref == 0.0:
+                        err = abs(val - ref)
+                    else:
+                        err = abs((val - ref) / ref)
                     line += f"| {val:13.6g} {err:11.5g} "
             print(line)
 
