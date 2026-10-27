@@ -188,14 +188,14 @@ def make_plasma_state(temp, dens, composition, *, compute_derivatives=False):
     composition : Composition or dict(Nucleus)
         a Composition object or a dictionary of molar abundances for each ion,
         as returned by :meth:`.Composition.get_molar`
-    compute_derivatives : bool, optional
+    compute_derivatives : bool
         Seed derivatives with respect to Ye = sum(Z Y) and S2 = sum(Z**2 Y).
         The default is False.
 
     Returns
     -------
-    PlasmaState or namedtuple
-        With compute_derivatives=True, an immutable state whose
+    PlasmaState or tuple
+        With compute_derivatives=True, a named tuple whose
         composition-dependent fields carry two derivatives.
 
     """
@@ -229,8 +229,8 @@ def make_plasma_state_with_derivatives(temp, dens, Ys, Zs):
 
     Returns
     -------
-    namedtuple
-        State with the same attributes as PlasmaState. Composition-dependent
+    tuple
+        Named tuple with the same attributes as PlasmaState. Composition-dependent
         fields are Dual values with DerivativePair seeds: d1 corresponds to
         Ye = sum(Z_i Y_i), and d2 to S2 = sum(Z_i**2 Y_i).
 
