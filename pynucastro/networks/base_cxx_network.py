@@ -22,15 +22,18 @@ from pynucastro.rates.rate import cxx_rate_func_args
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TableIndex
 from pynucastro.screening import get_screening_pair_set
+from pynucastro.sort_utils import topo_sort
 from pynucastro.utils import pynucastro_version
 
 # dict to convert rate type to the C++ namespace
-namespaces = {"BetaLimitedRate": "beta_limited_rates",
+namespaces = {"ApproximateRate": "approximate_rates",
+              "BetaLimitedRate": "beta_limited_rates",
               "BranchedRate": "branched_rates",
               "DerivedRate": "derived_rates",
               "ModifiedRate": "modified_rates",
               "ReacLibRate": "reaclib_rates",
               "StarLibRate": "temp_tabular",
+              "TabularWeakRate": "tabular_weak_rates",
               "TemperatureTabularRate": "temp_tabular"}
 
 
@@ -116,15 +119,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<rate_struct>'] = self._rate_struct
-        self.ftags['<fill_approx_rates>'] = self._fill_approx_rates
-        self.ftags['<fill_beta_limited_rates>'] = self._fill_beta_limited_rates
-        self.ftags['<fill_branched_rates>'] = self._fill_branched_rates
-        self.ftags['<fill_derived_rates>'] = self._fill_derived_rates
-        self.ftags['<fill_modified_rates>'] = self._fill_modified_rates
-        self.ftags['<fill_reaclib_rates>'] = self._fill_reaclib_rates
-        self.ftags['<fill_starlib_rates>'] = self._fill_starlib_rates
-        self.ftags['<fill_tabular_rates>'] = self._fill_tabular_rates
-        self.ftags['<fill_temp_tabular_rates>'] = self._fill_temp_tabular_rates
+        self.ftags['<fill_all_rates>'] = self._fill_all_rates
+        self.ftags['<fill_all_weak_rates>'] = self._fill_all_weak_rates
         self.ftags['<approx_rate_functions>'] = self._approx_rate_functions
         self.ftags['<beta_limited_rate_functions>'] = self._beta_limited_rate_functions
         self.ftags['<branched_rate_functions>'] = self._branched_rate_functions
@@ -494,35 +490,42 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             self._write_ydot_nuc(n_indent, of, self.ydot_out_result[n])
 
-    def _ydot_weak(self, n_indent, of):
-        # Writes ydot for weak reactions and computes corresponding neutrino loss term
-
-        # Fill all the weak rates
+    def _get_weak_rates(self):
+        # helper function that gets just the rates that may affect Ye
 
         # Consider possible cases for weak rates in realicb, modified,
         # branched, and starlib rates.  Here we leave out derived rate
         # since we don't expect derived rate to be a weak rate.  Also
         # handle tabular weak rates separately
         weak_rates = [r for r in self.reaclib_rates + self.modified_rates +
-                      self.starlib_rates +
-                      self.temperature_tabular_rates
+                      self.starlib_rates + self.temperature_tabular_rates
                       if r.weak]
 
-        # BranchedRate rates don't evaluate their underlying rates
-        # directly (and the interface doesn't need screening or
-        # templates parameters).  This means we need to first evaluate
-        # all of the rates the BranchedRate depends on (whether or not
-        # they are weak, since the final rate is a weak rate)
-        weak_branched_rates = [r for r in self.branched_rates
-                               if r.weak]
+        # BranchedRate and BetaLimitedRates rates don't evaluate their
+        # underlying rates directly (and the interface doesn't need
+        # screening or templates parameters).  This means we need to
+        # first evaluate all of the rates the parent depends on
+        # (whether or not they are weak, since the final rate is a
+        # weak rate)
+        weak_branched_beta_rates = [r for r in self.branched_rates + self.beta_limited_rates
+                                    if r.weak]
 
-        weak_branched_rates_children = {cr for br in weak_branched_rates
+        weak_branched_beta_rates_children = {cr for br in weak_branched_beta_rates
                                         for cr in br.get_child_rates()}
 
-        weak_rates += weak_branched_rates_children
+        weak_rates += weak_branched_beta_rates_children
+
+        # include all tabular rates
+        weak_rates += self.tabular_rates
+
+        return weak_rates
+
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+
+        weak_rates = self._get_weak_rates()
 
         # Compute necessary screening term.
-        # This is really only possible for weak ModifiedRates and BranchedRates
         screening_pair_set = get_screening_pair_set(weak_rates)
         if len(screening_pair_set) > 0:
             of.write('#ifdef SCREENING\n')
@@ -534,28 +537,6 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                    do_T_derivatives=False)
             of.write(f'{self.indent*n_indent}}}\n')
             of.write('#endif\n\n')
-
-        # Call different rate functions to evaluate the rates.
-        if len(weak_rates) > 0:
-
-            of.write(f'{self.indent*n_indent}const tf_t tfactors = evaluate_tfactors(state.T);\n\n')
-
-            # there can be many different types and each type is in a
-            # different namespace, so fill them by namespace
-            names = {type(r).__name__ for r in weak_rates}
-            for nm in names:
-                self._fill_rates(n_indent, of, [r for r in weak_rates if type(r).__name__ == nm],
-                                 do_T_derivatives=False,
-                                 namespace=namespaces[nm])
-
-        if len(weak_branched_rates) > 0:
-            self._fill_rates(n_indent, of, weak_branched_rates,
-                             do_T_derivatives=False,
-                             namespace="branched_rates")
-
-        # Now do tabular weak rates explicitly
-        of.write(f"{self.indent*n_indent}tabular_weak_rates::fill_rates(state.T, state.rho, rhoy, Y, rate_eval);\n")
-        of.write('\n')
 
         # Compose and write ydot for all weak reactions
         if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
@@ -765,10 +746,10 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}}}\n")
             of.write("#endif\n")
 
-    def _fill_rates(self, n_indent, of, rates,
-                    *, template_args=None,
-                    do_T_derivatives=True,
-                    namespace=None):
+    def _fill_rates_helper(self, n_indent, of, rates,
+                           *, template_args=None,
+                           do_T_derivatives=True,
+                           namespace=None):
         """Fill in the rates by calling the appropriate rate functions
         given a list of rates.
 
@@ -782,7 +763,12 @@ class BaseCxxNetwork(ABC, RateCollection):
             if r.screening_pairs:
                 self.write_screen_var(n_indent+1, of, r, do_T_derivatives=do_T_derivatives)
             prefix = "rate_"
-            if namespace:
+            if namespace == "auto":
+                cls = type(r).__name__
+                if cls not in namespaces:
+                    cls = type(r).__base__.__name__
+                prefix = f"{namespaces[cls]}::" + prefix
+            elif namespace:
                 prefix = f"{namespace}::" + prefix
             if template_args:
                 of.write(f"{self.indent*(n_indent+1)}{prefix}{r.fname}<{', '.join(template_args)}>({', '.join(call_args)});\n")
@@ -791,28 +777,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
             of.write(f"{self.indent*n_indent}" + "}\n\n")
 
-    def _fill_temp_tabular_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.temperature_tabular_rates)
+    def _fill_all_rates(self, n_indent, of):
 
-    def _fill_starlib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.starlib_rates)
-
-    def _fill_reaclib_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.reaclib_rates)
-
-    def _fill_tabular_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.tabular_rates)
-
-    def _fill_modified_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.modified_rates)
-
-    def _fill_branched_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.branched_rates)
-
-    def _fill_beta_limited_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.beta_limited_rates)
-
-    def _fill_derived_rates(self, n_indent, of):
         if self.derived_rates:
             of.write(f"{self.indent*n_indent}part_fun::pf_cache_t pf_cache{{}};\n\n")
             temp_arrays, _ = self.dedupe_partition_function_temperatures()
@@ -820,10 +786,15 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f"{self.indent*n_indent}pf_cache.index_temp_array_{i+1} = interp_net::find_index(tfactors.T9, part_fun::temp_array_{i+1});\n")
                 of.write("\n")
 
-        self._fill_rates(n_indent, of, self.derived_rates)
+        sorted_rates = topo_sort(self.all_rates)
+        self._fill_rates_helper(n_indent, of, sorted_rates, namespace="auto")
 
-    def _fill_approx_rates(self, n_indent, of):
-        self._fill_rates(n_indent, of, self.approx_rates)
+    def _fill_all_weak_rates(self, n_indent, of):
+        # Fill all the weak rates
+
+        weak_rates = self._get_weak_rates()
+        sorted_rates = topo_sort(weak_rates)
+        self._fill_rates_helper(n_indent, of, sorted_rates, namespace="auto")
 
     def _fill_partition_function_data(self, n_indent, of):
         # itertools recipe
