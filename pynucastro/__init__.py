@@ -216,9 +216,9 @@ from pynucastro.nucdata import (Composition, Nucleus, get_all_nuclei,
 from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
                               FFNLibrary, LangankeLibrary, Library,
                               ModifiedRate, OdaLibrary, PruetFullerLibrary,
-                              Rate, RateFilter, RauscherLibrary, ReacLibLibrary,
-                              StarLibLibrary, SuzukiLibrary, TabularLibrary,
-                              TabularWeakLibrary, Tfactors, ThermoState,
-                              full_library, load_rate)
+                              Rate, RateFilter, RauscherLibrary,
+                              ReacLibLibrary, StarLibLibrary, SuzukiLibrary,
+                              TabularLibrary, TabularWeakLibrary, Tfactors,
+                              ThermoState, full_library, load_rate)
 from pynucastro.reduction import drgep, sens_analysis
 from pynucastro.screening import make_plasma_state, make_screen_factors
