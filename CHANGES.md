@@ -42,6 +42,7 @@
       (#1590)
     * fix mismatch in `NSENetwork` description of
       `comp_reduced_function` (#1611)
+    * evaluate rates in topologically-sorted order (#1621)
 
   * `Library` :
 
@@ -107,6 +108,7 @@
     * add a function to do a topological sort of rates (#1530)
     * more `mesa_reader` fixes to catch different name variations
       (#1625)
+    * add basic forward-mode autodiff support (#1628)
 
 ## 3.1.0
 
