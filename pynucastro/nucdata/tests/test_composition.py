@@ -83,6 +83,10 @@ class TestComposition:
         comp.set_nuc(n.raw, 0.55)
         assert comp[n] == 0.55
 
+    def test_set_molar(self, comp):
+        comp.set_molar(Nucleus("n14"), 0.06)
+        assert comp[Nucleus("n14")] == approx(0.06 * 14)
+
     def test_get_molar(self, comp):
         comp.set_solar_like(Z=0.02)
         molar = comp.get_molar()
@@ -101,6 +105,22 @@ class TestComposition:
                                       4.16666667e-04, 3.12500000e-04,
                                       3.57142857e-04, 1.25000000e-04]),
                         rtol=1.e-7, atol=1.e-20)
+
+    def test_set_dict(self, comp):
+        rng = np.random.default_rng()
+        Xs = rng.random(size=6)
+        d = dict(zip(["h1", "he4", "c12", "o16", "n14", "ca40"], Xs))
+        comp.set_dict(d)
+        got_Xs = comp.get_array()
+        assert_allclose(got_Xs, Xs, rtol=1.e-14, atol=1.e-30)
+
+    def test_set_molar_dict(self, comp):
+        rng = np.random.default_rng()
+        Ys = rng.random(size=6)
+        d = dict(zip(["h1", "he4", "c12", "o16", "n14", "ca40"], Ys))
+        comp.set_molar_dict(d)
+        got_Ys = comp.get_molar_array()
+        assert_allclose(got_Ys, Ys, rtol=1.e-14, atol=1.e-30)
 
     def test_set_equal(self, nuclei, comp):
         comp.set_equal()
