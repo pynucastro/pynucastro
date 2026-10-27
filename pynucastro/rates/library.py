@@ -1053,6 +1053,7 @@ class ReacLibLibrary(Library):
             for rate in self.get_rates():
                 rate.write_to_file(f)
 
+
 class RauscherLibrary(Library):
     """Create a :py:class:`Library` containing rate fits from the Rauscher 2025
     SMARAGD data for charged particles induced reactions."""
@@ -1062,7 +1063,7 @@ class RauscherLibrary(Library):
     def __init__(self):
         super().__init__()
 
-        for filename in ("fits_p.dat","fits_a.dat","fits_n.dat"):
+        for filename in ("fits_p.dat", "fits_a.dat", "fits_n.dat"):
             self._read_library_file(self.lib_path/filename)
 
     def _read_library_file(self, library_file):
