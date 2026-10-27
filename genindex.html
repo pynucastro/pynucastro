@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; pynucastro 3.1.0.post58+g7222a94b3 documentation</title>
+    <title>Index &#8212; pynucastro 3.1.0.post59+gf9bf306ba documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=36893afb"></script>
+    <script src="_static/documentation_options.js?v=fdf7e881"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -278,6 +278,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jac-devel.html">Form of the Jacobian</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autodiff.html">Automatic differentiation</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
@@ -285,6 +287,11 @@
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.autodiff.html">pynucastro.autodiff package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.derivative_pair.html">pynucastro.autodiff.derivative_pair module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html">pynucastro.autodiff.dual module</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -598,6 +605,8 @@
 </li>
       <li><a href="pynucastro.networks.common_networks.html#pynucastro.networks.common_networks.aprox13">aprox13() (in module pynucastro.networks.common_networks)</a>
 </li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.arctan">arctan() (in module pynucastro.autodiff.dual)</a>
+</li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.aznut">aznut (pynucastro.screening.screen.ScreenFactors attribute)</a>
 </li>
   </ul></td>
@@ -644,6 +653,8 @@
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.cast_list">cast_list() (pynucastro.nucdata.nucleus.Nucleus class method)</a>
 </li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.cbrt">cbrt() (in module pynucastro.autodiff.dual)</a>
+</li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2007">chugunov_2007() (in module pynucastro.screening.screen)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.chugunov_2009">chugunov_2009() (in module pynucastro.screening.screen)</a>
@@ -686,6 +697,10 @@
 </li>
       <li><a href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition">Composition (class in pynucastro.nucdata.composition)</a>
 </li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.constant_like">constant_like() (in module pynucastro.autodiff.dual)</a>
+</li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.cos">cos() (in module pynucastro.autodiff.dual)</a>
+</li>
       <li><a href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate.counter_factors">counter_factors() (pynucastro.rates.derived_rate.DerivedRate method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.create_network_graph">create_network_graph() (pynucastro.networks.rate_collection.RateCollection method)</a>
@@ -708,6 +723,8 @@
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.dedupe_partition_function_temperatures">dedupe_partition_function_temperatures() (pynucastro.networks.rate_collection.RateCollection method)</a>
 </li>
+      <li><a href="pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.DerivativePair">DerivativePair (class in pynucastro.autodiff.derivative_pair)</a>
+</li>
       <li><a href="pynucastro.rates.library.html#pynucastro.rates.library.Library.derived_backward">derived_backward() (pynucastro.rates.library.Library method)</a>
 </li>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet.derived_from_inverse">derived_from_inverse (pynucastro.rates.reaclib_rate.SingleSet attribute)</a>
@@ -727,6 +744,8 @@
       <li><a href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep">drgep() (in module pynucastro.reduction.drgep_module)</a>
 </li>
       <li><a href="pynucastro.reduction.drgep_module.html#pynucastro.reduction.drgep_module.drgep_dijkstras">drgep_dijkstras() (in module pynucastro.reduction.drgep_module)</a>
+</li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual">Dual (class in pynucastro.autodiff.dual)</a>
 </li>
       <li><a href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus.dummy">dummy (pynucastro.nucdata.nucleus.Nucleus attribute)</a>
 </li>
@@ -807,6 +826,8 @@
       <li><a href="pynucastro.rates.rate.html#pynucastro.rates.rate.Rate.evaluate_screening">evaluate_screening() (pynucastro.rates.rate.Rate method)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_ydots">evaluate_ydots() (pynucastro.networks.rate_collection.RateCollection method)</a>
+</li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.exp">exp() (in module pynucastro.autodiff.dual)</a>
 </li>
       <li><a href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.Explorer.explore">explore() (pynucastro.networks.rate_collection.Explorer method)</a>
 </li>
@@ -1180,6 +1201,10 @@
 </li>
       <li><a href="pynucastro.rates.html#pynucastro.rates.load_rate">load_rate() (in module pynucastro.rates)</a>
 </li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.log">log() (in module pynucastro.autodiff.dual)</a>
+</li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.log1p">log1p() (in module pynucastro.autodiff.dual)</a>
+</li>
       <li><a href="pynucastro.rates.approximate_rates.html#pynucastro.rates.approximate_rates.ApproximateRate.log_eval">log_eval() (pynucastro.rates.approximate_rates.ApproximateRate method)</a>
 
       <ul>
@@ -1287,6 +1312,12 @@
 
       <ul>
         <li><a href="pynucastro.html#module-pynucastro">pynucastro</a>
+</li>
+        <li><a href="pynucastro.autodiff.html#module-pynucastro.autodiff">pynucastro.autodiff</a>
+</li>
+        <li><a href="pynucastro.autodiff.derivative_pair.html#module-pynucastro.autodiff.derivative_pair">pynucastro.autodiff.derivative_pair</a>
+</li>
+        <li><a href="pynucastro.autodiff.dual.html#module-pynucastro.autodiff.dual">pynucastro.autodiff.dual</a>
 </li>
         <li><a href="pynucastro.constants.html#module-pynucastro.constants">pynucastro.constants</a>
 </li>
@@ -1557,6 +1588,27 @@
 </li>
       </ul></li>
       <li>
+    pynucastro.autodiff
+
+      <ul>
+        <li><a href="pynucastro.autodiff.html#module-pynucastro.autodiff">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.autodiff.derivative_pair
+
+      <ul>
+        <li><a href="pynucastro.autodiff.derivative_pair.html#module-pynucastro.autodiff.derivative_pair">module</a>
+</li>
+      </ul></li>
+      <li>
+    pynucastro.autodiff.dual
+
+      <ul>
+        <li><a href="pynucastro.autodiff.dual.html#module-pynucastro.autodiff.dual">module</a>
+</li>
+      </ul></li>
+      <li>
     pynucastro.constants
 
       <ul>
@@ -1710,6 +1762,8 @@
         <li><a href="pynucastro.networks.rate_collection.html#module-pynucastro.networks.rate_collection">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.networks.simple_cxx_network
 
@@ -1717,8 +1771,6 @@
         <li><a href="pynucastro.networks.simple_cxx_network.html#module-pynucastro.networks.simple_cxx_network">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pynucastro.networks.sympy_network_support
 
@@ -2125,6 +2177,8 @@
 </li>
       <li><a href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork (class in pynucastro.networks.simple_cxx_network)</a>
 </li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.sin">sin() (in module pynucastro.autodiff.dual)</a>
+</li>
       <li><a href="pynucastro.rates.reaclib_rate.html#pynucastro.rates.reaclib_rate.SingleSet">SingleSet (class in pynucastro.rates.reaclib_rate)</a>
 </li>
       <li><a href="pynucastro.eos.difference_utils.html#pynucastro.eos.difference_utils.sixth_order_diff">sixth_order_diff() (in module pynucastro.eos.difference_utils)</a>
@@ -2154,6 +2208,8 @@
       <li><a href="pynucastro.nucdata.spin_table.html#pynucastro.nucdata.spin_table.SpinTable">SpinTable (class in pynucastro.nucdata.spin_table)</a>
 </li>
       <li><a href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.splas">splas (pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents attribute)</a>
+</li>
+      <li><a href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.sqrt">sqrt() (in module pynucastro.autodiff.dual)</a>
 </li>
       <li><a href="pynucastro.neutrino_cooling.sneut5_mod.html#pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents.sreco">sreco (pynucastro.neutrino_cooling.sneut5_mod.NeutrinoComponents attribute)</a>
 </li>
@@ -2379,6 +2435,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.zero_derivative">zero_derivative() (in module pynucastro.autodiff.derivative_pair)</a>
+</li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.zhat">zhat (pynucastro.screening.screen.ScreenFactors attribute)</a>
 </li>
       <li><a href="pynucastro.screening.screen.html#pynucastro.screening.screen.ScreenFactors.zhat2">zhat2 (pynucastro.screening.screen.ScreenFactors attribute)</a>

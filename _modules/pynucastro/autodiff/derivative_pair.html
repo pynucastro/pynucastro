@@ -1,0 +1,729 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pynucastro.autodiff.derivative_pair &#8212; pynucastro 3.1.0.post59+gf9bf306ba documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=90905a2f556bf617f1a9" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=4418a689" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/myfile.css?v=15ab05d9" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=90905a2f556bf617f1a9"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
+
+    <script src="../../../_static/documentation_options.js?v=fdf7e881"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=eaa7b67c"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/pynucastro/autodiff/derivative_pair';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="3.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt=""/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt=""/>
+  
+  
+    <p class="title logo__title">pynucastro 3.1</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Overview of pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../rate_types.html">Reaction Rate Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Properties</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../sources.html">Third Party Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nucleus.html">Nuclear Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../solar_composition.html">Solar Composition</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">pynucastro Overview</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-examples.html">pynucastro Usage Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../plot-types.html">Plotting Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_network.html">Basic Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pynucastro-integration.html">Integrating a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../starlib.html">Networks with StarLib rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working with Libraries</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../finding-rates.html">Finding Available Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tabulated-weak-rates.html">Tabulated Weak Rate Sources</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Building Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../duplicate-rates.html">Dealing with Duplicate Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../validate-example.html">Checking Your Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-capture-example.html">Tabulated Weak Rate Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-captures.html">Combining ReacLib Rates with Electron Capture Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../alternate-rates.html"><code class="docutils literal notranslate"><span class="pre">alternate_rates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../inert-nuclei.html">Inert Nuclei</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../documenting-networks.html">Documenting Networks</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Rate Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../screening-examples.html">Screening Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom-rates.html">Creating a Custom Rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../derived-rates.html">Derived Rates</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Approximating Rates</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../alpha-gamma-approx.html">Approximating alpha-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../double-n-capture.html">Approximating double n-capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modified-rates.html">Modified Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../co-approximations.html">Approximating C and O Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../branched-rates.html"><code class="docutils literal notranslate"><span class="pre">BranchedRate</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../beta-limited-rates.html">β-limited Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../not_in_ydot_term.html">Rate Sequences with Extra Reactants</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Advanced Network Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-protons.html">Using NSE Protons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../unimportant-rates.html">Removing Unimportant Rates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../network-cycles.html">Finding Cycles (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../most-probable-path.html">Finding the Likely Path Between Nuclei (with NetworkX)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stiffness.html">Assessing the Stiffness of a Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reduction.html">Network Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sens_analysis_example.html">Sensitivity Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Nuclear Statistical Equilibrium</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../nse-intro.html">NSE Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-example.html">NSE Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../NSE-direct-integration.html">NSE vs. Direct Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nse_table.html">Creating an NSE table</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Thermodynamics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../fermi-integrals.html">Fermi-Dirac Integrals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../electron-eos.html">The Electron-Positron EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../stellar-eos.html">Stellar EOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../temperature-evolution.html">Integrating Networks with Temperature Evolution</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Plasma Neutrinos</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling.html">Neutrino Cooling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../neutrino-cooling-effects.html">Effects of Thermal Neutrino Cooling in Network Integrations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Exporting Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../networks.html">Exporting Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../python-network.html">Python network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../simple-cxx-network.html">Simple C++ network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fortran-network.html">Fortran Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../amrex-astro-cxx-networks.html">AMReX Astro Microphysics Networks</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../julia.html">Integrating using DifferentialEquations.jl</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installing-diffeqpy-julia.html">Installing <code class="docutils literal notranslate"><span class="pre">diffeqpy</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../Example-Integrating-Network-diffeqpy.html">Example of Integrating a Network</a></li>
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Some Useful Networks</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../common-nets.html">Common Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mesa-basic.html">MESA <code class="docutils literal notranslate"><span class="pre">basic.net</span></code> Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cno-network.html">CNO burning network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aprox13.html">The “aprox13” network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../he-burning-example.html">A He-burning Network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working With Simulation Codes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../mesa-nova.html">Importing MESA Models and Visualizing Reactive Flow</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples in Nuclear Astrophysics</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/binding-energy.html">Binding Energy per Nucleon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/pp-cno.html">p-p chain vs. CNO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/hot-CNO-breakout-example.html">hot-CNO and breakout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/triple_alpha_eval.html">Computing the Screened Triple-alpha rate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/he-burning.html">Ratio of C/O from He burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/c-burning-products.html">Products of Carbon Burning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/supernova-lightcurve.html">A Supernova Lightcurve</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../rates-devel.html">Working with <code class="docutils literal notranslate"><span class="pre">Rate</span></code> Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../adding-rates.html">Adding Rates from the Literature</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../nets-devel.html">Working with Network Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../jac-devel.html">Form of the Jacobian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing.html">Testing and Comparing Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autodiff.html">Automatic differentiation</a></li>
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing pynucastro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../pynucastro.html">pynucastro package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.autodiff.html">pynucastro.autodiff package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.autodiff.derivative_pair.html">pynucastro.autodiff.derivative_pair module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.autodiff.dual.html">pynucastro.autodiff.dual module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.eos.html">pynucastro.eos package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.degeneracy_parameter_bounds.html">pynucastro.eos.degeneracy_parameter_bounds module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.difference_utils.html">pynucastro.eos.difference_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.electron_eos.html">pynucastro.eos.electron_eos module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.eos_components.html">pynucastro.eos.eos_components module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.fermi_integrals.html">pynucastro.eos.fermi_integrals module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.quadrature_weights.html">pynucastro.eos.quadrature_weights module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.eos.stellar_eos.html">pynucastro.eos.stellar_eos module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.networks.html">pynucastro.networks package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.amrexastro_cxx_network.html">pynucastro.networks.amrexastro_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.base_cxx_network.html">pynucastro.networks.base_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.common_networks.html">pynucastro.networks.common_networks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.fortran_network.html">pynucastro.networks.fortran_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.helper.html">pynucastro.networks.helper module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.network_compare.html">pynucastro.networks.network_compare module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.nse_network.html">pynucastro.networks.nse_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.python_network.html">pynucastro.networks.python_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.rate_collection.html">pynucastro.networks.rate_collection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.simple_cxx_network.html">pynucastro.networks.simple_cxx_network module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.networks.sympy_network_support.html">pynucastro.networks.sympy_network_support module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.html">pynucastro.neutrino_cooling package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.neutrino_cooling.html">pynucastro.neutrino_cooling.neutrino_cooling module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.neutrino_cooling.sneut5_mod.html">pynucastro.neutrino_cooling.sneut5_mod module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.nucdata.html">pynucastro.nucdata package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.composition.html">pynucastro.nucdata.composition module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.elements.html">pynucastro.nucdata.elements module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.halflife_table.html">pynucastro.nucdata.halflife_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.mass_table.html">pynucastro.nucdata.mass_table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.nucleus.html">pynucastro.nucdata.nucleus module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.partition_function.html">pynucastro.nucdata.partition_function module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.nucdata.spin_table.html">pynucastro.nucdata.spin_table module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.rates.html">pynucastro.rates package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.alternate_rates.html">pynucastro.rates.alternate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.approximate_rates.html">pynucastro.rates.approximate_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.aprox_family_rates.html">pynucastro.rates.aprox_family_rates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.beta_limited_rate.html">pynucastro.rates.beta_limited_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.branched_rate.html">pynucastro.rates.branched_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.derived_rate.html">pynucastro.rates.derived_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.files.html">pynucastro.rates.files module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.known_duplicates.html">pynucastro.rates.known_duplicates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.library.html">pynucastro.rates.library module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.modified_rate.html">pynucastro.rates.modified_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.rate.html">pynucastro.rates.rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.reaclib_rate.html">pynucastro.rates.reaclib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.starlib_rate.html">pynucastro.rates.starlib_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.tabular_rate.html">pynucastro.rates.tabular_rate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.rates.temperature_tabular_rate.html">pynucastro.rates.temperature_tabular_rate module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.reduction.html">pynucastro.reduction package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.drgep_module.html">pynucastro.reduction.drgep_module module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.reduction.sensitivity_analysis.html">pynucastro.reduction.sensitivity_analysis module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../pynucastro.screening.html">pynucastro.screening package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screen.html">pynucastro.screening.screen module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../pynucastro.screening.screening_util.html">pynucastro.screening.screening_util module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.mesa_utils.html">pynucastro.mesa_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.mpi_utils.html">pynucastro.mpi_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.numba_util.html">pynucastro.numba_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.sort_utils.html">pynucastro.sort_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.utils.html">pynucastro.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../pynucastro.yt_utils.html">pynucastro.yt_utils module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../zreferences.html">References</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Index</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/pynucastro/pynucastro/issues/new?title=Issue%20on%20page%20%2F_modules/pynucastro/autodiff/derivative_pair.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for pynucastro.autodiff.derivative_pair</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Two independent forward-mode derivative components, stored without arrays."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pynucastro.numba_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">overload</span><span class="p">,</span> <span class="n">types</span>
+
+
+<div class="viewcode-block" id="DerivativePair">
+<a class="viewcode-back" href="../../../pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.DerivativePair">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DerivativePair</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s2">"DerivativePairTuple"</span><span class="p">,</span> <span class="p">(</span><span class="s2">"d1"</span><span class="p">,</span> <span class="s2">"d2"</span><span class="p">))):</span>
+<span class="w">    </span><span class="sd">"""Store derivatives with respect to two independent variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d1 : float</span>
+<span class="sd">        Derivative with respect to the first variable.</span>
+<span class="sd">    d2 : float</span>
+<span class="sd">        Derivative with respect to the second variable.</span>
+
+<span class="sd">    """</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="c1"># NumPy scalars must defer to our reflected arithmetic, not build arrays.</span>
+    <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span> <span class="o">*</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2</span> <span class="o">*</span> <span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">*</span> <span class="n">other</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span> <span class="o">/</span> <span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2</span> <span class="o">/</span> <span class="n">other</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_pair</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">BaseNamedTuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">instance_class</span> <span class="ow">is</span> <span class="n">DerivativePair</span>
+
+
+<span class="n">_REAL_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">impl</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">d1</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">d2</span> <span class="o">+</span> <span class="n">b</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">sub</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_sub</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">impl</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">d1</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">d2</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_neg</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">impl</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="o">-</span><span class="n">x</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">_REAL_TYPES</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">impl</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">d1</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">d2</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">impl</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_REAL_TYPES</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">reflected_impl</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">d2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reflected_impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">truediv</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_div</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">_REAL_TYPES</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">impl</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">d1</span> <span class="o">/</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">d2</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="zero_derivative">
+<a class="viewcode-back" href="../../../pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.zero_derivative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">zero_derivative</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a zero seed of the same kind as deriv."""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deriv</span><span class="p">,</span> <span class="n">DerivativePair</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.0</span></div>
+
+
+
+<span class="nd">@overload</span><span class="p">(</span><span class="n">zero_derivative</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ol_zero_derivative</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">pair_impl</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+            <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pair_impl</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deriv</span><span class="p">,</span> <span class="n">_REAL_TYPES</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">scalar_impl</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">scalar_impl</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By pynucastro development team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024-2026, pynucastro development team.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

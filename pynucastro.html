@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro package &#8212; pynucastro 3.1.0.post58+g7222a94b3 documentation</title>
+    <title>pynucastro package &#8212; pynucastro 3.1.0.post59+gf9bf306ba documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=36893afb"></script>
+    <script src="_static/documentation_options.js?v=fdf7e881"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -52,7 +52,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pynucastro.constants package" href="pynucastro.constants.html" />
+    <link rel="next" title="pynucastro.autodiff package" href="pynucastro.autodiff.html" />
     <link rel="prev" title="pynucastro" href="modules.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -281,6 +281,8 @@
 <li class="toctree-l1"><a class="reference internal" href="nets-devel.html">Working with Network Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jac-devel.html">Form of the Jacobian</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autodiff.html">Automatic differentiation</a></li>
+
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
@@ -288,6 +290,11 @@
 <li class="toctree-l1"><a class="reference internal" href="changes.html">Changelog</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">API</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">pynucastro package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.autodiff.html">pynucastro.autodiff package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.derivative_pair.html">pynucastro.autodiff.derivative_pair module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html">pynucastro.autodiff.dual module</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a></li>
 </ul>
@@ -789,6 +796,30 @@ routines for modifying the reaction rates.</p>
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="pynucastro.autodiff.html">pynucastro.autodiff package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pynucastro.autodiff.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.autodiff.derivative_pair.html">pynucastro.autodiff.derivative_pair module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.DerivativePair"><code class="docutils literal notranslate"><span class="pre">DerivativePair</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.zero_derivative"><code class="docutils literal notranslate"><span class="pre">zero_derivative()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pynucastro.autodiff.dual.html">pynucastro.autodiff.dual module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual"><code class="docutils literal notranslate"><span class="pre">Dual</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.arctan"><code class="docutils literal notranslate"><span class="pre">arctan()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.cbrt"><code class="docutils literal notranslate"><span class="pre">cbrt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.constant_like"><code class="docutils literal notranslate"><span class="pre">constant_like()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.cos"><code class="docutils literal notranslate"><span class="pre">cos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.exp"><code class="docutils literal notranslate"><span class="pre">exp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.log"><code class="docutils literal notranslate"><span class="pre">log()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.log1p"><code class="docutils literal notranslate"><span class="pre">log1p()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.sin"><code class="docutils literal notranslate"><span class="pre">sin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.sqrt"><code class="docutils literal notranslate"><span class="pre">sqrt()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pynucastro.constants.html">pynucastro.constants package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pynucastro.constants.html#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pynucastro.constants.constants.html">pynucastro.constants.constants module</a><ul>
@@ -1202,11 +1233,11 @@ routines for modifying the reaction rates.</p>
       </div>
     </a>
     <a class="right-next"
-       href="pynucastro.constants.html"
+       href="pynucastro.autodiff.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">pynucastro.constants package</p>
+        <p class="prev-next-title">pynucastro.autodiff package</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
