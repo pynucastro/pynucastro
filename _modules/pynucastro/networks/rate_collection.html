@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post60+g92562f8fc documentation</title>
+    <title>pynucastro.networks.rate_collection &#8212; pynucastro 3.1.0.post61+g6fe8e6687 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=c99c0b16"></script>
+    <script src="../../../_static/documentation_options.js?v=4fffe3cb"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1765,7 +1765,7 @@
 <a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_rates">[docs]</a>
     <span class="nd">@need_state</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_rates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                       <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                       <span class="n">screen_func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Evaluate the rates for a specific density, temperature, and</span>
 <span class="sd">        composition, with optional screening.  Note: this returns that</span>
 <span class="sd">        rate as dY/dt, where Y is the molar fraction.  For a 2 body</span>
@@ -1788,6 +1788,9 @@
 <span class="sd">            one of the screening functions from :py:mod:`pynucastro.screening`</span>
 <span class="sd">            -- if provided, then the evaluated rates will include the screening</span>
 <span class="sd">            correction.</span>
+<span class="sd">        rate_filter : Callable</span>
+<span class="sd">            a function that takes a :py:class:`Rate &lt;pynucastro.rates.rate.Rate&gt;`</span>
+<span class="sd">            and returns `True` or `False` if it is to be evaluated.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1800,8 +1803,9 @@
         <span class="n">y_e</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">ye</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">eval_full_rate</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
-                                        <span class="n">y_molar</span><span class="o">=</span><span class="n">ys</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="n">y_e</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rate_filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rate_filter</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+                <span class="n">rvals</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">eval_full_rate</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span>
+                                            <span class="n">y_molar</span><span class="o">=</span><span class="n">ys</span><span class="p">,</span> <span class="n">y_e</span><span class="o">=</span><span class="n">y_e</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">rvals</span></div>
 
@@ -2174,7 +2178,8 @@
 
 <span class="sd">        """</span>
 
-        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">)</span>
+        <span class="n">rvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_rates</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="n">screen_func</span><span class="p">,</span> <span class="n">rate_filter</span><span class="o">=</span><span class="n">rate_filter</span><span class="p">)</span>
+
         <span class="n">ydots</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">:</span>
@@ -2199,6 +2204,38 @@
             <span class="n">ydots</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">produced</span><span class="p">)</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">consumed</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ydots</span></div>
+
+
+<div class="viewcode-block" id="RateCollection.evaluate_neutrino_energy_loss">
+<a class="viewcode-back" href="../../../pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.evaluate_neutrino_energy_loss">[docs]</a>
+    <span class="nd">@need_state</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_neutrino_energy_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Evaluate the energy loss from neutrinos for a specific density,</span>
+<span class="sd">        temperature and composition</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state: ThermoState</span>
+<span class="sd">            ThermoState containing relevant thermodynamic information used to</span>
+<span class="sd">            evaluate ydots. It knows about (rho, T, composition).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        enu : float</span>
+<span class="sd">            the neutrino loss rate from weak reactions</span>
+
+<span class="sd">        """</span>
+
+        <span class="n">enu</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">):</span>
+                <span class="c1"># get composition</span>
+                <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
+
+                <span class="c1"># need to get reactant nucleus</span>
+                <span class="n">nuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">enu</span> <span class="o">+=</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">get_nu_loss</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">enu</span></div>
 
 
 <div class="viewcode-block" id="RateCollection.evaluate_energy_generation">
@@ -2243,15 +2280,7 @@
         <span class="n">enuc</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">constants</span><span class="o">.</span><span class="n">N_A</span>
 
         <span class="c1"># subtract neutrino losses for tabular weak reactions</span>
-        <span class="n">enu</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">TabularWeakRate</span><span class="p">):</span>
-                <span class="c1"># get composition</span>
-                <span class="n">ys</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_molar</span><span class="p">()</span>
-
-                <span class="c1"># need to get reactant nucleus</span>
-                <span class="n">nuc</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">reactants</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">enu</span> <span class="o">+=</span> <span class="n">constants</span><span class="o">.</span><span class="n">N_A</span> <span class="o">*</span> <span class="n">ys</span><span class="p">[</span><span class="n">nuc</span><span class="p">]</span> <span class="o">*</span> <span class="n">r</span><span class="o">.</span><span class="n">get_nu_loss</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">enu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_neutrino_energy_loss</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
         <span class="n">enuc</span> <span class="o">-=</span> <span class="n">enu</span>
         <span class="k">if</span> <span class="n">return_enu</span><span class="p">:</span>
