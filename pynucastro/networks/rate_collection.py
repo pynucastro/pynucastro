@@ -1146,7 +1146,7 @@ class RateCollection:
 
     @need_state
     def evaluate_rates(self, state, *,
-                       screen_func=None):
+                       screen_func=None, rate_filter=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1169,6 +1169,9 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        rate_filter : Callable
+            a function that takes a :py:class:`Rate <pynucastro.rates.rate.Rate>`
+            and returns `True` or `False` if it is to be evaluated.
 
         Returns
         -------
@@ -1181,8 +1184,9 @@ class RateCollection:
         y_e = state.ye
 
         for r in self.rates:
-            rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
-                                        y_molar=ys, y_e=y_e)
+            if rate_filter is None or rate_filter(r):
+                rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                            y_molar=ys, y_e=y_e)
 
         return rvals
 
@@ -1534,14 +1538,7 @@ class RateCollection:
 
         """
 
-        rvals = {}
-        ys = state.get_molar()
-        y_e = state.ye
-
-        for r in self.rates:
-            if rate_filter is None or rate_filter(r):
-                rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
-                                            y_molar=ys, y_e=y_e)
+        rvals = self.evaluate_rates(state, screen_func=screen_func, rate_filter=rate_filter)
 
         ydots = {}
 
