@@ -393,9 +393,7 @@ class NSENetwork(RateCollection):
                                                 screen_func=potekhin_1998,
                                                 rate_filter=lambda r: isinstance(r, TabularWeakRate))
 
-                    _, enu = self.evaluate_energy_generation(state,
-                                                             screen_func=potekhin_1998,
-                                                             return_enu=True)
+                    enu = self.evaluate_neutrino_energy_loss(state)
 
                     nse_states.append(NSETableEntry(rho, T, ye,
                                                     comp=comp, ydots=ydots, enu=enu,
