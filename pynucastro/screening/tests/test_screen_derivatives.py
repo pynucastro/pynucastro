@@ -45,8 +45,19 @@ def test_composition_derivatives(method, temp, dens):
         minus = YS.copy()
         plus[i] += step
         minus[i] -= step
-        expected = (method(PlasmaState(temp, dens, plus, ZS), factors) -
-                    method(PlasmaState(temp, dens, minus, ZS), factors)) / (2 * step)
+        fplus = method(PlasmaState(temp, dens, plus, ZS), factors)
+        fminus = method(PlasmaState(temp, dens, minus, ZS), factors)
+
+        if ZS[i] == 0:
+            # Neutrons leave both charge moments unchanged. Check invariance
+            # directly: dividing roundoff in the screening values by the tiny
+            # abundance step can produce a spurious nonzero derivative.
+            assert derivatives[i] == 0.0
+            assert fplus == pytest.approx(fscn, rel=2.e-13, abs=0.0)
+            assert fminus == pytest.approx(fscn, rel=2.e-13, abs=0.0)
+            continue
+
+        expected = (fplus - fminus) / (2 * step)
         assert derivatives[i] == pytest.approx(expected, rel=3.e-6, abs=2.e-6)
 
     if method in (chugunov_2007, potekhin_1998):
