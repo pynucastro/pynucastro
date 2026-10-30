@@ -17,6 +17,10 @@
     * fix compiler warnings in C++ code (#1588, #1589)
     * save a few divides in the partition function interp (#1604)
 
+  * `NSENetwork` :
+
+    * do not evaluate ydots for strong rates (#1635)
+
   * `PythonNetwork` / `RateCollection` / general network changes :
 
     * add composition derivating internal to (nn,γ) to Jacobian
