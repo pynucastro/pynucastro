@@ -242,7 +242,7 @@ with
 
 Status of this term:
 
-* ``RateCollection`` : not yet implemented.
+* ``RateCollection`` : this contribution is computed directly in :py:meth:`Rate.eval_jacobian_term <pynucastro.rates.rate.Rate.eval_jacobian_term>`.
 * ``PythonNetwork`` : not yet implemented.
 * ``SimpleCxxNetwork`` : not yet implemented.
 * ``AmrexAstroCxxNetwork`` : stored in ``rate_derivs_t`` when the screening factor

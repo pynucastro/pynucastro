@@ -106,12 +106,10 @@ Finally, we can compute the screening factor and the composition derivatives.
 
 .. code:: python
 
-    h = chugunov_2009(state, pair)
+    h = chugunov_2009(pstate, pair)
 
-    dh_dY = Z * h.deriv.d1 + Z**2 * h.deriv.d2
     factor = dual.exp(h)
     dfactor_dY = Z * factor.deriv.d1 + Z**2 * factor.deriv.d2
-
 
 .. note::
 

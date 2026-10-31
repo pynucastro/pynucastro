@@ -1305,10 +1305,17 @@ class Rate:
         respect to ``y_i``.  This flux term has the full composition
         and density dependence, i.e.:
 
-        flux = c ρ**n Y1**a Y2**b ... λ
+        flux = c ρ**n Y1**a Y2**b ... f λ
 
-        The derivative is only non-zero if this term depends on
-        nucleus ``y_i``.
+        where f is the screening factor and λ is N_A <σv> for a
+        strong-mediated rate.
+
+        If ``screen_func`` is ``None``, then this derivative is only
+        non-zero if this term depends on nucleus ``y_i``.
+
+        If screening is used, then the composition derivative of the
+        screening function (via the plasma state) contributes to
+        the Jacobian term for all charged nuclei.
 
         Parameters
         ----------
@@ -1327,14 +1334,38 @@ class Rate:
         float
 
         """
-        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
-            return 0.0
+
+        J = 0.0
 
         rho = state.rho
         T = state.T
         comp = state.comp
 
         ymolar = comp.get_molar()
+
+        if screen_func and (nuc_pairs := self.get_effective_screening_pairs()):
+            # compute the ∂f/∂Y_i contribution via the plasma state
+            plasma_state = make_plasma_state(T, rho, comp, compute_derivatives=True)
+
+            # compute ∂ln(f)/∂Y_i
+            dlogf_dY = 0.0
+            for n1, n2 in nuc_pairs:
+                scn_fac = make_screen_factors(n1, n2)
+                # we get h = log(f)
+                h = screen_func(plasma_state, scn_fac)
+                dlogf_dY += y_i.Z * h.deriv.d1 + y_i.Z**2 * h.deriv.d2
+
+            # construct c ρ**n Y1**a Y2**b ... ∂f/∂Y_i λ
+            J = self.eval_full_rate(state, screen_func=screen_func, y_molar=ymolar) * dlogf_dY
+
+        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
+            # there is no explicit derivative of the flux (aside from
+            # via the plasma state in the screening factor, if that
+            # exists, so exit early)
+            return J
+
+        # now compute the derivative of the flux aside from the
+        # screening factor
 
         # composition dependence
         Y_term = 1.0
@@ -1365,7 +1396,7 @@ class Rate:
         rate_eval = self.eval(T, rho=rho, comp=comp,
                               screen_func=screen_func)
 
-        return self.prefactor * dens_term * y_e_term * Y_term * rate_eval
+        return J + self.prefactor * dens_term * y_e_term * Y_term * rate_eval
 
 
 class RateSource:
