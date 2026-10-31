@@ -69,27 +69,5 @@ namespace derived_rates {
     }
 
 
-    template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        [[maybe_unused]] amrex::Real rate;
-        [[maybe_unused]] amrex::Real drate_dT;
-
-        part_fun::pf_cache_t pf_cache{};
-
-        pf_cache.index_temp_array_1 = interp_net::find_index(tfactors.T9, part_fun::temp_array_1);
-
-        {
-            // F17_to_O16_p_derived
-            rate_F17_to_O16_p_derived(rate_eval, tfactors, pf_cache);
-        }
-
-
-    }
-
 }
 #endif
