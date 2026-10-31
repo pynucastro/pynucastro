@@ -39,6 +39,16 @@ For the generation of the righthand side of the network itself, we use
 SymPy to build up an expression for each term and then use SymPy's
 `cxxcode <https://docs.sympy.org/latest/modules/printing.html#sympy.printing.codeprinter.cxxcode>`_ function to translate it into C++ code.  This is managed by the :class:`SympyRates <pynucastro.networks.sympy_network_support.SympyRates>` class.
 
+With screening enabled, we need to account for both the temperature
+and composition dependence of the screening factor in the Jacobian.
+For composition, derivatives of the screening function with respect to :math:`Y_e =
+\sum_j Z_j Y_j` and :math:`Z_2 = \sum_j Z_j^2 Y_j` are computed and
+used to correct the Jacobian row for the composition dependence.  This
+requires the Microphysics screening interface providing
+``screening_dual_t`` and derivatives of log screening with respect to
+temperature, :math:`Y_e`, and :math:`Z_2`.  For temperature, the
+derivative of the screening function is combined with the derivative
+of the rate with respect to temperature.
 
 This will directly write out the C++ code into a collection of headers
 and source files.  These are:
@@ -170,4 +180,3 @@ If any ``StarLibRate`` rates are included in the network,
 then the runtime parameter ``network.starlib_seed`` can be
 used to seed the random numbers used for sampling the rate
 uncertainty.
-
