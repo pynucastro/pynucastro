@@ -130,7 +130,7 @@ namespace Rates
     // this vector with rate_names[0] = "" so the indices line up with the
     // NetworkRates enum
 
-    static const std::vector<std::string> rate_names = {
+    inline constexpr std::array<std::string_view, Rates::NumRates + 1> rate_names = {
         "",   // 0
         "O16_p_to_F17_iliadis",  // 1,
         "F17_to_O16_p_derived"  // 2,

@@ -14,7 +14,7 @@ namespace reaclib_rates {
     using namespace Rates;
     using namespace Species;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Mg24_He4_to_p_Al27_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -100,7 +100,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Mg24_He4_to_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -163,7 +163,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Al27_p_to_He4_Mg24_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -249,7 +249,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Al27_p_to_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -335,7 +335,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Si28_to_He4_Mg24_reaclib(T& rate_eval, const tf_t& tfactors) {
 
@@ -390,7 +390,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Si28_to_p_Al27_reaclib(T& rate_eval, const tf_t& tfactors) {
 
@@ -467,7 +467,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Si28_He4_to_p_P31_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -553,7 +553,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Si28_He4_to_S32_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -593,7 +593,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_P31_p_to_He4_Si28_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -679,7 +679,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_P31_p_to_S32_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -765,7 +765,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_S32_to_He4_Si28_reaclib(T& rate_eval, const tf_t& tfactors) {
 
@@ -802,7 +802,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_S32_to_p_P31_reaclib(T& rate_eval, const tf_t& tfactors) {
 

@@ -1,6 +1,8 @@
 #ifndef NET_RATE_TYPE_H
 #define NET_RATE_TYPE_H
 
+#include <concepts>
+
 #include <actual_network.H>
 
 struct rate_t {
@@ -25,5 +27,10 @@ struct rate_derivs_t {
     Real denuc_weak_dYe;
 };
 
+
+template <typename T>
+concept RateEvaluation =
+    std::same_as<T, rate_t> ||
+    std::same_as<T, rate_derivs_t>;
 
 #endif

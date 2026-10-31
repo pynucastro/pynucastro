@@ -11,7 +11,7 @@ namespace derived_rates {
 
     using namespace Rates;
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_Ne20_He4_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -57,7 +57,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_Na23_p_to_C12_C12_derived(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -103,7 +103,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_O16_to_He4_C12_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -170,7 +170,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_Mg24_to_He4_Ne20_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -279,7 +279,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_Mg24_to_n_Mg23_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
