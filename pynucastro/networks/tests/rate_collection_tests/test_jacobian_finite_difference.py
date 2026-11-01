@@ -14,6 +14,7 @@ import pytest
 from pynucastro.networks import RateCollection
 from pynucastro.nucdata import Composition
 from pynucastro.rates import DerivedRate, ThermoState
+from pynucastro.screening import chugunov_2007
 
 
 class TestJacobianFD:
@@ -46,18 +47,19 @@ class TestJacobianFD:
         return net
 
     @pytest.mark.parametrize("temp, dens", [(1.e8, 1.e5), (1.e9, 1.e6), (4.e9, 1.e7)])
-    def test_jacobian_no_screening(self, net, temp, dens):
+    @pytest.mark.parametrize("screen_method", [None, chugunov_2007], ids=["no_screening", "chugunov_2007"])
+    def test_jacobian(self, net, temp, dens, screen_method):
 
         comp = Composition(net.unique_nuclei, init="uniform")
         state = ThermoState(rho=dens, T=temp, comp=comp)
 
-        jac_analytic = net.evaluate_jacobian(state)
+        jac_analytic = net.evaluate_jacobian(state, screen_func=screen_method)
 
         jac_numerical = np.zeros_like(jac_analytic)
 
         # Estimate roundoff from all production and destruction terms,
         # since their sum can be much larger than the net Ydot.
-        fluxes = net.evaluate_rates(state)
+        fluxes = net.evaluate_rates(state, screen_func=screen_method)
         flux_scale = np.array([
             sum(r.reactant_count(n) * abs(fluxes[r]) for r in net.nuclei_consumed[n]) +
             sum(r.product_count(n) * abs(fluxes[r]) for r in net.nuclei_produced[n])
@@ -73,10 +75,10 @@ class TestJacobianFD:
             comp.X[jnuc] = cnuc_old + h
 
             state_pert = ThermoState(rho=dens, T=temp, comp=comp)
-            dydt_plus = net.evaluate_ydots(state_pert)
+            dydt_plus = net.evaluate_ydots(state_pert, screen_func=screen_method)
 
             comp.X[jnuc] = cnuc_old - h
-            dydt_minus = net.evaluate_ydots(state_pert)
+            dydt_minus = net.evaluate_ydots(state_pert, screen_func=screen_method)
 
             comp.X[jnuc] = cnuc_old
 
