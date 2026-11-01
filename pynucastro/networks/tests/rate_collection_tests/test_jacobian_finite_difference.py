@@ -16,7 +16,6 @@ from pynucastro.nucdata import Composition
 from pynucastro.rates import DerivedRate, ThermoState
 
 
-
 class TestJacobianFD:
     @pytest.fixture(scope="class")
     @classmethod
@@ -49,38 +48,66 @@ class TestJacobianFD:
     @pytest.mark.parametrize("temp, dens", [(1.e8, 1.e5), (1.e9, 1.e6), (4.e9, 1.e7)])
     def test_jacobian_no_screening(self, net, temp, dens):
 
-        comp=Composition(net.unique_nuclei, init="uniform")
+        comp = Composition(net.unique_nuclei, init="uniform")
         state = ThermoState(rho=dens, T=temp, comp=comp)
 
         jac_analytic = net.evaluate_jacobian(state)
 
         jac_numerical = np.zeros_like(jac_analytic)
 
-        # do a finite-difference.  First compute the unperturbed
-        # Ydots
-        dydt0 = net.evaluate_ydots(state)
+        # Estimate roundoff from all production and destruction terms,
+        # since their sum can be much larger than the net Ydot.
+        fluxes = net.evaluate_rates(state)
+        flux_scale = np.array([
+            sum(r.reactant_count(n) * abs(fluxes[r]) for r in net.nuclei_consumed[n]) +
+            sum(r.product_count(n) * abs(fluxes[r]) for r in net.nuclei_produced[n])
+            for n in net.unique_nuclei
+        ])
 
-        h = 1.e-8
+        h = 1.e-5
 
         for jcol, jnuc in enumerate(net.unique_nuclei):
 
             # perturb the current nucleus
             cnuc_old = comp.X[jnuc]
-            comp.X[jnuc] += h
+            comp.X[jnuc] = cnuc_old + h
 
             state_pert = ThermoState(rho=dens, T=temp, comp=comp)
-            dydt_pert = net.evaluate_ydots(state_pert)
+            dydt_plus = net.evaluate_ydots(state_pert)
+
+            comp.X[jnuc] = cnuc_old - h
+            dydt_minus = net.evaluate_ydots(state_pert)
 
             comp.X[jnuc] = cnuc_old
 
             for irow, inuc in enumerate(net.unique_nuclei):
                 # we perturbed X, so we need to convert d/dX to d/dY
-                jac_numerical[irow, jcol] = (dydt_pert[inuc] - dydt0[inuc]) / h * jnuc.A
+                jac_numerical[irow, jcol] = (dydt_plus[inuc] - dydt_minus[inuc]) / (2 * h) * jnuc.A
 
-        # compute the relative error
+        # Allow 1% relative error plus an estimate of the roundoff in the
+        # finite difference.  Each Ydot evaluation has rounding errors on
+        # the scale of eps * flux_scale, where eps is machine precision.
+        # Use the sum of absolute production and destruction terms, since
+        # cancellation can make the net Ydot much smaller than these terms.
+        # The two evaluations contribute roughly 2 * eps * flux_scale of
+        # uncertainty to the numerator; dividing by 2*h leaves a scale of
+        # eps * flux_scale / h.  Thus a smaller h amplifies roundoff.
+        # Multiplying by A_j converts this d/dX_j uncertainty to d/dY_j,
+        # giving the same inverse-second units as the Jacobian entries.
+        # The factor of 10 is a practical allowance for flux evaluation and
+        # summation errors, not a rigorous bound.  Entries below this floor
+        # cannot be reliably checked to 1% by this finite difference.
         err = np.abs(jac_numerical - jac_analytic)
+        mass_numbers = np.array([n.A for n in net.unique_nuclei])
+        roundoff_floor = 10 * np.finfo(float).eps * flux_scale[:, None] * mass_numbers[None, :] / h
+        error_bound = 1.e-2 * np.abs(jac_analytic) + roundoff_floor
 
-        rerr = np.divide(err, jac_analytic, where=(jac_analytic != 0), out=None)
-
-        assert rerr.max() < 1.e-2
-
+        # argmax returns the flat index of the entry with the largest
+        # excess error over its bound.  unravel_index converts that index
+        # into a row and column so the failure message can name the nuclei.
+        irow, jcol = np.unravel_index(np.argmax(err - error_bound), err.shape)
+        assert np.all(err <= error_bound), (
+            f"Jacobian entry ({net.unique_nuclei[irow]}, {net.unique_nuclei[jcol]}): "
+            f"analytic={jac_analytic[irow, jcol]}, numerical={jac_numerical[irow, jcol]}, "
+            f"error={err[irow, jcol]}, bound={error_bound[irow, jcol]}"
+        )
