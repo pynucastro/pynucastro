@@ -101,12 +101,16 @@ class TestJacobianFD:
         # cannot be reliably checked to 1% by this finite difference.
         err = np.abs(jac_numerical - jac_analytic)
         mass_numbers = np.array([n.A for n in net.unique_nuclei])
-        roundoff_floor = 10 * np.finfo(float).eps * flux_scale[:, None] * mass_numbers[None, :] / h
+        # Pylint cannot infer the attributes initialized by NumPy's finfo.
+        eps = np.finfo(float).eps  # pylint: disable=no-member
+        roundoff_floor = 10 * eps * flux_scale[:, None] * mass_numbers[None, :] / h
         error_bound = 1.e-2 * np.abs(jac_analytic) + roundoff_floor
 
         # argmax returns the flat index of the entry with the largest
         # excess error over its bound.  unravel_index converts that index
         # into a row and column so the failure message can name the nuclei.
+        # Pylint cannot infer that err.shape has exactly two dimensions.
+        # pylint: disable-next=unbalanced-tuple-unpacking
         irow, jcol = np.unravel_index(np.argmax(err - error_bound), err.shape)
         assert np.all(err <= error_bound), (
             f"Jacobian entry ({net.unique_nuclei[irow]}, {net.unique_nuclei[jcol]}): "
