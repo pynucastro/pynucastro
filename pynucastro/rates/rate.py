@@ -1300,7 +1300,8 @@ class Rate:
 
     @need_state
     def eval_jacobian_term(self, state, y_i, *,
-                           screen_func=None):
+                           screen_func=None,
+                           include_screening_comp_derivs=True):
         """Evaluate dflux/d(y_i), the derivative of the rate with
         respect to ``y_i``.  This flux term has the full composition
         and density dependence, i.e.:
@@ -1328,6 +1329,10 @@ class Rate:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the jacobian_term will include the
             screening correction.
+        include_screening_comp_derivs : bool
+            do we include the derivatives of the screening factor with respect
+            to composition (via the plasma state).
+
 
         Returns
         -------
@@ -1343,7 +1348,8 @@ class Rate:
 
         ymolar = comp.get_molar()
 
-        if screen_func and (nuc_pairs := self.get_effective_screening_pairs()):
+        if (screen_func and include_screening_comp_derivs and
+            (nuc_pairs := self.get_effective_screening_pairs())):
             # compute the ∂f/∂Y_i contribution via the plasma state
             plasma_state = make_plasma_state(T, rho, comp, compute_derivatives=True)
 

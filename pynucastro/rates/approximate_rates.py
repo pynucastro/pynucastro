@@ -798,7 +798,8 @@ class ApproximateRate(Rate):
 
     @need_state
     def eval_jacobian_term(self, state, y_i, *,
-                           screen_func=None):
+                           screen_func=None,
+                           include_screening_comp_derivs=True):
         """Evaluate drate/d(y_i), the derivative of the rate with
         respect to ``y_i``.  This rate term has the full composition
         and density dependence, i.e.:
@@ -823,6 +824,9 @@ class ApproximateRate(Rate):
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the jacobian_term will include the
             screening correction.
+        include_screening_comp_derivs : bool
+            do we include the derivatives of the screening factor with respect
+            to composition (via the plasma state).
 
         Returns
         -------
@@ -831,7 +835,8 @@ class ApproximateRate(Rate):
         """
 
         # get the Jacobian term differentiating with respect to y_i
-        val = super().eval_jacobian_term(state, y_i, screen_func=screen_func)
+        val = super().eval_jacobian_term(state, y_i, screen_func=screen_func,
+                                         include_screening_comp_derivs=include_screening_comp_derivs)
 
         if self.rate_comp_dependence is None or y_i not in self.rate_comp_dependence:
             return val
