@@ -235,8 +235,12 @@ void jac_nuc(const burn_t& state,
     // add ∂λ_weak / ∂Y_e terms now
     // this uses ∂Y_e/∂Y_i = Z_i
     for (int irow = 1; irow <= NumSpec; ++irow) {
+        const auto dweak = rate_eval.dweak_ydot_dYe(irow);
+        if (dweak == 0.0_rt) {
+            continue;
+        }
         for (int jcol = 1; jcol <= NumSpec; ++jcol) {
-            jac.add(irow, jcol, rate_eval.dweak_ydot_dYe(irow) * NetworkProperties::zion(jcol));
+            jac.add(irow, jcol, dweak * NetworkProperties::zion(jcol));
         }
     }
 
