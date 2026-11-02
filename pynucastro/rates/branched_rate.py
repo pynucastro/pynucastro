@@ -8,9 +8,6 @@ import copy
 import numpy as np
 
 from pynucastro.rates.rate import Rate, cxx_rate_func_args, py_rate_func_args
-from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class BranchedRate(Rate):
@@ -68,20 +65,6 @@ class BranchedRate(Rate):
         self.primary_branch = primary_branch
         self.other_branch = other_branch
         self.description = description
-
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill branched rates
-        # only after the other rates are filled and screened.
-
-        assert isinstance(underlying_rate,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
-        assert isinstance(primary_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
-        assert isinstance(other_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
 
         # the reactants come from the underlying rate
         reactants = self.underlying_rate.reactants

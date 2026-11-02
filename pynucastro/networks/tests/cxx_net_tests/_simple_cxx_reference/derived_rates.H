@@ -171,50 +171,5 @@ namespace derived_rates {
     }
 
 
-    template <typename T>
-    inline
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] T& rate_eval)
-    {
-        [[maybe_unused]] Real rate;
-        [[maybe_unused]] Real drate_dT;
-
-        part_fun::pf_cache_t pf_cache{};
-
-        {
-            // Ne20_He4_to_C12_C12_derived
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
-#ifdef SCREENING
-            log_scor = rate_eval.log_screen(k_He4_Ne20);
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                dlog_scor_dT = rate_eval.dlog_screen_dT(k_He4_Ne20);
-            }
-#endif
-            rate_Ne20_He4_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
-        }
-
-        {
-            // Na23_p_to_C12_C12_derived
-            Real log_scor {0.0_rt};
-            Real dlog_scor_dT {0.0_rt};
-#ifdef SCREENING
-            log_scor = rate_eval.log_screen(k_p_Na23);
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Na23);
-            }
-#endif
-            rate_Na23_p_to_C12_C12_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
-        }
-
-        {
-            // O16_to_He4_C12_derived
-            rate_O16_to_He4_C12_derived(rate_eval, tfactors, pf_cache);
-        }
-
-
-    }
-
 }
 #endif
