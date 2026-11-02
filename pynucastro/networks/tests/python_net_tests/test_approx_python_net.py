@@ -106,8 +106,8 @@ class TestPythonNetwork:
     def test_full_ydot_string(self, pynet):
         ostr = \
 """dYdt[jhe4] = (
-      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.Mg24_He4_to_Si28_approx +Y[jsi28]*rate_eval.Si28_to_Mg24_He4_approx ) +
-      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.Si28_He4_to_S32_approx +Y[js32]*rate_eval.S32_to_Si28_He4_approx )
+      ( -rho*Y[jhe4]*Y[jmg24]*rate_eval.rates[RateIdx.Mg24_He4_to_Si28_approx] +Y[jsi28]*rate_eval.rates[RateIdx.Si28_to_Mg24_He4_approx] ) +
+      ( -rho*Y[jhe4]*Y[jsi28]*rate_eval.rates[RateIdx.Si28_He4_to_S32_approx] +Y[js32]*rate_eval.rates[RateIdx.S32_to_Si28_He4_approx] )
    )
 
 """
@@ -119,13 +119,13 @@ class TestPythonNetwork:
         ostr = \
 """@numba.njit()
 def Mg24_He4_to_Si28_approx(rate_eval):
-    r_pg = rate_eval.Al27_p_to_Si28_reaclib
-    r_pa = rate_eval.Al27_p_to_He4_Mg24_reaclib
+    r_pg = rate_eval.rates[RateIdx.Al27_p_to_Si28_reaclib]
+    r_pa = rate_eval.rates[RateIdx.Al27_p_to_He4_Mg24_reaclib]
     r_pY = 0.0
-    r_ag = rate_eval.Mg24_He4_to_Si28_reaclib
-    r_ap = rate_eval.Mg24_He4_to_p_Al27_reaclib
+    r_ag = rate_eval.rates[RateIdx.Mg24_He4_to_Si28_reaclib]
+    r_ap = rate_eval.rates[RateIdx.Mg24_He4_to_p_Al27_reaclib]
     rate = r_ag + r_ap * r_pg / (r_pg + r_pa + r_pY)
-    rate_eval.Mg24_He4_to_Si28_approx = rate
+    rate_eval.rates[RateIdx.Mg24_He4_to_Si28_approx] = rate
 
 """
         r = pynet.get_rate("mg24_he4_to_si28_approx")
@@ -155,7 +155,7 @@ def Mg24_He4_to_Si28_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.Mg24_He4_to_Si28_reaclib = rate
+    rate_eval.rates[RateIdx.Mg24_He4_to_Si28_reaclib] = rate
 
 """
 
