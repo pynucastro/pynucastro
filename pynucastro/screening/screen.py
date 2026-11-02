@@ -34,7 +34,7 @@ __all__ = [
 
 # A native tuple can carry either floats or dual-valued composition factors.
 _PlasmaStateData = namedtuple("PlasmaStateData",
-                             "temp dens qlam0z taufac aa abar zbar z2bar n_e gamma_e_fac")
+                             "temp dens qlam0z taufac aa zbar z2bar n_e gamma_e_fac")
 
 
 @njit
@@ -76,7 +76,7 @@ def _plasma_state_from_moments(temp, dens, ytot, ye, s2):
 
     # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
     gamma_e_fac = constants.q_e**2 / constants.k * dual.cbrt(4 * np.pi / 3) * dual.cbrt(n_e)
-    return _PlasmaStateData(temp, dens, qlam0z, taufac, aa, abar, zbar, z2bar, n_e, gamma_e_fac)
+    return _PlasmaStateData(temp, dens, qlam0z, taufac, aa, zbar, z2bar, n_e, gamma_e_fac)
 
 
 @jitclass([
@@ -85,7 +85,6 @@ def _plasma_state_from_moments(temp, dens, ytot, ye, s2):
     ("qlam0z", numba.float64),
     ("taufac", numba.float64),
     ("aa", numba.float64),
-    ("abar", numba.float64),
     ("zbar", numba.float64),
     ("z2bar", numba.float64),
     ("n_e", numba.float64),
@@ -114,8 +113,6 @@ class PlasmaState:
         a common factor from Itoh 1979
     aa : float
         a common factor from Itoh 1979
-    abar : float
-        average atomic mass
     zbar : float
         average ion charge
     z2bar : float
@@ -135,7 +132,6 @@ class PlasmaState:
         self.qlam0z = state.qlam0z
         self.taufac = state.taufac
         self.aa = state.aa
-        self.abar = state.abar
         self.zbar = state.zbar
         self.z2bar = state.z2bar
         self.n_e = state.n_e
