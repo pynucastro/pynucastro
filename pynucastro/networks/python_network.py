@@ -882,7 +882,7 @@ class PythonNetwork(RateCollection):
                     # Product rule: retain the full abundance and density
                     # factors and replace the rate with its derivative.
                     deriv_name = f"drate_{r.fname}_dY{y_j_nucleus.cindex()}"
-                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.{r.fname}",
+                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.rates[RateIdx.{r.fname}]",
                                                               f"rate_eval.{deriv_name}"))
 
                 for jac_str in jac_terms:
@@ -1017,6 +1017,7 @@ class PythonNetwork(RateCollection):
 
         indent = 4*" "
 
+        of.write("from enum import IntEnum\n")
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from pynucastro.constants import constants\n")
@@ -1095,12 +1096,16 @@ class PythonNetwork(RateCollection):
             of.write(f"{n}_log_pf_array = np.array({list(n.partition_function.log_pf_data)})\n")
             of.write("\n")
 
+        # rate index enum
+        of.write("class RateIdx(IntEnum):\n")
+        for n, r in enumerate(self.all_rates):
+            of.write(f"{indent}{r.fname} = {n}\n")
+
         # rate_eval class
 
         of.write("@jitclass([\n")
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
-        for r in self.all_rates:
-            of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        of.write(f'{indent}("rates", numba.float64[:]),\n')
         of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1111,8 +1116,7 @@ class PythonNetwork(RateCollection):
         of.write("class RateEval:\n")
         of.write(f"{indent}def __init__(self):\n")
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
-        for r in self.all_rates:
-            of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+        of.write(f"{indent*2}self.rates = np.full({len(self.all_rates)}, np.nan)\n")
         of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
