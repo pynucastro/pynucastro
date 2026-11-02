@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.screening.screen module &#8212; pynucastro 3.2.0.post1+g9e39448e7 documentation</title>
+    <title>pynucastro.screening.screen module &#8212; pynucastro 3.2.0.post3+g8d7dc1e4e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=29bca115"></script>
+    <script src="_static/documentation_options.js?v=596106f4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -283,6 +283,7 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="autodiff.html">Automatic differentiation</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="screening_derivs.html">Screening composition derivatives</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current nav bd-sidenav">
@@ -624,7 +625,6 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.qlam0z"><code class="docutils literal notranslate"><span class="pre">PlasmaState.qlam0z</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.taufac"><code class="docutils literal notranslate"><span class="pre">PlasmaState.taufac</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.aa"><code class="docutils literal notranslate"><span class="pre">PlasmaState.aa</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.abar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.abar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.zbar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.zbar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.z2bar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.z2bar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.n_e"><code class="docutils literal notranslate"><span class="pre">PlasmaState.n_e</span></code></a></li>
@@ -648,6 +648,7 @@
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.f0"><code class="docutils literal notranslate"><span class="pre">f0()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.get_screening_func"><code class="docutils literal notranslate"><span class="pre">get_screening_func()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state"><code class="docutils literal notranslate"><span class="pre">make_plasma_state()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state_with_derivatives"><code class="docutils literal notranslate"><span class="pre">make_plasma_state_with_derivatives()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_screen_factors"><code class="docutils literal notranslate"><span class="pre">make_screen_factors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.potekhin_1998"><code class="docutils literal notranslate"><span class="pre">potekhin_1998()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.screen5"><code class="docutils literal notranslate"><span class="pre">screen5()</span></code></a></li>
@@ -695,7 +696,7 @@ screening calculations</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.NseState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7fd5a64fa5d0&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.NseState#7ff7f29c7750&lt;temp:float64,dens:float64,ye:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.NseState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -750,17 +751,6 @@ correction factor calculations.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.abar">
-<span class="sig-name descname"><span class="pre">abar</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.abar" title="Link to this definition">#</a></dt>
-<dd><p>average atomic mass</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.zbar">
 <span class="sig-name descname"><span class="pre">zbar</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.zbar" title="Link to this definition">#</a></dt>
 <dd><p>average ion charge</p>
@@ -806,7 +796,7 @@ correction factor calculations.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.PlasmaState.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7fd5a77fbcb0&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,abar:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.PlasmaState#7ff7e5f306e0&lt;temp:float64,dens:float64,qlam0z:float64,taufac:float64,aa:float64,zbar:float64,z2bar:float64,n_e:float64,gamma_e_fac:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.PlasmaState.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -895,7 +885,7 @@ correction factor for a specific pair of nuclei.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.ScreenFactors.class_type">
-<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7fd5a64fa710&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">class_type</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">jitclass.ScreenFactors#7ff7f29c79d0&lt;z1:int32,z2:int32,a1:int32,a2:int32,zs13:float64,zhat:float64,zhat2:float64,lzav:float64,aznut:float64,ztilde:float64&gt;</span></span><a class="headerlink" href="#pynucastro.screening.screen.ScreenFactors.class_type" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -913,8 +903,12 @@ multi-component plasma.</p>
 <li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logarithm of the screening enhancement, with derivatives when the
+state was constructed with make_plasma_state_with_derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a> or <a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual" title="pynucastro.autodiff.dual.Dual">Dual</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -930,8 +924,12 @@ multi-component plasma.</p>
 <li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logarithm of the screening enhancement, with derivatives when the
+state was constructed with make_plasma_state_with_derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a> or <a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual" title="pynucastro.autodiff.dual.Dual">Dual</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -948,8 +946,12 @@ coupling, following the appendix of <span class="bibtex-citation" id="id4">Chugu
 <li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logarithm of the screening enhancement, with derivatives when the
+state was constructed with make_plasma_state_with_derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a> or <a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual" title="pynucastro.autodiff.dual.Dual">Dual</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -985,21 +987,56 @@ coupling, following the appendix of <span class="bibtex-citation" id="id4">Chugu
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pynucastro.screening.screen.make_plasma_state">
-<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">make_plasma_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molar_fractions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#make_plasma_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.make_plasma_state" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">make_plasma_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_derivatives</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#make_plasma_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.make_plasma_state" title="Link to this definition">#</a></dt>
 <dd><p>Construct a PlasmaState object from simulation data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>temp</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – temperature in K</p></li>
 <li><p><strong>dens</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – density in g/cm^3</p></li>
-<li><p><strong>molar_fractions</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – dictionary of molar abundances for each ion,
+<li><p><strong>composition</strong> (<a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition" title="pynucastro.nucdata.composition.Composition"><em>Composition</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a><em>(</em><a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a><em>)</em>) – a Composition object or a dictionary of molar abundances for each ion,
 as returned by <a class="reference internal" href="pynucastro.nucdata.composition.html#pynucastro.nucdata.composition.Composition.get_molar" title="pynucastro.nucdata.composition.Composition.get_molar"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Composition.get_molar()</span></code></a></p></li>
+<li><p><strong>compute_derivatives</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>) – Seed derivatives with respect to Ye = sum(Z Y) and S2 = sum(Z**2 Y).
+The default is False.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState">PlasmaState</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>With compute_derivatives=True, a named tuple whose
+composition-dependent fields carry two derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pynucastro.screening.screen.PlasmaState" title="pynucastro.screening.screen.PlasmaState">PlasmaState</a> or <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pynucastro.screening.screen.make_plasma_state_with_derivatives">
+<span class="sig-prename descclassname"><span class="pre">pynucastro.screening.screen.</span></span><span class="sig-name descname"><span class="pre">make_plasma_state_with_derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Zs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/screening/screen.html#make_plasma_state_with_derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.screening.screen.make_plasma_state_with_derivatives" title="Link to this definition">#</a></dt>
+<dd><p>Construct a state carrying two composition derivatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>temp</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Temperature in K, held fixed during differentiation.</p></li>
+<li><p><strong>dens</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>) – Density in g/cm^3, held fixed during differentiation.</p></li>
+<li><p><strong>Ys</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – Molar abundances, Y_i = X_i / A_i.</p></li>
+<li><p><strong>Zs</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – Nuclear charges in the same order as Ys.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Named tuple with the same attributes as PlasmaState. Composition-dependent
+fields are Dual values with DerivativePair seeds: d1 corresponds to
+Ye = sum(Z_i Y_i), and d2 to S2 = sum(Z_i**2 Y_i).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)">tuple</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The total molar abundance is held fixed when seeding these moments.
+It cancels out of the screening expressions. For a returned log screening
+factor h, dh/dY_i = Z_i * h.deriv.d1 + Z_i**2 * h.deriv.d2, without
+renormalizing the abundances. Reuse this state for different ion pairs.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1031,8 +1068,12 @@ as returned by <a class="reference internal" href="pynucastro.nucdata.compositio
 <li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logarithm of the screening enhancement, with derivatives when the
+state was constructed with make_plasma_state_with_derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a> or <a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual" title="pynucastro.autodiff.dual.Dual">Dual</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1052,8 +1093,12 @@ for strong screening.</p>
 <li><p><strong>scn_fac</strong> (<a class="reference internal" href="#pynucastro.screening.screen.ScreenFactors" title="pynucastro.screening.screen.ScreenFactors"><em>ScreenFactors</em></a>) – the precomputed ion pair factors</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a></p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Logarithm of the screening enhancement, with derivatives when the
+state was constructed with make_plasma_state_with_derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)">float</a> or <a class="reference internal" href="pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.Dual" title="pynucastro.autodiff.dual.Dual">Dual</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1157,7 +1202,6 @@ limit.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.qlam0z"><code class="docutils literal notranslate"><span class="pre">PlasmaState.qlam0z</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.taufac"><code class="docutils literal notranslate"><span class="pre">PlasmaState.taufac</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.aa"><code class="docutils literal notranslate"><span class="pre">PlasmaState.aa</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.abar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.abar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.zbar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.zbar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.z2bar"><code class="docutils literal notranslate"><span class="pre">PlasmaState.z2bar</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.PlasmaState.n_e"><code class="docutils literal notranslate"><span class="pre">PlasmaState.n_e</span></code></a></li>
@@ -1181,6 +1225,7 @@ limit.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.f0"><code class="docutils literal notranslate"><span class="pre">f0()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.get_screening_func"><code class="docutils literal notranslate"><span class="pre">get_screening_func()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state"><code class="docutils literal notranslate"><span class="pre">make_plasma_state()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_plasma_state_with_derivatives"><code class="docutils literal notranslate"><span class="pre">make_plasma_state_with_derivatives()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.make_screen_factors"><code class="docutils literal notranslate"><span class="pre">make_screen_factors()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.potekhin_1998"><code class="docutils literal notranslate"><span class="pre">potekhin_1998()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.screening.screen.screen5"><code class="docutils literal notranslate"><span class="pre">screen5()</span></code></a></li>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating a Custom Rate &#8212; pynucastro 3.2.0.post1+g9e39448e7 documentation</title>
+    <title>Creating a Custom Rate &#8212; pynucastro 3.2.0.post3+g8d7dc1e4e documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=29bca115"></script>
+    <script src="_static/documentation_options.js?v=596106f4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -285,6 +285,7 @@
 <li class="toctree-l1"><a class="reference internal" href="testing.html">Testing and Comparing Backends</a></li>
 <li class="toctree-l1"><a class="reference internal" href="autodiff.html">Automatic differentiation</a></li>
 
+<li class="toctree-l1"><a class="reference internal" href="screening_derivs.html">Screening composition derivatives</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="nav bd-sidenav">
@@ -672,7 +673,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.416655077954945e-13 15.601858115843468
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.416655077954945e-13 15.601858116021104
 </pre></div>
 </div>
 </div>
@@ -773,7 +774,7 @@ from <code class="docutils literal notranslate"><span class="pre">py_rate_func_a
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>@numba.njit()
 def N14_p_to_O15_generic(rate_eval, tf, log_scor=0.0):
-    rate_eval.N14_p_to_O15_generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858115843468)
+    rate_eval.N14_p_to_O15_generic = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858116021104)
 </pre></div>
 </div>
 </div>
