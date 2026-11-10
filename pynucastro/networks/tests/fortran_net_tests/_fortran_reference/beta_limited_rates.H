@@ -12,19 +12,5 @@ namespace beta_limited_rates {
     using namespace Rates;
 
 
-    template <typename T>
-    inline
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] const Real rho,
-               [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        [[maybe_unused]] Real rate;
-        [[maybe_unused]] Real drate_dT;
-
-
-    }
 }
 #endif

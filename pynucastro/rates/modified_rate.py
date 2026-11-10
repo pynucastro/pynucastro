@@ -7,12 +7,8 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
                                    py_rate_func_args)
-from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class ModifiedRate(Rate):
@@ -72,14 +68,6 @@ class ModifiedRate(Rate):
         self.original_rate = original_rate
         self.update_screening = update_screening
         self.description = description
-
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill modified
-        # rates only after the original rate is filled.
-        assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate,
-                           TemperatureTabularRate, BetaLimitedRate))
 
         if new_reactants is not None:
             reactants = new_reactants

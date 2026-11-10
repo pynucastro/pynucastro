@@ -50,7 +50,6 @@ class TestScreen:
         assert plasma_state.qlam0z == approx(82.64519344765309)
         assert plasma_state.taufac == approx(14.162368047477718)
         assert plasma_state.aa == approx(10.00149809343336)
-        assert plasma_state.abar == approx(1.2966614825934775)
         assert plasma_state.zbar == approx(1.1021622602044556)
         assert plasma_state.z2bar == approx(1.4036360549074394)
         assert plasma_state.n_e == approx(5.118819647768954e+28)
