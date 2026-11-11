@@ -1146,7 +1146,7 @@ class RateCollection:
 
     @need_state
     def evaluate_rates(self, state, *,
-                       screen_func=None):
+                       screen_func=None, rate_filter=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1169,6 +1169,9 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        rate_filter : Callable
+            a function that takes a :py:class:`Rate <pynucastro.rates.rate.Rate>`
+            and returns `True` or `False` if it is to be evaluated.
 
         Returns
         -------
@@ -1181,8 +1184,9 @@ class RateCollection:
         y_e = state.ye
 
         for r in self.rates:
-            rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
-                                        y_molar=ys, y_e=y_e)
+            if rate_filter is None or rate_filter(r):
+                rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                            y_molar=ys, y_e=y_e)
 
         return rvals
 
@@ -1534,7 +1538,8 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(state, screen_func=screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func, rate_filter=rate_filter)
+
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -1559,6 +1564,35 @@ class RateCollection:
             ydots[nuc] = sum(produced) - sum(consumed)
 
         return ydots
+
+    @need_state
+    def evaluate_neutrino_energy_loss(self, state):
+        """Evaluate the energy loss from neutrinos for a specific density,
+        temperature and composition
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate ydots. It knows about (rho, T, composition).
+
+        Returns
+        -------
+        enu : float
+            the neutrino loss rate from weak reactions
+
+        """
+
+        enu = 0.0
+        for r in self.rates:
+            if isinstance(r, TabularWeakRate):
+                # get composition
+                ys = state.get_molar()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        return enu
 
     @need_state
     def evaluate_energy_generation(self, state, *,
@@ -1600,15 +1634,7 @@ class RateCollection:
         enuc *= -1*constants.N_A
 
         # subtract neutrino losses for tabular weak reactions
-        enu = 0.0
-        for r in self.rates:
-            if isinstance(r, TabularWeakRate):
-                # get composition
-                ys = state.get_molar()
-
-                # need to get reactant nucleus
-                nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        enu = self.evaluate_neutrino_energy_loss(state)
 
         enuc -= enu
         if return_enu:
