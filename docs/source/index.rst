@@ -85,6 +85,7 @@ and interactively exploring nuclear reaction networks.
    modified-rates.ipynb
    co-approximations.ipynb
    branched-rates.ipynb
+   beta-limited-rates.ipynb
    not_in_ydot_term.ipynb
 
 .. toctree::
@@ -179,7 +180,10 @@ and interactively exploring nuclear reaction networks.
    rates-devel
    adding-rates
    nets-devel
+   jac-devel
    testing
+   autodiff
+   screening_derivs
 
 .. toctree::
    :maxdepth: 1

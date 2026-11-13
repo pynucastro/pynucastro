@@ -13,7 +13,7 @@ from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.modified_rate import ModifiedRate
 from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
-                                   cxx_rate_func_args)
+                                   cxx_rate_func_args, py_rate_func_args)
 from pynucastro.rates.reaclib_rate import ReacLibRate, SingleSet
 from pynucastro.rates.starlib_rate import StarLibRate
 from pynucastro.rates.tabular_rate import TabularWeakRate
@@ -199,9 +199,12 @@ class DerivedRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n\n"
 
         # Evaluate partition function terms
@@ -237,7 +240,9 @@ class DerivedRate(Rate):
                 for t in set_string.split("\n"):
                     fstring += "    " + t + "\n"
                 fstring += "\n"
-                fstring += "    ln_set_rate += net_log_pf + log_scor\n"
+                fstring += "    ln_set_rate += net_log_pf\n"
+                if self.screening_pairs:
+                    fstring += "    ln_set_rate += log_scor\n"
                 fstring += "    set_rate = np.exp(ln_set_rate)\n"
                 fstring += "    rate += set_rate\n\n"
 
@@ -248,16 +253,20 @@ class DerivedRate(Rate):
             fstring += f"    log_r = {self.underlying_rate.fname}_interpolator.interpolate(tf.T9 * 1.0e9)\n\n"
 
             fstring += "    # Apply equilibrium ratio and screening\n"
-            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor\n"
+            fstring += f"    log_r += {self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf\n"
+            if self.screening_pairs:
+                fstring += "    log_r += log_scor\n"
             if self.net_stoich != 0:
                 fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n\n"
             fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
 
         else:
             fstring += "    # Evaluate the equilibrium ratio and screening\n"
-            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf + log_scor"
+            fstring += f"    ratio = np.exp({self.ratio_factor} + {self.Q_kBGK} * tf.T9i + net_log_pf\n"
+            if self.screening_pairs:
+                fstring += "    + log_scor\n"
             if self.net_stoich != 0:
-                fstring += f" + {1.5 * self.net_stoich} * tf.lnT9"
+                fstring += f"    + {1.5 * self.net_stoich} * tf.lnT9"
             fstring += ")\n\n"
             fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
 

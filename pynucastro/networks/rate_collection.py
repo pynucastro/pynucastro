@@ -24,13 +24,14 @@ from scipy.linalg import eigvals
 # Import Rate
 from pynucastro.constants import constants
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import (ApproximateRate, BranchedRate, DerivedRate,
-                              Library, ModifiedRate, Rate, RateFileError,
-                              RatePair, ReacLibRate, StarLibRate,
-                              TabularWeakRate, TemperatureTabularRate,
-                              ThermoState, find_duplicate_rates,
-                              is_allowed_dupe, load_rate, make_ap_pg_rates,
-                              make_CO_approx_rates, need_state)
+from pynucastro.rates import (ApproximateRate, BetaLimitedRate, BranchedRate,
+                              DerivedRate, Library, ModifiedRate, Rate,
+                              RateFileError, RatePair, ReacLibRate,
+                              StarLibRate, TabularWeakRate,
+                              TemperatureTabularRate, ThermoState,
+                              find_duplicate_rates, is_allowed_dupe, load_rate,
+                              make_ap_pg_rates, make_CO_approx_rates,
+                              need_state)
 from pynucastro.rates.library import _rate_name_to_nuc, capitalize_id
 
 mpl.rcParams['figure.dpi'] = 100
@@ -178,18 +179,25 @@ class RateCollection:
         # Check whether this child rate is removed or not.  "removed"
         # means that this rate is never used on its own to connect two
         # nuclei in the network it is only used in one or more
-        # ApproximateRate, BranchedRate, or ModifiedRate
+        # ApproximateRate, BetaLimitedRate, BranchedRate, or
+        # ModifiedRate
         if cr not in self.rates:
             cr.removed = True
         else:
             cr.removed = False
 
-        # child rates may be ReacLibRates, StarLibRates,
-        # or DerivedRates.  Make sure we don't double
-        # count
+        # child rates may be ReacLibRate, StarLibRate,
+        # BetaLimitedRate, or DerivedRate.  Make sure we
+        # don't double count
         if isinstance(cr, DerivedRate):
             if cr not in self.derived_rates:
                 self.derived_rates.append(cr)
+        elif isinstance(cr, BetaLimitedRate):
+            if cr not in self.beta_limited_rates:
+                self.beta_limited_rates.append(cr)
+                # we also need to classify its hidden rates
+                for br in cr.get_child_rates():
+                    self._classify_hidden_rate(br)
         elif isinstance(cr, StarLibRate):
             if cr not in self.starlib_rates:
                 self.starlib_rates.append(cr)
@@ -253,6 +261,7 @@ class RateCollection:
         self.derived_rates = []
         self.modified_rates = []
         self.branched_rates = []
+        self.beta_limited_rates = []
 
         for r in self.rates:
             if isinstance(r, ApproximateRate):
@@ -271,6 +280,12 @@ class RateCollection:
                 for br in r.get_child_rates():
                     # TabularWeakRate is not tested with BranchedRate
                     assert not isinstance(br, TabularWeakRate)
+                    self._classify_hidden_rate(br)
+            elif isinstance(r, BetaLimitedRate):
+                if r not in self.beta_limited_rates:
+                    self.beta_limited_rates.append(r)
+                for br in r.get_child_rates():
+                    print(f"checking {br}")
                     self._classify_hidden_rate(br)
             elif isinstance(r, TabularWeakRate):
                 self.tabular_rates.append(r)
@@ -301,7 +316,7 @@ class RateCollection:
                           self.tabular_rates + self.starlib_rates +
                           self.temperature_tabular_rates + self.approx_rates +
                           self.modified_rates + self.branched_rates +
-                          self.derived_rates)
+                          self.beta_limited_rates + self.derived_rates)
 
         # finally check for duplicate rates -- these are not
         # allowed
@@ -471,17 +486,13 @@ class RateCollection:
         """
         hidden_rates = []
         for r in self.get_rates():
-            if isinstance(r, ApproximateRate):
+            if isinstance(r, (ApproximateRate, BetaLimitedRate, BranchedRate)):
                 for c in r.get_child_rates():
                     if c.removed:
                         hidden_rates.append(c)
             elif isinstance(r, ModifiedRate):
                 if r.original_rate.removed:
                     hidden_rates.append(r.original_rate)
-            elif isinstance(r, BranchedRate):
-                for br in r.get_child_rates():
-                    if br.removed:
-                        hidden_rates.append(br)
         return set(hidden_rates)
 
     def get_rate(self, fname):
@@ -1126,6 +1137,7 @@ class RateCollection:
         print(f"  starlib rates: {len(self.starlib_rates)}")
         print(f"  temperature tabular rates: {len(self.temperature_tabular_rates)}")
         print(f"  weak tabular rates: {len(self.tabular_rates)}")
+        print(f"  beta-limited rates: {len(self.beta_limited_rates)}")
         print(f"  approximate rates: {len(self.approx_rates)}")
         print(f"  derived rates: {len(self.derived_rates)}")
         print(f"  branched rates: {len(self.branched_rates)}")
@@ -1134,7 +1146,7 @@ class RateCollection:
 
     @need_state
     def evaluate_rates(self, state, *,
-                       screen_func=None):
+                       screen_func=None, rate_filter=None):
         """Evaluate the rates for a specific density, temperature, and
         composition, with optional screening.  Note: this returns that
         rate as dY/dt, where Y is the molar fraction.  For a 2 body
@@ -1157,6 +1169,9 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        rate_filter : Callable
+            a function that takes a :py:class:`Rate <pynucastro.rates.rate.Rate>`
+            and returns `True` or `False` if it is to be evaluated.
 
         Returns
         -------
@@ -1169,8 +1184,9 @@ class RateCollection:
         y_e = state.ye
 
         for r in self.rates:
-            rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
-                                        y_molar=ys, y_e=y_e)
+            if rate_filter is None or rate_filter(r):
+                rvals[r] = r.eval_full_rate(state, screen_func=screen_func,
+                                            y_molar=ys, y_e=y_e)
 
         return rvals
 
@@ -1522,7 +1538,8 @@ class RateCollection:
 
         """
 
-        rvals = self.evaluate_rates(state, screen_func=screen_func)
+        rvals = self.evaluate_rates(state, screen_func=screen_func, rate_filter=rate_filter)
+
         ydots = {}
 
         for nuc in self.unique_nuclei:
@@ -1547,6 +1564,35 @@ class RateCollection:
             ydots[nuc] = sum(produced) - sum(consumed)
 
         return ydots
+
+    @need_state
+    def evaluate_neutrino_energy_loss(self, state):
+        """Evaluate the energy loss from neutrinos for a specific density,
+        temperature and composition
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate ydots. It knows about (rho, T, composition).
+
+        Returns
+        -------
+        enu : float
+            the neutrino loss rate from weak reactions
+
+        """
+
+        enu = 0.0
+        for r in self.rates:
+            if isinstance(r, TabularWeakRate):
+                # get composition
+                ys = state.get_molar()
+
+                # need to get reactant nucleus
+                nuc = r.reactants[0]
+                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        return enu
 
     @need_state
     def evaluate_energy_generation(self, state, *,
@@ -1588,15 +1634,7 @@ class RateCollection:
         enuc *= -1*constants.N_A
 
         # subtract neutrino losses for tabular weak reactions
-        enu = 0.0
-        for r in self.rates:
-            if isinstance(r, TabularWeakRate):
-                # get composition
-                ys = state.get_molar()
-
-                # need to get reactant nucleus
-                nuc = r.reactants[0]
-                enu += constants.N_A * ys[nuc] * r.get_nu_loss(state)
+        enu = self.evaluate_neutrino_energy_loss(state)
 
         enuc -= enu
         if return_enu:
@@ -2302,7 +2340,8 @@ class RateCollection:
             else:
                 # show hidden nuclei only if they react with themselves
                 for r in self.rates:
-                    if not isinstance(r, (ApproximateRate, BranchedRate, ModifiedRate)) and r.reactant_count(n) > 1:
+                    if not isinstance(r, (ApproximateRate, BetaLimitedRate,
+                                          BranchedRate, ModifiedRate)) and r.reactant_count(n) > 1:
                         node_nuclei.append(n)
                         colors.append(get_node_color(n))
                         break

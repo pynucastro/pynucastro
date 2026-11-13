@@ -71,6 +71,10 @@ def get_nuclei(model):
                 continue
             nuclei.append(nuc)
 
+    # sometimes MESA uses "neut" for neutrons
+    if "neut" in model.bulk_names:
+        nuclei.append(Nucleus("neut"))
+
     return nuclei
 
 
@@ -100,10 +104,21 @@ def get_zone_data(model, i, *, nuclei=None):
     if nuclei is None:
         nuclei = get_nuclei(model)
 
-    r = 10.0**model.bulk_data[i]["logR"] * R_sun
+    try:
+        r = 10.0**model.bulk_data[i]["logR"] * R_sun
+    except ValueError:
+        r = model.bulk_data[i]["radius_cm"]
     m = model.bulk_data[i]["mass"] * M_sun
-    rho = 10.0**model.bulk_data[i]["logRho"]
-    T = 10.0**model.bulk_data[i]["logT"]
+
+    try:
+        rho = 10.0**model.bulk_data[i]["logRho"]
+    except ValueError:
+        rho = model.bulk_data[i]["density"]
+
+    try:
+        T = 10.0**model.bulk_data[i]["logT"]
+    except ValueError:
+        T = model.bulk_data[i]["temperature"]
     comp = Composition(nuclei)
     for n in nuclei:
         # sometimes the species data is in terms of log

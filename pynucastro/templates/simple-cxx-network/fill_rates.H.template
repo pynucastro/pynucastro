@@ -1,0 +1,52 @@
+#ifndef FILL_RATES_H
+#define FILL_RATES_H
+
+#include <amrex_bridge.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+
+namespace rate_util {
+
+    using namespace Rates;
+    using namespace Species;
+
+    template <typename T>
+    inline
+    void
+    fill_rates([[maybe_unused]] const tf_t& tfactors,
+               [[maybe_unused]] const Real temp,
+               [[maybe_unused]] const Real rho,
+               [[maybe_unused]] const Real rhoy,
+               [[maybe_unused]] const Array1D<Real, 1, NumSpec>& Y,
+               [[maybe_unused]] T& rate_eval)
+    {
+
+        [[maybe_unused]] Real rate{};
+        [[maybe_unused]] Real drate_dT{};
+
+        [[maybe_unused]] const Real log_temp = std::log10(temp);
+        [[maybe_unused]] const Real log_rhoy = std::log10(rhoy);
+
+        rate_eval.enuc_weak = 0.0_rt;
+
+        if constexpr (std::is_same_v<T, rate_derivs_t>) {
+            for (int n = 1; n <= NumSpec; ++n) {
+                rate_eval.dweak_ydot_dYe(n) = 0.0_rt;
+                rate_eval.denuc_weak_dY(n) = 0.0_rt;
+            }
+            rate_eval.denuc_weak_dT = 0.0_rt;
+            rate_eval.denuc_weak_dYe = 0.0_rt;
+
+        }
+
+        // rates are filled in a topologically-sorted order
+
+        <fill_all_rates>(2)
+
+    }
+
+}
+
+#endif

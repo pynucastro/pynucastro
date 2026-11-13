@@ -8,7 +8,8 @@ from pytest import approx
 
 from pynucastro import Composition, Rate, rates
 from pynucastro.nucdata import Nucleus
-from pynucastro.rates import BaryonConservationError, ModifiedRate
+from pynucastro.rates import (BaryonConservationError, ModifiedRate,
+                              ReacLibRate, SingleSet)
 from pynucastro.rates.alternate_rates import IliadisO16pgF17
 from pynucastro.screening.screen import chugunov_2007
 
@@ -186,9 +187,6 @@ class TestRate:
     def test_prefactor(self, srates):
         assert srates["ch4"].prefactor == 1.0
         assert srates["ch8"].prefactor == approx(0.16666666)
-
-    def test_rate_exponent(self, srates):
-        assert srates["ch8"].get_rate_exponent(1.e8) == approx(40.9106396)
 
     def test_eval(self, srates):
         assert srates["ch8"].eval(1.e8) == approx(2.0403192412842946e-24, rel=1.e-6, abs=1.e-40)
@@ -465,3 +463,17 @@ class TestModifiedRate:
 
         assert (r2.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007) ==
                 rate.eval(2e9, rho=1e8, comp=comp, screen_func=chugunov_2007))
+
+
+class TestReacLibCompare:
+
+    def test_eq_operator(self):
+
+        a = SingleSet([0.] * 7, "test  ")
+        b = SingleSet([1.] + [0.] * 6, "test  ")
+        left = ReacLibRate(reactants=["c12"], products=["he4", "he4", "he4"], sets=[a, a])
+        right = ReacLibRate(reactants=["c12"], products=["he4", "he4", "he4"], sets=[a, b])
+
+        # these Rates should test as different regardless of the ordering
+        assert left != right
+        assert right != left

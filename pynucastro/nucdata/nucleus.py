@@ -324,6 +324,8 @@ class Nucleus:
         return self.raw
 
     def __hash__(self):
+        # Nuclei also compare equal to (Z, A) tuples.  Including el or nse
+        # here would violate the equal-objects-have-equal-hashes contract.
         return hash((self.Z, self.A))
 
     def c(self):

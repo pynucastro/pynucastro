@@ -203,45 +203,5 @@ namespace derived_rates {
     }
 
 
-    template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        [[maybe_unused]] amrex::Real rate;
-        [[maybe_unused]] amrex::Real drate_dT;
-
-        part_fun::pf_cache_t pf_cache{};
-
-        pf_cache.index_temp_array_1 = interp_net::find_index(tfactors.T9, part_fun::temp_array_1);
-
-        {
-            // Ni56_to_He4_Fe52_derived
-            rate_Ni56_to_He4_Fe52_derived(rate_eval, tfactors, pf_cache);
-        }
-
-        {
-            // Ni56_to_p_Co55_derived
-            rate_Ni56_to_p_Co55_derived(rate_eval, tfactors, pf_cache);
-        }
-
-        {
-            // Co55_p_to_He4_Fe52_derived
-            amrex::Real log_scor {0.0_rt};
-            amrex::Real dlog_scor_dT {0.0_rt};
-#ifdef SCREENING
-            log_scor = rate_eval.log_screen(k_p_Co55);
-            if constexpr (std::is_same_v<T, rate_derivs_t>) {
-                dlog_scor_dT = rate_eval.dlog_screen_dT(k_p_Co55);
-            }
-#endif
-            rate_Co55_p_to_He4_Fe52_derived(rate_eval, tfactors, log_scor, dlog_scor_dT, pf_cache);
-        }
-
-
-    }
-
 }
 #endif

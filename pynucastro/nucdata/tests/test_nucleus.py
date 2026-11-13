@@ -60,6 +60,18 @@ class TestNucleus:
         assert self.ni56.c() == "Ni56"
         assert self.ni56.pretty == "{}^{56}\\mathrm{Ni}"
 
+    def test_hash(self):
+        """Aliases and (Z, A) tuples must retrieve the same dictionary key."""
+        assert hash(self.p) == hash(self.h1) == hash((1, 1))
+        assert {self.p: "proton"}[self.h1] == "proton"
+        assert {self.p: "proton"}[(1, 1)] == "proton"
+        assert {(1, 1): "proton"}[self.p] == "proton"
+        nse_p = Nucleus("p_nse")
+        assert nse_p != self.p
+        assert nse_p == (1, 1)
+        assert hash(nse_p) == hash((1, 1))
+        assert len({self.p, nse_p}) == 2
+
     def test_binding(self):
         assert self.ni56.nucbind == approx(8.642779)
 
