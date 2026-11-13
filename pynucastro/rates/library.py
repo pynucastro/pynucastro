@@ -54,7 +54,7 @@ def _rate_name_to_nuc(name):
                 # electrons, neutrinos, gammas, and nothing
                 continue
 
-            # Consider combinations of single letter light isotope group
+            # Consider combinations of single letter light isotope
             for l in nuc.lower():
                 try:
                     reactants.append(Nucleus(l))
@@ -74,7 +74,7 @@ def _rate_name_to_nuc(name):
                 # first electrons and neutrinos, gammas, and nothing
                 continue
 
-            # Consider combinations of single letter light isotope group
+            # Consider combinations of single letter light isotope
             for l in nuc.lower():
                 try:
                     products.append(Nucleus(l))
