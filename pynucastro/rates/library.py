@@ -58,8 +58,8 @@ def _rate_name_to_nuc(name):
             for l in nuc.lower():
                 try:
                     reactants.append(Nucleus(l))
-                except (ValueError, AssertionError):
-                    raise ValueError(f"Couldn't deal with {nuc}")
+                except (ValueError, AssertionError) as exc:
+                    raise ValueError(f"Couldn't deal with {nuc}") from exc
 
     products = []
     for nuc in _p:
@@ -78,8 +78,8 @@ def _rate_name_to_nuc(name):
             for l in nuc.lower():
                 try:
                     products.append(Nucleus(l))
-                except (ValueError, AssertionError):
-                    raise ValueError(f"Couldn't deal with {nuc}")
+                except (ValueError, AssertionError) as exc:
+                    raise ValueError(f"Couldn't deal with {nuc}") from exc
 
     return reactants, products
 
