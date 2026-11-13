@@ -9,7 +9,7 @@ concurrency:
 jobs:
   CUDA-compilation:
     name: CUDA@12.9 GCC
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
