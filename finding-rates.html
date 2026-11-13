@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Finding Available Rates &#8212; pynucastro 3.2.0.post3+g8d7dc1e4e documentation</title>
+    <title>Finding Available Rates &#8212; pynucastro 3.2.0.post5+ged6e04e65 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=596106f4"></script>
+    <script src="_static/documentation_options.js?v=a5e07f89"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -786,12 +786,12 @@ Ni56 ⟶ n + Ni55          ths8        ReacLibRate
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">net</span> <span class="o">=</span> <span class="n">pyna</span><span class="o">.</span><span class="n">RateCollection</span><span class="p">(</span><span class="n">libraries</span><span class="o">=</span><span class="p">[</span><span class="n">new_lib</span><span class="p">])</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:175,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:175,</span> in <span class="ni">RateCollection.__init__</span><span class="nt">(self, rate_files, libraries, rates, inert_nuclei, do_screening, verbose)</span>
 <span class="g g-Whitespace">    </span><span class="mi">171</span>         <span class="n">combined_library</span> <span class="o">+=</span> <span class="n">lib</span>
 <span class="g g-Whitespace">    </span><span class="mi">173</span> <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="n">combined_library</span><span class="o">.</span><span class="n">get_rates</span><span class="p">(</span><span class="n">as_copies</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">175</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_collection</span><span class="p">()</span>
 
-<span class="nn">File /opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:325,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
+<span class="nn">File /opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/networks/rate_collection.py:325,</span> in <span class="ni">RateCollection._build_collection</span><span class="nt">(self)</span>
 <span class="g g-Whitespace">    </span><span class="mi">323</span> <span class="k">if</span> <span class="n">dupes</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_duplicate_links</span><span class="p">():</span>
 <span class="g g-Whitespace">    </span><span class="mi">324</span>     <span class="nb">print</span><span class="p">(</span><span class="n">dupes</span><span class="p">)</span>
 <span class="ne">--&gt; </span><span class="mi">325</span>     <span class="k">raise</span> <span class="n">RateDuplicationError</span><span class="p">(</span><span class="s2">"Duplicate rates found"</span><span class="p">)</span>
@@ -951,36 +951,28 @@ C12 + C12 ⟶ n + Mg23           [Q =  -2.60 MeV] (C12 + C12 --&gt; n + Mg23 &lt
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>O16
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ne20
+Ne20
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mg24
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Si28
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>S32
+S32
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ar36
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ca40
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ti44
+Ti44
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Cr48
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fe52
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Ni56
+Ni56
 </pre></div>
 </div>
 </div>

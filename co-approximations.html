@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Approximating C and O Burning &#8212; pynucastro 3.2.0.post3+g8d7dc1e4e documentation</title>
+    <title>Approximating C and O Burning &#8212; pynucastro 3.2.0.post5+ged6e04e65 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=596106f4"></script>
+    <script src="_static/documentation_options.js?v=a5e07f89"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -640,20 +640,17 @@ These are:</p>
 \[\begin{split}{}^{12}\mathrm{C} + {}^{12}\mathrm{C} \rightarrow \begin{cases}
        {}^{20}\mathrm{Ne} + \alpha \\
        {}^{23}\mathrm{Na} + p \\
-       {}^{23}\mathrm{Mg} + n \end{cases}
-\end{split}\]</div>
+       {}^{23}\mathrm{Mg} + n \end{cases}\end{split}\]</div>
 <div class="math notranslate nohighlight">
 \[\begin{split}{}^{12}\mathrm{C} + {}^{16}\mathrm{O} \rightarrow \begin{cases}
        {}^{24}\mathrm{Mg} + \alpha \\
        {}^{27}\mathrm{Al} + p \\
-       {}^{27}\mathrm{Si} + n \end{cases}
-\end{split}\]</div>
+       {}^{27}\mathrm{Si} + n \end{cases}\end{split}\]</div>
 <div class="math notranslate nohighlight">
 \[\begin{split}{}^{16}\mathrm{O} + {}^{16}\mathrm{O} \rightarrow \begin{cases}
        {}^{28}\mathrm{Si} + \alpha \\
        {}^{31}\mathrm{P} + p \\
-       {}^{31}\mathrm{S} + n \end{cases}
-\end{split}\]</div>
+       {}^{31}\mathrm{S} + n \end{cases}\end{split}\]</div>
 <p>in the first two of these sequences, the rate that produces a neutron is endothermic, and these rates are usually not considered.  For O-burning, the rate that produces a neutron has a branching probability of 5%, and is often
 neglected as well.</p>
 <p>In the “aprox”-family of networks, it is common to approximate these by removing the intermediate nucleus in the proton emission case.</p>
@@ -813,7 +810,7 @@ the C / O burning approximations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
@@ -826,7 +823,7 @@ the C / O burning approximations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:539: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:539: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>
@@ -953,7 +950,7 @@ the C / O burning approximations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/rates/derived_rate.py:129: UserWarning: C12 partition function is not supported by tables: set log_pf = 0.0 by default
   warnings.warn(UserWarning(f'{nuc} partition function is not supported by tables: set log_pf = 0.0 by default'))
 </pre></div>
 </div>
@@ -966,7 +963,7 @@ the C / O burning approximations.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.9/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:539: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.14.10/x64/lib/python3.14/site-packages/pynucastro/networks/python_network.py:539: UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.
   ax.set_xlim(tmin, tmax)
 </pre></div>
 </div>

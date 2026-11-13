@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>NSE vs. Direct Integration &#8212; pynucastro 3.2.0.post3+g8d7dc1e4e documentation</title>
+    <title>NSE vs. Direct Integration &#8212; pynucastro 3.2.0.post5+ged6e04e65 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=596106f4"></script>
+    <script src="_static/documentation_options.js?v=a5e07f89"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -654,29 +654,21 @@ To understand this, we need to revisit the assumptions made when deriving the NS
 <li><p>Assumed that only strong-mediated nuclear reactions take place such that the <span class="math notranslate nohighlight">\(Y_e\)</span> remains unchanged, i.e.</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[
-   \sum_i \frac{Z_i X_i}{A_i} - Y_e =0
-\]</div>
+\[   \sum_i \frac{Z_i X_i}{A_i} - Y_e =0\]</div>
 <ol class="arabic simple" start="2">
 <li><p>Assumed that the mass fraction of any species is characterized by Boltzmann gas, see <a class="reference internal" href="derived-rates.html#gas-model"><span class="std std-ref">Semi-relativistic ideal gas model</span></a>, such that</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[
-X_i = \frac{m_i}{\rho}G_i \left(\frac{m_i k_B T}{2\pi\hbar^2}\right)^{3/2} \exp{\left(\frac{\mu_i - m_i c^2 - \mu^C_i}{k_B T}\right)}
-\]</div>
+\[X_i = \frac{m_i}{\rho}G_i \left(\frac{m_i k_B T}{2\pi\hbar^2}\right)^{3/2} \exp{\left(\frac{\mu_i - m_i c^2 - \mu^C_i}{k_B T}\right)}\]</div>
 <ol class="arabic simple" start="3">
 <li><p>Assumed that the chemical potential of any species in the network can be represented as a linear combination of chemical potential of any 2 species. The NSE condition specifically chooses to work in the basis of proton and neutron, but any two can work. See Appendix B in <span class="bibtex-citation" id="id1">Lippuner and Roberts [<a class="reference internal" href="zreferences.html#id40" title="Jonas Lippuner and Luke F. Roberts. SkyNet: A Modular Nuclear Reaction Network Library. \apjs , 233(2):18, December 2017. arXiv:1706.06198, doi:10.3847/1538-4365/aa94cb.">2017</a>]</span> for reference.</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[
-\mu_i = Z_i \mu_p + N_i \mu_n
-\]</div>
+\[\mu_i = Z_i \mu_p + N_i \mu_n\]</div>
 <p>To resolve the assumptions made above consider the following:</p>
 <p>To address assumption #1, consider a reaction network that includes a set of weak reaction rates, such that the electron fraction, <span class="math notranslate nohighlight">\(Y_e\)</span>, evolves according to</p>
 <div class="math notranslate nohighlight">
-\[
-\dot{Y}_e = \sum_i Z_i \dot{Y}_i^{\mathrm{weak}}
-\]</div>
+\[\dot{Y}_e = \sum_i Z_i \dot{Y}_i^{\mathrm{weak}}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\dot{Y}_i^{\mathrm{weak}}\)</span> is the rate of change of the molar fraction of the <span class="math notranslate nohighlight">\(i\)</span>-th species due to weak rates. If the timescale for strong reactions to reach equilibrium is much shorter than the timescale for weak reactions, then the composition can still be treated as being in equilibrium with respect to the strong rates. In this case, the equilibrium composition is still well-defined as long as the electron fraction, <span class="math notranslate nohighlight">\(Y_e\)</span>, is evolved over time based on the weak rate contributions.</p>
 <p>To address assumption #2, the reaction network must be consistent with the same Boltzmann-gas form of the mass fractions described in Eq. 2. This requires that every strong reaction is paired with its inverse reaction. One of the two rates, either forward or reverse, must
 then be derived from the other using detailed balance. This is implemented by using <a class="reference internal" href="pynucastro.rates.derived_rate.html#pynucastro.rates.derived_rate.DerivedRate" title="pynucastro.rates.derived_rate.DerivedRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DerivedRate</span></code></a>, see <a class="reference internal" href="derived-rates.html#derived-rate"><span class="std std-ref">Derived rate definition</span></a>.</p>
@@ -692,9 +684,7 @@ the rate equation assumed when deriving the <code class="docutils literal notran
 For the equilibrium state to be consistent with NSE, the dimension of <span class="math notranslate nohighlight">\(\mu^{\mathrm{eq}}\)</span> must not be greater than the maximum independent equilibrium chemical potentials, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM}\)</span>. In general, <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} = 2\)</span> as there are two possible NSE constraints.
 If all species in the network have the same <span class="math notranslate nohighlight">\(Z/A\)</span> ratio, such as the <span class="math notranslate nohighlight">\(\alpha\)</span>-chain network, the <span class="math notranslate nohighlight">\(Y_e\)</span> constraint becomes redundant and <span class="math notranslate nohighlight">\(\mathrm{MAX\_DIM} \rightarrow 1\)</span>. The mathematical equivalent statement is to require</p>
 <div class="math notranslate nohighlight">
-\[
- \mathrm{nullity}(S) \leq \mathrm{MAX\_DIM}
-\]</div>
+\[ \mathrm{nullity}(S) \leq \mathrm{MAX\_DIM}\]</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>In pynucastro, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection" title="pynucastro.networks.rate_collection.RateCollection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RateCollection</span></code></a> provides a convenient method, <a class="reference internal" href="pynucastro.networks.rate_collection.html#pynucastro.networks.rate_collection.RateCollection.is_NSE_compatible" title="pynucastro.networks.rate_collection.RateCollection.is_NSE_compatible"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_NSE_compatible</span></code></a>, that checks all the above assumptions and pre-determines whether a network will be compatible with NSE.</p>
@@ -875,7 +865,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/de148f1a26ed7c85bb25830d3bf2d3e6a1765ce3cd3d46af4acc077e4527654c.png" src="_images/de148f1a26ed7c85bb25830d3bf2d3e6a1765ce3cd3d46af4acc077e4527654c.png" />
+<img alt="_images/c7377d8913e32e9386d49ad142981a79cfbdb6c2b88440dc5cd4b443f4b1148f.png" src="_images/c7377d8913e32e9386d49ad142981a79cfbdb6c2b88440dc5cd4b443f4b1148f.png" />
 </div>
 </div>
 </section>
@@ -943,7 +933,7 @@ Since we will compare to NSE, we want to use the same screening that NSE uses �
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e8bb73d97672e0199cf6981eb93f970a83d7f9ad84eddd9710f312e0ea2b0f60.png" src="_images/e8bb73d97672e0199cf6981eb93f970a83d7f9ad84eddd9710f312e0ea2b0f60.png" />
+<img alt="_images/8d7ca6858c80d5ef73f750a8ce1820cc88ca03a1b39148bd9e1dee0fbe84eaec.png" src="_images/8d7ca6858c80d5ef73f750a8ce1820cc88ca03a1b39148bd9e1dee0fbe84eaec.png" />
 </div>
 </div>
 <p>We see that the plot of absolute and relative difference shows that the mass fraction obtained from direct integration matches with NSE equations to machine precision just as <code class="docutils literal notranslate"><span class="pre">is_NSE_compatible()</span></code> predicted. The differences between the two are largely set by the tolerances of both the NSE solver and the ODE integrator.</p>
@@ -978,7 +968,7 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a73eb89435b5af9d32f772612b5464b0236b0f74f50457d5c89cf7977f8cf1a4.png" src="_images/a73eb89435b5af9d32f772612b5464b0236b0f74f50457d5c89cf7977f8cf1a4.png" />
+<img alt="_images/3eceb62689df6bf04d1978cb54f6f1af5e893bdcbd66e18dfc08eaeb25da7afb.png" src="_images/3eceb62689df6bf04d1978cb54f6f1af5e893bdcbd66e18dfc08eaeb25da7afb.png" />
 </div>
 </div>
 <p>Here we see that the normalized net rates are all &lt; <span class="math notranslate nohighlight">\(10^{-12}\)</span>, so we are effectively seeing the integration tolerance, and are very close to machine precision.</p>
@@ -988,13 +978,9 @@ by the total activity of the rate (forward + reverse) by doing <code class="docu
 <p>We previously demonstrated a potentially useful 19-nuclei network for Helium burning, where the network is intrinsically compatible with NSE. Now the question is what are some examples that are not compatible with NSE?</p>
 <p>Let’s consider expanding the network with more iron-group species by adding two rate pairs</p>
 <div class="math notranslate nohighlight">
-\[
-{}^{52}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{53}\mathrm{Fe}
-\]</div>
+\[{}^{52}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{53}\mathrm{Fe}\]</div>
 <div class="math notranslate nohighlight">
-\[
- {}^{53}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{54}\mathrm{Fe}
-\]</div>
+\[ {}^{53}\mathrm{Fe} + \mathrm{n} \rightleftharpoons {}^{54}\mathrm{Fe}\]</div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fe52n_fe53</span> <span class="o">=</span> <span class="n">rl</span><span class="o">.</span><span class="n">get_rate_by_name</span><span class="p">(</span><span class="s2">"fe52(n,g)fe53"</span><span class="p">)</span>
@@ -1041,7 +1027,7 @@ But let’s verify it by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a97831f7e39d6833a50082f119f406740972cda45b0d2dfdb6921d1875890d19.png" src="_images/a97831f7e39d6833a50082f119f406740972cda45b0d2dfdb6921d1875890d19.png" />
+<img alt="_images/a00acae2c33076c3c5bcabfe257fe3b9d4f70e8f6235921b3b3de22f1f366bf5.png" src="_images/a00acae2c33076c3c5bcabfe257fe3b9d4f70e8f6235921b3b3de22f1f366bf5.png" />
 <img alt="_images/b543456754974a572c6e52e956ee445267dda00ef4d594e788991eca91cea811.png" src="_images/b543456754974a572c6e52e956ee445267dda00ef4d594e788991eca91cea811.png" />
 </div>
 </div>
@@ -1049,9 +1035,7 @@ But let’s verify it by integrating the network.</p>
 suggesting the isotopes are not sufficiently connected. To resolve this issue, we need additional rates to provide connections
 from the newly added <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span> to <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>. Let’s consider adding,</p>
 <div class="math notranslate nohighlight">
-\[
-{}^{54}\mathrm{Fe} + \mathrm{p} \rightleftharpoons {}^{55}\mathrm{Co}
-\]</div>
+\[{}^{54}\mathrm{Fe} + \mathrm{p} \rightleftharpoons {}^{55}\mathrm{Co}\]</div>
 <p>This rate completes the loop between <span class="math notranslate nohighlight">\({}^{52}\mathrm{Fe}\)</span>, <span class="math notranslate nohighlight">\({}^{53}\mathrm{Fe}\)</span>, <span class="math notranslate nohighlight">\({}^{54}\mathrm{Fe}\)</span>, and <span class="math notranslate nohighlight">\({}^{55}\mathrm{Co}\)</span>,
 allowing for the exchange of <span class="math notranslate nohighlight">\({}^{4}\mathrm{He}\)</span> to 2 protons and 2 neutrons</p>
 <div class="cell docutils container">
@@ -1126,8 +1110,8 @@ Let’s verify its prediction by integrating the network.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/34c1edb2771dbb8a1f2fc4535ab31ac119ff7e296bd4e743ac1acd62f568deec.png" src="_images/34c1edb2771dbb8a1f2fc4535ab31ac119ff7e296bd4e743ac1acd62f568deec.png" />
-<img alt="_images/ba89832bd4794284eaf51270514be0ce96aaeb7fe012e9a441de45900e96ab96.png" src="_images/ba89832bd4794284eaf51270514be0ce96aaeb7fe012e9a441de45900e96ab96.png" />
+<img alt="_images/6a0c09732fb75233ad00f70ed75951c58091ab5b0283f88a3d427110cf429326.png" src="_images/6a0c09732fb75233ad00f70ed75951c58091ab5b0283f88a3d427110cf429326.png" />
+<img alt="_images/62845a629488a1d93b9177b3405e7dc039da75b2a5ae6a5b2f38a10ba1dd5ad8.png" src="_images/62845a629488a1d93b9177b3405e7dc039da75b2a5ae6a5b2f38a10ba1dd5ad8.png" />
 </div>
 </div>
 <p>The error plot above shows that NSE and integration agrees to machine-precision once again.</p>
