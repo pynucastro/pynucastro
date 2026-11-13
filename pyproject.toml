@@ -48,6 +48,7 @@ namespaces = false
 # additional files to include when building a wheel
 pynucastro = [
   "data/*",
+  "data/rauscher_fits/*",
   "data/tabular/*",
   "data/tabular/suzuki/*",
   "data/tabular/langanke/*",
