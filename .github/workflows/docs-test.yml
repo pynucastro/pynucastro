@@ -1,5 +1,6 @@
 name: docs build
 
+# only run if something in the docs/ directory changed
 on:
   pull_request:
     branches:
