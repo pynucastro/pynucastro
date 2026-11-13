@@ -602,7 +602,8 @@ class TabularWeakRate(Rate):
 
     @need_state
     def eval_jacobian_term(self, state, y_i, *,
-                           screen_func=None):
+                           screen_func=None,
+                           include_screening_comp_derivs=True):
         """Evaluate ∂flux/∂(y_i), the derivative of the rate with
         respect to ``y_i``.  This flux term has the full composition
         dependence, i.e., for a decay rate:
@@ -625,6 +626,9 @@ class TabularWeakRate(Rate):
         screen_func : Callable
             Screening doesn't apply for electron-capture / decay rates, but
             we include the argument here to ensure the interface is standard.
+        include_screening_comp_derivs : bool
+            do we include the derivatives of the screening factor with respect
+            to composition (via the plasma state).
 
         Returns
         -------
@@ -633,7 +637,8 @@ class TabularWeakRate(Rate):
         """
 
         explicit_term = super().eval_jacobian_term(state, y_i,
-                                                   screen_func=screen_func)
+                                                   screen_func=screen_func,
+                                                   include_screening_comp_derivs=include_screening_comp_derivs)
 
         parent = self.reactants[0]
         Yp = state.comp[parent] / parent.A

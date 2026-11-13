@@ -15,3 +15,4 @@ the effective Fe52(nn, gamma)Fe54 rate contributes a term using
    :members:
    :undoc-members:
    :show-inheritance:
+   :private-members: _jacnuc_screening

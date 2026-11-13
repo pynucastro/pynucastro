@@ -76,6 +76,7 @@ def _plasma_state_from_moments(temp, dens, ytot, ye, s2):
 
     # temperature-independent part of Gamma_e, from Chugunov 2009 eq. 6
     gamma_e_fac = constants.q_e**2 / constants.k * dual.cbrt(4 * np.pi / 3) * dual.cbrt(n_e)
+
     return _PlasmaStateData(temp, dens, qlam0z, taufac, aa, zbar, z2bar, n_e, gamma_e_fac)
 
 
