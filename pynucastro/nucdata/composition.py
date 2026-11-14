@@ -418,7 +418,8 @@ class Composition(collections.UserDict):
         Returns
         -------
         new_composition : Composition
-            The new binned composition
+            The new binned composition preserving the order
+            given in `nuclei`
         """
 
         nuclei = Nucleus.cast_list(nuclei)
