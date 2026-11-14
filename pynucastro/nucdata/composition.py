@@ -95,6 +95,12 @@ class Composition(collections.UserDict):
             super().__init__({Nucleus.cast(k): small for k in nuclei})
         except TypeError:
             raise ValueError("must supply an iterable of Nucleus objects or strings") from None
+        if isinstance(nuclei, dict):
+            self.set_dict(nuclei)
+            if init is not None:
+                warnings.warn(f"nuclei mass fractions are being overwritten by init method {init}",
+                      UserWarning,
+                      stacklevel=2)
 
         if init == "uniform":
             self.set_equal()
@@ -233,7 +239,7 @@ class Composition(collections.UserDict):
 
     def set_array(self, arr):
         """Set the mass fractions of all species to the values
-        in arr, `get_nuclei()`
+        in arr, ordered the same as `get_nuclei()`
 
         .. deprecated:: 3.1 ``set_array`` has been deprecated.  Use
            ``set_nuc`` instead.  ``set_array`` will be
@@ -246,15 +252,30 @@ class Composition(collections.UserDict):
 
         """
 
-        warnings.warn("set_array is deprecated, use set_nuc instead",
+        warnings.warn("set_array is deprecated, use set_nuc or set_dict instead",
                       DeprecationWarning,
                       stacklevel=2)
 
         self._set_array(arr)
 
+    def set_dict(self, d):
+        """Set the mass fractions of all species to the values
+        in dictionary d, with associated keys marking the
+        nuclei of type Nucleus or string
+
+        Parameters
+        ----------
+        d : dict
+            keys : Nucleus, str
+            values : input values of mass fractions
+        """
+
+        for nuc, xval in d.items():
+            self.set_nuc(Nucleus.cast(nuc), xval)
+
     def set_molar_array(self, arr):
         """Set the molar fractions of all species to the values
-        in arr, `get_nuclei()`
+        in arr, ordered the same as `get_nuclei()`
 
         Parameters
         ----------
@@ -263,10 +284,29 @@ class Composition(collections.UserDict):
 
         """
 
+        # deprecate at will. Function is unsafe, as we have
+        # no guarantee that the input array uses the same
+        # ordering as the internal array.
+
         As = np.array([n.A for n in self])
 
         for i, k in enumerate(self):
             self[k] = float(arr[i] * As[i])
+
+    def set_molar_dict(self, d):
+        """Set the molar fractions of all species to the values
+        in dictionary d, with associated keys marking the
+        nuclei of type Nucleus or string
+
+        Parameters
+        ----------
+        d : dict
+            keys : Nucleus, str
+            values : input values of mass fractions
+        """
+
+        for nuc, yval in d.items():
+            self.set_molar(Nucleus.cast(nuc), yval)
 
     def set_all(self, xval: float):
         """Set all species to the same scalar value.
@@ -318,6 +358,17 @@ class Composition(collections.UserDict):
         xval: float
         """
         self[name] = xval
+
+    def set_molar(self, name, yval: float):
+        """Set nuclei name to the molar fraction yval.
+
+        Parameters
+        ----------
+        name : Nucleus
+            the nucleus to set
+        molar: float
+        """
+        self[name] = yval * Nucleus.cast(name).A
 
     def normalize(self, *, half_life_thresh=None):
         """Normalize the mass fractions to sum to 1.
