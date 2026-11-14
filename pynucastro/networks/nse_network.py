@@ -411,7 +411,10 @@ class NSENetwork(RateCollection):
             of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'d<B/A>/dt':^15} {'e_nu':^15} ")
 
             if nse_states[0].X:
-                for nuc, _ in nse_states[0].X.items():
+                # write composition columns in ascending A, then ascending Z
+                sorted_nuclei = nse_states[0].X.keys().sort(key=lambda n: (n.A, n.Z))
+
+                for nuc in sorted_nuclei:
                     _tmp = f"X({nuc})"
                     of.write(f"{_tmp:^15} ")
 
@@ -422,6 +425,7 @@ class NSENetwork(RateCollection):
                 of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dbeadt:15.8g} {entry.enu:15.8g} ")
 
                 if entry.X:
-                    for _, val in entry.X.items():
+                    for nuc in sorted_nuclei:
+                        val = entry.X[nuc]
                         of.write(f"{val:15.10g} ")
                 of.write("\n")
