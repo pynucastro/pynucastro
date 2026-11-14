@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>BranchedRate &#8212; pynucastro 3.2.0.post8+g067256df4 documentation</title>
+    <title>BranchedRate &#8212; pynucastro 3.2.0.post10+g277fcf8df documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ebae35f6"></script>
+    <script src="_static/documentation_options.js?v=3bb2fb38"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -898,12 +898,12 @@ def N14_p_p_to_He4_C12_beta_pos_branched(rate_eval):
     # N14 + p + p --&gt; He4 + C12
     # represents the sequence: N14(p,g)O15(,e+nu)N15(p,a)C12
 
-    r0 = rate_eval.N14_p_to_O15_reaclib
-    r_prim_br = rate_eval.N15_p_to_He4_C12_reaclib
-    r_other_br = rate_eval.N15_p_to_O16_reaclib
+    r0 = rate_eval.rates[RateIdx.N14_p_to_O15_reaclib]
+    r_prim_br = rate_eval.rates[RateIdx.N15_p_to_He4_C12_reaclib]
+    r_other_br = rate_eval.rates[RateIdx.N15_p_to_O16_reaclib]
 
     f = r_prim_br / (r_prim_br + r_other_br)
-    rate_eval.N14_p_p_to_He4_C12_beta_pos_branched = f * r0
+    rate_eval.rates[RateIdx.N14_p_p_to_He4_C12_beta_pos_branched] = f * r0
 </pre></div>
 </div>
 </div>
@@ -1091,32 +1091,32 @@ def ydot_eq(Y, rho, rate_eval):
     dYdt = np.zeros((nnuc), dtype=np.float64)
 
     dYdt[jp] = (
-          + -2*rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
-          + -2*rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
-          + -2*rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
-          + -2*rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+          + -2*rho*Y[jp]*Y[jc12]*rate_eval.rates[RateIdx.C12_p_p_to_N14_beta_pos_modified]  +
+          + -2*rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_He4_C12_beta_pos_branched]  +
+          + -2*rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_O16_beta_pos_branched]  +
+          + -2*rho*Y[jp]*Y[jo16]*rate_eval.rates[RateIdx.O16_p_p_to_N14_He4_beta_pos_modified]
        )
 
     dYdt[jhe4] = (
-          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
-          +rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+          +rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_He4_C12_beta_pos_branched]  +
+          +rho*Y[jp]*Y[jo16]*rate_eval.rates[RateIdx.O16_p_p_to_N14_He4_beta_pos_modified]
        )
 
     dYdt[jc12] = (
-          -rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
-          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched
+          -rho*Y[jp]*Y[jc12]*rate_eval.rates[RateIdx.C12_p_p_to_N14_beta_pos_modified]  +
+          +rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_He4_C12_beta_pos_branched]
        )
 
     dYdt[jn14] = (
-          +rho*Y[jp]*Y[jc12]*rate_eval.C12_p_p_to_N14_beta_pos_modified  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_He4_C12_beta_pos_branched  +
-          -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
-          +rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+          +rho*Y[jp]*Y[jc12]*rate_eval.rates[RateIdx.C12_p_p_to_N14_beta_pos_modified]  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_He4_C12_beta_pos_branched]  +
+          -rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_O16_beta_pos_branched]  +
+          +rho*Y[jp]*Y[jo16]*rate_eval.rates[RateIdx.O16_p_p_to_N14_He4_beta_pos_modified]
        )
 
     dYdt[jo16] = (
-          +rho*Y[jp]*Y[jn14]*rate_eval.N14_p_p_to_O16_beta_pos_branched  +
-          -rho*Y[jp]*Y[jo16]*rate_eval.O16_p_p_to_N14_He4_beta_pos_modified
+          +rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_p_to_O16_beta_pos_branched]  +
+          -rho*Y[jp]*Y[jo16]*rate_eval.rates[RateIdx.O16_p_p_to_N14_He4_beta_pos_modified]
        )
 
     return dYdt

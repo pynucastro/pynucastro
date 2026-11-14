@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>β-limited Rates &#8212; pynucastro 3.2.0.post8+g067256df4 documentation</title>
+    <title>β-limited Rates &#8212; pynucastro 3.2.0.post10+g277fcf8df documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=ebae35f6"></script>
+    <script src="_static/documentation_options.js?v=3bb2fb38"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -791,14 +791,14 @@ def N14_p_to_O15_betalimited(rate_eval, rho=None, Y=None):
     # N14 + p --&gt; O15
     # represents the beta-limiting: N14(p,g)O15 limited by O14(β+) and O15(β+)
 
-    r0 = rate_eval.N14_p_to_O15_reaclib
+    r0 = rate_eval.rates[RateIdx.N14_p_to_O15_reaclib]
     lambda_beta_tot = 0.0
-    lambda_beta_tot += 1.0 / rate_eval.O15_to_N15_beta_pos_reaclib
-    lambda_beta_tot += 1.0 / rate_eval.O14_to_N14_beta_pos_reaclib
+    lambda_beta_tot += 1.0 / rate_eval.rates[RateIdx.O15_to_N15_beta_pos_reaclib]
+    lambda_beta_tot += 1.0 / rate_eval.rates[RateIdx.O14_to_N14_beta_pos_reaclib]
     lambda_beta_tot = 1.0 / lambda_beta_tot
 
     limited_rate = min(r0, lambda_beta_tot / (rho * Y[jp]))
-    rate_eval.N14_p_to_O15_betalimited = limited_rate
+    rate_eval.rates[RateIdx.N14_p_to_O15_betalimited] = limited_rate
 </pre></div>
 </div>
 </div>
@@ -876,7 +876,7 @@ we’ll scale the decay rates by <span class="math notranslate nohighlight">\(\r
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x74fdbbd6a120&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x74fa769d2120&gt;
 </pre></div>
 </div>
 <img alt="_images/67d4c2e59ddabfaa9026e7004c64413d31ec342753e895c537fc2afc0ecc5b11.png" src="_images/67d4c2e59ddabfaa9026e7004c64413d31ec342753e895c537fc2afc0ecc5b11.png" />

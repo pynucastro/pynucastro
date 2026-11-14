@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.2.0.post8+g067256df4 documentation</title>
+    <title>pynucastro.rates.branched_rate &#8212; pynucastro 3.2.0.post10+g277fcf8df documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=ebae35f6"></script>
+    <script src="../../../_static/documentation_options.js?v=3bb2fb38"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -764,11 +764,11 @@
         <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rid</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
             <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    # represents the sequence: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r0 = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_prim_br = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_branch</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_other_br = rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">other_branch</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r0 = rate_eval.rates[RateIdx.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying_rate</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_prim_br = rate_eval.rates[RateIdx.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_branch</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    r_other_br = rate_eval.rates[RateIdx.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">other_branch</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">]</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="n">fstring</span> <span class="o">+=</span> <span class="s2">"    f = r_prim_br / (r_prim_br + r_other_br)</span><span class="se">\n</span><span class="s2">"</span>
-        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = f * r0</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="n">fstring</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"    rate_eval.rates[RateIdx.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">] = f * r0</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">fstring</span></div>
 
 

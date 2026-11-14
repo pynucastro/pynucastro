@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.2.0.post8+g067256df4 documentation</title>
+    <title>pynucastro.networks.network_compare &#8212; pynucastro 3.2.0.post10+g277fcf8df documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=ebae35f6"></script>
+    <script src="../../../_static/documentation_options.js?v=3bb2fb38"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -792,7 +792,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">jac_py_module</span><span class="p">[(</span><span class="n">inuc</span><span class="p">,</span> <span class="n">jnuc</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_jac</span><span class="p">[</span><span class="n">irow</span><span class="p">,</span> <span class="n">jcol</span><span class="p">]</span>
 
         <span class="n">rate_eval</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">do_rate_eval</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">screen_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_func</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rate_eval</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rates_py_module</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="n">rate_eval</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">cn</span><span class="o">.</span><span class="n">RateIdx</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="p">]]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pynet</span><span class="o">.</span><span class="n">all_rates</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enuc_py_module</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">energy_release</span><span class="p">(</span><span class="n">_tmp</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enu_weak_py_module</span> <span class="o">=</span> <span class="n">rate_eval</span><span class="o">.</span><span class="n">enuc_weak</span>
 
