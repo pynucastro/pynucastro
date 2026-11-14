@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.rates.library &#8212; pynucastro 3.2.0.post7+ga411a3033 documentation</title>
+    <title>pynucastro.rates.library &#8212; pynucastro 3.2.0.post8+g067256df4 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=c2b80a23"></script>
+    <script src="../../../_static/documentation_options.js?v=ebae35f6"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -591,26 +591,13 @@
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"e"</span><span class="p">,</span> <span class="s2">"nu"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">,</span> <span class="s2">"gamma"</span><span class="p">]:</span>
                 <span class="c1"># electrons, neutrinos, gammas, and nothing</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"pp"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nn"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"aa"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"npa"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nna"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nnn"</span><span class="p">:</span>
-                <span class="n">reactants</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"couldn't deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">raise</span>
+
+            <span class="c1"># Consider combinations of single letter light isotope</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">reactants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Couldn't deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="n">products</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">nuc</span> <span class="ow">in</span> <span class="n">_p</span><span class="p">:</span>
@@ -624,26 +611,13 @@
             <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"e"</span><span class="p">,</span> <span class="s2">"nu"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">,</span> <span class="s2">"g"</span><span class="p">,</span> <span class="s2">"gamma"</span><span class="p">]:</span>
                 <span class="c1"># first electrons and neutrinos, gammas, and nothing</span>
                 <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"pp"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nn"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"aa"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"npa"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"p"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nna"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"he4"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"nnn"</span><span class="p">:</span>
-                <span class="n">products</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">),</span> <span class="n">Nucleus</span><span class="p">(</span><span class="s2">"n"</span><span class="p">)]</span>
-                <span class="k">continue</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"couldn't deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">raise</span>
+
+            <span class="c1"># Consider combinations of single letter light isotope</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">nuc</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">products</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Nucleus</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Couldn't deal with </span><span class="si">{</span><span class="n">nuc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
     <span class="k">return</span> <span class="n">reactants</span><span class="p">,</span> <span class="n">products</span>
 
