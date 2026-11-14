@@ -412,7 +412,8 @@ class NSENetwork(RateCollection):
 
             if nse_states[0].X:
                 # write composition columns in ascending A, then ascending Z
-                sorted_nuclei = nse_states[0].X.keys().sort(key=lambda n: (n.A, n.Z))
+                sorted_nuclei = list(nse_states[0].X.keys())
+                sorted_nuclei.sort(key=lambda n: (n.A, n.Z))
 
                 for nuc in sorted_nuclei:
                     _tmp = f"X({nuc})"
