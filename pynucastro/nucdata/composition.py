@@ -398,7 +398,7 @@ class Composition(collections.UserDict):
         """
         return self.abar * self.ye
 
-    def bin_as(self, nuclei, *, verbose=False, exclude=None):
+    def bin_as(self, nuclei, *, verbose=False, exclude=None, mode="standard"):
         """Given a list of nuclei, return a new Composition object
         with the current composition mass fractions binned into the
         new nuclei.
@@ -410,16 +410,23 @@ class Composition(collections.UserDict):
             Nucleus objects) defining the new composition.
         verbose : bool
             Output more information
-        exclude : bool
+        exclude : list
             List of nuclei in `nuclei` that only
             exact matches from the original composition can
             map into
+        mode : str
+            The binning mode to use. Options are "standard" (or "mass")
+            to bin by atomic mass number A and charge Z, or "ye" to bin
+            according to electron fraction Ye.
 
         Returns
         -------
         new_composition : Composition
             The new binned composition
         """
+
+        if mode.lower() not in ("standard", "mass", "ye"):
+            raise ValueError(f"unknown binning mode: {mode}")
 
         nuclei = Nucleus.cast_list(nuclei)
         exclude = Nucleus.cast_list(exclude, allow_None=True)
@@ -451,7 +458,7 @@ class Composition(collections.UserDict):
 
         # loop over our original nuclei.  Find the new nucleus such
         # that n_orig.A >= n_new.A.  If there are multiple, then do
-        # the same for Z
+        # the same for Z (or Ye if mode == "ye")
         for old_n, v in self.items():
 
             if old_n in exclude:
@@ -464,6 +471,31 @@ class Composition(collections.UserDict):
             # (which will be the lightest)
             if not candidates:
                 match_nuc = nuclei[0]
+            elif mode.lower() == "ye":
+                max_A = max(q.A for q in candidates)
+                group_A = {max_A}
+                curr = max_A
+                for a in sorted({q.A for q in candidates if q.A < max_A}, reverse=True):
+                    if curr - a <= 2:
+                        group_A.add(a)
+                        curr = a
+                    else:
+                        break
+                candidates_ye = [q for q in candidates if q.A in group_A or q.Z == old_n.Z]
+
+                old_ye = old_n.Z / old_n.A
+                min_diff = min(abs(old_ye - q.Z / q.A) for q in candidates_ye)
+                match_ye = [q for q in candidates_ye if math.isclose(abs(old_ye - q.Z / q.A), min_diff, rel_tol=1e-12, abs_tol=1e-12)]
+                max_cand_A = max(q.A for q in match_ye)
+                match_A = [q for q in match_ye if q.A == max_cand_A]
+                if len(match_A) > 1:
+                    match_Z = [q for q in sorted(match_A, key=lambda p: p.Z) if old_n.Z >= q.Z]
+                    if not match_Z:
+                        match_nuc = match_A[0]
+                    else:
+                        match_nuc = match_Z[-1]
+                else:
+                    match_nuc = match_A[0]
             else:
                 max_A = max(q.A for q in candidates)
                 match_A = [q for q in candidates if q.A == max_A]
