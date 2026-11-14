@@ -118,40 +118,5 @@ namespace approximate_rates {
     }
 
 
-
-    template <typename T>
-    AMREX_GPU_DEVICE AMREX_INLINE
-    void
-    fill_rates([[maybe_unused]] const tf_t& tfactors,
-               [[maybe_unused]] const amrex::Real rho,
-               [[maybe_unused]] const amrex::Array1D<amrex::Real, 1, NumSpec>& Y,
-               [[maybe_unused]] T& rate_eval)
-    {
-
-        [[maybe_unused]] amrex::Real rate{};
-        [[maybe_unused]] amrex::Real drate_dT{};
-
-        {
-            // Mg24_He4_to_Si28_approx
-            rate_Mg24_He4_to_Si28_approx(rate_eval);
-        }
-
-        {
-            // Si28_to_Mg24_He4_approx
-            rate_Si28_to_Mg24_He4_approx(rate_eval);
-        }
-
-        {
-            // Si28_He4_to_S32_approx
-            rate_Si28_He4_to_S32_approx(rate_eval);
-        }
-
-        {
-            // S32_to_Si28_He4_approx
-            rate_S32_to_Si28_He4_approx(rate_eval);
-        }
-
-
-    }
 }
 #endif

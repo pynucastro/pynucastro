@@ -120,7 +120,7 @@ class TestNetworkCompare:
         # compare the AMReX, and python module nets to the
         # python inline version
 
-        for other in [eval_cond1.rates_amrex, eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
+        for other in [eval_cond1.rates_cxx, eval_cond1.rates_amrex, eval_cond1.rates_py_module]:
             for nuc in eval_cond1.rates_py_inline:
                 assert other[nuc] == approx(eval_cond1.rates_py_inline[nuc],
                                             rel=1.e-11, abs=1.e-30)

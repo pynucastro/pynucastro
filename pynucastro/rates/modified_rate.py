@@ -7,12 +7,8 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
                                    py_rate_func_args)
-from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class ModifiedRate(Rate):
@@ -73,14 +69,6 @@ class ModifiedRate(Rate):
         self.update_screening = update_screening
         self.description = description
 
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill modified
-        # rates only after the original rate is filled.
-        assert isinstance(original_rate,
-                          (ReacLibRate, StarLibRate,
-                           TemperatureTabularRate, BetaLimitedRate))
-
         if new_reactants is not None:
             reactants = new_reactants
         else:
@@ -108,6 +96,10 @@ class ModifiedRate(Rate):
         self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
         self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
         self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
+        self.rate_eval_needs_logtemp = self.original_rate.rate_eval_needs_logtemp
+        self.rate_eval_needs_rhoye = self.original_rate.rate_eval_needs_rhoye
+        self.rate_eval_needs_logrhoye = self.original_rate.rate_eval_needs_logrhoye
+        self.rate_eval_needs_pfcache = self.original_rate.rate_eval_needs_pfcache
 
         self._set_print_representation()
 
@@ -237,7 +229,7 @@ class ModifiedRate(Rate):
             fstring += f"    # represents the sequence: {self.description}\n\n"
         cargs = py_rate_func_args(self.original_rate, mode="call", screen_term_pass="log_scor")
         fstring += f"    {self.original_rate.fname}({', '.join(cargs)})\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate_eval.rates[RateIdx.{self.original_rate.fname}]\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",

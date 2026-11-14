@@ -43,5 +43,5 @@ class TestTemperatureTabular:
                                             rel=3e-3, abs=1.e-100)
 
     def test_ydot_string(self, myrate):
-        ydot_str = "rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_temptab"
+        ydot_str = "rho*Y[jp]*Y[jc12]*rate_eval.rates[RateIdx.C12_p_to_N13_temptab]"
         assert myrate.ydot_string_py() == ydot_str

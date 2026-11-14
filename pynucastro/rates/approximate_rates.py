@@ -847,18 +847,18 @@ class ApproximateRate(Rate):
             string += "@numba.njit()\n"
             string += f"def {self.fname}(rate_eval):\n"
 
-            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates['X(p,a)A'].fname}\n"
+            string += f"    r_pg = rate_eval.rates[RateIdx.{self.rates['X(p,g)B'].fname}]\n"
+            string += f"    r_pa = rate_eval.rates[RateIdx.{self.rates['X(p,a)A'].fname}]\n"
             if "X(p,Y)C" in self.rates:
-                string += f"    r_pY = rate_eval.{self.rates['X(p,Y)C'].fname}\n"
+                string += f"    r_pY = rate_eval.rates[RateIdx.{self.rates['X(p,Y)C'].fname}]\n"
             else:
                 string += "    r_pY = 0.0\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r_ag = rate_eval.{self.rates['A(a,g)B'].fname}\n"
-                string += f"    r_ap = rate_eval.{self.rates['A(a,p)X'].fname}\n"
+                string += f"    r_ag = rate_eval.rates[RateIdx.{self.rates['A(a,g)B'].fname}]\n"
+                string += f"    r_ap = rate_eval.rates[RateIdx.{self.rates['A(a,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_ag + r_ap * r_pg / (r_pg + r_pa + r_pY)\n"
@@ -866,13 +866,13 @@ class ApproximateRate(Rate):
             else:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r_ga = rate_eval.{self.rates['B(g,a)A'].fname}\n"
-                string += f"    r_gp = rate_eval.{self.rates['B(g,p)X'].fname}\n"
+                string += f"    r_ga = rate_eval.rates[RateIdx.{self.rates['B(g,a)A'].fname}]\n"
+                string += f"    r_gp = rate_eval.rates[RateIdx.{self.rates['B(g,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_ga + r_pa * r_gp / (r_pg + r_pa + r_pY)\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n\n"
+            string += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
             return string
 
         if self.approx_type == "nn_g":
@@ -886,24 +886,24 @@ class ApproximateRate(Rate):
             string += "    Yn = Y[jn]\n"
 
             # create the normalization
-            string += f"    r2_ng = rate_eval.{self.rates['X(n,g)B'].fname}\n"
-            string += f"    r1_gn = rate_eval.{self.rates['X(g,n)A'].fname}\n"
+            string += f"    r2_ng = rate_eval.rates[RateIdx.{self.rates['X(n,g)B'].fname}]\n"
+            string += f"    r1_gn = rate_eval.rates[RateIdx.{self.rates['X(g,n)A'].fname}]\n"
             string += "    dd = 1.0 / (rho * Yn * r2_ng + r1_gn)\n\n"
 
             if not self.is_reverse:
-                string += f"    r1_ng = rate_eval.{self.rates['A(n,g)X'].fname}\n"
+                string += f"    r1_ng = rate_eval.rates[RateIdx.{self.rates['A(n,g)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = 2.0 * r1_ng * r2_ng * dd\n"
                 string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
             else:
-                string += f"    r2_gn = rate_eval.{self.rates['B(g,n)X'].fname}\n"
+                string += f"    r2_gn = rate_eval.rates[RateIdx.{self.rates['B(g,n)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r1_gn * r2_gn * dd\n"
                 string += "    drate_dYN = -rate * dd * rho * r2_ng\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n"
+            string += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n"
             string += f"    rate_eval.drate_{self.fname}_dYN = drate_dYN\n\n"
             return string
 
@@ -917,20 +917,20 @@ class ApproximateRate(Rate):
             string += "@numba.njit()\n"
             string += f"def {self.fname}(rate_eval):\n"
 
-            string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates['X(p,a)C'].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates['X(p,g)B'].fname}\n"
+            string += f"    r_pY = rate_eval.rates[RateIdx.{self.rates['X(p,Y)A'].fname}]\n"
+            string += f"    r_pa = rate_eval.rates[RateIdx.{self.rates['X(p,a)C'].fname}]\n"
+            string += f"    r_pg = rate_eval.rates[RateIdx.{self.rates['X(p,g)B'].fname}]\n"
             string += "    denom = r_pY + r_pa + r_pg\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
                 if "A(Y,g)B" in self.rates:
-                    string += f"    r_Yg = rate_eval.{self.rates['A(Y,g)B'].fname}\n"
+                    string += f"    r_Yg = rate_eval.rates[RateIdx.{self.rates['A(Y,g)B'].fname}]\n"
                 else:
                     string += "    r_Yg = 0.0\n"
 
-                string += f"    r_Yp = rate_eval.{self.rates['A(Y,p)X'].fname}\n"
+                string += f"    r_Yp = rate_eval.rates[RateIdx.{self.rates['A(Y,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_Yg + r_Yp * r_pg / denom\n"
@@ -939,16 +939,16 @@ class ApproximateRate(Rate):
 
                 # first we need to get all of the rates that make this up
                 if "B(g,Y)A" in self.rates:
-                    string += f"    r_gY = rate_eval.{self.rates['B(g,Y)A'].fname}\n"
+                    string += f"    r_gY = rate_eval.rates[RateIdx.{self.rates['B(g,Y)A'].fname}]\n"
                 else:
                     string += "    r_gY = 0.0\n"
 
-                string += f"    r_gp = rate_eval.{self.rates['B(g,p)X'].fname}\n"
+                string += f"    r_gp = rate_eval.rates[RateIdx.{self.rates['B(g,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_gY + r_pY * r_gp / denom\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n\n"
+            string += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
             return string
 
         if self.approx_type == "Yp_pa":
@@ -960,16 +960,16 @@ class ApproximateRate(Rate):
             string += "@numba.njit()\n"
             string += f"def {self.fname}(rate_eval):\n"
 
-            string += f"    r_pY = rate_eval.{self.rates['X(p,Y)A'].fname}\n"
-            string += f"    r_pa = rate_eval.{self.rates['X(p,a)B'].fname}\n"
-            string += f"    r_pg = rate_eval.{self.rates['X(p,g)C'].fname}\n"
+            string += f"    r_pY = rate_eval.rates[RateIdx.{self.rates['X(p,Y)A'].fname}]\n"
+            string += f"    r_pa = rate_eval.rates[RateIdx.{self.rates['X(p,a)B'].fname}]\n"
+            string += f"    r_pg = rate_eval.rates[RateIdx.{self.rates['X(p,g)C'].fname}]\n"
             string += "    denom = r_pY + r_pa + r_pg\n"
 
             if not self.is_reverse:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r_Ya = rate_eval.{self.rates['A(Y,a)B'].fname}\n"
-                string += f"    r_Yp = rate_eval.{self.rates['A(Y,p)X'].fname}\n"
+                string += f"    r_Ya = rate_eval.rates[RateIdx.{self.rates['A(Y,a)B'].fname}]\n"
+                string += f"    r_Yp = rate_eval.rates[RateIdx.{self.rates['A(Y,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_Ya + r_Yp * r_pa / denom\n"
@@ -977,13 +977,13 @@ class ApproximateRate(Rate):
             else:
 
                 # first we need to get all of the rates that make this up
-                string += f"    r_aY = rate_eval.{self.rates['B(a,Y)A'].fname}\n"
-                string += f"    r_ap = rate_eval.{self.rates['B(a,p)X'].fname}\n"
+                string += f"    r_aY = rate_eval.rates[RateIdx.{self.rates['B(a,Y)A'].fname}]\n"
+                string += f"    r_ap = rate_eval.rates[RateIdx.{self.rates['B(a,p)X'].fname}]\n"
 
                 # now the approximation
                 string += "    rate = r_aY + r_pY * r_ap / denom\n"
 
-            string += f"    rate_eval.{self.fname} = rate\n\n"
+            string += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
             return string
 
         raise NotImplementedError("don't know how to work with this approximation")

@@ -1,12 +1,12 @@
 name: docs build
 
+# only run if something in the docs/ directory changed
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+    paths:
+      - 'docs/**'
   workflow_dispatch:
 
 concurrency:

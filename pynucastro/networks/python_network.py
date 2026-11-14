@@ -17,6 +17,7 @@ from pynucastro.neutrino_cooling import sneut5
 from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.rates.rate import py_rate_func_args
 from pynucastro.screening import get_screening_func, get_screening_pair_set
+from pynucastro.sort_utils import topo_sort
 
 
 class NetworkSolution:
@@ -881,7 +882,7 @@ class PythonNetwork(RateCollection):
                     # Product rule: retain the full abundance and density
                     # factors and replace the rate with its derivative.
                     deriv_name = f"drate_{r.fname}_dY{y_j_nucleus.cindex()}"
-                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.{r.fname}",
+                    jac_terms.append(r.ydot_string_py().replace(f"rate_eval.rates[RateIdx.{r.fname}]",
                                                               f"rate_eval.{deriv_name}"))
 
                 for jac_str in jac_terms:
@@ -975,65 +976,11 @@ class PythonNetwork(RateCollection):
         ostr += f"{indent}log_rhoY = np.log10(rhoY)\n"
         ostr += f"{indent}log_T = np.log10(T)\n\n"
 
-        if self.reaclib_rates:
-            ostr += f"{indent}# reaclib rates\n"
-        for r in self.reaclib_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
+        # We evaluate the rates in a topologically-sorted order,
+        # this way any dependences have already been evaluated
+        # in RateEval
 
-        if self.tabular_rates:
-            ostr += f"\n{indent}# tabular rates\n"
-        for r in self.tabular_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.temperature_tabular_rates:
-            ostr += f"\n{indent}# temperature tabular rates\n"
-        for r in self.temperature_tabular_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.starlib_rates:
-            ostr += f"\n{indent}# starlib rates\n"
-        for r in self.starlib_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.custom_rates:
-            ostr += f"\n{indent}# custom rates\n"
-        for r in self.custom_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.beta_limited_rates:
-            ostr += f"\n{indent}# beta-limited rates\n"
-        for r in self.beta_limited_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.modified_rates:
-            ostr += f"\n{indent}# modified rates\n"
-        for r in self.modified_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.branched_rates:
-            ostr += f"\n{indent}# branched rates\n"
-        for r in self.branched_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        # Derived rate should go last (before approx rates)
-        # since the inverse rate should be evaluated first.
-        if self.derived_rates:
-            ostr += f"\n{indent}# derived rates\n"
-        for r in self.derived_rates:
-            call_args = py_rate_func_args(r, mode="call")
-            ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
-
-        if self.approx_rates:
-            ostr += f"\n{indent}# approximate rates\n"
-        for r in self.approx_rates:
+        for r in topo_sort(self.all_rates):
             call_args = py_rate_func_args(r, mode="call")
             ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
@@ -1070,6 +1017,7 @@ class PythonNetwork(RateCollection):
 
         indent = 4*" "
 
+        of.write("from enum import IntEnum\n")
         of.write("import numba\n")
         of.write("import numpy as np\n")
         of.write("from pynucastro.constants import constants\n")
@@ -1148,12 +1096,16 @@ class PythonNetwork(RateCollection):
             of.write(f"{n}_log_pf_array = np.array({list(n.partition_function.log_pf_data)})\n")
             of.write("\n")
 
+        # rate index enum
+        of.write("class RateIdx(IntEnum):\n")
+        for n, r in enumerate(self.all_rates):
+            of.write(f"{indent}{r.fname} = {n}\n")
+
         # rate_eval class
 
         of.write("@jitclass([\n")
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
-        for r in self.all_rates:
-            of.write(f'{indent}("{r.fname}", numba.float64),\n')
+        of.write(f'{indent}("rates", numba.float64[:]),\n')
         of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1164,8 +1116,7 @@ class PythonNetwork(RateCollection):
         of.write("class RateEval:\n")
         of.write(f"{indent}def __init__(self):\n")
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
-        for r in self.all_rates:
-            of.write(f"{indent*2}self.{r.fname} = np.nan\n")
+        of.write(f"{indent*2}self.rates = np.full({len(self.all_rates)}, np.nan)\n")
         of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:

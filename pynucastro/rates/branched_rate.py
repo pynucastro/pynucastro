@@ -7,11 +7,7 @@ import copy
 
 import numpy as np
 
-from pynucastro.rates.beta_limited_rate import BetaLimitedRate
 from pynucastro.rates.rate import Rate, cxx_rate_func_args, py_rate_func_args
-from pynucastro.rates.reaclib_rate import ReacLibRate
-from pynucastro.rates.starlib_rate import StarLibRate
-from pynucastro.rates.temperature_tabular_rate import TemperatureTabularRate
 
 
 class BranchedRate(Rate):
@@ -69,21 +65,6 @@ class BranchedRate(Rate):
         self.primary_branch = primary_branch
         self.other_branch = other_branch
         self.description = description
-
-        # at the moment, this is only tested with ReacLibRate,
-        # TemperatureTabularRate, and StarLibRate rates.  It is
-        # important in the C++ code generation the we fill branched rates
-        # only after the other rates are filled and screened.
-
-        assert isinstance(underlying_rate,
-                          (ReacLibRate, StarLibRate,
-                           TemperatureTabularRate, BetaLimitedRate))
-
-        assert isinstance(primary_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
-
-        assert isinstance(other_branch,
-                          (ReacLibRate, StarLibRate, TemperatureTabularRate))
 
         # the reactants come from the underlying rate
         reactants = self.underlying_rate.reactants
@@ -232,11 +213,11 @@ class BranchedRate(Rate):
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
-        fstring += f"    r_prim_br = rate_eval.{self.primary_branch.fname}\n"
-        fstring += f"    r_other_br = rate_eval.{self.other_branch.fname}\n\n"
+        fstring += f"    r0 = rate_eval.rates[RateIdx.{self.underlying_rate.fname}]\n"
+        fstring += f"    r_prim_br = rate_eval.rates[RateIdx.{self.primary_branch.fname}]\n"
+        fstring += f"    r_other_br = rate_eval.rates[RateIdx.{self.other_branch.fname}]\n\n"
         fstring += "    f = r_prim_br / (r_prim_br + r_other_br)\n"
-        fstring += f"    rate_eval.{self.fname} = f * r0\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = f * r0\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",

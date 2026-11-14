@@ -440,7 +440,7 @@ class TabularWeakRate(Rate):
         fstring += f"    egamma = {self.fname}_interpolator.interpolate(log_rhoY, log_T, TableIndex.GAMMA.value)\n\n"
         fstring += f"    drate_drhoye = {self.fname}_interpolator.interpolate_dlogrhoy(log_rhoY, log_T, TableIndex.RATE.value)\n\n"
 
-        fstring += f"    rate_eval.{self.fname} = 10.0**r\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = 10.0**r\n"
         fstring += "    edot_nu = -10.0**enu\n"
         fstring += "    edot_gamma = 10.0**egamma\n"
         fstring += "    drate_drhoye = 10.0**r * drate_drhoye / (10.0**log_rhoY)\n"

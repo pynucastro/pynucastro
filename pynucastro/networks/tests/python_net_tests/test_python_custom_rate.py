@@ -30,7 +30,7 @@ class MyRate(pyna.Rate):
         fstring = ""
         fstring += "@numba.njit()\n"
         fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
-        fstring += f"    rate_eval.{self.fname} = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = {self.r0} * (tf.T9 * 1.e9 / {self.T0} )**({self.nu})\n\n"
         return fstring
 
     def log_eval(self, T, *, rho=None, comp=None,
@@ -99,11 +99,11 @@ class TestPythonCustomNetwork:
 
         dpdt = \
 """dYdt[jp] = (
-      -rho*Y[jp]*Y[jc12]*rate_eval.C12_p_to_N13_reaclib  +
-      -rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib  +
-      -rho*Y[jp]*Y[jn13]*rate_eval.N13_p_to_O14_reaclib  +
-      -rho*Y[jp]*Y[jn15]*rate_eval.N15_p_to_He4_C12_reaclib  +
-      -rho*Y[jp]*Y[jn14]*rate_eval.N14_p_to_O15_custom
+      -rho*Y[jp]*Y[jc12]*rate_eval.rates[RateIdx.C12_p_to_N13_reaclib]  +
+      -rho*Y[jp]*Y[jc13]*rate_eval.rates[RateIdx.C13_p_to_N14_reaclib]  +
+      -rho*Y[jp]*Y[jn13]*rate_eval.rates[RateIdx.N13_p_to_O14_reaclib]  +
+      -rho*Y[jp]*Y[jn15]*rate_eval.rates[RateIdx.N15_p_to_He4_C12_reaclib]  +
+      -rho*Y[jp]*Y[jn14]*rate_eval.rates[RateIdx.N14_p_to_O15_custom]
    )
 
 """
@@ -118,7 +118,7 @@ class TestPythonCustomNetwork:
         func = \
 """@numba.njit()
 def N14_p_to_O15_custom(rate_eval, tf, log_scor=0.0):
-    rate_eval.N14_p_to_O15_custom = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858115843468)
+    rate_eval.rates[RateIdx.N14_p_to_O15_custom] = 1.416655077954945e-13 * (tf.T9 * 1.e9 / 30000000.0 )**(15.601858115843468)
 
 """
 
