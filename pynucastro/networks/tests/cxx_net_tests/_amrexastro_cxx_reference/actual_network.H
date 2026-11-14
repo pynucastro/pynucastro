@@ -1,6 +1,7 @@
 #ifndef ACTUAL_NETWORK_H
 #define ACTUAL_NETWORK_H
 
+#include <map>
 #include <random>
 #include <string_view>
 
