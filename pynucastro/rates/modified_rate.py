@@ -96,6 +96,10 @@ class ModifiedRate(Rate):
         self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
         self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
         self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
+        self.rate_eval_needs_logtemp = self.original_rate.rate_eval_needs_logtemp
+        self.rate_eval_needs_rhoye = self.original_rate.rate_eval_needs_rhoye
+        self.rate_eval_needs_logrhoye = self.original_rate.rate_eval_needs_logrhoye
+        self.rate_eval_needs_pfcache = self.original_rate.rate_eval_needs_pfcache
 
         self._set_print_representation()
 
@@ -225,7 +229,7 @@ class ModifiedRate(Rate):
             fstring += f"    # represents the sequence: {self.description}\n\n"
         cargs = py_rate_func_args(self.original_rate, mode="call", screen_term_pass="log_scor")
         fstring += f"    {self.original_rate.fname}({', '.join(cargs)})\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate_eval.rates[RateIdx.{self.original_rate.fname}]\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",

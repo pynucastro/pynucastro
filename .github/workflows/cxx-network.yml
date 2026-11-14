@@ -8,7 +8,7 @@ concurrency:
 
 jobs:
   compilation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
@@ -54,18 +54,18 @@ jobs:
       - name: Regenerate he-burn-19am network
         run: |
           cd external/Microphysics/networks/he-burn/he-burn-19am
-          NPY_DISABLE_CPU_FEATURES="X86_V4" python he_burn_19am.py
+          NPY_DISABLE_CPU_FEATURES="X86_V3,X86_V4,AVX512_ICL,AVX512_SPR" python he_burn_19am.py
 
       - name: Compile burn_cell (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
           make realclean
-          make NETWORK_DIR=he-burn/he-burn-19am -j 4
+          make DEBUG=TRUE NETWORK_DIR=he-burn/he-burn-19am -j 4
 
       - name: Run burn_cell (he-burn-19am)
         run: |
           cd external/Microphysics/unit_test/burn_cell
-          ./main3d.gnu.ex inputs_subch_simple > test.out
+          ./main3d.gnu.DEBUG.ex inputs_subch_simple > test.out
 
       - name: Compare to stored output (he-burn-19am)
         run: |

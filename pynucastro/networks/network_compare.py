@@ -252,7 +252,7 @@ class NetworkCompare:
                 self.jac_py_module[(inuc, jnuc)] = _jac[irow, jcol]
 
         rate_eval = cn.do_rate_eval(0.0, Y, rho, T, screen_func=self.screen_func)
-        self.rates_py_module = {r: getattr(rate_eval, r.fname, None) for r in self.pynet.all_rates}
+        self.rates_py_module = {r: rate_eval.rates[cn.RateIdx[r.fname]] for r in self.pynet.all_rates}
         self.enuc_py_module = cn.energy_release(_tmp)
         self.enu_weak_py_module = rate_eval.enuc_weak
 

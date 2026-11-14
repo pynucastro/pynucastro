@@ -229,13 +229,13 @@ class BetaLimitedRate(Rate):
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the beta-limiting: {self.description}\n\n"
-        fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
+        fstring += f"    r0 = rate_eval.rates[RateIdx.{self.underlying_rate.fname}]\n"
         fstring += "    lambda_beta_tot = 0.0\n"
         for lam in self.beta_limiting_rates:
-            fstring += f"    lambda_beta_tot += 1.0 / rate_eval.{lam.fname}\n"
+            fstring += f"    lambda_beta_tot += 1.0 / rate_eval.rates[RateIdx.{lam.fname}]\n"
         fstring += "    lambda_beta_tot = 1.0 / lambda_beta_tot\n\n"
         fstring += f"    limited_rate = min(r0, lambda_beta_tot / (rho * Y[j{self.limiter_nucleus.raw}]))\n"
-        fstring += f"    rate_eval.{self.fname} = limited_rate\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = limited_rate\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
