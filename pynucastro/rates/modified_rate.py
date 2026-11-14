@@ -96,6 +96,10 @@ class ModifiedRate(Rate):
         self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
         self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
         self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
+        self.rate_eval_needs_logtemp = self.original_rate.rate_eval_needs_logtemp
+        self.rate_eval_needs_rhoye = self.original_rate.rate_eval_needs_rhoye
+        self.rate_eval_needs_logrhoye = self.original_rate.rate_eval_needs_logrhoye
+        self.rate_eval_needs_pfcache = self.original_rate.rate_eval_needs_pfcache
 
         self._set_print_representation()
 
