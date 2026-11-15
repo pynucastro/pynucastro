@@ -246,7 +246,7 @@ class DerivedRate(Rate):
                 fstring += "    set_rate = np.exp(ln_set_rate)\n"
                 fstring += "    rate += set_rate\n\n"
 
-            fstring += f"    rate_eval.{self.fname} = rate\n\n"
+            fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
 
         elif isinstance(self.underlying_rate, TemperatureTabularRate):
             fstring += f"    {self.underlying_rate.fname}_interpolator = TempTableInterpolator(*{self.underlying_rate.fname}_info)\n"
@@ -258,7 +258,7 @@ class DerivedRate(Rate):
                 fstring += "    log_r += log_scor\n"
             if self.net_stoich != 0:
                 fstring += f"    log_r += {1.5 * self.net_stoich} * tf.lnT9\n\n"
-            fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+            fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = np.exp(log_r)\n\n"
 
         else:
             fstring += "    # Evaluate the equilibrium ratio and screening\n"
@@ -268,7 +268,7 @@ class DerivedRate(Rate):
             if self.net_stoich != 0:
                 fstring += f"    + {1.5 * self.net_stoich} * tf.lnT9"
             fstring += ")\n\n"
-            fstring += f"    rate_eval.{self.fname} = rate_eval.{self.source_rate.fname} * ratio\n"
+            fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate_eval.rates[RateIdx.{self.source_rate.fname}] * ratio\n"
 
         return fstring
 

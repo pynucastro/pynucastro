@@ -25,29 +25,29 @@ class TestPythonNetwork:
 
     def test_ydot_string(self, rate1, rate2, rate3, rate4):
         ydot1 = rate1.ydot_string_py()
-        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.C13_p_to_N14_reaclib"
+        assert ydot1 == "rho*Y[jp]*Y[jc13]*rate_eval.rates[RateIdx.C13_p_to_N14_reaclib]"
 
         ydot2 = rate2.ydot_string_py()
-        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.He4_p_p_to_He3_He3_reaclib"
+        assert ydot2 == "5.00000000000000e-01*rho**2*Y[jp]**2*Y[jhe4]*rate_eval.rates[RateIdx.He4_p_p_to_He3_He3_reaclib]"
 
         ydot3 = rate3.ydot_string_py()
-        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.He4_He4_p_n_to_He3_Li7_reaclib"
+        assert ydot3 == "5.00000000000000e-01*rho**3*Y[jn]*Y[jp]*Y[jhe4]**2*rate_eval.rates[RateIdx.He4_He4_p_n_to_He3_Li7_reaclib]"
 
         ydot4 = rate4.ydot_string_py()
-        assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.p_p_to_d_electron_capture_reaclib"
+        assert ydot4 == "5.00000000000000e-01*rho**2*ye(Y)*Y[jp]**2*rate_eval.rates[RateIdx.p_p_to_d_electron_capture_reaclib]"
 
     def test_jacobian_string(self, rate1, rate2, rate3, rate4):
         jac1 = rate1.jacobian_string_py(rate1.reactants[0])
-        assert jac1 == "rho*Y[jc13]*rate_eval.C13_p_to_N14_reaclib"
+        assert jac1 == "rho*Y[jc13]*rate_eval.rates[RateIdx.C13_p_to_N14_reaclib]"
 
         jac2 = rate2.jacobian_string_py(rate2.reactants[0])
-        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.He4_p_p_to_He3_He3_reaclib"
+        assert jac2 == "5.00000000000000e-01*rho**2*2*Y[jp]*Y[jhe4]*rate_eval.rates[RateIdx.He4_p_p_to_He3_He3_reaclib]"
 
         jac3 = rate3.jacobian_string_py(rate3.reactants[0])
-        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.He4_He4_p_n_to_He3_Li7_reaclib"
+        assert jac3 == "5.00000000000000e-01*rho**3*Y[jp]*Y[jhe4]**2*rate_eval.rates[RateIdx.He4_He4_p_n_to_He3_Li7_reaclib]"
 
         jac4 = rate4.jacobian_string_py(rate4.reactants[0])
-        assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.p_p_to_d_electron_capture_reaclib"
+        assert jac4 == "5.00000000000000e-01*rho**2*ye(Y)*2*Y[jp]*rate_eval.rates[RateIdx.p_p_to_d_electron_capture_reaclib]"
 
     def test_function_string(self, rate1, rate2, rate3, rate4):
 
@@ -81,7 +81,7 @@ def C13_p_to_N14_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.C13_p_to_N14_reaclib = rate
+    rate_eval.rates[RateIdx.C13_p_to_N14_reaclib] = rate
 """
 
         ostr2 = """
@@ -98,7 +98,7 @@ def He4_p_p_to_He3_He3_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.He4_p_p_to_He3_He3_reaclib = rate
+    rate_eval.rates[RateIdx.He4_p_p_to_He3_He3_reaclib] = rate
 """
 
         ostr3 = """
@@ -115,7 +115,7 @@ def He4_He4_p_n_to_He3_Li7_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.He4_He4_p_n_to_He3_Li7_reaclib = rate
+    rate_eval.rates[RateIdx.He4_He4_p_n_to_He3_Li7_reaclib] = rate
 """
 
         ostr4 = """
@@ -132,7 +132,7 @@ def p_p_to_d_electron_capture_reaclib(rate_eval, tf, log_scor=0.0):
     set_rate = np.exp(ln_set_rate)
     rate += set_rate
 
-    rate_eval.p_p_to_d_electron_capture_reaclib = rate
+    rate_eval.rates[RateIdx.p_p_to_d_electron_capture_reaclib] = rate
 """
 
         assert rate1.function_string_py().strip() == ostr1.strip()
