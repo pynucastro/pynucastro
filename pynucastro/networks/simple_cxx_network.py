@@ -20,6 +20,7 @@ class SimpleCxxNetwork(BaseCxxNetwork):
         self.gpu_device_specifier = ""
         self.dtype = "Real"
         self.array_namespace = ""
+        self.screening_derivatives = ("Ye", "S2")
 
     def _get_template_files(self):
 
@@ -40,12 +41,23 @@ class SimpleCxxNetwork(BaseCxxNetwork):
             if not self.do_screening:
                 # Set log_scor terms to be 0 if not doing screening
                 of.write(f'{self.indent*(n_indent)}rate_eval.log_screen(k_{n1}_{n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*n_indent}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                for variable in ("Ye", "S2"):
+                    of.write(f'{self.indent*(n_indent+1)}rate_eval.dlog_screen_d{variable}(k_{n1}_{n2}) = 0.0_rt;\n')
+                of.write(f'{self.indent*n_indent}}}\n')
             else:
                 # Scope the screening calculation to avoid multiple definitions of scn_fac.
                 of.write(f'{self.indent*n_indent}' + '{\n')
                 of.write(f'{self.indent*(n_indent+1)}auto scn_fac = scrn::calculate_screen_factor({nuc1_info}, {nuc2_info});\n')
-                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor);\n')
-                of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}auto log_scor = actual_log_screen(pstate, scn_fac);\n')
+                of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                of.write(f'{self.indent*(n_indent+2)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor.value;\n')
+                for variable, component in (("Ye", "d1"), ("S2", "d2")):
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_d{variable}(k_{n1}_{n2}) = '
+                             f'log_scor.deriv.{component};\n')
+                of.write(f'{self.indent*(n_indent+1)}}} else {{\n')
+                of.write(f'{self.indent*(n_indent+2)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
+                of.write(f'{self.indent*(n_indent+1)}}}\n')
                 of.write(f'{self.indent*n_indent}' + '}\n\n')
 
     def _write_network(self, odir=None):
