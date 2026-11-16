@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.nucdata.composition module &#8212; pynucastro 3.2.0.post11+g7d6a8d632 documentation</title>
+    <title>pynucastro.nucdata.composition module &#8212; pynucastro 3.2.0.post12+gf204b91b6 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=bf4d55d1"></script>
+    <script src="_static/documentation_options.js?v=63f30eee"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -633,8 +633,11 @@
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.plot"><code class="docutils literal notranslate"><span class="pre">Composition.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_all"><code class="docutils literal notranslate"><span class="pre">Composition.set_all()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_dict"><code class="docutils literal notranslate"><span class="pre">Composition.set_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_equal"><code class="docutils literal notranslate"><span class="pre">Composition.set_equal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar_dict"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
@@ -863,7 +866,7 @@ in the trace nuclei wedget of the plot.</p></li>
 <dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_array">
 <span class="sig-name descname"><span class="pre">set_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_array" title="Link to this definition">#</a></dt>
 <dd><p>Set the mass fractions of all species to the values
-in arr, <cite>get_nuclei()</cite></p>
+in arr, ordered the same as <cite>get_nuclei()</cite></p>
 <div class="deprecated">
 <p><span class="versionmodified deprecated">Deprecated since version 3.1: </span><code class="docutils literal notranslate"><span class="pre">set_array</span></code> has been deprecated.  Use
 <code class="docutils literal notranslate"><span class="pre">set_nuc</span></code> instead.  <code class="docutils literal notranslate"><span class="pre">set_array</span></code> will be
@@ -877,19 +880,66 @@ removed in version 3.3.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_dict">
+<span class="sig-name descname"><span class="pre">set_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_dict" title="Link to this definition">#</a></dt>
+<dd><p>Set the mass fractions of all species to the values
+in dictionary d, with associated keys marking the
+nuclei of type Nucleus or string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>) – keys : Nucleus, str
+values : input values of mass fractions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_equal">
 <span class="sig-name descname"><span class="pre">set_equal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_equal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_equal" title="Link to this definition">#</a></dt>
 <dd><p>Set all species to be equal</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_molar">
+<span class="sig-name descname"><span class="pre">set_molar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_molar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_molar" title="Link to this definition">#</a></dt>
+<dd><p>Set nuclei name to the molar fraction yval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference internal" href="pynucastro.nucdata.nucleus.html#pynucastro.nucdata.nucleus.Nucleus" title="pynucastro.nucdata.nucleus.Nucleus"><em>Nucleus</em></a>) – the nucleus to set</p></li>
+<li><p><strong>molar</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_molar_array">
 <span class="sig-name descname"><span class="pre">set_molar_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_molar_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_molar_array" title="Link to this definition">#</a></dt>
 <dd><p>Set the molar fractions of all species to the values
-in arr, <cite>get_nuclei()</cite></p>
+in arr, ordered the same as <cite>get_nuclei()</cite></p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 3.3: </span><code class="docutils literal notranslate"><span class="pre">set_molar_array</span></code> has been deprecated.  Use
+<code class="docutils literal notranslate"><span class="pre">set_molar_dict</span></code> instead.  <code class="docutils literal notranslate"><span class="pre">set_molar_array</span></code> will be
+removed in version 3.4.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>arr</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>numpy.ndarray</em></a>) – input values of mass fractions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pynucastro.nucdata.composition.Composition.set_molar_dict">
+<span class="sig-name descname"><span class="pre">set_molar_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/nucdata/composition.html#Composition.set_molar_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.nucdata.composition.Composition.set_molar_dict" title="Link to this definition">#</a></dt>
+<dd><p>Set the molar fractions of all species to the values
+in dictionary d, with associated keys marking the
+nuclei of type Nucleus or string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>d</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><em>dict</em></a>) – keys : Nucleus, str
+values : input values of mass fractions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1050,8 +1100,11 @@ fractions for individual isotopes.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.plot"><code class="docutils literal notranslate"><span class="pre">Composition.plot()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_all"><code class="docutils literal notranslate"><span class="pre">Composition.set_all()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_dict"><code class="docutils literal notranslate"><span class="pre">Composition.set_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_equal"><code class="docutils literal notranslate"><span class="pre">Composition.set_equal()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar_array"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar_array()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_molar_dict"><code class="docutils literal notranslate"><span class="pre">Composition.set_molar_dict()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_nuc"><code class="docutils literal notranslate"><span class="pre">Composition.set_nuc()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_random"><code class="docutils literal notranslate"><span class="pre">Composition.set_random()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pynucastro.nucdata.composition.Composition.set_solar_like"><code class="docutils literal notranslate"><span class="pre">Composition.set_solar_like()</span></code></a></li>
