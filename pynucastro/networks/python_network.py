@@ -675,7 +675,7 @@ class NetworkSolution:
             eps_nu = []
             for t in self.t:
                 comp = Composition(self.unique_nuclei)
-                comp.set_molar_dict({n:y for n,y in zip(self.unique_nuclei,self.Y_at(t))})
+                comp.set_molar_dict({n: y for n, y in zip(self.unique_nuclei, self.Y_at(t))})
 
                 if self.self_heating:
                     T = self.T_at(t)
@@ -1372,7 +1372,7 @@ class PythonNetwork(RateCollection):
                 # use the EOS to get the specific heat
                 eos = StellarEOS()
                 comp = Composition(self.unique_nuclei)
-                comp.set_molar_dict({n:y for n,y in zip(self.unique_nuclei,Y)})
+                comp.set_molar_dict({n: y for n, y in zip(self.unique_nuclei, Y)})
                 state = eos.pe_state(rho, T, comp)
 
                 # include neutrino loss in the temperature evolution equation if wanted
