@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.autodiff.dual module &#8212; pynucastro 3.2.0.post9+ga26d35bf4 documentation</title>
+    <title>pynucastro.autodiff.dual module &#8212; pynucastro 3.2.0.post11+g7d6a8d632 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=627872df"></script>
+    <script src="_static/documentation_options.js?v=bf4d55d1"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -649,6 +649,17 @@ when a scalar bound is selected. Ties select the first operand, as in Python.
 Use DerivativePair seeds to propagate two derivatives simultaneously. All dual
 operands in an expression must use the same seed kind. Other branches must
 likewise keep dual-valued variables consistently typed.</p>
+<p>There are two execution paths for the same derivative rules. Ordinary Python
+calls use the Dual methods and math helpers such as <code class="docutils literal notranslate"><span class="pre">sin</span></code>. In Numba-compiled
+code, Dual is represented as a native namedtuple; Numba does not automatically
+use this subclass’s Python methods. The <code class="docutils literal notranslate"><span class="pre">&#64;overload</span></code> registrations supply its
+arithmetic and math operations instead.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">_ol_</span></code> prefix means “overload”: <code class="docutils literal notranslate"><span class="pre">_ol_sin</span></code> is a compile-time factory,
+not another user-facing sine function. Numba passes it argument <em>types</em>, and
+it returns a function to compile for those types. That returned function
+receives actual values at runtime. Call <code class="docutils literal notranslate"><span class="pre">sin(x)</span></code> in either execution path;
+Numba selects the overload automatically. Keep the formulas in both paths in
+sync when changing a derivative rule.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.autodiff.dual.Dual">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.autodiff.dual.</span></span><span class="sig-name descname"><span class="pre">Dual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deriv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/autodiff/dual.html#Dual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.autodiff.dual.Dual" title="Link to this definition">#</a></dt>

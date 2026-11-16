@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.autodiff.derivative_pair &#8212; pynucastro 3.2.0.post9+ga26d35bf4 documentation</title>
+    <title>pynucastro.autodiff.derivative_pair &#8212; pynucastro 3.2.0.post11+g7d6a8d632 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=627872df"></script>
+    <script src="../../../_static/documentation_options.js?v=bf4d55d1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -536,7 +536,24 @@
                 <article class="bd-article">
                   
   <h1>Source code for pynucastro.autodiff.derivative_pair</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Two independent forward-mode derivative components, stored without arrays."""</span>
+<span></span><span class="sd">"""Two independent forward-mode derivative components, stored without arrays.</span>
+
+<span class="sd">A DerivativePair is the derivative payload of a Dual, not a value/derivative</span>
+<span class="sd">pair itself. For independent variables x and y, seed x with</span>
+<span class="sd">``Dual(x, DerivativePair(1.0, 0.0))`` and y with</span>
+<span class="sd">``Dual(y, DerivativePair(0.0, 1.0))``. The result's ``deriv.d1`` and</span>
+<span class="sd">``deriv.d2`` then hold derivatives with respect to x and y. Dual implements</span>
+<span class="sd">the chain and product rules; this class adds, subtracts, and scales their</span>
+<span class="sd">derivative components independently.</span>
+
+<span class="sd">The arithmetic is written twice to support Python and Numba. Python uses the</span>
+<span class="sd">class's special methods (such as ``__add__``). Numba represents instances as</span>
+<span class="sd">native namedtuples and needs explicit ``@overload`` registrations for these</span>
+<span class="sd">operations instead of relying on the Python methods. Functions prefixed with</span>
+<span class="sd">``_ol_`` receive Numba argument *types* during compilation and return an</span>
+<span class="sd">implementation that operates on *values* at runtime. They are not called by</span>
+<span class="sd">users. Keep their formulas consistent with the Python methods.</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
@@ -583,12 +600,16 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_pair</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="c1"># Inspect a Numba type, not a runtime instance; unrelated namedtuple</span>
+    <span class="c1"># classes must retain their own arithmetic behavior.</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">BaseNamedTuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">instance_class</span> <span class="ow">is</span> <span class="n">DerivativePair</span>
 
 
 <span class="n">_REAL_TYPES</span> <span class="o">=</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">Float</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
 
 
+<span class="c1"># Select implementations at compile time. Returning None means this overload</span>
+<span class="c1"># does not handle the argument types, so Numba can try other registrations.</span>
 <span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_ol_add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
@@ -642,6 +663,8 @@
 <a class="viewcode-back" href="../../../pynucastro.autodiff.derivative_pair.html#pynucastro.autodiff.derivative_pair.zero_derivative">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">zero_derivative</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Return a zero seed of the same kind as deriv."""</span>
+    <span class="c1"># Constants must preserve the derivative payload's shape, including both</span>
+    <span class="c1"># components when propagating two independent derivatives.</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">deriv</span><span class="p">,</span> <span class="n">DerivativePair</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
     <span class="k">return</span> <span class="mf">0.0</span></div>
@@ -650,6 +673,8 @@
 
 <span class="nd">@overload</span><span class="p">(</span><span class="n">zero_derivative</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_ol_zero_derivative</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
+    <span class="c1"># Compiled counterpart of zero_derivative: choose the return type from</span>
+    <span class="c1"># the seed's type, without needing its runtime component values.</span>
     <span class="k">if</span> <span class="n">_is_pair</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">pair_impl</span><span class="p">(</span><span class="n">deriv</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
             <span class="k">return</span> <span class="n">DerivativePair</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>

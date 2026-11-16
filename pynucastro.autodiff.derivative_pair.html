@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.autodiff.derivative_pair module &#8212; pynucastro 3.2.0.post9+ga26d35bf4 documentation</title>
+    <title>pynucastro.autodiff.derivative_pair module &#8212; pynucastro 3.2.0.post11+g7d6a8d632 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=627872df"></script>
+    <script src="_static/documentation_options.js?v=bf4d55d1"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -632,6 +632,20 @@
   <section id="module-pynucastro.autodiff.derivative_pair">
 <span id="pynucastro-autodiff-derivative-pair-module"></span><h1>pynucastro.autodiff.derivative_pair module<a class="headerlink" href="#module-pynucastro.autodiff.derivative_pair" title="Link to this heading">#</a></h1>
 <p>Two independent forward-mode derivative components, stored without arrays.</p>
+<p>A DerivativePair is the derivative payload of a Dual, not a value/derivative
+pair itself. For independent variables x and y, seed x with
+<code class="docutils literal notranslate"><span class="pre">Dual(x,</span> <span class="pre">DerivativePair(1.0,</span> <span class="pre">0.0))</span></code> and y with
+<code class="docutils literal notranslate"><span class="pre">Dual(y,</span> <span class="pre">DerivativePair(0.0,</span> <span class="pre">1.0))</span></code>. The result’s <code class="docutils literal notranslate"><span class="pre">deriv.d1</span></code> and
+<code class="docutils literal notranslate"><span class="pre">deriv.d2</span></code> then hold derivatives with respect to x and y. Dual implements
+the chain and product rules; this class adds, subtracts, and scales their
+derivative components independently.</p>
+<p>The arithmetic is written twice to support Python and Numba. Python uses the
+class’s special methods (such as <code class="docutils literal notranslate"><span class="pre">__add__</span></code>). Numba represents instances as
+native namedtuples and needs explicit <code class="docutils literal notranslate"><span class="pre">&#64;overload</span></code> registrations for these
+operations instead of relying on the Python methods. Functions prefixed with
+<code class="docutils literal notranslate"><span class="pre">_ol_</span></code> receive Numba argument <em>types</em> during compilation and return an
+implementation that operates on <em>values</em> at runtime. They are not called by
+users. Keep their formulas consistent with the Python methods.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pynucastro.autodiff.derivative_pair.DerivativePair">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">pynucastro.autodiff.derivative_pair.</span></span><span class="sig-name descname"><span class="pre">DerivativePair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pynucastro/autodiff/derivative_pair.html#DerivativePair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pynucastro.autodiff.derivative_pair.DerivativePair" title="Link to this definition">#</a></dt>

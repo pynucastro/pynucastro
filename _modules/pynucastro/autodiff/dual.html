@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.autodiff.dual &#8212; pynucastro 3.2.0.post9+ga26d35bf4 documentation</title>
+    <title>pynucastro.autodiff.dual &#8212; pynucastro 3.2.0.post11+g7d6a8d632 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=627872df"></script>
+    <script src="../../../_static/documentation_options.js?v=bf4d55d1"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -547,6 +547,19 @@
 <span class="sd">Use DerivativePair seeds to propagate two derivatives simultaneously. All dual</span>
 <span class="sd">operands in an expression must use the same seed kind. Other branches must</span>
 <span class="sd">likewise keep dual-valued variables consistently typed.</span>
+
+<span class="sd">There are two execution paths for the same derivative rules. Ordinary Python</span>
+<span class="sd">calls use the Dual methods and math helpers such as ``sin``. In Numba-compiled</span>
+<span class="sd">code, Dual is represented as a native namedtuple; Numba does not automatically</span>
+<span class="sd">use this subclass's Python methods. The ``@overload`` registrations supply its</span>
+<span class="sd">arithmetic and math operations instead.</span>
+
+<span class="sd">The ``_ol_`` prefix means "overload": ``_ol_sin`` is a compile-time factory,</span>
+<span class="sd">not another user-facing sine function. Numba passes it argument *types*, and</span>
+<span class="sd">it returns a function to compile for those types. That returned function</span>
+<span class="sd">receives actual values at runtime. Call ``sin(x)`` in either execution path;</span>
+<span class="sd">Numba selects the overload automatically. Keep the formulas in both paths in</span>
+<span class="sd">sync when changing a derivative rule.</span>
 <span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
@@ -676,6 +689,8 @@
 
 
 
+<span class="c1"># Each math helper applies the chain rule: d(f(x)) = f'(x.value) * x.deriv.</span>
+<span class="c1"># Multiplication by a DerivativePair applies that rule to both components.</span>
 <div class="viewcode-block" id="exp">
 <a class="viewcode-back" href="../../../pynucastro.autodiff.dual.html#pynucastro.autodiff.dual.exp">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -839,8 +854,11 @@
 
 <span class="nd">@overload</span><span class="p">(</span><span class="n">sin</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_ol_sin</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="c1"># Here x is a Numba type, so _is_dual(x) replaces Python's runtime</span>
+    <span class="c1"># isinstance(x, Dual) check. Only the selected implementation is compiled.</span>
     <span class="k">if</span> <span class="n">_is_dual</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">dual_impl</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1"># Inside this function x is a value, just as in sin() above.</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">deriv</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dual_impl</span>
@@ -848,6 +866,8 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">scalar_impl</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scalar_impl</span>
+    <span class="c1"># No implementation for this signature; let Numba try other overloads</span>
+    <span class="c1"># or report a typing error if none apply.</span>
     <span class="k">return</span> <span class="kc">None</span>
 
 
@@ -881,9 +901,14 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_dual</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Recognize only this namedtuple class, not unrelated namedtuples."""</span>
+    <span class="c1"># t describes a compiled argument; it is not a Dual instance.</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">BaseNamedTuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">instance_class</span> <span class="ow">is</span> <span class="n">Dual</span>
 
 
+<span class="c1"># These registrations mirror the Python special methods above. For example,</span>
+<span class="c1"># Python evaluates a + b via __add__/__radd__, while Numba uses _ol_add.</span>
+<span class="c1"># Explicit scalar-left branches provide the reflected operations in compiled</span>
+<span class="c1"># code. Returning None leaves signatures without a Dual to other overloads.</span>
 <span class="nd">@overload</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"cpu"</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_ol_add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">_is_dual</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_dual</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
