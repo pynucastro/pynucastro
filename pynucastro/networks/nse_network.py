@@ -337,7 +337,7 @@ class NSENetwork(RateCollection):
         raise ValueError("Unable to find a solution, try to adjust initial guess manually")
 
     def generate_table(self, rho_values=None, T_values=None, Ye_values=None,
-                       comp_reduction_func=None,
+                       comp_reduction_func=None, sort_reduced_comp=True,
                        verbose=False, outfile="nse.tbl"):
         """Generate a table of NSE properties.  For every combination
         of density, temperature, and Ye, we solve for the NSE state
@@ -354,6 +354,8 @@ class NSENetwork(RateCollection):
         comp_reduction_func : Callable
             a function that takes the NSE ``Composition`` object and returns
             a new ``Composition`` representing a reduced set of nuclei.
+        sort_reduced_comp : bool
+            output the reduced set of nuclei in ascending order by A, then Z
         verbose : bool
             output progress on creating the table as we go along
         outfile : str
@@ -411,9 +413,9 @@ class NSENetwork(RateCollection):
             of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'d<B/A>/dt':^15} {'e_nu':^15} ")
 
             if nse_states[0].X:
-                # write composition columns in ascending A, then ascending Z
                 sorted_nuclei = list(nse_states[0].X.keys())
-                sorted_nuclei.sort(key=lambda n: (n.A, n.Z))
+                if sort_reduced_comp:
+                    sorted_nuclei.sort(key=lambda n: (n.A, n.Z))
 
                 for nuc in sorted_nuclei:
                     _tmp = f"X({nuc})"
