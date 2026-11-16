@@ -277,6 +277,10 @@ class Composition(collections.UserDict):
         """Set the molar fractions of all species to the values
         in arr, ordered the same as `get_nuclei()`
 
+        .. deprecated:: 3.3 ``set_molar_array`` has been deprecated.  Use
+           ``set_molar_dict`` instead.  ``set_molar_array`` will be
+           removed in version 3.4.
+
         Parameters
         ----------
         arr : list, tuple, numpy.ndarray
@@ -284,9 +288,9 @@ class Composition(collections.UserDict):
 
         """
 
-        # deprecate at will. Function is unsafe, as we have
-        # no guarantee that the input array uses the same
-        # ordering as the internal array.
+        warnings.warn("set_molar_array is deprecated, use set_molar_dict instead",
+                      DeprecationWarning,
+                      stacklevel=2)
 
         As = np.array([n.A for n in self])
 
