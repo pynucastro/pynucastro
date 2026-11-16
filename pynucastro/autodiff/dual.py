@@ -9,6 +9,19 @@ when a scalar bound is selected. Ties select the first operand, as in Python.
 Use DerivativePair seeds to propagate two derivatives simultaneously. All dual
 operands in an expression must use the same seed kind. Other branches must
 likewise keep dual-valued variables consistently typed.
+
+There are two execution paths for the same derivative rules. Ordinary Python
+calls use the Dual methods and math helpers such as ``sin``. In Numba-compiled
+code, Dual is represented as a native namedtuple; Numba does not automatically
+use this subclass's Python methods. The ``@overload`` registrations supply its
+arithmetic and math operations instead.
+
+The ``_ol_`` prefix means "overload": ``_ol_sin`` is a compile-time factory,
+not another user-facing sine function. Numba passes it argument *types*, and
+it returns a function to compile for those types. That returned function
+receives actual values at runtime. Call ``sin(x)`` in either execution path;
+Numba selects the overload automatically. Keep the formulas in both paths in
+sync when changing a derivative rule.
 """
 
 import operator
@@ -135,6 +148,8 @@ class Dual(namedtuple("DualTuple", ("value", "deriv"), defaults=(1.0,))):
                     y * self.value**(y - 1.0) * self.deriv)
 
 
+# Each math helper applies the chain rule: d(f(x)) = f'(x.value) * x.deriv.
+# Multiplication by a DerivativePair applies that rule to both components.
 def exp(x):
     """Compute exp(x)."""
     if isinstance(x, Dual):
@@ -277,8 +292,11 @@ def sin(x):
 
 @overload(sin)
 def _ol_sin(x):
+    # Here x is a Numba type, so _is_dual(x) replaces Python's runtime
+    # isinstance(x, Dual) check. Only the selected implementation is compiled.
     if _is_dual(x):
         def dual_impl(x):
+            # Inside this function x is a value, just as in sin() above.
             value = np.sin(x.value)
             return Dual(value, np.cos(x.value) * x.deriv)
         return dual_impl
@@ -286,6 +304,8 @@ def _ol_sin(x):
         def scalar_impl(x):
             return np.sin(x)
         return scalar_impl
+    # No implementation for this signature; let Numba try other overloads
+    # or report a typing error if none apply.
     return None
 
 
@@ -316,9 +336,14 @@ _REAL_TYPES = (types.Integer, types.Float, types.Boolean)
 
 def _is_dual(t):
     """Recognize only this namedtuple class, not unrelated namedtuples."""
+    # t describes a compiled argument; it is not a Dual instance.
     return isinstance(t, types.BaseNamedTuple) and t.instance_class is Dual
 
 
+# These registrations mirror the Python special methods above. For example,
+# Python evaluates a + b via __add__/__radd__, while Numba uses _ol_add.
+# Explicit scalar-left branches provide the reflected operations in compiled
+# code. Returning None leaves signatures without a Dual to other overloads.
 @overload(operator.add, target="cpu")
 def _ol_add(a, b):
     if _is_dual(a) and _is_dual(b):
