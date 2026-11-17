@@ -6,9 +6,9 @@ from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
+from .nse_network import NSENetwork
 from .python_network import PythonNetwork
 from .simple_cxx_network import SimpleCxxNetwork
-from .nse_network import NSENetwork
 
 
 def get_net_class(*, network_type="python"):
