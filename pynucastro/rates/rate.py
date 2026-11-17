@@ -1029,7 +1029,7 @@ class Rate:
                 ydot_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
-        ydot_string_components.append(f"rate_eval.{self.fname}")
+        ydot_string_components.append(f"rate_eval.rates[RateIdx.{self.fname}]")
 
         return "*".join(ydot_string_components)
 
@@ -1278,7 +1278,7 @@ class Rate:
                     jac_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
-        jac_string_components.append(f"rate_eval.{self.fname}")
+        jac_string_components.append(f"rate_eval.rates[RateIdx.{self.fname}]")
 
         return "*".join(jac_string_components)
 

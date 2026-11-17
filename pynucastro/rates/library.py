@@ -53,26 +53,13 @@ def _rate_name_to_nuc(name):
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # electrons, neutrinos, gammas, and nothing
                 continue
-            if nuc.lower() == "pp":
-                reactants += [Nucleus("p"), Nucleus("p")]
-                continue
-            if nuc.lower() == "nn":
-                reactants += [Nucleus("n"), Nucleus("n")]
-                continue
-            if nuc.lower() == "aa":
-                reactants += [Nucleus("he4"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "npa":
-                reactants += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "nna":
-                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "nnn":
-                reactants += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
-                continue
-            print(f"couldn't deal with {nuc}")
-            raise
+
+            # Consider combinations of single letter light isotope
+            for l in nuc.lower():
+                try:
+                    reactants.append(Nucleus(l))
+                except (ValueError, AssertionError) as exc:
+                    raise ValueError(f"Couldn't deal with {nuc}") from exc
 
     products = []
     for nuc in _p:
@@ -86,26 +73,13 @@ def _rate_name_to_nuc(name):
             if nuc.lower() in ["e", "nu", "_", "g", "gamma"]:
                 # first electrons and neutrinos, gammas, and nothing
                 continue
-            if nuc.lower() == "pp":
-                products += [Nucleus("p"), Nucleus("p")]
-                continue
-            if nuc.lower() == "nn":
-                products += [Nucleus("n"), Nucleus("n")]
-                continue
-            if nuc.lower() == "aa":
-                products += [Nucleus("he4"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "npa":
-                products += [Nucleus("n"), Nucleus("p"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "nna":
-                products += [Nucleus("n"), Nucleus("n"), Nucleus("he4")]
-                continue
-            if nuc.lower() == "nnn":
-                products += [Nucleus("n"), Nucleus("n"), Nucleus("n")]
-                continue
-            print(f"couldn't deal with {nuc}")
-            raise
+
+            # Consider combinations of single letter light isotope
+            for l in nuc.lower():
+                try:
+                    products.append(Nucleus(l))
+                except (ValueError, AssertionError) as exc:
+                    raise ValueError(f"Couldn't deal with {nuc}") from exc
 
     return reactants, products
 

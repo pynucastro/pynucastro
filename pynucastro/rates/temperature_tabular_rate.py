@@ -291,9 +291,9 @@ class TemperatureTabularRate(Rate):
         fstring += "    T = tf.T9 * 1.e9\n"
         fstring += f"    log_r = {self.fname}_interpolator.interpolate(T)\n"
         if self.screening_pairs:
-            fstring += f"    rate_eval.{self.fname} = np.exp(log_r + log_scor)\n\n"
+            fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = np.exp(log_r + log_scor)\n\n"
         else:
-            fstring += f"    rate_eval.{self.fname} = np.exp(log_r)\n\n"
+            fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = np.exp(log_r)\n\n"
 
         return fstring
 
