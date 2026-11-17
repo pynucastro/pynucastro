@@ -74,6 +74,7 @@ class NSETableEntry:
             self.X = None
             if comp_reduction_func:
                 self.X = comp_reduction_func(self.comp)
+                assert getattr(self.X, "keys", None), "comp_reduction_func should return a dict-like object."
 
     def __str__(self):
         return f"({self.rho:12.6g}, {self.T:12.6g}, {self.Ye:6.4f}): {self.abar:6.4f}  {self.bea:6.4f}  {self.dYedt:12.6g}  {self.enu:12.6g}"
