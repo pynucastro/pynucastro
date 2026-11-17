@@ -249,6 +249,22 @@ void jac_nuc(const burn_t& state,
 
     jac.set(N, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(N, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // p row
 
@@ -272,6 +288,27 @@ void jac_nuc(const burn_t& state,
 
     jac.set(H1, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_Na23_p_to_C12_C12_derived)*Y(Na23)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Na23));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_p_Na23));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(H1, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // He4 row
 
@@ -297,6 +334,32 @@ void jac_nuc(const burn_t& state,
 
     jac.set(He4, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(He4)*Y(Ne20)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Ne20));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_Ne20));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(He4, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // C12 row
 
@@ -326,6 +389,47 @@ void jac_nuc(const burn_t& state,
 
     jac.set(C12, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = -screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_C12_C12_to_n_Mg23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_C12_C12_to_p_Na23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_C12));
+        }
+        {
+            const Real flux = 2.0*screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(He4)*Y(Ne20)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Ne20));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_Ne20));
+        }
+        {
+            const Real flux = 2.0*screened_rates(k_Na23_p_to_C12_C12_derived)*Y(Na23)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Na23));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_p_Na23));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(C12, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // O16 row
 
@@ -348,6 +452,22 @@ void jac_nuc(const burn_t& state,
 
     jac.set(O16, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = screened_rates(k_C12_He4_to_O16_reaclib)*Y(C12)*Y(He4)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_C12));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(O16, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // Ne20 row
 
@@ -370,6 +490,27 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Ne20, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_He4_Ne20_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_Ne20_He4_to_C12_C12_derived)*Y(He4)*Y(Ne20)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_He4_Ne20));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_He4_Ne20));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(Ne20, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // Na23 row
 
@@ -392,6 +533,27 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Na23, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_p_Na23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        {
+            const Real flux = -screened_rates(k_Na23_p_to_C12_C12_derived)*Y(Na23)*Y(H1)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_p_Na23));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_p_Na23));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(Na23, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
     // Mg23 row
 
@@ -412,6 +574,22 @@ void jac_nuc(const burn_t& state,
 
     jac.set(Mg23, Mg23, 0.0);
 
+#ifdef SCREENING
+    {
+        // Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).
+        Real dscreen_ydot_dYe{};
+        Real dscreen_ydot_dS2{};
+        {
+            const Real flux = 0.5*screened_rates(k_C12_C12_to_n_Mg23_reaclib)*std::pow(Y(C12), 2)*state.rho;
+            dscreen_ydot_dYe += flux * (rate_eval.dlog_screen_dYe(k_C12_C12));
+            dscreen_ydot_dS2 += flux * (rate_eval.dlog_screen_dS2(k_C12_C12));
+        }
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            const Real Z = zion[jcol-1];
+            jac.add(Mg23, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);
+        }
+    }
+#endif
 
 
     // add ∂λ_weak / ∂Y_e terms now
