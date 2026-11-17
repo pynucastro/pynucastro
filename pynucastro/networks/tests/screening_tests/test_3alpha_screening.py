@@ -204,38 +204,74 @@ if screen_func is not None:
         good = \
 """{
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 2.0_rt, 4.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_He4) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_He4) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_He4) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_He4) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_He4) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 9.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_Be9) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_Be9) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_Be9) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_Be9) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_Be9) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 9.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_Be9) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_Be9) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_Be9) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_Be9) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_Be9) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 5.0_rt, 11.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_B11) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_B11) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_B11) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_B11) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_B11) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_Be8) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_Be8) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_Be8) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_Be8) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_Be8) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 8.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_Be8) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_Be8) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_Be8) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_Be8) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_Be8) = log_scor;
+    }
 }
 
 """

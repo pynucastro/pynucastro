@@ -28,7 +28,7 @@ class AmrexAstroCxxNetwork(BaseCxxNetwork):
         # Initialize BaseCxxNetwork parent class
         super().__init__(*args, **kwargs)
 
-        self.do_comp_screening_derivs = True
+        self.screening_derivatives = ("Ye", "S2")
 
         self.ftags['<rate_param_tests>'] = self._rate_param_tests
         self.ftags['<nse_rate_pair_data>'] = self._write_nse_rate_pair_data
