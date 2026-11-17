@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.helper &#8212; pynucastro 3.2.0.post12+gf204b91b6 documentation</title>
+    <title>pynucastro.networks.helper &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=63f30eee"></script>
+    <script src="../../../_static/documentation_options.js?v=681857a4"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -544,6 +544,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.amrexastro_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">AmrexAstroCxxNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fortran_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">FortranNetwork</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.nse_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">NSENetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.python_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">PythonNetwork</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.simple_cxx_network</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleCxxNetwork</span>
 
@@ -563,10 +564,11 @@
 <span class="sd">        * "cxx" : create a :py:obj:`SimpleCxxNetwork &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`</span>
 <span class="sd">        * "fortran" : create a :py:obj:`FortranNetwork &lt;pynucastro.networks.fortran_network.FortranNetwork&gt;`</span>
 <span class="sd">        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`</span>
+<span class="sd">        * "nse" : create a :py:obj:`NSENetwork &lt;pynucastro.networks.nse_network.NSENetwork&gt;`</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork</span>
+<span class="sd">    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork, NSENetwork</span>
 
 <span class="sd">    """</span>
 
@@ -581,6 +583,9 @@
 
     <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">"amrex"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">AmrexAstroCxxNetwork</span>
+
+    <span class="k">if</span> <span class="n">network_type</span> <span class="o">==</span> <span class="s2">"nse"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">NSENetwork</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"invalid network_type"</span><span class="p">)</span></div>
 
@@ -614,6 +619,7 @@
 <span class="sd">        * "cxx" : create a :py:obj:`SimpleCxxNetwork &lt;pynucastro.networks.simple_cxx_network.SimpleCxxNetwork&gt;`</span>
 <span class="sd">        * "fortran" : create a :py:obj:`FortranNetwork &lt;pynucastro.networks.fortran_network.FortranNetwork&gt;`</span>
 <span class="sd">        * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork &lt;pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork&gt;`</span>
+<span class="sd">        * "nse" : create a :py:obj:`NSENetwork &lt;pynucastro.networks.nse_network.NSENetwork&gt;`</span>
 <span class="sd">    inert_nuclei : list, tuple</span>
 <span class="sd">        an iterable of Nuclei that should be part of the collection but</span>
 <span class="sd">        are not linked via reactions to the other Nuclei in the network.</span>
@@ -638,7 +644,7 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork</span>
+<span class="sd">    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork, NSENetwork</span>
 
 <span class="sd">    """</span>
 

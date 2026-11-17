@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.helper module &#8212; pynucastro 3.2.0.post12+gf204b91b6 documentation</title>
+    <title>pynucastro.networks.helper module &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=63f30eee"></script>
+    <script src="_static/documentation_options.js?v=681857a4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -644,11 +644,12 @@
 <li><p>”cxx” : create a <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></p></li>
 <li><p>”fortran” : create a <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FortranNetwork</span></code></a></p></li>
 <li><p>”amrex” : create a <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></p></li>
+<li><p>”nse” : create a <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a></p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork">PythonNetwork</a>, <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">AmrexAstroCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork">FortranNetwork</a></p>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork">PythonNetwork</a>, <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">AmrexAstroCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork">FortranNetwork</a>, <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork">NSENetwork</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -671,6 +672,7 @@ specified in a string like “ni56-58”, or comma-separated like
 <li><p>”cxx” : create a <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleCxxNetwork</span></code></a></p></li>
 <li><p>”fortran” : create a <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FortranNetwork</span></code></a></p></li>
 <li><p>”amrex” : create a <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AmrexAstroCxxNetwork</span></code></a></p></li>
+<li><p>”nse” : create a <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NSENetwork</span></code></a></p></li>
 </ul>
 </p></li>
 <li><p><strong>inert_nuclei</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a>) – an iterable of Nuclei that should be part of the collection but
@@ -692,7 +694,7 @@ and the priority that each source should have.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork">PythonNetwork</a>, <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">AmrexAstroCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork">FortranNetwork</a></p>
+<dd class="field-even"><p><a class="reference internal" href="pynucastro.networks.python_network.html#pynucastro.networks.python_network.PythonNetwork" title="pynucastro.networks.python_network.PythonNetwork">PythonNetwork</a>, <a class="reference internal" href="pynucastro.networks.simple_cxx_network.html#pynucastro.networks.simple_cxx_network.SimpleCxxNetwork" title="pynucastro.networks.simple_cxx_network.SimpleCxxNetwork">SimpleCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.amrexastro_cxx_network.html#pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork" title="pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork">AmrexAstroCxxNetwork</a>, <a class="reference internal" href="pynucastro.networks.fortran_network.html#pynucastro.networks.fortran_network.FortranNetwork" title="pynucastro.networks.fortran_network.FortranNetwork">FortranNetwork</a>, <a class="reference internal" href="pynucastro.networks.nse_network.html#pynucastro.networks.nse_network.NSENetwork" title="pynucastro.networks.nse_network.NSENetwork">NSENetwork</a></p>
 </dd>
 </dl>
 </dd></dl>
