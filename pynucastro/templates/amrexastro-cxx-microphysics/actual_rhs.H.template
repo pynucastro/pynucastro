@@ -65,7 +65,7 @@ void evaluate_screening(const burn_t& state,
     plasma_state_t<number_t> pstate{};
     fill_plasma_state(pstate, temp, state.rho, Y);
 
-    amrex::Real log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2;
+    amrex::Real log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2;
 
     <compute_screening_factors>(1)
 }

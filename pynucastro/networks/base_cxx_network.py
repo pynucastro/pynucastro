@@ -97,6 +97,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.array_namespace = ""
 
         # Composition partials stored alongside the screening temperature partial.
+        self.do_comp_screening_derivs = True
         self.screening_derivatives = ()
 
         # a dictionary of functions to call to handle specific parts
@@ -306,7 +307,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             if do_T_derivatives:
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                 if self.do_comp_screening_derivs:
-                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dZ2);\n')
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);\n')
                 else:
                     of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
 
@@ -321,7 +322,7 @@ class BaseCxxNetwork(ABC, RateCollection):
                 of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
                 if self.do_comp_screening_derivs:
                     of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dYe(k_{n1}_{n2}) = dlog_scor_dYe;\n')
-                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dZ2(k_{n1}_{n2}) = dlog_scor_dZ2;\n')
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dS2(k_{n1}_{n2}) = dlog_scor_dS2;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
             of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -621,10 +622,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#ifdef SCREENING\n")
         of.write(f"{self.indent*n_indent}{{\n")
         indent = self.indent * (n_indent + 1)
-        of.write(f"{indent}// Screening dependence through Ye = sum(Z Y) and Z2 = sum(Z^2 Y).\n")
+        of.write(f"{indent}// Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).\n")
 
         of.write(f"{indent}{self.dtype} dscreen_ydot_dYe{{}};\n")
-        of.write(f"{indent}{self.dtype} dscreen_ydot_dZ2{{}};\n")
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dS2{{}};\n")
 
         for rate, flux in contributions:
             flux_cxx = self._cxxify(sympy.cxxcode(flux, precision=15, standard="c++11"))
@@ -636,7 +637,7 @@ class BaseCxxNetwork(ABC, RateCollection):
             # the derivative of the screening portion of the flux with
             # respect to Ye, since dlogf = df/f, the screening factor
             # cancels.
-            for variable in ("Ye", "Z2"):
+            for variable in ("Ye", "S2"):
                 derivative = " + ".join(f"rate_eval.dlog_screen_d{variable}(k_{n1}_{n2})"
                                         for n1, n2 in rate.get_effective_screening_pairs())
                 of.write(f"{indent}    dscreen_ydot_d{variable} += flux * ({derivative});\n")
@@ -644,7 +645,7 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         of.write(f"{indent}for (int jcol = 1; jcol <= NumSpec; ++jcol) {{\n")
         of.write(f"{indent}    const {self.dtype} Z = zion[jcol-1];\n")
-        of.write(f"{indent}    jac.add({nuc.cindex()}, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dZ2 * Z * Z);\n")
+        of.write(f"{indent}    jac.add({nuc.cindex()}, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);\n")
         of.write(f"{indent}}}\n")
         of.write(f"{self.indent*n_indent}}}\n")
         of.write("#endif\n")
