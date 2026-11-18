@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python network &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
+    <title>Python network &#8212; pynucastro 3.2.0.post14+g38101aaef documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=681857a4"></script>
+    <script src="_static/documentation_options.js?v=7ef97350"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -683,6 +683,14 @@ take the form:</p>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">rate_eval</span></code> is a <code class="docutils literal notranslate"><span class="pre">RateEval</span></code> object and <code class="docutils literal notranslate"><span class="pre">tf</span></code> is a
 <a class="reference internal" href="pynucastro.rates.rate.html#pynucastro.rates.rate.Tfactors" title="pynucastro.rates.rate.Tfactors"><code class="xref py py-func docutils literal notranslate"><span class="pre">Tfactors</span></code></a> object</p>
+</li>
+<li><p>screening</p>
+<p><code class="docutils literal notranslate"><span class="pre">RateEval.log_scor</span></code> stores the dimensionless natural logarithms of the
+screening factors, with one entry per unique screening pair indexed by
+<code class="docutils literal notranslate"><span class="pre">ScreenIdx</span></code>.  Each pair is evaluated once before the rates are evaluated.
+The rate functions receive the sum of their pairs’ entries as <code class="docutils literal notranslate"><span class="pre">log_scor</span></code>.
+The array is initialized to zero, so disabling screening leaves the rates
+unscreened.</p>
 </li>
 <li><p>RHS and Jacobian</p>
 <p>Finally, to interface with an ODE solver, we have:</p>

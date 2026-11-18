@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Integrating a Network &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
+    <title>Integrating a Network &#8212; pynucastro 3.2.0.post14+g38101aaef documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=681857a4"></script>
+    <script src="_static/documentation_options.js?v=7ef97350"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -903,15 +903,25 @@ class RateIdx(IntEnum):
     N15_p_to_He4_C12_reaclib = 5
     O14_to_N14_beta_pos_reaclib = 6
     O15_to_N15_beta_pos_reaclib = 7
+
+class ScreenIdx(IntEnum):
+    p_C12 = 0
+    p_C13 = 1
+    p_N13 = 2
+    p_N14 = 3
+    p_N15 = 4
+
 @jitclass([
     ("enuc_weak", numba.float64),
     ("rates", numba.float64[:]),
+    ("log_scor", numba.float64[:]),
     ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
     def __init__(self):
         self.enuc_weak = 0.0
         self.rates = np.full(8, np.nan)
+        self.log_scor = np.zeros(5)
         self.dweak_ydot_dYe = np.zeros(9)
 
 @numba.njit()
@@ -1121,36 +1131,31 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    log_scor_p_N13 = 0.0
-    log_scor_p_C12 = 0.0
-    log_scor_p_N15 = 0.0
-    log_scor_p_N14 = 0.0
-    log_scor_p_C13 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
-        scn_fac = ScreenFactors(1, 1, 7, 13)
-        log_scor_p_N13 = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(1, 1, 6, 12)
-        log_scor_p_C12 = screen_func(plasma_state, scn_fac)
-        scn_fac = ScreenFactors(1, 1, 7, 15)
-        log_scor_p_N15 = screen_func(plasma_state, scn_fac)
-        scn_fac = ScreenFactors(1, 1, 7, 14)
-        log_scor_p_N14 = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.p_C12] = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(1, 1, 6, 13)
-        log_scor_p_C13 = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.p_C13] = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(1, 1, 7, 13)
+        rate_eval.log_scor[ScreenIdx.p_N13] = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(1, 1, 7, 14)
+        rate_eval.log_scor[ScreenIdx.p_N14] = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(1, 1, 7, 15)
+        rate_eval.log_scor[ScreenIdx.p_N15] = screen_func(plasma_state, scn_fac)
 
     rhoY = rho * ye(Y)
     log_rhoY = np.log10(rhoY)
     log_T = np.log10(T)
 
-    C12_p_to_N13_reaclib(rate_eval, tf, log_scor=log_scor_p_C12)
-    C13_p_to_N14_reaclib(rate_eval, tf, log_scor=log_scor_p_C13)
+    C12_p_to_N13_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.p_C12])
+    C13_p_to_N14_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.p_C13])
     N13_to_C13_beta_pos_reaclib(rate_eval, tf)
-    N13_p_to_O14_reaclib(rate_eval, tf, log_scor=log_scor_p_N13)
-    N14_p_to_O15_reaclib(rate_eval, tf, log_scor=log_scor_p_N14)
-    N15_p_to_He4_C12_reaclib(rate_eval, tf, log_scor=log_scor_p_N15)
+    N13_p_to_O14_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.p_N13])
+    N14_p_to_O15_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.p_N14])
+    N15_p_to_He4_C12_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.p_N15])
     O14_to_N14_beta_pos_reaclib(rate_eval, tf)
     O15_to_N15_beta_pos_reaclib(rate_eval, tf)
 
@@ -1502,7 +1507,7 @@ the network as <code class="docutils literal notranslate"><span class="pre">mass
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>epsilon(t=         0) =          117.7738358
 epsilon(t=  2.55e+14) =          2.990307739
-epsilon(t=     1e+20) =      4.503996597e-10
+epsilon(t=     1e+20) =      4.503996655e-10
 </pre></div>
 </div>
 </div>

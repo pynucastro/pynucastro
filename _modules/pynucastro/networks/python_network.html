@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>pynucastro.networks.python_network &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
+    <title>pynucastro.networks.python_network &#8212; pynucastro 3.2.0.post14+g38101aaef documentation</title>
   
   
   
@@ -41,7 +41,7 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="../../../_static/documentation_options.js?v=681857a4"></script>
+    <script src="../../../_static/documentation_options.js?v=7ef97350"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1509,7 +1509,7 @@
 <span class="w">        </span><span class="sd">"""Create a string containing the python code that sets up the</span>
 <span class="sd">        screening (PlasmaState) and calls the screening function on</span>
 <span class="sd">        every set of reactants in our network. This computes log(screening)</span>
-<span class="sd">        terms and store them in local variables.</span>
+<span class="sd">        terms and stores them in ``RateEval.log_scor``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1525,15 +1525,10 @@
 
         <span class="n">ostr</span> <span class="o">=</span> <span class="s2">""</span>
 
-        <span class="n">screening_pair_set</span> <span class="o">=</span> <span class="n">get_screening_pair_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span>
-
-        <span class="c1"># Initialize log_scor to 0.0</span>
-        <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">screening_pair_set</span><span class="p">:</span>
-            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"log_scor_</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">"</span>
-            <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">screen_var</span><span class="si">}</span><span class="s2"> = 0.0</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="n">screening_pair_set</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">get_screening_pair_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">))</span>
 
         <span class="c1"># Check if we're doing screening, return early if not screening</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_screening</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">screening_pair_set</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ostr</span>
 
         <span class="n">ostr</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
@@ -1541,7 +1536,7 @@
         <span class="n">indent</span> <span class="o">+=</span> <span class="s2">"    "</span>
         <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">plasma_state = PlasmaState(T, rho, Y, Z)</span><span class="se">\n\n</span><span class="s2">"</span>
         <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">screening_pair_set</span><span class="p">:</span>
-            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"log_scor_</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">screen_var</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"rate_eval.log_scor[ScreenIdx.</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">]"</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">scn_fac = ScreenFactors(</span><span class="si">{</span><span class="n">n1</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n1</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n2</span><span class="o">.</span><span class="n">Z</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">n2</span><span class="o">.</span><span class="n">A</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">screen_var</span><span class="si">}</span><span class="s2"> = screen_func(plasma_state, scn_fac)</span><span class="se">\n</span><span class="s2">"</span>
 
@@ -1555,8 +1550,7 @@
 <span class="sd">        for each rate.  Typically this is of the form</span>
 <span class="sd">        ``name(rate_eval, ...)``, where ``rate_eval`` is a container</span>
 <span class="sd">        class in the output network that stores the rate values.  This</span>
-<span class="sd">        also calls ``screening_string()`` after the main rates are</span>
-<span class="sd">        evaluated but before the approximate rates are constructed.</span>
+<span class="sd">        also calls ``screening_string()`` before evaluating the rates.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1586,7 +1580,9 @@
         <span class="c1"># in RateEval</span>
 
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">topo_sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
-            <span class="n">call_args</span> <span class="o">=</span> <span class="n">py_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"call"</span><span class="p">)</span>
+            <span class="n">screen_terms</span> <span class="o">=</span> <span class="s2">" + "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rate_eval.log_scor[ScreenIdx.</span><span class="si">{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2">]"</span>
+                                      <span class="k">for</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">screening_pairs</span><span class="p">)</span>
+            <span class="n">call_args</span> <span class="o">=</span> <span class="n">py_rate_func_args</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"call"</span><span class="p">,</span> <span class="n">screen_term_pass</span><span class="o">=</span><span class="n">screen_terms</span><span class="p">)</span>
             <span class="n">ostr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">call_args</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span>
 
         <span class="k">return</span> <span class="n">ostr</span></div>
@@ -1707,11 +1703,21 @@
         <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">):</span>
             <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">r</span><span class="o">.</span><span class="n">fname</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
+        <span class="c1"># screening pair index enum</span>
+        <span class="n">screening_pairs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">get_screening_pair_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">))</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">class ScreenIdx(IntEnum):</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">screening_pairs</span><span class="p">):</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}{</span><span class="n">n1</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">n2</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">screening_pairs</span><span class="p">:</span>
+            <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">pass</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
         <span class="c1"># rate_eval class</span>
 
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"@jitclass([</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("enuc_weak", numba.float64),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("rates", numba.float64[:]),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("log_scor", numba.float64[:]),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s1">("dweak_ydot_dYe", numba.float64[:]),</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">nucs</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span><span class="p">:</span>
@@ -1723,6 +1729,7 @@
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="si">}</span><span class="s2">def __init__(self):</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.enuc_weak = 0.0</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.rates = np.full(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">)</span><span class="si">}</span><span class="s2">, np.nan)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.log_scor = np.zeros(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">screening_pairs</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">of</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">indent</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">self.dweak_ydot_dYe = np.zeros(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_nuclei</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_rates</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">nucs</span> <span class="o">:=</span> <span class="n">r</span><span class="o">.</span><span class="n">rate_comp_dependence</span><span class="p">:</span>

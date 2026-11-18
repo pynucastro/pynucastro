@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.2.0.post13+g25857d784 documentation</title>
+    <title>pynucastro.networks.python_network module &#8212; pynucastro 3.2.0.post14+g38101aaef documentation</title>
   
   
   
@@ -42,7 +42,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=90905a2f556bf617f1a9" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=90905a2f556bf617f1a9" />
 
-    <script src="_static/documentation_options.js?v=681857a4"></script>
+    <script src="_static/documentation_options.js?v=7ef97350"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1144,8 +1144,7 @@ mass fraction drops to the value provided.</p></li>
 for each rate.  Typically this is of the form
 <code class="docutils literal notranslate"><span class="pre">name(rate_eval,</span> <span class="pre">...)</span></code>, where <code class="docutils literal notranslate"><span class="pre">rate_eval</span></code> is a container
 class in the output network that stores the rate values.  This
-also calls <code class="docutils literal notranslate"><span class="pre">screening_string()</span></code> after the main rates are
-evaluated but before the approximate rates are constructed.</p>
+also calls <code class="docutils literal notranslate"><span class="pre">screening_string()</span></code> before evaluating the rates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – A string that will be prepended to each line of the output,
@@ -1176,7 +1175,7 @@ an arbitrary seed is used.</p>
 <dd><p>Create a string containing the python code that sets up the
 screening (PlasmaState) and calls the screening function on
 every set of reactants in our network. This computes log(screening)
-terms and store them in local variables.</p>
+terms and stores them in <code class="docutils literal notranslate"><span class="pre">RateEval.log_scor</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>indent</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>) – A string that will be prepended to each line of the output,
