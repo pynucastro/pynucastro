@@ -79,7 +79,7 @@ class TestNSETable:
                     header_row = new.strip().split()[1:]
                     continue
                 assert new in (ref_1, ref_2)
-            
+
             nuclei = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
                     Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
             nuclei.sort(key=lambda n: (n.A, n.Z))
