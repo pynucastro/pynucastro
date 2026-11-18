@@ -491,6 +491,97 @@ def jacobian_eq(t, Y, rho, T, screen_func):
        +5.00000000000000e-01*rho*2*Y[jc12]*rate_eval.rates[RateIdx.C12_C12_to_n_Mg23_reaclib]
        )
 
+    if screen_func is not None:
+        # n: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_n_Mg23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        for jcol in range(nnuc):
+            jac[jn, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # p: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_p_Na23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        for jcol in range(nnuc):
+            jac[jp, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # He4: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_He4_Ne20_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        flux = -1*(rho*Y[jhe4]*Y[jc12]*rate_eval.rates[RateIdx.C12_He4_to_O16_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.He4_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.He4_C12])
+        flux = -3*(1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.rates[RateIdx.He4_He4_He4_to_C12_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.He4_He4] + rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be8])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.He4_He4] + rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be8])
+        for jcol in range(nnuc):
+            jac[jhe4, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # C12: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = -2*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_He4_Ne20_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        flux = -2*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_n_Mg23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        flux = -2*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_p_Na23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        flux = -1*(rho*Y[jhe4]*Y[jc12]*rate_eval.rates[RateIdx.C12_He4_to_O16_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.He4_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.He4_C12])
+        flux = 1*(1.66666666666667e-01*rho**2*Y[jhe4]**3*rate_eval.rates[RateIdx.He4_He4_He4_to_C12_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.He4_He4] + rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be8])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.He4_He4] + rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be8])
+        for jcol in range(nnuc):
+            jac[jc12, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # O16: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(rho*Y[jhe4]*Y[jc12]*rate_eval.rates[RateIdx.C12_He4_to_O16_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.He4_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.He4_C12])
+        for jcol in range(nnuc):
+            jac[jo16, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # Ne20: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_He4_Ne20_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        for jcol in range(nnuc):
+            jac[jne20, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # Na23: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_p_Na23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        for jcol in range(nnuc):
+            jac[jna23, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
+        # Mg23: screening dependence through Ye and S2
+        dscreen_ydot_dYe = 0.0
+        dscreen_ydot_dS2 = 0.0
+        flux = 1*(5.00000000000000e-01*rho*Y[jc12]**2*rate_eval.rates[RateIdx.C12_C12_to_n_Mg23_reaclib])
+        dscreen_ydot_dYe += flux * (rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12])
+        dscreen_ydot_dS2 += flux * (rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12])
+        for jcol in range(nnuc):
+            jac[jmg23, jcol] += dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2
+
     # add ∂λ_weak / ∂Y_e terms now
     # this uses ∂Y_e/∂Y_i = Z_i
     for irow in range(nnuc):

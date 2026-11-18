@@ -95,8 +95,13 @@ The following information is provided:
   derivatives of each pair's log enhancement with respect to
   :math:`Y_e = \sum_i Z_i Y_i` and :math:`S_2 = \sum_i Z_i^2 Y_i`,
   at fixed temperature and density (see :ref:`sec:screening_derivs`).
-  These arrays remain zero when screening is disabled.  They are stored
-  for future use and do not yet contribute to the generated Jacobian.
+  These arrays remain zero when screening is disabled.  The generated
+  Jacobian includes their contribution through
+  :math:`\partial h/\partial Y_j = Z_j\partial h/\partial Y_e +
+  Z_j^2\partial h/\partial S_2`, where :math:`h` is the log enhancement.
+  Each signed, screened reaction flux multiplies this derivative; approximate
+  rates use their effective screening pairs after cancellations.  These are
+  unconstrained abundance derivatives at fixed temperature and density.
 
 * RHS and Jacobian
 

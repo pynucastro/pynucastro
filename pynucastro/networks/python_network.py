@@ -903,6 +903,45 @@ class PythonNetwork(RateCollection):
 
         return ostr
 
+    def _screening_jacobian_string(self, indent=""):
+        """Add screening composition derivatives to the molar Jacobian.
+
+        Use signed, screened fluxes and the effective screening pairs,
+        including cancellations in approximate rates.
+        """
+        if not self.do_screening:
+            return ""
+
+        ostr = ""
+        for nucleus in self.unique_nuclei:
+            contributions = []
+            for rate in self.rates:
+                pairs = rate.get_effective_screening_pairs()
+                coefficient = rate.product_count(nucleus) - rate.reactant_count(nucleus)
+                if pairs and coefficient:
+                    contributions.append((rate, pairs, coefficient))
+
+            if not contributions:
+                continue
+
+            inner = indent + "    "
+            ostr += f"{inner}# {nucleus}: screening dependence through Ye and S2\n"
+            ostr += f"{inner}dscreen_ydot_dYe = 0.0\n"
+            ostr += f"{inner}dscreen_ydot_dS2 = 0.0\n"
+            for rate, pairs, coefficient in contributions:
+                ostr += f"{inner}flux = {coefficient}*({rate.ydot_string_py()})\n"
+                for variable in ("Ye", "S2"):
+                    derivative = " + ".join(f"rate_eval.dlog_scor_d{variable}[ScreenIdx.{n1}_{n2}]"
+                                            for n1, n2 in pairs)
+                    ostr += f"{inner}dscreen_ydot_d{variable} += flux * ({derivative})\n"
+            ostr += f"{inner}for jcol in range(nnuc):\n"
+            ostr += (f"{inner}    jac[j{nucleus.raw}, jcol] += "
+                     "dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2\n\n")
+
+        if ostr:
+            return f"{indent}if screen_func is not None:\n" + ostr
+        return ""
+
     def screening_string(self, indent=""):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
@@ -1240,6 +1279,8 @@ class PythonNetwork(RateCollection):
         for n_i in self.unique_nuclei:
             for n_j in self.unique_nuclei:
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        of.write(self._screening_jacobian_string(indent=indent))
 
         # now the correction for the Ye dependence in weak rates
         of.write(f"{indent}# add ∂λ_weak / ∂Y_e terms now\n")
