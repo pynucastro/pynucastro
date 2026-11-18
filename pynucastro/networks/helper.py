@@ -6,6 +6,7 @@ from pynucastro.rates import (DerivedRate, ReacLibLibrary, StarLibLibrary,
 
 from .amrexastro_cxx_network import AmrexAstroCxxNetwork
 from .fortran_network import FortranNetwork
+from .nse_network import NSENetwork
 from .python_network import PythonNetwork
 from .simple_cxx_network import SimpleCxxNetwork
 
@@ -23,10 +24,11 @@ def get_net_class(*, network_type="python"):
         * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
         * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
         * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+        * "nse" : create a :py:obj:`NSENetwork <pynucastro.networks.nse_network.NSENetwork>`
 
     Returns
     -------
-    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork
+    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork, NSENetwork
 
     """
 
@@ -41,6 +43,9 @@ def get_net_class(*, network_type="python"):
 
     if network_type == "amrex":
         return AmrexAstroCxxNetwork
+
+    if network_type == "nse":
+        return NSENetwork
 
     raise ValueError("invalid network_type")
 
@@ -71,6 +76,7 @@ def network_helper(nuclei, *,
         * "cxx" : create a :py:obj:`SimpleCxxNetwork <pynucastro.networks.simple_cxx_network.SimpleCxxNetwork>`
         * "fortran" : create a :py:obj:`FortranNetwork <pynucastro.networks.fortran_network.FortranNetwork>`
         * "amrex" : create a :py:obj:`AmrexAstroCxxNetwork <pynucastro.networks.amrexastro_cxx_network.AmrexAstroCxxNetwork>`
+        * "nse" : create a :py:obj:`NSENetwork <pynucastro.networks.nse_network.NSENetwork>`
     inert_nuclei : list, tuple
         an iterable of Nuclei that should be part of the collection but
         are not linked via reactions to the other Nuclei in the network.
@@ -95,7 +101,7 @@ def network_helper(nuclei, *,
 
     Returns
     -------
-    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork
+    PythonNetwork, SimpleCxxNetwork, AmrexAstroCxxNetwork, FortranNetwork, NSENetwork
 
     """
 

@@ -665,7 +665,7 @@ class ReacLibRate(Rate):
             fstring += "    set_rate = np.exp(ln_set_rate)\n"
             fstring += "    rate += set_rate\n\n"
 
-        fstring += f"    rate_eval.{self.fname} = rate\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",

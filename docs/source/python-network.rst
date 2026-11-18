@@ -81,6 +81,15 @@ The following information is provided:
   where ``rate_eval`` is a ``RateEval`` object and ``tf`` is a
   :func:`Tfactors <pynucastro.rates.rate.Tfactors>` object
 
+* screening
+
+  ``RateEval.log_scor`` stores the dimensionless natural logarithms of the
+  screening factors, with one entry per unique screening pair indexed by
+  ``ScreenIdx``.  Each pair is evaluated once before the rates are evaluated.
+  The rate functions receive the sum of their pairs' entries as ``log_scor``.
+  The array is initialized to zero, so disabling screening leaves the rates
+  unscreened.
+
 * RHS and Jacobian
 
   Finally, to interface with an ODE solver, we have:

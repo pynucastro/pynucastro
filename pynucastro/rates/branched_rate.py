@@ -213,11 +213,11 @@ class BranchedRate(Rate):
         fstring += f"    # {self.rid}\n"
         if self.description:
             fstring += f"    # represents the sequence: {self.description}\n\n"
-        fstring += f"    r0 = rate_eval.{self.underlying_rate.fname}\n"
-        fstring += f"    r_prim_br = rate_eval.{self.primary_branch.fname}\n"
-        fstring += f"    r_other_br = rate_eval.{self.other_branch.fname}\n\n"
+        fstring += f"    r0 = rate_eval.rates[RateIdx.{self.underlying_rate.fname}]\n"
+        fstring += f"    r_prim_br = rate_eval.rates[RateIdx.{self.primary_branch.fname}]\n"
+        fstring += f"    r_other_br = rate_eval.rates[RateIdx.{self.other_branch.fname}]\n\n"
         fstring += "    f = r_prim_br / (r_prim_br + r_other_br)\n"
-        fstring += f"    rate_eval.{self.fname} = f * r0\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = f * r0\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
