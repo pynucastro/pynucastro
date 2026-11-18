@@ -97,15 +97,24 @@ class RateIdx(IntEnum):
     He4_He4_He4_to_C12_reaclib = 5
     Na23_to_Ne23_electron_capture_weaktab = 6
     Ne23_to_Na23_beta_neg_weaktab = 7
+
+class ScreenIdx(IntEnum):
+    He4_He4 = 0
+    He4_Be8 = 1
+    He4_C12 = 2
+    C12_C12 = 3
+
 @jitclass([
     ("enuc_weak", numba.float64),
     ("rates", numba.float64[:]),
+    ("log_scor", numba.float64[:]),
     ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
     def __init__(self):
         self.enuc_weak = 0.0
         self.rates = np.full(8, np.nan)
+        self.log_scor = np.zeros(4)
         self.dweak_ydot_dYe = np.zeros(9)
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
@@ -288,33 +297,29 @@ def do_rate_eval(t, Y, rho, T, screen_func):
     tf = Tfactors(T)
     rate_eval = RateEval()
 
-    log_scor_He4_He4 = 0.0
-    log_scor_He4_C12 = 0.0
-    log_scor_He4_Be8 = 0.0
-    log_scor_C12_C12 = 0.0
 
     if screen_func is not None:
         plasma_state = PlasmaState(T, rho, Y, Z)
 
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
-        scn_fac = ScreenFactors(2, 4, 6, 12)
-        log_scor_He4_C12 = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.He4_He4] = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(2, 4, 4, 8)
-        log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.He4_Be8] = screen_func(plasma_state, scn_fac)
+        scn_fac = ScreenFactors(2, 4, 6, 12)
+        rate_eval.log_scor[ScreenIdx.He4_C12] = screen_func(plasma_state, scn_fac)
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        log_scor_C12_C12 = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.C12_C12] = screen_func(plasma_state, scn_fac)
 
     rhoY = rho * ye(Y)
     log_rhoY = np.log10(rhoY)
     log_T = np.log10(T)
 
-    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
-    C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
-    C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=log_scor_C12_C12)
-    C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=log_scor_He4_C12)
+    C12_C12_to_He4_Ne20_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.C12_C12])
+    C12_C12_to_n_Mg23_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.C12_C12])
+    C12_C12_to_p_Na23_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.C12_C12])
+    C12_He4_to_O16_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.He4_C12])
     n_to_p_beta_neg_reaclib(rate_eval, tf)
-    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=log_scor_He4_He4 + log_scor_He4_Be8)
+    He4_He4_He4_to_C12_reaclib(rate_eval, tf, log_scor=rate_eval.log_scor[ScreenIdx.He4_He4] + rate_eval.log_scor[ScreenIdx.He4_Be8])
     Na23_to_Ne23_electron_capture_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
     Ne23_to_Na23_beta_neg_weaktab(rate_eval, T, log_T=log_T, rho=rho, log_rhoY=log_rhoY, Y=Y)
 

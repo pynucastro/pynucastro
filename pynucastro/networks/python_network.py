@@ -907,7 +907,7 @@ class PythonNetwork(RateCollection):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
         every set of reactants in our network. This computes log(screening)
-        terms and store them in local variables.
+        terms and stores them in ``RateEval.log_scor``.
 
         Parameters
         ----------
@@ -923,15 +923,10 @@ class PythonNetwork(RateCollection):
 
         ostr = ""
 
-        screening_pair_set = get_screening_pair_set(self.all_rates)
-
-        # Initialize log_scor to 0.0
-        for n1, n2 in screening_pair_set:
-            screen_var = f"log_scor_{n1}_{n2}"
-            ostr += f"{indent}{screen_var} = 0.0\n"
+        screening_pair_set = sorted(get_screening_pair_set(self.all_rates))
 
         # Check if we're doing screening, return early if not screening
-        if not self.do_screening:
+        if not self.do_screening or not screening_pair_set:
             return ostr
 
         ostr += "\n"
@@ -939,7 +934,7 @@ class PythonNetwork(RateCollection):
         indent += "    "
         ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
         for n1, n2 in screening_pair_set:
-            screen_var = f"log_scor_{n1}_{n2}"
+            screen_var = f"rate_eval.log_scor[ScreenIdx.{n1}_{n2}]"
             ostr += f"{indent}scn_fac = ScreenFactors({n1.Z}, {n1.A}, {n2.Z}, {n2.A})\n"
             ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
 
@@ -950,8 +945,7 @@ class PythonNetwork(RateCollection):
         for each rate.  Typically this is of the form
         ``name(rate_eval, ...)``, where ``rate_eval`` is a container
         class in the output network that stores the rate values.  This
-        also calls ``screening_string()`` after the main rates are
-        evaluated but before the approximate rates are constructed.
+        also calls ``screening_string()`` before evaluating the rates.
 
         Parameters
         ----------
@@ -981,7 +975,9 @@ class PythonNetwork(RateCollection):
         # in RateEval
 
         for r in topo_sort(self.all_rates):
-            call_args = py_rate_func_args(r, mode="call")
+            screen_terms = " + ".join(f"rate_eval.log_scor[ScreenIdx.{n1}_{n2}]"
+                                      for n1, n2 in r.screening_pairs)
+            call_args = py_rate_func_args(r, mode="call", screen_term_pass=screen_terms)
             ostr += f"{indent}{r.fname}({', '.join(call_args)})\n"
 
         return ostr
@@ -1101,11 +1097,21 @@ class PythonNetwork(RateCollection):
         for n, r in enumerate(self.all_rates):
             of.write(f"{indent}{r.fname} = {n}\n")
 
+        # screening pair index enum
+        screening_pairs = sorted(get_screening_pair_set(self.all_rates))
+        of.write("\nclass ScreenIdx(IntEnum):\n")
+        for i, (n1, n2) in enumerate(screening_pairs):
+            of.write(f"{indent}{n1}_{n2} = {i}\n")
+        if not screening_pairs:
+            of.write(f"{indent}pass\n")
+        of.write("\n")
+
         # rate_eval class
 
         of.write("@jitclass([\n")
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         of.write(f'{indent}("rates", numba.float64[:]),\n')
+        of.write(f'{indent}("log_scor", numba.float64[:]),\n')
         of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1117,6 +1123,7 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent}def __init__(self):\n")
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         of.write(f"{indent*2}self.rates = np.full({len(self.all_rates)}, np.nan)\n")
+        of.write(f"{indent*2}self.log_scor = np.zeros({len(screening_pairs)})\n")
         of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
