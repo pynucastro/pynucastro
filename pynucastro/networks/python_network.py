@@ -1112,6 +1112,8 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         of.write(f'{indent}("rates", numba.float64[:]),\n')
         of.write(f'{indent}("log_scor", numba.float64[:]),\n')
+        of.write(f'{indent}("dlog_scor_dYe", numba.float64[:]),\n')
+        of.write(f'{indent}("dlog_scor_dS2", numba.float64[:]),\n')
         of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1124,6 +1126,8 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         of.write(f"{indent*2}self.rates = np.full({len(self.all_rates)}, np.nan)\n")
         of.write(f"{indent*2}self.log_scor = np.zeros({len(screening_pairs)})\n")
+        of.write(f"{indent*2}self.dlog_scor_dYe = np.zeros({len(screening_pairs)})\n")
+        of.write(f"{indent*2}self.dlog_scor_dS2 = np.zeros({len(screening_pairs)})\n")
         of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
