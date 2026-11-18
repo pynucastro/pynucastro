@@ -907,7 +907,8 @@ class PythonNetwork(RateCollection):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
         every set of reactants in our network. This computes log(screening)
-        terms and stores them in ``RateEval.log_scor``.
+        terms and stores them in ``RateEval.log_scor``, along with their
+        composition derivatives with respect to Ye and S2.
 
         Parameters
         ----------
@@ -932,11 +933,15 @@ class PythonNetwork(RateCollection):
         ostr += "\n"
         ostr += f"{indent}if screen_func is not None:\n"
         indent += "    "
-        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
+        ostr += f"{indent}plasma_state = make_plasma_state_with_derivatives(T, rho, Y, Z)\n\n"
         for n1, n2 in screening_pair_set:
-            screen_var = f"rate_eval.log_scor[ScreenIdx.{n1}_{n2}]"
+            screen_idx = f"ScreenIdx.{n1}_{n2}"
+            ostr += f"{indent}# {n1} + {n2}\n"
             ostr += f"{indent}scn_fac = ScreenFactors({n1.Z}, {n1.A}, {n2.Z}, {n2.A})\n"
-            ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
+            ostr += f"{indent}log_scor = screen_func(plasma_state, scn_fac)\n"
+            ostr += f"{indent}rate_eval.log_scor[{screen_idx}] = log_scor.value\n"
+            ostr += f"{indent}rate_eval.dlog_scor_dYe[{screen_idx}] = log_scor.deriv.d1\n"
+            ostr += f"{indent}rate_eval.dlog_scor_dS2[{screen_idx}] = log_scor.deriv.d2\n\n"
 
         return ostr
 
@@ -1022,7 +1027,7 @@ class PythonNetwork(RateCollection):
         of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,\n")
         of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
         of.write("                              Tfactors)\n")
-        of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
+        of.write("from pynucastro.screening import make_plasma_state_with_derivatives, ScreenFactors\n\n")
 
         # integer keys
 

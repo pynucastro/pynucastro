@@ -9,7 +9,7 @@ N_A = constants.N_A
 from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,
                               TempTableInterpolator, TemperatureTabularRate,
                               Tfactors)
-from pynucastro.screening import PlasmaState, ScreenFactors
+from pynucastro.screening import make_plasma_state_with_derivatives, ScreenFactors
 
 jn = 0
 jp = 1
@@ -108,6 +108,8 @@ class ScreenIdx(IntEnum):
     ("enuc_weak", numba.float64),
     ("rates", numba.float64[:]),
     ("log_scor", numba.float64[:]),
+    ("dlog_scor_dYe", numba.float64[:]),
+    ("dlog_scor_dS2", numba.float64[:]),
     ("dweak_ydot_dYe", numba.float64[:]),
 ])
 class RateEval:
@@ -115,6 +117,8 @@ class RateEval:
         self.enuc_weak = 0.0
         self.rates = np.full(8, np.nan)
         self.log_scor = np.zeros(4)
+        self.dlog_scor_dYe = np.zeros(4)
+        self.dlog_scor_dS2 = np.zeros(4)
         self.dweak_ydot_dYe = np.zeros(9)
 
 # note: we cannot make the TableInterpolator global, since numba doesn't like global jitclass
@@ -299,16 +303,36 @@ def do_rate_eval(t, Y, rho, T, screen_func):
 
 
     if screen_func is not None:
-        plasma_state = PlasmaState(T, rho, Y, Z)
+        plasma_state = make_plasma_state_with_derivatives(T, rho, Y, Z)
 
+        # He4 + He4
         scn_fac = ScreenFactors(2, 4, 2, 4)
-        rate_eval.log_scor[ScreenIdx.He4_He4] = screen_func(plasma_state, scn_fac)
+        log_scor = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.He4_He4] = log_scor.value
+        rate_eval.dlog_scor_dYe[ScreenIdx.He4_He4] = log_scor.deriv.d1
+        rate_eval.dlog_scor_dS2[ScreenIdx.He4_He4] = log_scor.deriv.d2
+
+        # He4 + Be8
         scn_fac = ScreenFactors(2, 4, 4, 8)
-        rate_eval.log_scor[ScreenIdx.He4_Be8] = screen_func(plasma_state, scn_fac)
+        log_scor = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.He4_Be8] = log_scor.value
+        rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be8] = log_scor.deriv.d1
+        rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be8] = log_scor.deriv.d2
+
+        # He4 + C12
         scn_fac = ScreenFactors(2, 4, 6, 12)
-        rate_eval.log_scor[ScreenIdx.He4_C12] = screen_func(plasma_state, scn_fac)
+        log_scor = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.He4_C12] = log_scor.value
+        rate_eval.dlog_scor_dYe[ScreenIdx.He4_C12] = log_scor.deriv.d1
+        rate_eval.dlog_scor_dS2[ScreenIdx.He4_C12] = log_scor.deriv.d2
+
+        # C12 + C12
         scn_fac = ScreenFactors(6, 12, 6, 12)
-        rate_eval.log_scor[ScreenIdx.C12_C12] = screen_func(plasma_state, scn_fac)
+        log_scor = screen_func(plasma_state, scn_fac)
+        rate_eval.log_scor[ScreenIdx.C12_C12] = log_scor.value
+        rate_eval.dlog_scor_dYe[ScreenIdx.C12_C12] = log_scor.deriv.d1
+        rate_eval.dlog_scor_dS2[ScreenIdx.C12_C12] = log_scor.deriv.d2
+
 
     rhoY = rho * ye(Y)
     log_rhoY = np.log10(rhoY)
