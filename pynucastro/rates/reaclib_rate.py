@@ -832,7 +832,8 @@ class ReacLibRate(Rate):
         return drdT
 
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10), *, rho=None, comp=None, screen_func=None):
+             figsize=(6, 6), *, show_grid=True, npts=100,
+             rho=None, comp=None, screen_func=None):
         """Plot the rate's temperature sensitivity vs temperature
 
         Parameters
@@ -847,6 +848,10 @@ class ReacLibRate(Rate):
             unused for ReacLib rates
         figsize : tuple
             the horizontal, vertical size (in inches) for the plot
+        show_grid : bool
+            do we show a grid in the axes for major ticks
+        npts : int
+            number of points used for sampling the rate
         rho : float
             the density to evaluate the screening effect.
         comp : float
@@ -864,9 +869,9 @@ class ReacLibRate(Rate):
         """
         _ = (rhoYmin, rhoYmax)  # unused by this subclass
 
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, constrained_layout=True)
 
-        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), npts)
         r = np.zeros_like(temps)
 
         for n, T in enumerate(temps):
@@ -883,5 +888,8 @@ class ReacLibRate(Rate):
             ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
+
+        if show_grid:
+            ax.grid(ls=":")
 
         return fig
