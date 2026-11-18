@@ -58,28 +58,22 @@ class Test3alphaScreening:
 
         scr_str = net.screening_string()
         good = \
-"""log_scor_He4_He4 = 0.0
-log_scor_He4_Be9 = 0.0
-log_scor_p_Be9 = 0.0
-log_scor_p_B11 = 0.0
-log_scor_He4_Be8 = 0.0
-log_scor_p_Be8 = 0.0
-
+"""
 if screen_func is not None:
     plasma_state = PlasmaState(T, rho, Y, Z)
 
-    scn_fac = ScreenFactors(2, 4, 2, 4)
-    log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(2, 4, 4, 9)
-    log_scor_He4_Be9 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(1, 1, 4, 9)
-    log_scor_p_Be9 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(1, 1, 5, 11)
-    log_scor_p_B11 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(2, 4, 4, 8)
-    log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
     scn_fac = ScreenFactors(1, 1, 4, 8)
-    log_scor_p_Be8 = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_Be8] = screen_func(plasma_state, scn_fac)
+    scn_fac = ScreenFactors(1, 1, 4, 9)
+    rate_eval.log_scor[ScreenIdx.p_Be9] = screen_func(plasma_state, scn_fac)
+    scn_fac = ScreenFactors(1, 1, 5, 11)
+    rate_eval.log_scor[ScreenIdx.p_B11] = screen_func(plasma_state, scn_fac)
+    scn_fac = ScreenFactors(2, 4, 2, 4)
+    rate_eval.log_scor[ScreenIdx.He4_He4] = screen_func(plasma_state, scn_fac)
+    scn_fac = ScreenFactors(2, 4, 4, 8)
+    rate_eval.log_scor[ScreenIdx.He4_Be8] = screen_func(plasma_state, scn_fac)
+    scn_fac = ScreenFactors(2, 4, 4, 9)
+    rate_eval.log_scor[ScreenIdx.He4_Be9] = screen_func(plasma_state, scn_fac)
 """
 
         assert scr_str == good
