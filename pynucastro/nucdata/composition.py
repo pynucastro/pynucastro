@@ -473,17 +473,18 @@ class Composition(collections.UserDict):
         Returns
         -------
         new_composition : Composition
-            The new binned composition
+            The new binned composition preserving the order
+            given in `nuclei`
         """
 
         nuclei = Nucleus.cast_list(nuclei)
         exclude = Nucleus.cast_list(exclude, allow_None=True)
 
-        # sort the input nuclei by A, then Z
-        nuclei.sort(key=lambda n: (n.A, n.Z))
-
         # create the new composition
         new_comp = Composition(nuclei)
+
+        # sort the input nuclei by A, then Z
+        nuclei.sort(key=lambda n: (n.A, n.Z))
 
         # first do any exact matches if we provided an exclude list
         if exclude is None:

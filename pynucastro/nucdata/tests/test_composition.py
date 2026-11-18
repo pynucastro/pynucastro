@@ -213,8 +213,8 @@ class TestCompBinning:
     def test_bin_as(self, nuclei, comp, capsys):
 
         new_nuclei = [Nucleus("he4"),
-                      Nucleus("c12"),
                       Nucleus("ti44"),
+                      Nucleus("c12"),
                       Nucleus("ni56"),
                       Nucleus("fe56")]
 
@@ -237,6 +237,10 @@ storing Zn60 as Ni56
 """
 
         assert captured.out == output
+
+        # we should retain the original order of the nuclei
+        for input_nuc, output_nuc in zip(new_nuclei, c_new.keys()):
+            assert input_nuc == output_nuc
 
         assert c_new.get_sum_X() == approx(comp.get_sum_X())
 
