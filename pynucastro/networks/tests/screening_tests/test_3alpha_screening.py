@@ -58,28 +58,52 @@ class Test3alphaScreening:
 
         scr_str = net.screening_string()
         good = \
-"""log_scor_He4_He4 = 0.0
-log_scor_He4_Be9 = 0.0
-log_scor_p_Be9 = 0.0
-log_scor_p_B11 = 0.0
-log_scor_He4_Be8 = 0.0
-log_scor_p_Be8 = 0.0
-
+"""
 if screen_func is not None:
-    plasma_state = PlasmaState(T, rho, Y, Z)
+    plasma_state = make_plasma_state_with_derivatives(T, rho, Y, Z)
 
-    scn_fac = ScreenFactors(2, 4, 2, 4)
-    log_scor_He4_He4 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(2, 4, 4, 9)
-    log_scor_He4_Be9 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(1, 1, 4, 9)
-    log_scor_p_Be9 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(1, 1, 5, 11)
-    log_scor_p_B11 = screen_func(plasma_state, scn_fac)
-    scn_fac = ScreenFactors(2, 4, 4, 8)
-    log_scor_He4_Be8 = screen_func(plasma_state, scn_fac)
+    # p + Be8
     scn_fac = ScreenFactors(1, 1, 4, 8)
-    log_scor_p_Be8 = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_Be8] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_Be8] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_Be8] = log_scor.deriv.d2
+
+    # p + Be9
+    scn_fac = ScreenFactors(1, 1, 4, 9)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_Be9] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_Be9] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_Be9] = log_scor.deriv.d2
+
+    # p + B11
+    scn_fac = ScreenFactors(1, 1, 5, 11)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_B11] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_B11] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_B11] = log_scor.deriv.d2
+
+    # He4 + He4
+    scn_fac = ScreenFactors(2, 4, 2, 4)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_He4] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_He4] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_He4] = log_scor.deriv.d2
+
+    # He4 + Be8
+    scn_fac = ScreenFactors(2, 4, 4, 8)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_Be8] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be8] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be8] = log_scor.deriv.d2
+
+    # He4 + Be9
+    scn_fac = ScreenFactors(2, 4, 4, 9)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_Be9] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be9] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be9] = log_scor.deriv.d2
+
 """
 
         assert scr_str == good
