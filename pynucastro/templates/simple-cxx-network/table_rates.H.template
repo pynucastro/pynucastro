@@ -2,6 +2,7 @@
 #define TABLE_RATES_H
 
 #include <iostream>
+#include <cmath>
 #include <cstdint>
 #include <sstream>
 #include <fstream>
@@ -11,13 +12,9 @@
 
 #include <interp_tools.H>
 
+
 // Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
-
-// all tables are expected to have columns:
-// Log(rhoY)     Log(T)   mu    dQ    Vs    Log(e-cap-rate)   Log(nu-energy-loss)  Log(gamma-energy)
-// Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
-//
 
 <table_num>(0)
 
