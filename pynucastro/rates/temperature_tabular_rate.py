@@ -404,6 +404,7 @@ class TemperatureTabularRate(Rate):
         return log_rate
 
     def plot(self, *, Tmin=None, Tmax=None, figsize=(6, 6),
+             show_grid=True, npts=100,
              rho=None, comp=None, screen_func=None):
         """Plot the rate as a function of temperature.
 
@@ -415,6 +416,10 @@ class TemperatureTabularRate(Rate):
             maximum temperature for the plot
         figsize : tuple
             the horizontal, vertical size (in inches) for the plot
+        show_grid : bool
+            do we show a grid in the axes for major ticks
+        npts : int
+            number of points used for sampling the rate
         rho : float
             the density to evaluate the screening effect.
         comp : float
@@ -431,14 +436,14 @@ class TemperatureTabularRate(Rate):
 
         """
 
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, constrained_layout=True)
 
         if Tmin is None:
             Tmin = self.table_Tmin
         if Tmax is None:
             Tmax = self.table_Tmax
 
-        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), npts)
         r = np.zeros_like(temps)
 
         for n, T in enumerate(temps):
@@ -464,6 +469,7 @@ class TemperatureTabularRate(Rate):
             ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
-        ax.grid(ls=":")
+        if show_grid:
+            ax.grid(ls=":")
 
         return fig
