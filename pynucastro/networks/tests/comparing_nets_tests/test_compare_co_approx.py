@@ -87,11 +87,9 @@ class TestNetworkCompare:
                         reason="We do not build C++ on Mac or Windows")
     def test_compare_energy(self, eval_cond):
 
-        # we use a relaxed tolerance here because of differences
-        # in constants in simple C++ nets (N_A)
         eval_cond.compare_results(quantity="enuc",
-                                  rtol=1.e-7, atol=1.e-30)
+                                  rtol=1.e-10, atol=1.e-30)
         eval_cond.compare_results(quantity="enu_weak",
-                                  rtol=1.e-7, atol=1.e-30)
+                                  rtol=1.e-10, atol=1.e-30)
 
     # pylint: enable=duplicate-code
