@@ -14,7 +14,7 @@ namespace reaclib_rates {
     using namespace Rates;
     using namespace Species;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Fe52_He4_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -54,7 +54,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Co55_p_to_Ni56_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 
@@ -94,7 +94,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Fe52_He4_to_p_Co55_reaclib(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT) {
 

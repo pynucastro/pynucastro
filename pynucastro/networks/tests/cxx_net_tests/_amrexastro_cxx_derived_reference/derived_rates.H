@@ -11,7 +11,7 @@ namespace derived_rates {
 
     using namespace Rates;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Ni56_to_He4_Fe52_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -36,8 +36,8 @@ namespace derived_rates {
         // interpolating Fe52 partition function
         get_partition_function_cached(Fe52, tfactors.T9, pf_cache, Fe52_log_pf, dFe52_log_pf_dT9);
 
-        amrex::Real net_log_pf = He4_log_pf + Fe52_log_pf - Ni56_log_pf;
-        [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dHe4_log_pf_dT9 + dFe52_log_pf_dT9 - dNi56_log_pf_dT9;
+        const amrex::Real net_log_pf = He4_log_pf + Fe52_log_pf - Ni56_log_pf;
+        [[maybe_unused]] const amrex::Real net_dlog_pf_dT9 = dHe4_log_pf_dT9 + dFe52_log_pf_dT9 - dNi56_log_pf_dT9;
 
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};
@@ -72,7 +72,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Ni56_to_p_Co55_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -97,8 +97,8 @@ namespace derived_rates {
         // interpolating Co55 partition function
         get_partition_function_cached(Co55, tfactors.T9, pf_cache, Co55_log_pf, dCo55_log_pf_dT9);
 
-        amrex::Real net_log_pf = p_log_pf + Co55_log_pf - Ni56_log_pf;
-        [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dp_log_pf_dT9 + dCo55_log_pf_dT9 - dNi56_log_pf_dT9;
+        const amrex::Real net_log_pf = p_log_pf + Co55_log_pf - Ni56_log_pf;
+        [[maybe_unused]] const amrex::Real net_dlog_pf_dT9 = dp_log_pf_dT9 + dCo55_log_pf_dT9 - dNi56_log_pf_dT9;
 
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};
@@ -133,7 +133,7 @@ namespace derived_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_Co55_p_to_He4_Fe52_derived(T& rate_eval, const tf_t& tfactors, const amrex::Real log_scor, const amrex::Real dlog_scor_dT, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -164,8 +164,8 @@ namespace derived_rates {
         // interpolating Fe52 partition function
         get_partition_function_cached(Fe52, tfactors.T9, pf_cache, Fe52_log_pf, dFe52_log_pf_dT9);
 
-        amrex::Real net_log_pf = He4_log_pf + Fe52_log_pf - p_log_pf - Co55_log_pf;
-        [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dHe4_log_pf_dT9 + dFe52_log_pf_dT9 - dp_log_pf_dT9 - dCo55_log_pf_dT9;
+        const amrex::Real net_log_pf = He4_log_pf + Fe52_log_pf - p_log_pf - Co55_log_pf;
+        [[maybe_unused]] const amrex::Real net_dlog_pf_dT9 = dHe4_log_pf_dT9 + dFe52_log_pf_dT9 - dp_log_pf_dT9 - dCo55_log_pf_dT9;
 
         amrex::Real ln_set_rate{0.0};
         amrex::Real dln_set_rate_dT9{0.0};

@@ -11,7 +11,7 @@ namespace derived_rates {
 
     using namespace Rates;
 
-    template <typename T>
+    template <RateEvaluation T>
     AMREX_GPU_DEVICE AMREX_INLINE
     void rate_F17_to_O16_p_derived(T& rate_eval, const tf_t& tfactors, [[maybe_unused]] part_fun::pf_cache_t& pf_cache) {
 
@@ -36,8 +36,8 @@ namespace derived_rates {
         // interpolating O16 partition function
         get_partition_function_cached(O16, tfactors.T9, pf_cache, O16_log_pf, dO16_log_pf_dT9);
 
-        amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
-        [[maybe_unused]] amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
+        const amrex::Real net_log_pf = O16_log_pf + p_log_pf - F17_log_pf;
+        [[maybe_unused]] const amrex::Real net_dlog_pf_dT9 = dO16_log_pf_dT9 + dp_log_pf_dT9 - dF17_log_pf_dT9;
 
         constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;
         auto [_rate, _drate_dT] = interp_net::monotone_1d_interp<do_T_derivatives>(

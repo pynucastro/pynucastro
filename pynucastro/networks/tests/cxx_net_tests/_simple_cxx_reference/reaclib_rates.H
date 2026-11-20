@@ -12,7 +12,7 @@ namespace reaclib_rates {
     using namespace Rates;
     using namespace Species;
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_C12_C12_to_He4_Ne20_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT) {
 
@@ -52,7 +52,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_C12_C12_to_n_Mg23_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT) {
 
@@ -92,7 +92,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_C12_C12_to_p_Na23_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT) {
 
@@ -132,7 +132,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_C12_He4_to_O16_reaclib(T& rate_eval, const tf_t& tfactors, const Real log_scor, const Real dlog_scor_dT) {
 
@@ -195,7 +195,7 @@ namespace reaclib_rates {
         }
     }
 
-    template <typename T>
+    template <RateEvaluation T>
     inline
     void rate_n_to_p_beta_neg_reaclib(T& rate_eval, const tf_t& tfactors) {
 
