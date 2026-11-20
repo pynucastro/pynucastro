@@ -26,6 +26,7 @@ ifneq ($(SKIP_EXECUTE),TRUE)
 	curl -L -H 'Accept: application/x-bibtex' https://zenodo.org/api/records/1202434 > source/zenodo.bibtex.txt
 	python parse_changelog.py ../CHANGES.md > source/changelog.md
 endif
+	python authors.py
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
