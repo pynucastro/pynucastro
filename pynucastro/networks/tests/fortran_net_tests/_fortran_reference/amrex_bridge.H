@@ -109,6 +109,12 @@ struct MathArray2D
         arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)] = x;
     }
 
+    inline
+    void add (const int i, const int j, const Real x) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)] += x;
+    }
+
     [[nodiscard]] inline
     Real get (const int i, const int j) const noexcept {
         assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);

@@ -903,11 +903,51 @@ class PythonNetwork(RateCollection):
 
         return ostr
 
+    def _screening_jacobian_string(self, indent=""):
+        """Add screening composition derivatives to the molar Jacobian.
+
+        Use signed, screened fluxes and the effective screening pairs,
+        including cancellations in approximate rates.
+        """
+        if not self.do_screening:
+            return ""
+
+        ostr = ""
+        for nucleus in self.unique_nuclei:
+            contributions = []
+            for rate in self.rates:
+                pairs = rate.get_effective_screening_pairs()
+                coefficient = rate.product_count(nucleus) - rate.reactant_count(nucleus)
+                if pairs and coefficient:
+                    contributions.append((rate, pairs, coefficient))
+
+            if not contributions:
+                continue
+
+            inner = indent + "    "
+            ostr += f"{inner}# {nucleus}: screening dependence through Ye and S2\n"
+            ostr += f"{inner}dscreen_ydot_dYe = 0.0\n"
+            ostr += f"{inner}dscreen_ydot_dS2 = 0.0\n"
+            for rate, pairs, coefficient in contributions:
+                ostr += f"{inner}flux = {coefficient}*({rate.ydot_string_py()})\n"
+                for variable in ("Ye", "S2"):
+                    derivative = " + ".join(f"rate_eval.dlog_scor_d{variable}[ScreenIdx.{n1}_{n2}]"
+                                            for n1, n2 in pairs)
+                    ostr += f"{inner}dscreen_ydot_d{variable} += flux * ({derivative})\n"
+            ostr += f"{inner}for jcol in range(nnuc):\n"
+            ostr += (f"{inner}    jac[j{nucleus.raw}, jcol] += "
+                     "dscreen_ydot_dYe * Z[jcol] + dscreen_ydot_dS2 * Z[jcol]**2\n\n")
+
+        if ostr:
+            return f"{indent}if screen_func is not None:\n" + ostr
+        return ""
+
     def screening_string(self, indent=""):
         """Create a string containing the python code that sets up the
         screening (PlasmaState) and calls the screening function on
         every set of reactants in our network. This computes log(screening)
-        terms and stores them in ``RateEval.log_scor``.
+        terms and stores them in ``RateEval.log_scor``, along with their
+        composition derivatives with respect to Ye and S2.
 
         Parameters
         ----------
@@ -932,11 +972,15 @@ class PythonNetwork(RateCollection):
         ostr += "\n"
         ostr += f"{indent}if screen_func is not None:\n"
         indent += "    "
-        ostr += f"{indent}plasma_state = PlasmaState(T, rho, Y, Z)\n\n"
+        ostr += f"{indent}plasma_state = make_plasma_state_with_derivatives(T, rho, Y, Z)\n\n"
         for n1, n2 in screening_pair_set:
-            screen_var = f"rate_eval.log_scor[ScreenIdx.{n1}_{n2}]"
+            screen_idx = f"ScreenIdx.{n1}_{n2}"
+            ostr += f"{indent}# {n1} + {n2}\n"
             ostr += f"{indent}scn_fac = ScreenFactors({n1.Z}, {n1.A}, {n2.Z}, {n2.A})\n"
-            ostr += f"{indent}{screen_var} = screen_func(plasma_state, scn_fac)\n"
+            ostr += f"{indent}log_scor = screen_func(plasma_state, scn_fac)\n"
+            ostr += f"{indent}rate_eval.log_scor[{screen_idx}] = log_scor.value\n"
+            ostr += f"{indent}rate_eval.dlog_scor_dYe[{screen_idx}] = log_scor.deriv.d1\n"
+            ostr += f"{indent}rate_eval.dlog_scor_dS2[{screen_idx}] = log_scor.deriv.d2\n\n"
 
         return ostr
 
@@ -1022,7 +1066,7 @@ class PythonNetwork(RateCollection):
         of.write("from pynucastro.rates import (TableIndex, TableInterpolator, TabularWeakRate,\n")
         of.write("                              TempTableInterpolator, TemperatureTabularRate,\n")
         of.write("                              Tfactors)\n")
-        of.write("from pynucastro.screening import PlasmaState, ScreenFactors\n\n")
+        of.write("from pynucastro.screening import make_plasma_state_with_derivatives, ScreenFactors\n\n")
 
         # integer keys
 
@@ -1112,6 +1156,8 @@ class PythonNetwork(RateCollection):
         of.write(f'{indent}("enuc_weak", numba.float64),\n')
         of.write(f'{indent}("rates", numba.float64[:]),\n')
         of.write(f'{indent}("log_scor", numba.float64[:]),\n')
+        of.write(f'{indent}("dlog_scor_dYe", numba.float64[:]),\n')
+        of.write(f'{indent}("dlog_scor_dS2", numba.float64[:]),\n')
         of.write(f'{indent}("dweak_ydot_dYe", numba.float64[:]),\n')
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1124,6 +1170,8 @@ class PythonNetwork(RateCollection):
         of.write(f"{indent*2}self.enuc_weak = 0.0\n")
         of.write(f"{indent*2}self.rates = np.full({len(self.all_rates)}, np.nan)\n")
         of.write(f"{indent*2}self.log_scor = np.zeros({len(screening_pairs)})\n")
+        of.write(f"{indent*2}self.dlog_scor_dYe = np.zeros({len(screening_pairs)})\n")
+        of.write(f"{indent*2}self.dlog_scor_dS2 = np.zeros({len(screening_pairs)})\n")
         of.write(f"{indent*2}self.dweak_ydot_dYe = np.zeros({len(self.unique_nuclei)})\n")
         for r in self.all_rates:
             if nucs := r.rate_comp_dependence:
@@ -1231,6 +1279,8 @@ class PythonNetwork(RateCollection):
         for n_i in self.unique_nuclei:
             for n_j in self.unique_nuclei:
                 of.write(self.full_jacobian_element_string(n_i, n_j, indent=indent))
+
+        of.write(self._screening_jacobian_string(indent=indent))
 
         # now the correction for the Ye dependence in weak rates
         of.write(f"{indent}# add ∂λ_weak / ∂Y_e terms now\n")
