@@ -22,6 +22,15 @@ _spin_table = SpinTable()
 # read the partition function table once and store it at the module-level
 _pcollection = PartitionFunctionCollection(use_high_temperatures=True, use_set='frdm')
 
+_NUCLEUS_SYMBOL_MASS_RE = re.compile(r"^([a-zA-Z]+)(\d*)$")
+_NUCLEUS_MASS_SYMBOL_RE = re.compile(r"^(\d*)([a-zA-Z]*)$")
+
+# this matches something like "ni56-58,60"
+_NUCLEUS_RANGE_RE = re.compile(r"([A-Za-z]+)(\d+(?:-\d+)?(?:,\d+(?:-\d+)?)*)")
+
+# Note: for Nubase 2020, we need to use the CODATA 18 constants
+_mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
+
 
 class UnsupportedNucleus(Exception):
     """Exception for a nucleus that we do not know about."""
@@ -140,10 +149,10 @@ class Nucleus:
         elif name.lower().strip() in ("al-6", "al*6"):
             raise UnsupportedNucleus("isomers of Al26 are not currently supported")
         else:
-            if e := re.match(r"^([a-zA-Z]+)(\d*)$", name):
+            if e := _NUCLEUS_SYMBOL_MASS_RE.match(name):
                 self.el = e.group(1).title()  # chemical symbol
                 self.A = int(e.group(2))
-            elif e := re.match(r"^(\d*)([a-zA-Z]*)$", name):
+            elif e := _NUCLEUS_MASS_SYMBOL_RE.match(name):
                 self.el = e.group(2).title()  # chemical symbol
                 self.A = int(e.group(1))
             if e is None:
@@ -190,12 +199,10 @@ class Nucleus:
 
         # nuclear mass
         try:
-            # Note: for Nubase 2020, we need to use the CODATA 18 constants
-            mass_H = _mass_table.get_mass_diff(a=1, z=1) + constants.m_u_MeV_C18
             self.dm = _mass_table.get_mass_diff(a=self.A, z=self.Z)
             self.A_nuc = float(self.A) + self.dm / constants.m_u_MeV_C18
             self.mass = self.A * constants.m_u_MeV_C18 + self.dm
-            B = (self.Z * mass_H + self.N * constants.m_n_MeV_C18) - self.mass
+            B = (self.Z * _mass_H + self.N * constants.m_n_MeV_C18) - self.mass
             self.nucbind = B / self.A
 
         except NotImplementedError:
@@ -317,6 +324,8 @@ class Nucleus:
         return self.raw
 
     def __hash__(self):
+        # Nuclei also compare equal to (Z, A) tuples.  Including el or nse
+        # here would violate the equal-objects-have-equal-hashes contract.
         return hash((self.Z, self.A))
 
     def c(self):
@@ -421,6 +430,40 @@ class Nucleus:
                 return [cls.cast(lst)]
             raise ValueError("Single object passed to Nucleus.cast_list() instead of list")
         return [cls.cast(obj) for obj in lst]
+
+
+def parse_nuclei_group(nstr):
+    """Parse a string representing a group of nuclei, like "ni56-58,60"
+    and return a list of Nucleus objects
+
+    Parameters
+    ----------
+    nstr : str
+        A string representing a group of nuclei consisting of a single
+        element name followed by mass numbers, using "-" for a range and
+        "," for single values in the sequence.
+
+    Returns
+    -------
+    list(Nucleus)
+
+    """
+
+    match = _NUCLEUS_RANGE_RE.fullmatch(nstr)
+
+    if not match:
+        raise ValueError(f"invalid nuclei range specification: {nstr!r}")
+    element, numbers = match.groups()
+    result = []
+
+    for part in numbers.split(","):
+        if "-" in part:
+            start, end = map(int, part.split("-"))
+            result.extend(Nucleus(f"{element}{n}") for n in range(start, end+1))
+        else:
+            result.append(Nucleus(f"{element}{int(part)}"))
+
+    return result
 
 
 def get_nuclei_in_range(name=None, *,

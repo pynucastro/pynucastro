@@ -54,7 +54,7 @@ SKIP_EXECUTE=TRUE make html
 We use pytest to do unit and regression tests. All commands should be
 run from the repository root.
 
-* To run all the tests:
+* To run all the tests (including notebooks):
 
   ```
   pytest -v --nbval
@@ -72,8 +72,16 @@ run from the repository root.
   pytest -v --nbval -p no:python
   ```
 
-  This executes each of the notebooks under `examples/` and `docs/source/`
-  and compares against the stored outputs from each cell.
+  This executes each of the notebooks under `examples/` and
+  `docs/source/` and compares against the stored outputs from each
+  cell.
+
+* To run the tests in parallel, install the `pytest-xdist` package and
+  then:
+
+  ```
+  pytest -v --nbval -n 4 --dist loadscope
+  ```
 
 * To check code coverage:
 

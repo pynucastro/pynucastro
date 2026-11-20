@@ -1,0 +1,21 @@
+#ifndef BRANCHED_RATES_H
+#define BRANCHED_RATES_H
+
+#include <AMReX.H>
+#include <AMReX_Print.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+#include <temperature_table_rates.H>
+#include <reaclib_rates.H>
+
+namespace branched_rates {
+
+    using namespace Rates;
+
+    using namespace temp_tabular;
+
+
+}
+#endif

@@ -67,7 +67,10 @@ class NeutrinoCooling:
 
         im = ax.imshow(data, cmap="viridis",
                        extent=extent, aspect="auto", origin="lower")
-        fig.colorbar(im, ax=ax)
+        cbar = fig.colorbar(im, ax=ax)
+        cbar.set_label(
+            r"$\log(\epsilon_{\nu, \mathrm{therm}})$ [erg g$^{-1}$ s$^{-1}$]"
+        )
 
         ax.set_ylabel(r"$\log(T)$ [K]")
         ax.set_xlabel(r"$\log(\rho)$ [g/cm$^3$]")

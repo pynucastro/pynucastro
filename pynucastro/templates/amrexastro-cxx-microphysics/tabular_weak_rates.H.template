@@ -1,0 +1,24 @@
+#ifndef TABULAR_WEAK_RATES_H
+#define TABULAR_WEAK_RATES_H
+
+#include <cmath>
+
+#include <AMReX.H>
+
+#include <actual_network.H>
+#include <fundamental_constants.H>
+#include <network_properties.H>
+#include <rate_type.H>
+#include <table_rates.H>
+
+namespace tabular_weak_rates {
+
+    using namespace Rates;
+    using namespace Species;
+
+    using namespace rate_tables;
+
+    <tabular_rate_functions>(1)
+
+}
+#endif

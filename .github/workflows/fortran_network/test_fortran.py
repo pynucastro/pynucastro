@@ -7,7 +7,7 @@ for r in rates_to_derive:
     fr = lib.get_rate_by_nuclei(r.products, r.reactants)
     if fr:
         lib.remove_rate(r)
-        d = pyna.DerivedRate(fr, use_pf=False)
+        d = pyna.DerivedRate(fr, use_pf=True)
         lib.add_rate(d)
 net = pyna.FortranNetwork(libraries=[lib])
 fig = net.plot(rotated=True)

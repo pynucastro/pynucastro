@@ -4,6 +4,7 @@ import numpy as np
 
 from pynucastro.mpi_utils import mpi_importer
 from pynucastro.nucdata import Nucleus
+from pynucastro.rates import ThermoState
 
 MPI = mpi_importer()
 
@@ -211,7 +212,8 @@ def _drgep(net, conds, targets, tols, *, screen_func=None):
     adj_nuc = get_adj_nuc(net)
 
     for comp, rho, T in conds:
-        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp,
+        state = ThermoState(rho=rho, T=T, comp=comp)
+        rvals = net.evaluate_rates(state,
                                    screen_func=screen_func)
         _drgep_kernel(net, R_TB, rvals, targets, tols, adj_nuc)
 
@@ -237,7 +239,8 @@ def _drgep_mpi(net, conds, targets, tols, *, screen_func=None):
 
     for i in range(MPI_rank, len(conds), MPI_N):
         comp, rho, T = conds[i]
-        rvals = net.evaluate_rates(rho=rho, T=T, composition=comp,
+        state = ThermoState(rho=rho, T=T, comp=comp)
+        rvals = net.evaluate_rates(state,
                                    screen_func=screen_func)
         _drgep_kernel(net, R_TB_loc, rvals, targets, tols, adj_nuc)
 

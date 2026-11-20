@@ -2,19 +2,24 @@
 
 from pynucastro.nucdata import UnsupportedNucleus
 
-from .approximate_rates import ApproximateRate, create_double_neutron_capture
+from .approximate_rates import ApproximateRate
+from .aprox_family_rates import (make_ap_pg_rates, make_CO_approx_rates,
+                                 make_double_neutron_rates)
+from .beta_limited_rate import BetaLimitedRate
+from .branched_rate import BranchedRate
 from .derived_rate import DerivedRate
 from .files import RateFileError, _find_rate_file
 from .known_duplicates import find_duplicate_rates, is_allowed_dupe
 from .library import (FFNLibrary, LangankeLibrary, Library, OdaLibrary,
                       PruetFullerLibrary, RateFilter, ReacLibLibrary,
                       StarLibLibrary, SuzukiLibrary, TabularLibrary,
-                      full_library)
+                      TabularWeakLibrary, full_library)
 from .modified_rate import ModifiedRate
-from .rate import BaryonConservationError, Rate, RatePair, Tfactors
+from .rate import (BaryonConservationError, Rate, RatePair, Tfactors,
+                   ThermoState, need_state)
 from .reaclib_rate import ReacLibRate, SingleSet
 from .starlib_rate import StarLibRate
-from .tabular_rate import TableIndex, TableInterpolator, TabularRate
+from .tabular_rate import TableIndex, TableInterpolator, TabularWeakRate
 from .temperature_tabular_rate import (TemperatureTabularRate,
                                        TempTableInterpolator)
 
@@ -39,7 +44,7 @@ def load_rate(rfile=None):
     """
 
     try:
-        rate = TabularRate(rfile=rfile)
+        rate = TabularWeakRate(rfile=rfile)
     except (AttributeError, RateFileError, UnsupportedNucleus):
         rate = ReacLibRate.from_file(rfile=rfile)
 

@@ -1,5 +1,5 @@
-#ifndef actual_network_H
-#define actual_network_H
+#ifndef ACTUAL_NETWORK_H
+#define ACTUAL_NETWORK_H
 
 #include <amrex_bridge.H>
 
@@ -26,6 +26,11 @@ namespace Rates
     enum NetworkRates
     {
         <nrxn>(2)
+    };
+
+    enum ScreenPairs
+    {
+        <screen_pair>(2)
     };
 
     // rate names -- note: the rates are 1-based, not zero-based, so we pad

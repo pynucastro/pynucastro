@@ -1,0 +1,222 @@
+#ifndef AMREX_BRIDGE_H
+#define AMREX_BRIDGE_H
+
+#include <cassert>
+#include <type_traits>
+
+// this is a set of classes and data that allow us to use some
+// AMReX concepts in the base C++ network.  Note: many of these
+// are stripped down from their AMReX equivalents
+
+
+// adapted from AMReX_REAL.H
+
+using Real = double;
+
+inline namespace literals {
+
+    constexpr Real
+    operator"" _rt( long double x )
+    {
+        return Real( x );
+    }
+
+    constexpr Real
+    operator"" _rt( unsigned long long int x )
+    {
+        return Real( x );
+    }
+
+} // namespace literals
+
+
+// adapted from AMReX_Array.H
+
+template <class T, int XLO, int XHI>
+struct Array1D
+{
+
+    [[nodiscard]] inline
+    static constexpr int lo () noexcept { return XLO; }
+
+    [[nodiscard]] inline
+    static constexpr int hi () noexcept { return XHI; }
+
+    // Returns the number of elements in the Array1D object as an unsigned
+    // integer.
+    [[nodiscard]] inline
+    static constexpr unsigned int size () noexcept { return (XHI-XLO+1); }
+
+    // The elements of an Array1D object are accessed using parentheses,
+    // array(i), instead of using square brackets.
+    [[nodiscard]] inline
+    const T& operator() (int i) const noexcept {
+        assert (i >= XLO && i <= XHI);
+        return arr[i-XLO];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i) noexcept {
+        assert(i >= XLO && i <= XHI);
+        return arr[i-XLO];
+    }
+
+    // Array1D is implemented as a fixed-size array.
+    T arr[(XHI-XLO+1)];
+};
+
+// A stripped-down version of the AMReX Array2D
+// This has Fortran (column-major) ordering
+
+template <class T, int XLO, int XHI, int YLO, int YHI>
+struct Array2D
+{
+
+    [[nodiscard]] inline
+    static constexpr unsigned int size() noexcept { return (XHI-XLO+1)*(YHI-YLO+1); }
+
+    [[nodiscard]] inline
+    const T& operator() (int i, int j) const noexcept {
+        assert (i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i, int j) noexcept {
+        assert (i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    T arr[(XHI-XLO+1)*(YHI-YLO+1)];
+};
+
+
+// a 2D array from Microphysics used for Jacobians
+
+template <int XLO, int XHI, int YLO, int YHI>
+struct MathArray2D
+{
+    inline
+    void zero() {
+        for (int i = 0; i < (YHI-YLO+1)*(XHI-XLO+1); ++i) {
+            arr[i] = 0.0_rt;
+        }
+    }
+
+    inline
+    void set (const int i, const int j, const Real x) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)] = x;
+    }
+
+    [[nodiscard]] inline
+    Real get (const int i, const int j) const noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    inline
+    const Real& operator() (int i, int j) const noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    inline
+    Real& operator() (int i, int j) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI);
+        return arr[i+j*(XHI-XLO+1)-(YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    Real arr[(XHI-XLO+1)*(YHI-YLO+1)];
+};
+
+// A stripped-down version of the AMReX Array3D
+// This has Fortran (column-major) ordering
+
+template <class T, int XLO, int XHI, int YLO, int YHI, int ZLO, int ZHI>
+struct Array3D
+{
+    [[nodiscard]] inline
+    static constexpr unsigned int size () noexcept {
+        return (XHI-XLO+1)*(YHI-YLO+1)*(ZHI-ZLO+1);
+    }
+
+    [[nodiscard]] inline
+    const T& operator() (int i, int j, int k) const noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI && k >= ZLO && k <= ZHI);
+        return arr[i+j*(XHI-XLO+1)+k*((XHI-XLO+1)*(YHI-YLO+1))
+                   -(ZLO*((XHI-XLO+1)*(YHI-YLO+1))+YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    [[nodiscard]] inline
+    T& operator() (int i, int j, int k) noexcept {
+        assert(i >= XLO && i <= XHI && j >= YLO && j <= YHI && k >= ZLO && k <= ZHI);
+        return arr[i+j*(XHI-XLO+1)+k*((XHI-XLO+1)*(YHI-YLO+1))
+                   -(ZLO*((XHI-XLO+1)*(YHI-YLO+1))+YLO*(XHI-XLO+1)+XLO)];
+    }
+
+    T arr[(XHI-XLO+1)*(YHI-YLO+1)*(ZHI-ZLO+1)];
+};
+
+
+// copied from AMReX.H
+
+namespace amrex {
+
+    template <class... Ts>
+    inline
+    void ignore_unused (const Ts&...) {}
+
+
+    template<auto I, auto N, class F>
+    inline
+    constexpr void constexpr_for (F const& f)
+    {
+        if constexpr (I < N) {
+            f(std::integral_constant<decltype(I), I>());
+            constexpr_for<I+1, N>(f);
+        }
+    }
+
+    namespace Math {
+        // Return pow(x, Power), where Power is an integer known at compile time
+        // from AMReX 
+        template <int Power, typename T,
+                  typename = std::enable_if_t<!std::is_integral<T>() || Power>=0>>
+        inline
+        constexpr T powi (T x) noexcept
+        {
+            if constexpr (Power < 0) {
+                return T(1)/powi<-Power>(x);
+            } else if constexpr (Power == 0) {
+                //note: 0^0 is implementation-defined, but most compilers return 1
+                return T(1);
+            } else if constexpr (Power == 1) {
+                return x;
+            } else if constexpr (Power == 2) {
+                return x*x;
+            } else if constexpr (Power%2 == 0) {
+                return powi<2>(powi<Power/2>(x));
+            } else {
+                return x*powi<Power-1>(x);
+            }
+        }
+
+    }
+
+    template <typename T>
+    inline
+    constexpr const T& Clamp (const T& v, const T& lo, const T& hi)
+    {
+        if (v < lo) {
+            return lo;
+        } else if (hi < v) {
+            return hi;
+        } else {
+            return v;
+        }
+    }
+
+} // namespace amrex
+
+#endif

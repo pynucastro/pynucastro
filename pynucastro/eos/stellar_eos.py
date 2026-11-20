@@ -3,9 +3,12 @@ electrons + radiation)
 
 """
 
+import numpy as np
+
+from pynucastro.constants import constants
 
 from .electron_eos import ElectronEOS
-from .eos_components import IdealGasEOS, RadiationEOS
+from .eos_components import EOSComponentState, IdealGasEOS, RadiationEOS
 
 
 class EOSState:
@@ -63,7 +66,9 @@ class StellarEOS:
     ----------
     electrons_are_degenerate : bool
         Do we treat electrons as a Fermi gas with arbitrary degeneracy
-        and relativity? or just treat them as an ideal gas?
+        and relativity? or just treat them as an ideal gas?  Note, if
+        electrons are not treated as degenerate, then the degeneracy
+        parameter is not computed and is set to np.nan.
     include_positrons : bool
         If electrons are Fermi gas, do we consider both positrons and
         electrons?
@@ -109,7 +114,13 @@ class StellarEOS:
         # evaluate the full state
         ion_state = ion_eos.pe_state(rho, T, comp)
         rad_state = rad_eos.pe_state(rho, T, comp)
-        ele_state, pos_state = ele_eos.pe_state(rho, T, comp)
+        if ele_eos is not None:
+            ele_state, pos_state = ele_eos.pe_state(rho, T, comp)
+        else:
+            # all thermodynamics were already computed in the ideal
+            # gas case.  We just want to fill in the number density.
+            ele_state = EOSComponentState(n=rho*comp.ye/constants.m_u, eta=np.nan)
+            pos_state = EOSComponentState()
 
         p = ion_state.p + rad_state.p + ele_state.p + pos_state.p
         e = ion_state.e + rad_state.e + ele_state.e + pos_state.e

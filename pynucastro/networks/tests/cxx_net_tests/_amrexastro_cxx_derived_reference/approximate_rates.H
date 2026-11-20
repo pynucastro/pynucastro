@@ -1,0 +1,18 @@
+#ifndef APPROXIMATE_RATES_H
+#define APPROXIMATE_RATES_H
+
+#include <AMReX.H>
+#include <AMReX_Print.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+
+namespace approximate_rates {
+
+    using namespace Rates;
+    using namespace Species;
+
+
+}
+#endif

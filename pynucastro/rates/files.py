@@ -3,7 +3,7 @@
 from pathlib import Path
 
 _pynucastro_dir = Path(__file__).parents[1]
-_pynucastro_rates_dir = _pynucastro_dir/"library"
+_pynucastro_rates_dir = _pynucastro_dir/"data"
 _pynucastro_tabular_dir = _pynucastro_rates_dir/"tabular"
 _pynucastro_suzuki_dir = _pynucastro_tabular_dir/"suzuki"
 _pynucastro_langanke_dir = _pynucastro_tabular_dir/"langanke"

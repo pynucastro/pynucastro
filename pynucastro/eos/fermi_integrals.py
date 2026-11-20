@@ -147,9 +147,6 @@ def _kernel_p(x, k, eta, beta,
     if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
-    # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
-    tanh_half_delta = np.tanh(0.5 * delta)
-
     testm = delta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
@@ -186,6 +183,8 @@ def _kernel_p(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3 in terms of x**2
         if not testm:
+            # this is (exp(xsq - eta) - 1.0) / (exp(xsq - eta) + 1.0)
+            tanh_half_delta = np.tanh(0.5 * delta)
             result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
@@ -223,9 +222,6 @@ def _kernel_E(x, k, eta, beta,
     if abs(delta) < MAX_EXPONENT:
         inv_cosh_term = 0.5 / (1.0 + np.cosh(delta))
 
-    # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
-    tanh_half_delta = np.tanh(0.5 * delta)
-
     testm = x - eta < -MAX_EXPONENT
     if testm:
         denomi = 1.0
@@ -260,6 +256,8 @@ def _kernel_E(x, k, eta, beta,
         # this is IB = 3 from Gong et al.
         # this corresponds to eq A.3
         if not testm:
+            # this is (exp(x - eta) - 1.0) / (exp(x - eta) + 1.0)
+            tanh_half_delta = np.tanh(0.5 * delta)
             result = num * inv_cosh_term * tanh_half_delta
 
     elif eta_der == 1 and beta_der == 1:
@@ -323,18 +321,20 @@ class FermiIntegral:
     def __str__(self):
         fstr = ""
         fstr += f"F        = {self.F:20.10g}\n"
-        fstr += f"dF/dη    = {self.dF_deta:20.10g}\n"
-        fstr += f"dF/dβ    = {self.dF_dbeta:20.10g}\n"
-        fstr += f"d²F/dη²  = {self.d2F_deta2:20.10g}\n"
-        fstr += f"d²F/dηdβ = {self.d2F_detadbeta:20.10g}\n"
-        fstr += f"d²F/dβ²  = {self.d2F_dbeta2:20.10g}\n"
+        if self.dF_deta is not None:
+            # first derivatives were computed
+            fstr += f"dF/dη    = {self.dF_deta:20.10g}\n"
+            fstr += f"dF/dβ    = {self.dF_dbeta:20.10g}\n"
+        if self.d2F_deta2 is not None:
+            # second derivatives were computed
+            fstr += f"d²F/dη²  = {self.d2F_deta2:20.10g}\n"
+            fstr += f"d²F/dηdβ = {self.d2F_detadbeta:20.10g}\n"
+            fstr += f"d²F/dβ²  = {self.d2F_dbeta2:20.10g}\n"
         return fstr
 
     def _compute_legendre(self, kernel, a, b,
                           k, eta, beta,
                           eta_der, beta_der):
-
-        N = len(x_leg)//2
 
         # We set the correspondence (a+b)/2 -> 0 and map the (-1,0) and (0,1)
         # intervals separately.
@@ -346,7 +346,7 @@ class FermiIntegral:
                                eta_der=eta_der, beta_der=beta_der) +
                         kernel(fac1 - fac2 * root, k, eta, beta,
                                eta_der=eta_der, beta_der=beta_der)) * weight
-                       for root, weight in zip(x_leg[N:], w_leg[N:]))
+                       for root, weight in zip(x_leg, w_leg))
 
         integral *= (b - a) / 2
         return integral

@@ -1,0 +1,17 @@
+#ifndef BRANCHED_RATES_H
+#define BRANCHED_RATES_H
+
+#include <amrex_bridge.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+#include <reaclib_rates.H>
+
+namespace branched_rates {
+
+    using namespace Rates;
+
+
+}
+#endif

@@ -3,10 +3,12 @@ properties have been modified from the original source.
 
 """
 
+import copy
+
 import numpy as np
 
-from pynucastro.rates.rate import Rate
-from pynucastro.rates.reaclib_rate import ReacLibRate
+from pynucastro.rates.rate import (Rate, ThermoState, cxx_rate_func_args,
+                                   py_rate_func_args)
 
 
 class ModifiedRate(Rate):
@@ -36,42 +38,94 @@ class ModifiedRate(Rate):
         do we reset the screening pairs for this rate to reflect any
         new products or stoichiometry? or do we still screen based on
         the underlying rate?
+    not_in_ydot_term : list(Nucleus)
+        A list of nuclei that appear in ``reactants`` but should not
+        contribute to the Y[nuc] scaling in the dY/dt term of the
+        rate equations.  As an example, consider the sequence:
+        He4(He3,γ)Be7(e-,ν)Li7(p,α)He4.  Here, He4, He3, and p are
+        consumed, but if we want to model this using just the first
+        rate in the sequence, then the dY/dt term is ρY(He3)Y(He4)λ,
+        Even though p doesn't appear here, we still want to account
+        for its consumption in dY(p)/dt.
+    description : str
+        a description of the rate sequence we are approximating.  This
+        will be added as a comment to code outputs.
+    rate_source: str
+        the key to get the source information for the rate
+        from rate_sources.csv.  This information is also used in the
+        unique ``Rate.id``
 
     """
 
     def __init__(self, original_rate, *,
                  stoichiometry=None,
                  new_reactants=None, new_products=None,
-                 update_screening=False):
+                 update_screening=False,
+                 not_in_ydot_term=None,
+                 description=None,
+                 rate_source=None):
 
         self.original_rate = original_rate
         self.update_screening = update_screening
-
-        # at the moment, this is only tested with ReacLibRate
-        # a potential issue is in the C++ code generation where
-        # we output modified rates only after ReacLib rates,
-        # so we need to make sure other rate types are computed
-        # first, before any modified rates
-        assert isinstance(original_rate, ReacLibRate)
+        self.description = description
 
         if new_reactants is not None:
             reactants = new_reactants
         else:
-            reactants = original_rate.reactants
+            reactants = self.original_rate.reactants
 
         if new_products is not None:
             products = new_products
         else:
-            products = original_rate.products
+            products = self.original_rate.products
 
         super().__init__(reactants=reactants, products=products,
-                         weak_type=original_rate.weak_type,
+                         weak_type=self.original_rate.weak_type,
                          label="modified",
-                         stoichiometry=stoichiometry)
+                         stoichiometry=stoichiometry,
+                         not_in_ydot_term=not_in_ydot_term,
+                         rate_source=rate_source)
 
-        self.modified = True
+        # right now we assume that if the original rate is screened,
+        # then the modified rate should be too.
+        if self.original_rate.screening_pairs:
+            assert self.screening_pairs, "original_rate is screened, so the caller should be too"
+
+        # set the function string args to be those of the original rate
+        self.rate_eval_needs_tfactors = self.original_rate.rate_eval_needs_tfactors
+        self.rate_eval_needs_temp = self.original_rate.rate_eval_needs_temp
+        self.rate_eval_needs_rho = self.original_rate.rate_eval_needs_rho
+        self.rate_eval_needs_comp = self.original_rate.rate_eval_needs_comp
+        self.rate_eval_needs_logtemp = self.original_rate.rate_eval_needs_logtemp
+        self.rate_eval_needs_rhoye = self.original_rate.rate_eval_needs_rhoye
+        self.rate_eval_needs_logrhoye = self.original_rate.rate_eval_needs_logrhoye
+        self.rate_eval_needs_pfcache = self.original_rate.rate_eval_needs_pfcache
 
         self._set_print_representation()
+
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
+
+        """
+
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        # copy the original rate
+        new.original_rate = copy.copy(self.original_rate)
+
+        return new
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
@@ -80,9 +134,8 @@ class ModifiedRate(Rate):
         update_screening.
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         if self.update_screening:
             _reac = self.reactants
@@ -90,12 +143,23 @@ class ModifiedRate(Rate):
             _reac = self.original_rate.reactants
         nucz = [q for q in _reac if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz.copy()
+
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
+
+    def get_child_rates(self):
+        """Return the rate that this ModifiedRate depends on
+
+        Returns
+        -------
+        list(Rate)
+
+        """
+
+        return [self.original_rate]
 
     def log_eval(self, T, *, rho=None, comp=None,
                  screen_func=None):
@@ -110,7 +174,7 @@ class ModifiedRate(Rate):
             the density to evaluate screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -131,7 +195,8 @@ class ModifiedRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         # To consider general cases, convert to 1D array
         log_rate = np.atleast_1d(log_rate)
@@ -152,12 +217,19 @@ class ModifiedRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
-        fstring += f"    {self.original_rate.fname}(rate_eval, tf, log_scor=log_scor)\n"
-        fstring += f"    rate_eval.{self.fname} = rate_eval.{self.original_rate.fname}\n\n"
+        if self.description:
+            fstring += f"    # represents the sequence: {self.description}\n\n"
+        cargs = py_rate_func_args(self.original_rate, mode="call", screen_term_pass="log_scor")
+        fstring += f"    {self.original_rate.fname}({', '.join(cargs)})\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate_eval.rates[RateIdx.{self.original_rate.fname}]\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
@@ -188,15 +260,28 @@ class ModifiedRate(Rate):
 
         """
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
         fstring = ""
-        fstring = "template <int do_T_derivatives>\n"
+        fstring = "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
 
         # first we need to get all of the rates that make this up
-        fstring += f"    // {self.rid} (calls the underlying rate)\n\n"
-        fstring += f"    rate_{self.original_rate.fname}<do_T_derivatives>(tfactors, rate, drate_dT);\n"
+        fstring += f"    // {self.rid} (calls the underlying rate)\n"
+        if self.description:
+            fstring += f"    // represents the sequence: {self.description}\n\n"
+
+        cargs = cxx_rate_func_args(self.original_rate, mode="call")
+        fstring += f"    rate_{self.original_rate.fname}({', '.join(cargs)});\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate_eval.screened_rates(k_{self.original_rate.fname});\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = rate_eval.dscreened_rates_dT(k_{self.original_rate.fname});\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"

@@ -1,10 +1,498 @@
 # Changelog
 
+## 3.2.0
+
+  * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
+    `BaseCxxNetwork` :
+
+    * create a function to get C++ rate function args (#1522)
+    * remove unneeded template params + simplify screening (#1523)
+    * `TabularWeakRate` now creates a separate rate-filling function
+      for each rate (#1525)
+    * fix tabular weak rate interpolation of rate derivative (#1528)
+    * all C++ rate functions now fill `rate_eval` directly (#1529)
+    * add denu/dT & denu/dY weak rate terms to the Jacobian (#1535)
+    * switch `tabular_evaluate` to use a struct for results (#1540)
+    * remove unneeded `do_T_derivatives` template parameter (#1582)
+    * fix compiler warnings in C++ code (#1588, #1589)
+    * save a few divides in the partition function interp (#1604)
+
+  * `NSENetwork` :
+
+    * do not evaluate ydots for strong rates (#1635)
+
+  * `PythonNetwork` / `RateCollection` / general network changes :
+
+    * add composition derivating internal to (nn,γ) to Jacobian
+      (#1537)
+    * add weak rate ∂/∂Y_e contribution to the Jacobian (#1539, #1601)
+    * fix `remove_nuclei` for inert nucleus (#1551)
+    * `RateCollection.validate` should fail if we find missing rates
+      (#1552)
+    * fix potential Inf in `RateCollection.gridplot` aspect ratio
+      (#1553)
+    * fix `find_reverse` / `get_rate_pairs` for nuclei with same mass
+      number (#1554)
+    * add checks on input composition ordering to `integrate_network`
+      (#1559)
+    * `NetworkSolution` now stores its own copy of `unique_nuclei`
+      (#1560)
+    * fix stopping condition in `integrate_network` (#1565)
+    * add `NetworkSolution.comp_at` (#1578)
+    * fix def for `ye()` in exported networks (#1581)
+    * automate the construction of python rate function arguments
+      (#1583, #1623)
+    * fix NetworkSolution.X_at when a numpy scalar array is passed
+      (#1590)
+    * fix mismatch in `NSENetwork` description of
+      `comp_reduced_function` (#1611)
+    * evaluate rates in topologically-sorted order (#1621)
+
+  * `Library` :
+
+    * fix `Library.write_to_file` argument (#1573)
+    * return empty `Library` if no forward rates found via
+      `forward_for_detailed_balance` (#1574)
+    * fix `Library.remove_rate` when an `id` is passed in (#1575)
+
+  * `ApproximateRate` / `ModifiedRate` / `BranchedRate` / `BetaLimitedRate` :
+
+     * add a β-limited rate class, `BetaLimitedRate` (#1508)
+
+  * general rate changes:
+
+    * make `_classify_hidden_rate` more robust (#1514)
+    * add `rate_eval_needs_{tfactors,temp}` to rate classes (#1521)
+    * remove `Rate.modify_products` (#1533)
+    * fix dr/dT for `ReacLibRate` and `DerivedRate` if rate is floored
+      (#1542)
+    * change `ReacLibRate.__eq__` to first use super-class (#1564)
+    * add `threshold=sys.maxsize` to `np.array2string` for table
+      writing (#1566)
+    * fix subtraction of `Library` objects (#1608)
+    * address divide by zero in `get_rate_exponent` + move to `Rate`
+      (#1610)
+    * fix `ReacLibRate` `__eq__` (#1613)
+    * make rate hash consistent with `__eq__` (#1614)
+
+  * nuclei / screening / partition functions:
+
+    * simplify how we construct the screening pair set (#1536)
+
+  * EOS:
+
+    * fix Ye for fully-ionized ideal gas (#1599)
+    * fix printing of `FermiIntegral` when derivatives are not
+      computed (#1600)
+    * fix EOS degeneracy parameter bounds w/ positrons (#1605)
+    * fix `StellarEOS` with `electrons_are_degenerate=False` (#1606)
+    * fox `ElectronEOS` when `compute_derivs=False` (#1607)
+
+  * git / project infrastructure:
+
+    * add python 3.15 CI testing (#1541)
+    * split linkcheck off into its own action (#1545)
+    * add concurrency group to pytest-random CI (#1585)
+    * add first-interaction workflow (#1632)
+
+  * documentation:
+
+    * fix inaccuracies / typos in rate dev docs (#1576)
+    * add developer docs explaining the Jacobian (#1543)
+    * explain `rate_eval_needs_*` attributes in the docs (#1618)
+    * update citation for 3.0 (#1627)
+
+  * testing:
+
+    * add Jacobian testing to `NetworkCompare` + streamline the
+      interface (#1519)
+
+  * helper functionality:
+
+    * add a function to do a topological sort of rates (#1530)
+    * more `mesa_reader` fixes to catch different name variations
+      (#1625)
+    * add basic forward-mode autodiff support (#1628)
+
+## 3.1.0
+
+  * `AmrexAstroCxxNetwork` / `SimpleCxxNetwork` / `FortranNetwork` /
+    `BaseCxxNetwork` :
+
+    * move rate evals into namespaces (#1459, #1500)
+    * silence unused vars (#1487)
+    * evaluate the rates in the same order as `PythonNetwork` (#1497)
+    * sync the rate headers in `SimpleCxxNetwork` with
+      `AmrexAstroCxxNetwork` (#1499)
+    * optimize C++ tabular rate interpolation (#1516)
+    * some cleaning of duplicate code in `base_cxx_network.py` (#1518)
+    * fix the size of the int used for `StarLibRate` random numbers in
+      C++ (#1524)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * address the case where a nucleus is both a reactant and a
+      product (#959)
+    * add `stopping_condition` to `integrate_network` (#1474)
+    * cache the Numpy-compiled network (#1475, #1481)
+    * sync `RateCollection.get_rate_by_name` with the `Library`
+      version (#1488)
+    * remove an outdated comment on working with `ModifiedRatres` (#1496)
+    * simplify `make_ap_pg_approx` (#1498)
+    * add `add_inert_nucleus` to `RateCollection` (#1501)
+    * simplify the loop over rates that writes out functions (#1513)
+
+  * `ApproximateRate` / `ModifiedRate` :
+
+    * move and rename `create_double_neutron_capture` (#1458)
+    * allow `ModifiedRate` to set `rate_source` (#1470)
+    * sync up the interfaces of the aprox-family rate helpers (#1472)
+
+  * general rate changes:
+
+    * make `Rate.fname` more descriptive (#1463)
+    * add `not_in_ydot_term` functionality (#1467)
+    * `__eq__` now also compares `weak_type` (#1473)
+
+  * git / project infrastructure:
+
+    * add `pytest-random` test (#1300, #1477)
+    * update ruff config (#1456)
+    * add an `AGENTS.md` (#1504)
+
+  * documentation:
+
+    * create MESA's `basic.net` (#1452)
+    * remove `.nojekyll` on `main` branch (#1457)
+    * add `BranchedRate` to the docs intro (#1460)
+    * add missing network compare test to testing docs (#1464)
+    * improve `Rate` developer documentation (#1479)
+    * fix function display in `BranchedRate` notebook (#1482)
+    * move rate approximations into their own section (#1484)
+    * cite some cites rendering (#1486)
+    * add a CNO network example (#1489)
+    * add an example of working with MESA data (#1490)
+    * add an example on finding the most probable path between
+      nuclei (#1492)
+    * add developer documentation on networks (#1495)
+    * fix some docs typos (#1503)
+    * don't link check on ADS (#1507)
+    * add an example of C-burning products (#1509)
+
+  * testing:
+
+    * add energy to `network_compare` (#1465)
+
+  * helper functionality:
+
+    * allow `network_helper` to take ranges of nuclei (#1483)
+    * create the `common_networks` module (#1485)
+    * `MesaModel` now has `num_zones` property and an `__iter__`
+      method (#1506)
+
+## 3.0.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * add `#define STARLIB` (#1428)
+    * fix datatype for `rate_pair_data` (#1411)
+
+  * `ApproximateRate` :
+
+    * remove use of `identical_particle_factor` for double-n capture
+      (#1421)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * fix check on `ModifiedRate.original_rate` (#1449)
+    * add customization to `plot_evolution` (#1439)
+    * update `get_nuclei_latex_string` to group nuclei (#1417)
+    * add `curved_edge_radius` option to `plot` (#1413)
+    * fix `Z_range` / `N_range` for `rotated=True` (#1412)
+    * add weak-rate energy contributions to integration (#1440)
+    * add edge label size separate from node font size (#1455)
+    * remove the `Rate.modified` attribute (#1447)
+
+  * `NSENetwork` :
+
+    * use runtime tol for checking residual (#1420)
+
+  * general rate changes:
+
+    * add `ThermoState` class (#1436)
+    * add deprecation warning for `Rate.modify_products` (#1434)
+    * rename `TabularRate` -> `TabularWeakRate` (#1431)
+    * remove individual ReacLib rate files (#1432)
+    * rename `library/` to `data/` (#1430)
+    * extend `eliminate_duplicate_rates()` to deal with ReacLib
+      duplicates (#1426)
+    * add more rates to `full_library` (#1423)
+    * added `BranchedRate` (#1448)
+
+  * nuclei / screening / partition functions:
+
+    * simplify the screening pair check on `ApproximateRate` (#1451)
+    * rename `LoddersComposition` -> `SolarComposition` (#1416)
+
+  * git / project infrastructure:
+
+    * modernize github actions (#1441)
+    * bump `setup-python` from 6 to 7 (#1425)
+
+  * documentation:
+
+    * clean-up Sphinx `conf.py` and update dependencies (#1442)
+    * fix a broken link (#1443)
+    * add `ModifiedRate` and `StarLibLibrary` to main pynucastro
+      docstring (#1438)
+    * fix the sensitivity example (#1437)
+    * add missing density weighting to intro docs dYdt (#1424)
+    * fix navbar issue in `pydata-sphinx-theme` (#1427)
+
+  * neutrino cooling:
+
+    * add label to colorbar in neutrino cooling plot (#1422)
+
+  * helper functionality:
+
+    * update the MESA interfaces to be a class and better parse
+      composition (#1418)
+
+## 2.12.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * Scope screening into its own block (#1390)
+    * Generalize `get_ydot_weak` to all weak rates (#1388)
+    * ROCm/HIP does not like managed inline data (#1387)
+    * Fix undefined behavior in interpolating right on the upper
+      boundary of data (#1382)
+
+  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
+
+    * Add helper functions to `fill_rates` and
+      `compute_screening_factors` (#1386)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * integration now supports self-heating (#1378) including with
+      thermal neutrino loses (#1402)
+    * fix broadcast in `NetworkSolution` (#1392, #1399)
+    * allow resampling of StarLib rates within the network (#1393)
+    * allow `integrate_network` to take a `Composition` object (#1398)
+
+  * `Library` :
+
+     * update `eliminate_duplicates` to support `StarLibRate` (#1401)
+
+  * general rate changes:
+
+    * we now use PCHIP interpolation + linear extrapolation for
+      StarLib rates (#1391)
+    * Remove placeholder rate data for StarLib (#1384)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` with `init="solar"` now uses the Lodders solar
+       composition.  Also added `init="lightest"` (#1409)
+
+  * git / project infrastructure:
+
+    * update to checkout 7 (#1404)
+
+  * documentation:
+
+    * fix spelling (#1400)
+
+  * testing:
+
+    * make pytest fixtures as `@classmethod` for pytest 9.1.0
+      compatibility (#1397)
+
+  * helper functionality:
+
+    * update `yt_utils` to recognize neutrons (#1403)
+
+## 2.11.0
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * assign colors better in `plot_evolution` (#1355, #1379)
+    * rename `isNSECompatible` -> `is_NSE_compatible` (#1357)
+    * change default for `hide_xp` and `hide_xalpha` (#1361)
+    * add a method `find_stiffest_rate` (#1363)
+    * `RateCollection.validate` now returns a dict of missing rates +
+      includes some additional checks (#1366)
+    * enforce integer tick values for `RateCollection.plot` (#1383)
+
+  * general rate changes:
+
+    * fix rate plot to use LaTeX for <> (#1365)
+    * move the full rate evaluation into `Rate` (#1367)
+    * reorganize `_set_rhs_properties` (#1368)
+    * clean up the deBoer rate class (#1371)
+    * update `DerivedRate` to work with C++ `StarLibRate` (#1381)
+
+  * nuclei / screening / partition functions:
+
+    * `Composition` : add `get_array` and `get_molar_array` methods
+      (#1354)
+
+  * documentation:
+
+    * update the StarLib example to use the new integration (#1359)
+    * fix typos (#1362)
+    * update the double-n capture docs to use the new integration
+      (#1364)
+    * update the comparing networks test docs (#1372)
+    * add some missing modules to the rate module docstring (#1373)
+    * add documentation on adding new rates from papers (#1374)
+    * fix API doc rendering (#1375)
+    * use `get_molar_array` for `Y0` when integrating (#1377)
+
+  * helper functionality:
+
+    * `network_helper` : if `verbose=False`, then suppress linking nuclei
+      warnings (#1358)
+    * add `main_library` to `network_helper` (#1360)
+
+## 2.10.0
+
+  * `AmrexAstroCxxNetwork` :
+
+    * use C++20 and do some optimizations (#1224)
+    * separate derived rates into their own header (#1227)
+    * remove unused functions (#1229)
+    * fix whitespace formatting (#1235)
+    * set `PYNUCASTRO_NETWORK=TRUE` at compile time (#1236)
+    * template the spin function (#1239, #1240)
+    * work on "T9" directly (#1241)
+    * switch partition function data to inline (#1243)
+    * update the contents of the array to filter out unneeded rates
+      (#1244)
+    * inline the tabular rate data (#1245)
+    * use an `enum` for `NSE_INDEX` (#1254)
+    * eliminate a copy of the rates in the weak ydot eval (#1283)
+    * split the header files up (#1343)
+
+  * `ApproximateRate` :
+
+    * reorganize the constructor to make it easier to add other
+      approximations (#1329)
+    * add C+C, C+O, O+O approximate rates (#1328)
+
+  * `SimpleCxxNetwork` / `FortranNetwork` / `BaseCxxNetwork` :
+
+    * add a `partition_function.H` stub (#1226)
+    * group log(screening) and log(rate) together before the
+      exp (#1259)
+    * support partition functions and `DerivedRate` (#1324)
+    * tabulated weak rates (via `TabularRate`) (#1332)
+    * cleaning / reorg of headers (#1246, #1331, #1345)
+
+  * `PythonNetwork` / `RateCollection` :
+
+    * group log(rate) and log(screening) before doing exp() in
+      `PythonNetwork` (#1257)
+    * add a method to pre-determine network NSE compatibility (#1276,
+      #1280)
+    * add a method to integrate the network (#1279)
+    * store the weak rate tables directly in the module (#1282)
+    * add `NetworkSolution` to manage working with integration solutions
+      (#1288, #1352, #1353)
+    * Move the baryon conservation check to `_set_print_representation`.
+      This will catch more issues. (#1295)
+    * When we make a network, make a copy of the rates + implement a
+      custom `__copy__` function to `Rate` (#1307)
+    * simplify the construction of `unique_nuclei` (#1309)
+    * Network plots now work if ``show_small_ydot=True`` even if
+      no rates are above the threshold. (#1341)
+
+  * general rate changes:
+
+    * have `TemperatureTabularRate` work in natural log space (#1228)
+    * allow `TemperatureTabularRate` to extrapolate (#1233)
+    * updated `ModifiedRate` to correctly handle screening nuclei
+      (#1255)
+    * add support for StarLib rates (#1258, #1273, #1277, #1281, #1287,
+      #1289, #1293, #1294, #1303, #1318, #1327), including C++ output
+      (#1321)
+    * standardize `weak_type` to work across rate types (#1265)
+    * add URLs to the rate source properties CSV file (#1266)
+    * clean-up `ReacLibRate` (#1267)
+    * `ReacLibRate` unit test additions (#1268)
+    * clean-up `TabularRate` (#1278)
+    * Rate names no longer include the ``_removed`` label on output
+      (#1340)
+    * do log term addition for deriving from `TemperatureTabularRate`
+      (#1230)
+
+  * nuclei / screening / partition functions:
+
+    * store partition function data in log space and temperature in T9
+      (#1231)
+    * add `neut` as an alias for neutrons (#1253)
+    * add a general N-body screening prescription (#1260)
+    * some optimizations of the `nucleus` module (#1297)
+    * move `Composition` to its own module under `nucdata` (#1316)
+
+  * testing:
+
+    * add C++ `TemperatureTabularRate` unit tests (#1225)
+    * sync CI benchmarks due to AMReX-Astro Microphysics changes (#1234,
+      #1238, #1248, #1256)
+    * add a CUDA C++ compilation test (#1250)
+    * add a HIP C++ compilation test (#1251)
+    * drop python 3.11 testing (#1252)
+    * update CPU dispatch features in unit tests for numpy 2.4.x (#1263)
+    * bump actions (#1270)
+    * pytest suite optimizations (#1299, #1308)
+    * mutability fixes (#1304)
+    * reorganize the rate unit tests (#1306)
+    * eliminate duplicate temporary dir names (#1311)
+    * run tests in parallel (#1312)
+    * reorganize the network unit tests (#1319, #1322)
+    * use concurrency groups (#1320)
+    * add a new helper class, `NetworkCompare` that allows for testing
+      of python and C++ network results in a single unit test (#1291,
+      #1302, #1315, #1326)
+    * update / add to some of the comparison tests (#1313)
+    * split up pip requirements to speed up CI setup (#1330)
+
+  * git / project infrastructure:
+
+    * add a pull request template (#1264)
+    * update Zenodo authors (#1272)
+
+  * documentation:
+
+    * add a temperature evolution integration example (#1223)
+    * fix some sphinx API doc warning (#1237)
+    * update the derived rates documentation (#1247)
+    * update docs theme (#1261)
+    * copyright (#1274)
+    * fix typos (#1284, #1286)
+    * linkcheck ignores (#1292)
+    * remove unused examples (#1310)
+    * document parallel unit tests (#1314)
+    * intro overview (#1317)
+    * more network exporting descriptions (#1344)
+
+  * EOS:
+
+    * Optimizations of the Fermi integrals (#1298)
+
+  * helper functionality:
+
+    * A simple interface for working with MESA data was added (#1342)
+    * Fix an issue in `network_helper` if there are no reverse rates
+      (#1323)
+
 ## 2.9.0
 
   * complete a stellar EOS with ideal gas and radiation (#1201)
 
-  * `AmrexAstroCxxNetwork`: check weak label in `ydot_weak` (#1216)
+  * `AmrexAstroCxxNetwork` : check weak label in `ydot_weak` (#1216)
 
   * change how `DerivedRate` works so it can apply to any strong rate
     (#1207, #1217)

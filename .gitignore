@@ -21,6 +21,8 @@ _build.*
 pynucastro/_version.py
 
 /docs/build/
+changelog.md
+authors.rst
 
 # Distribution / packaging (from github/gitignore)
 .Python

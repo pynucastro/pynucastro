@@ -1,18 +1,21 @@
 """Classes and methods to interface with files storing rate data."""
 
+import functools
 import math
+import warnings
+from dataclasses import dataclass
+from operator import mul
 from pathlib import Path
 
 import numpy as np
+from scipy.special import logsumexp
 
 import pynucastro.numba_util as numba
 from pynucastro.constants import constants
-from pynucastro.nucdata import Nucleus
+from pynucastro.nucdata import Composition, Nucleus
 from pynucastro.numba_util import jitclass
 from pynucastro.rates.files import _find_rate_file
-from pynucastro.rates.known_duplicates import ALLOWED_DUPLICATES
-from pynucastro.screening import (get_screening_map, make_plasma_state,
-                                  make_screen_factors)
+from pynucastro.screening.screen import make_plasma_state, make_screen_factors
 
 
 class BaryonConservationError(Exception):
@@ -20,6 +23,146 @@ class BaryonConservationError(Exception):
     baryons on the left and righthand sides of the reaction.
 
     """
+
+
+def cxx_rate_func_args(r, *, mode="definition", dtype="Real"):
+    """Given a rate, give the list of arguments that are needed to
+    define the C++ function arguments or call the C++ function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+    dtype : str
+        the data type for floating point quantities
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if dtype == "amrex::Real":
+        array_type = "amrex::Array1D"
+    else:
+        array_type = "Array1D"
+
+    if mode == "definition":
+        args = ["T& rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("const tf_t& tfactors")
+        if r.rate_eval_needs_temp:
+            args.append(f"const {dtype} temp")
+        if r.rate_eval_needs_logtemp:
+            args.append(f"const {dtype} log_temp")
+        if r.rate_eval_needs_rho:
+            args.append(f"const {dtype} rho")
+        if r.rate_eval_needs_rhoye:
+            args.append(f"const {dtype} rhoy")
+        if r.rate_eval_needs_logrhoye:
+            args.append(f"const {dtype} log_rhoy")
+        if r.rate_eval_needs_comp:
+            args.append(f"const {array_type}<{dtype}, 1, NumSpec>& Y")
+        if r.screening_pairs:
+            args.append(f"const {dtype} log_scor")
+            args.append(f"const {dtype} dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("[[maybe_unused]] part_fun::pf_cache_t& pf_cache")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tfactors")
+        if r.rate_eval_needs_temp:
+            args.append("temp")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_temp")
+        if r.rate_eval_needs_rho:
+            args.append("rho")
+        if r.rate_eval_needs_rhoye:
+            args.append("rhoy")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoy")
+        if r.rate_eval_needs_comp:
+            args.append("Y")
+        if r.screening_pairs:
+            args.append("log_scor")
+            args.append("dlog_scor_dT")
+        if r.rate_eval_needs_pfcache:
+            args.append("pf_cache")
+
+    return args
+
+
+def py_rate_func_args(r, *, mode="definition", screen_term_pass=None):
+    """Given a rate, give the list of arguments that are needed to
+    define the python function arguments or call the python function.
+
+    Parameters
+    ----------
+    r : Rate
+        The rate whose function we are working with.
+    mode : str
+        "definition" if it is for writing the function,
+        "call" if it is for calling the function
+    screen_term_pass : str
+        The name of a screening variable to pass onto the function
+        when calling.  If it is None, then it will automatically be
+        generated via the screening pairs.
+
+    Returns
+    -------
+    list(str)
+
+    """
+
+    assert mode in ["definition", "call"]
+
+    if mode == "definition":
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=None")
+        if r.rate_eval_needs_rho:
+            args.append("rho=None")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=None")
+        if r.rate_eval_needs_comp:
+            args.append("Y=None")
+        if r.screening_pairs:
+            args.append("log_scor=0.0")
+
+    else:
+        args = ["rate_eval"]
+        if r.rate_eval_needs_tfactors:
+            args.append("tf")
+        elif r.rate_eval_needs_temp:
+            args.append("T")
+        if r.rate_eval_needs_logtemp:
+            args.append("log_T=log_T")
+        if r.rate_eval_needs_rho:
+            args.append("rho=rho")
+        if r.rate_eval_needs_logrhoye:
+            args.append("log_rhoY=log_rhoY")
+        if r.rate_eval_needs_comp:
+            args.append("Y=Y")
+        if r.screening_pairs:
+            if screen_term_pass:
+                screen_terms = [screen_term_pass]
+            else:
+                screen_terms = [f"log_scor_{r1}_{r2}"
+                                for r1, r2 in r.screening_pairs]
+            args.append("log_scor=" + " + ".join(screen_terms))
+
+    return args
 
 
 @jitclass([
@@ -77,6 +220,123 @@ class Tfactors:
                          self.T9, self.T953, self.lnT9])
 
 
+@dataclass(kw_only=True)
+class ThermoState:
+    """Class to hold the basic thermodynamic quantities
+    such as density, temperature, and composition.
+
+    Parameters
+    ----------
+    rho : float
+        density in g/cm^3
+    T : float
+        temperature in Kelvin
+    comp : Composition
+        composition object that holds the massfractions
+    """
+
+    rho: float
+    T: float
+    comp: Composition
+
+    @property
+    def ye(self):
+        """Return the electron fraction of the composition
+
+        Returns
+        -------
+        float
+        """
+        return self.comp.ye
+
+    def get_molar(self):
+        """Return a dictionary of molar fractions, Y = X/A.
+
+        Returns
+        -------
+        molar : dict
+            {Nucleus : Y}
+        """
+        return self.comp.get_molar()
+
+    def __str__(self):
+        f = "ThermoState\n"
+        f += "===========\n"
+        f += f"rho  : {self.rho:.3e} g cm^-3\n"
+        f += f"T    : {self.T:.3e} K\n"
+        f += f"ye   : {self.ye:.4f}\n"
+        f += "Comp :\n"
+        f += f"{self.comp}\n"
+        return f
+
+
+def need_state(func):
+    """
+    Allow functions with (ThermoState, ..., `**kwargs`) input
+    to also be called with (rho, T, comp, ..., `**kwargs`) input.
+    """
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        # Detect whether we already use ThermoState as input
+
+        # Assume it is always the first argument for args
+        # And check if we get it in keyword argument
+        if args and isinstance(args[0], ThermoState):
+            return func(self, *args, **kwargs)
+        if isinstance(kwargs.get("state"), ThermoState):
+            return func(self, *args, **kwargs)
+
+        # Now check if we're using old style. If yes convert to new style
+
+        # Potential old keywords for composition
+        COMP_KEYS = ("comp", "composition")
+
+        # Assume new style will NOT have positional argument more than 3.
+        is_old_positional = len(args) >= 3
+
+        # Handle cases where keyword arguments are used for old style
+        comp_kw_present = any(k in kwargs for k in COMP_KEYS)
+        is_old_keyword = {"rho", "T"} <= kwargs.keys() and comp_kw_present
+
+        # Handle cases where we used a mix of positional and keyword arguments
+        is_old_mixed = args and ({"rho", "T"} & kwargs.keys() or comp_kw_present)
+
+        if is_old_positional or is_old_keyword or is_old_mixed:
+            # This function previously used (T, rho, comp) instead of
+            # standard (rho, T, comp). But logic below assumes (rho, T, comp).
+            # I'll just throw an error if old style is used for eval_jacobian_term
+            if func.__name__ == "eval_jacobian_term":
+                raise TypeError(f"{func.__name__} no longer accepts "
+                                f"(T, rho, comp) arguments. Call {func.__name__}"
+                                "(ThermoState(rho=rho, T=T, comp=comp), ...) "
+                                "instead.")
+
+            warnings.warn(f"{func.__name__}(rho, T, comp, ...) is deprecated, "
+                          f"use {func.__name__}(ThermoState(rho=rho, T=T, "
+                          "comp=comp,  ...) instead",
+                          DeprecationWarning,
+                          stacklevel=2)
+            args = list(args)
+            rho = kwargs.pop("rho", args.pop(0) if args else None)
+            T = kwargs.pop("T", args.pop(0) if args else None)
+
+            # Check if we have composition as keyword
+            comp = None
+            for key in COMP_KEYS:
+                if key in kwargs:
+                    comp = kwargs.pop(key)
+
+            # If composition is not in keyword arg, assume its in args.
+            if comp is None and args:
+                comp = args.pop(0)
+
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            return func(self, state, *args, **kwargs)
+
+        return func(self, *args, **kwargs)
+    return wrapper
+
+
 class Rate:
     """The base reaction rate class.  Most rate types will subclass
     this and extend to their particular format.
@@ -95,7 +355,10 @@ class Rate:
         "beta_neg"
     label : str
         A descriptive label for the rate (usually representative of the
-        source
+        source)
+    use_ye_weighting : bool
+        Do we include an explicit ρYₑ term in the evaluation?  This
+        is sometimes needed for electron-capture rates.
     stoichiometry : dict(Nucleus)
         a custom set of coefficients to be used in the evolution
         equations dY(Nucleus)/dt.  If this is not set, then simply the
@@ -109,13 +372,23 @@ class Rate:
         we apply a multiplicity factor, N!, where N is the number of times
         the nucleus appears.  This can be disabled by setting
         use_identical_particle_factor = False
-
+    not_in_ydot_term : list(Nucleus)
+        A list of nuclei that appear in ``reactants`` but should not
+        contribute to the Y[nuc] scaling in the dY/dt term of the
+        rate equations.  As an example, consider the sequence:
+        He4(He3,γ)Be7(e-,ν)Li7(p,α)He4.  Here, He4, He3, and p are
+        consumed, but if we want to model this using just the first
+        rate in the sequence, then the dY/dt term is ρY(He3)Y(He4)λ,
+        Even though p doesn't appear here, we still want to account
+        for its consumption in dY(p)/dt.
     """
 
     def __init__(self, reactants=None, products=None,
                  Q=None, weak_type="", label="generic",
+                 use_ye_weighting=False,
                  stoichiometry=None, rate_source=None,
-                 use_identical_particle_factor=True):
+                 use_identical_particle_factor=True,
+                 not_in_ydot_term=None):
 
         if reactants:
             self.reactants = Nucleus.cast_list(reactants)
@@ -126,6 +399,11 @@ class Rate:
             self.products = Nucleus.cast_list(products)
         else:
             self.products = []
+
+        if not_in_ydot_term:
+            self.not_in_ydot_term = not_in_ydot_term
+        else:
+            self.not_in_ydot_term = []
 
         assert '_' not in label, "Rate label should not contain underscore"
         self.label = label
@@ -161,7 +439,6 @@ class Rate:
             self.weak = True
 
         self.removed = False
-        self.modified = False
         self.tabular = False
         self.approx = False
         self.resonant = False
@@ -180,35 +457,80 @@ class Rate:
         else:
             self.Q = Q
 
+        # this is used by eval to determine if we need to add
+        # a Ye weighting when we compute the full dY/dt form
+        # of the rate
+        self.use_ye_weighting = use_ye_weighting
+
         self._set_rhs_properties()
         self._set_screening()
         self._set_print_representation()
 
-        # ensure that baryon number is conserved
-        test = (
-            sum(n.A * self.reactant_count(n) for n in set(self.reactants)) ==
-            sum(n.A * self.product_count(n) for n in set(self.products))
-        )
+        # these apply to the argument list for the function that evaluates
+        # the just the N_A <σv> part of the rate
 
-        if not test:
-            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
+        self.rate_eval_needs_tfactors = True
+        self.rate_eval_needs_temp = False
+        self.rate_eval_needs_logtemp = False
 
         self.rate_eval_needs_rho = False
+        self.rate_eval_needs_rhoye = False
+        self.rate_eval_needs_logrhoye = False
+
         self.rate_eval_needs_comp = False
+        self.rate_eval_needs_pfcache = False
+
+        # if a nucleus appears explicitly in the rate (likely because
+        # of a rate approximation), we will provide a function to
+        # give the derivative
+
+        self.rate_comp_dependence = None
 
     def __repr__(self):
         return self.string
 
     def __hash__(self):
-        return hash(self.__repr__())
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
 
-    def __eq__(self, other):
-        """Determine whether two Rate objects are equal.  They are
-        equal if they contain identical reactants and products
+    def __copy__(self):
+        """Make a copy of the rate via copy.copy().  This is mostly
+        shallow except for a few attributes to address some mutability
+        issues
 
         """
 
-        return (self.reactants, self.products) == (other.reactants, other.products)
+        cls = type(self)
+        new = cls.__new__(cls)
+
+        # shallow copy everything
+        new.__dict__ = self.__dict__.copy()
+
+        # override some shallow copies
+        new.reactants = list(self.reactants)
+        new.products = list(self.products)
+        if self.stoichiometry:
+            new.stoichiometry = dict(self.stoichiometry)
+
+        return new
+
+    def __eq__(self, other):
+        """Determine whether two Rate objects are equal.  They are
+        equal if they use the same equality implementation and contain
+        identical reactants, products, and weak types.
+
+        """
+
+        if not isinstance(other, Rate):
+            return NotImplemented
+
+        # Subclasses with more restrictive equality must not compare equal
+        # in only one direction to rates using the base implementation.
+        if type(self).__eq__ is not type(other).__eq__:
+            return False
+
+        test1 = self.weak_type == other.weak_type
+        test2 = (self.reactants, self.products) == (other.reactants, other.products)
+        return test1 and test2
 
     def __lt__(self, other):
         """Sort such that lightest reactants come first, and then look
@@ -256,10 +578,10 @@ class Rate:
         self.Q *= constants.m_u_MeV_C18
 
     def _set_print_representation(self):
-        """Compose the string representations of this Rate.
-        This includes string,rid, pretty_string, and fname.
-        String is output to the terminal, rid is used as a dict key,
-        and pretty_string is latex, and fname is used when writing the
+        """Compose the string representations of this Rate.  This
+        includes string,rid, pretty_string, and fname.  String is
+        output to the terminal, rid is used to create id, and
+        pretty_string is latex, and fname is used when writing the
         code to evaluate the rate.
 
         """
@@ -275,11 +597,14 @@ class Rate:
 
         # put p, n, and alpha second
         treactants = []
+        treactants_light = []
         for n in self.reactants:
             if n.raw not in ["p", "he4", "n"]:
                 treactants.insert(0, n)
             else:
-                treactants.append(n)
+                treactants_light.append(n)
+
+        treactants += list(sorted(treactants_light, reverse=True))
 
         # figure out if there are any non-nuclei present
         # for the moment, we just handle strong rates
@@ -292,6 +617,10 @@ class Rate:
 
         reactant_As = sum(n.A * self.reactant_count(n) for n in set(self.reactants))
         product_As = sum(n.A * self.product_count(n) for n in set(self.products))
+
+        # ensure that baryon number is conserved
+        if reactant_As != product_As:
+            raise BaryonConservationError(f"baryon number not conserved in rate {self}")
 
         strong_test = reactant_Zs == product_Zs and reactant_As == product_As
 
@@ -343,6 +672,7 @@ class Rate:
 
         # this produces a sorted list with no dupes
         react_set = list(dict.fromkeys(treactants))
+        fname_reactants = []
         for n, r in enumerate(react_set):
             c = self.reactant_count(r)
             if c == 2:
@@ -350,6 +680,7 @@ class Rate:
                 self.string += f"{r.c()} + {r.c()}"
                 self.rid += f"{r} + {r}"
                 self.pretty_string += fr"{r.pretty} + {r.pretty}"
+                fname_reactants += [f"{r!r}", f"{r!r}"]
             else:
                 factor = ""
                 if c != 1:
@@ -360,6 +691,7 @@ class Rate:
                     self.pretty_string += fr"{factor}~{r.pretty}"
                 else:
                     self.pretty_string += fr"{r.pretty}"
+                fname_reactants += [f"{factor.strip()}{r!r}"]
             if not n == len(react_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -375,6 +707,7 @@ class Rate:
         self.pretty_string += r" \rightarrow "
 
         prod_set = list(dict.fromkeys(self.products))
+        fname_products = []
         for n, p in enumerate(prod_set):
             c = self.product_count(p)
             if c == 2:
@@ -382,6 +715,7 @@ class Rate:
                 self.string += f"{p.c()} + {p.c()}"
                 self.rid += f"{p} + {p}"
                 self.pretty_string += fr"{p.pretty} + {p.pretty}"
+                fname_products += [f"{p!r}", f"{p!r}"]
             else:
                 factor = ""
                 if c != 1:
@@ -389,6 +723,7 @@ class Rate:
                 self.string += f"{factor}{p.c()}"
                 self.rid += f"{factor}{p}"
                 self.pretty_string += fr"{factor}{p.pretty}"
+                fname_products += [f"{factor.strip()}{p!r}"]
             if not n == len(prod_set)-1:
                 self.string += " + "
                 self.rid += " + "
@@ -413,23 +748,28 @@ class Rate:
 
         self.pretty_string += r"$"
 
-        # If rate is removed, i.e. a child rate for an ApproximateRate,
-        # change label to removed
-        if self.removed:
-            self.label = "removed"
+        # fname is used in exported networks for the function names of
+        # the rates
 
-        # Set fname last
-        reactants_str = '_'.join([repr(nuc) for nuc in self.reactants])
-        products_str = '_'.join([repr(nuc) for nuc in self.products])
-        self.fname = f'{reactants_str}_to_{products_str}_{self.label}'
+        # we cannot begin with a digit, so expand the first reactant if
+        # it is a multiple (probably 3-alpha)
+        if fname_reactants[0][0].isdigit():
+            cnuc = fname_reactants.pop(0)
+            assert cnuc.find(".") == -1, "cannot have fractional multiplicity at the start"
+            multiplicity = int(cnuc[0])
+            nuc = cnuc[1:]
+            fname_reactants = multiplicity * [nuc] + fname_reactants
 
-        # Treat special duplicate rate cases
-        # These are likely weak rates with beta plus decay and electron captures
-        # So add weak_type to them.
-        is_dupe = any(f"{self.__class__.__name__}: {self.id}" in dupe_set
-                      for dupe_set in ALLOWED_DUPLICATES)
-        if is_dupe:
-            self.fname += '_' + self.weak_type
+        self.fname = "_".join(fname_reactants) + "_to_" + "_".join(fname_products)
+
+        if self.weak_type != "":
+            self.fname += f"_{self.weak_type}"
+
+        self.fname += f"_{self.label}"
+
+        # for fractional stoichiometry, we cannot have "." in the
+        # name, since it won't compile
+        self.fname = self.fname.replace(".", "p")
 
     def _set_rhs_properties(self):
         """Compute statistical prefactor and density exponent from the
@@ -442,27 +782,61 @@ class Rate:
             for r in set(self.reactants):
                 self.inv_prefactor = self.inv_prefactor * math.factorial(self.reactants.count(r))
         self.prefactor = self.prefactor/float(self.inv_prefactor)
-        self.dens_exp = len(self.reactants)-1
-        if self.weak_type == 'electron_capture':
-            self.dens_exp = self.dens_exp + 1
+        self.dens_exp = len([nuc for nuc in self.reactants if nuc not in self.not_in_ydot_term])-1
+
+        if self.use_ye_weighting:
+            # electron-capture rates from some sources need ρYₑ,
+            # some increment the density exponent here
+            self.dens_exp += 1
+
+    def _set_screening_pairs(self):
+        """Find a list reactant pairs used for screening. For reactions
+        that use more than 2 reactants, intermediate composite nuclei is
+        created for screening. For example, He4 + He4 + He4 → C12 give
+        [(He4, He4), (He4, Be8)]. This assumes that ion_screen is set.
+
+        """
+
+        if self.ion_screen:
+            scr_reactants = self.ion_screen.copy()
+            He4 = Nucleus("He4")
+            while len(scr_reactants) > 1:
+                He4_idx = [i for i, n in enumerate(scr_reactants) if n == He4]
+                if len(He4_idx) >= 2:
+                    # Check if there are two He4, if so merge them first
+                    n1, n2 = scr_reactants[He4_idx[0]], scr_reactants[He4_idx[1]]
+                    self.screening_pairs.append((n1, n2))
+                    remaining = [n for i, n in enumerate(scr_reactants) if i not in He4_idx[:2]]
+                    scr_reactants = [n1 + n2] + remaining
+                else:
+                    # merge first two reactants to get composite nucleus
+                    n1, n2 = scr_reactants[0], scr_reactants[1]
+                    self.screening_pairs.append((n1, n2))
+                    scr_reactants = [n1 + n2] + scr_reactants[2:]
+
+                scr_reactants.sort(key=lambda x: (x.Z, x.A))
 
     def _set_screening(self):
         """Determine if this rate is eligible for screening and the
-        nuclei to use.
+        nuclei to use. This determines ion_screen and screening_pairs
 
         """
-        # Tells if this rate is eligible for screening, and if it is
-        # then Rate.ion_screen is a 2-element (3 for 3-alpha) list of
-        # Nucleus objects for screening; otherwise it is set to none
+
+        # ion_screen holds the list of reactants eligible for screening
+        # empty list if there is only one eligible reactant
         self.ion_screen = []
         nucz = [q for q in self.reactants if q.Z != 0]
         if len(nucz) > 1:
-            nucz.sort(key=lambda x: x.Z)
-            self.ion_screen = []
-            self.ion_screen.append(nucz[0])
-            self.ion_screen.append(nucz[1])
-            if len(nucz) == 3:
-                self.ion_screen.append(nucz[2])
+            nucz.sort(key=lambda x: (x.Z, x.A))
+            self.ion_screen = nucz
+
+        # Find screening_pairs
+        self.screening_pairs = []
+        self._set_screening_pairs()
+
+    def get_child_rates(self):
+        """Return any rates that this rate depends on."""
+        return
 
     def get_rate_id(self):
         """Get an identifying string for this rate.
@@ -588,38 +962,16 @@ class Rate:
             return self.stoichiometry.get(n, c_prod)
         return c_prod
 
-    def modify_products(self, new_products):
-        """Change the products of the rate to new_products.  This will
-        recompute the Q value and update the print representation.
-
-        Parameters
-        ----------
-        new_products : list(Nucleus)
-            the new products to use with the rate.
-
-        """
-
-        self.products = Nucleus.cast_list(new_products, allow_single=True)
-        self.modified = True
-
-        # we need to update the Q value and the print string for the rate
-
-        self._set_q()
-        self._set_screening()
-        self._set_print_representation()
-
-    def evaluate_screening(self, rho, T, composition, screen_func):
+    @need_state
+    def evaluate_screening(self, state, screen_func):
         """Evaluate the screening correction for this rate.
         Note this returns log(screening).
 
         Parameters
         ----------
-        rho : float
-            density used to evaluate screening
-        T : float
-            temperature used to evaluate screening
-        composition : Composition
-            composition used to evaluate screening
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate screening. It knows about (rho, T, composition).
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
 
@@ -629,49 +981,19 @@ class Rate:
 
         """
 
-        ys = composition.get_molar()
-        plasma_state = make_plasma_state(T, rho, ys)
+        ys = state.get_molar()
+        plasma_state = make_plasma_state(state.T, state.rho, ys)
+
         log_scor = 0.0
-
-        # We can have three cases:
-        # 3-body reaction, i.e. 3-alpha: 2 ScreeningPair's
-        # 2-body reaction              : 1 ScreeningPair
-        # Photodisintegration (1-body) : 0 ScreeningPair
-
-        screening_map = get_screening_map([self])
-
-        # Handle 0 ScreeningPair case
-        if not screening_map:
-            return log_scor
-
-        # Handle 3-alpha case explicitly
-        if "He4_He4_He4" in [scr.name for scr in screening_map]:
-
-            # We should have two ScreeningPair's in this case
-            # He4_He4_He4 and He4_He4_He4_dummy
-            assert len(screening_map) == 2
-
-            for scr in screening_map:
-                scn_fac = make_screen_factors(scr.n1, scr.n2)
-                log_scor += screen_func(plasma_state, scn_fac)
-
-        # Now handle 2-body reaction
-        else:
-            scr = screening_map[0]
-
-            # Make sure no dummy nuclei exist in this case
-            # Otherwise we have more than 2-body reaction
-            assert not (scr.n1.dummy or scr.n2.dummy)
-            assert len(screening_map) == 1
-
-            scn_fac = make_screen_factors(scr.n1, scr.n2)
-            log_scor = screen_func(plasma_state, scn_fac)
+        for n1, n2 in self.screening_pairs:
+            scn_fac = make_screen_factors(n1, n2)
+            log_scor += screen_func(plasma_state, scn_fac)
 
         return log_scor
 
     def ydot_string_py(self):
-        """Construct the string containing the term in a dY/dt
-        equation in a reaction network corresponding to this rate.
+        """Construct the string containing this rate's contribution
+        to the dY/dt evolution equation (the flux).
 
         Returns
         -------
@@ -692,11 +1014,14 @@ class Rate:
             ydot_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
+            # we already would have added the rho to dens_exp
             ydot_string_components.append("ye(Y)")
 
         # composition dependence
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if c > 1:
                 ydot_string_components.append(f"Y[j{r.raw}]**{c}")
@@ -704,7 +1029,7 @@ class Rate:
                 ydot_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
-        ydot_string_components.append(f"rate_eval.{self.fname}")
+        ydot_string_components.append(f"rate_eval.rates[RateIdx.{self.fname}]")
 
         return "*".join(ydot_string_components)
 
@@ -721,7 +1046,7 @@ class Rate:
             the density to evaluate the rate and screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate and screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -747,7 +1072,7 @@ class Rate:
             the density to evaluate the rate and screening effects at.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate and screening effects with.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -764,6 +1089,126 @@ class Rate:
         # 2) A list of log_rates, e.g. ReacLib
         log_rate = np.atleast_1d(self.log_eval(T, rho=rho, comp=comp, screen_func=screen_func))
         return float(np.exp(log_rate).sum())
+
+    def get_rate_exponent(self, T0, *, rho=None, comp=None,
+                          screen_func=None):
+        """For a rate written as a power law, r = r_0 (T/T0)**nu,
+        return nu corresponding to T0. This also considers electron
+        screening effect if screen_func is passed in. The derivative is
+        evaluated in logarithmic space so finite logarithmic rates remain
+        usable even when the linear rate underflows or overflows.
+
+        Parameters
+        ----------
+        T0 : float
+            the temperature to base the power law from
+        rho : float
+            the density to evaluate the rate at (not needed for ReacLib
+            rates), but needed for evaluating screening effects.
+        comp : float
+            the composition (of type
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
+            to evaluate the rate with (not needed for ReacLib rates),
+            but needed for evaluating screening effects.
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the rate exponent will include screening correction.
+
+        Returns
+        -------
+        float
+            The dimensionless logarithmic temperature derivative.
+
+        Raises
+        ------
+        ValueError
+            If T0 is not positive and finite, or the summed logarithmic
+            rate is nonfinite at either finite-difference temperature.
+            Empty fits and fits with only negative-infinite logarithmic
+            rates represent zero rates and have no defined exponent.
+
+        """
+
+        if not np.isfinite(T0) or T0 <= 0.0:
+            raise ValueError("T0 must be positive and finite.")
+
+        # nu = dlog(λ)/dlog(T). Sum the sets before differencing,
+        # without requiring the linear rate to be representable (i.e.,
+        # λ might underflow but log(λ) is okay).
+        dlogT = 1.e-5
+        log_rates = []
+        for T in (T0 * np.exp(-dlogT), T0 * np.exp(dlogT)):
+            # we are differencing in logT.  If there are multiple
+            # sets, then logsumexp is a stable sum of exponential
+            # terms
+            log_rate = logsumexp(self.log_eval(T, rho=rho, comp=comp,
+                                               screen_func=screen_func))
+            if not np.isfinite(log_rate):
+                raise ValueError("Rate exponent requires a finite summed logarithmic rate.")
+            log_rates.append(log_rate)
+
+        # compute dlog(λ)/dlog(T)
+        return (log_rates[1] - log_rates[0]) / (2.0 * dlogT)
+
+    @need_state
+    def eval_full_rate(self, state, *,
+                       screen_func=None, y_molar=None, y_e=None):
+        """Evaluate the rate for a specific density, temperature, and
+        composition, with optional screening.  This returns the flux
+        that enters the dY/dt evolution, where Y is the molar
+        fraction.  For a 2 body reaction, a + b, this will be of the
+        form:
+
+        ρ Y_a Y_b N_A <σv> / (1 + δ_{ab})
+
+        where δ is the Kronecker delta that accounts for a = b.
+
+        If you want dn/dt, where n is the number density (so you get
+        n_a n_b <σv>), then you need to multiply the results here
+        by ρ N_A (where N_A is Avogadro's number).
+
+        Parameters
+        ----------
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
+        screen_func : Callable
+            one of the screening functions from :py:mod:`pynucastro.screening`
+            -- if provided, then the evaluated rates will include the screening
+            correction.
+        y_molar : dict(Nucleus)
+            the molar fractions of the nuclei.  If not provided, this
+            will be computed from composition
+        y_e : float
+            electron fraction.  If not provided, this will be computed
+            from composition
+        Returns
+        -------
+        float
+
+        """
+
+        if y_molar is not None:
+            ys = y_molar
+        else:
+            ys = state.get_molar()
+
+        if y_e is None:
+            y_e = state.ye
+
+        T = state.T
+        rho = state.rho
+        comp = state.comp
+
+        # Note screening effect is already included
+        val = self.prefactor * rho**self.dens_exp * self.eval(T, rho=rho, comp=comp,
+                                                              screen_func=screen_func)
+        if self.use_ye_weighting:
+            # we already added 1 to dens_exp
+            val = val * y_e
+        yfac = functools.reduce(mul, [ys[q] for q in self.reactants
+                                      if q not in self.not_in_ydot_term])
+        return yfac * val
 
     def function_string_py(self):
         """Return a string containing the python function that
@@ -792,7 +1237,7 @@ class Rate:
         str
 
         """
-        if y_i not in self.reactants:
+        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
             return ""
 
         jac_string_components = []
@@ -808,11 +1253,13 @@ class Rate:
             jac_string_components.append(f"rho**{self.dens_exp}")
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
             jac_string_components.append("ye(Y)")
 
         # composition dependence
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
@@ -831,29 +1278,27 @@ class Rate:
                     jac_string_components.append(f"Y[j{r.raw}]")
 
         # rate_eval.{fname}
-        jac_string_components.append(f"rate_eval.{self.fname}")
+        jac_string_components.append(f"rate_eval.rates[RateIdx.{self.fname}]")
 
         return "*".join(jac_string_components)
 
-    def eval_jacobian_term(self, T, rho, comp, y_i, *,
+    @need_state
+    def eval_jacobian_term(self, state, y_i, *,
                            screen_func=None):
-        """Evaluate drate/d(y_i), the derivative of the rate with
-        respect to ``y_i``.  This rate term has the full composition
+        """Evaluate dflux/d(y_i), the derivative of the rate with
+        respect to ``y_i``.  This flux term has the full composition
         and density dependence, i.e.:
 
-        rate = ρ**n Y1**a Y2**b ... N_A <σv>
+        flux = c ρ**n Y1**a Y2**b ... λ
 
         The derivative is only non-zero if this term depends on
         nucleus ``y_i``.
 
         Parameters
         ----------
-        T : float
-            the temperature to evaluate the rate with
-        rho : float
-            the density to evaluate the rate with
-        comp : Composition
-            the composition to use in the rate evaluation
+        state: ThermoState
+            ThermoState containing relevant thermodynamic information used to
+            evaluate rates. It knows about (rho, T, composition).
         y_i : Nucleus
             the nucleus we are differentiating with respect to
         screen_func : Callable
@@ -866,14 +1311,20 @@ class Rate:
         float
 
         """
-        if y_i not in self.reactants:
+        if y_i not in self.reactants or y_i in self.not_in_ydot_term:
             return 0.0
+
+        rho = state.rho
+        T = state.T
+        comp = state.comp
 
         ymolar = comp.get_molar()
 
         # composition dependence
         Y_term = 1.0
         for r in sorted(set(self.reactants)):
+            if r in self.not_in_ydot_term:
+                continue
             c = self.reactants.count(r)
             if y_i == r:
                 # take the derivative
@@ -889,7 +1340,7 @@ class Rate:
         dens_term = rho**self.dens_exp
 
         # electron fraction dependence
-        if self.weak_type == 'electron_capture' and not self.tabular:
+        if self.use_ye_weighting:
             y_e_term = comp.ye
         else:
             y_e_term = 1.0
@@ -937,7 +1388,7 @@ class RateSource:
         return cls.labels.get(label.lower().strip())
 
 
-class RatePair:
+class RatePair:  # noqa: PLW1641  (not hashable)
     """A pair of rates: the forward and reverse rates for a single
     reaction sequence.  Forward rates are those with Q >= 0.
 

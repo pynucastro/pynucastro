@@ -1,0 +1,20 @@
+#ifndef MODIFIED_RATES_H
+#define MODIFIED_RATES_H
+
+#include <amrex_bridge.H>
+
+#include <tfactors.H>
+#include <actual_network.H>
+#include <rate_type.H>
+#include <reaclib_rates.H>
+#include <beta_limited_rates.H>
+
+namespace modified_rates {
+
+    using namespace reaclib_rates;
+    using namespace Rates;
+    using namespace beta_limited_rates;
+
+
+}
+#endif

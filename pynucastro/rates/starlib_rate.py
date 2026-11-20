@@ -4,6 +4,7 @@ uncertainties as per the StarLib Library
 
 """
 
+from pynucastro.rates.rate import cxx_rate_func_args
 from pynucastro.rates.temperature_tabular_rate import (TemperatureTabularRate,
                                                        TempTableInterpolator)
 
@@ -22,6 +23,12 @@ class StarLibRate(TemperatureTabularRate):
         The tabulated log(uncertainty) data
     rng : numpy.random.Generator
         An rng for rate sampling
+
+    Attributes
+    ----------
+    log_median_rate : numpy.ndarray
+        A backup of the median rate, stored so we can resample
+
     """
 
     def __init__(self, log_t9_data, log_rate_data, sigma_data,
@@ -35,11 +42,14 @@ class StarLibRate(TemperatureTabularRate):
         rate_source = labelprops[0:4].strip()
         #Check for electron capture
         weak_type = ''
+        use_ye_weighting = False
         if rate_source == 'ec':
             weak_type = "electron_capture"
+            use_ye_weighting = True
 
         super().__init__(log_t9_data, log_rate_data, label=label,
                          rate_source=rate_source, weak_type=weak_type,
+                         use_ye_weighting=use_ye_weighting,
                          **kwargs)
 
         #Set relevant flags
@@ -88,4 +98,85 @@ class StarLibRate(TemperatureTabularRate):
         if not isinstance(other, StarLibRate):
             return False
 
-        return self.reactants == other.reactants and self.products == other.products
+        return (self.reactants == other.reactants and
+                self.products == other.products and
+                self.weak_type == other.weak_type)
+
+    def __hash__(self):
+        return hash((tuple(self.reactants), tuple(self.products), self.weak_type))
+
+    def function_string_cxx(self, dtype="double", specifiers="inline",
+                            leave_open=False, extra_args=None):
+        """Return a string containing the C++ function that computes
+        the rate, taking into account the uncertainty.
+
+        Parameters
+        ----------
+        dtype : str
+            The C++ datatype to use for all declarations
+        specifiers : str
+            C++ specifiers to add before each function declaration
+            (i.e. "inline")
+        leave_open : bool
+            If ``true``, then we leave the function unclosed (no "}"
+            at the end).  This can allow additional functions to add
+            to this output.
+        extra_args : list, tuple
+            A list of strings representing additional arguments that
+            should be appended to the argument list when defining the
+            function interface.
+
+        Returns
+        -------
+        str
+
+        """
+
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
+
+        fstring = ""
+        fstring += "template <typename T>\n"
+        fstring += f"{specifiers}\n"
+        fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
+        fstring += f"    // {self.rid}\n\n"
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
+
+        # pylint: enable=duplicate-code
+        fstring += "    // our rate is exp(μ + pσ + h)\n"
+        fstring += "    // where μ = median rate, p = Gaussian random #,\n"
+        fstring += "    //       σ = uncertainty, h = screening potential\n"
+        fstring += "    constexpr int do_T_derivatives = std::is_same_v<T, rate_derivs_t>;\n"
+        fstring += "    auto [_mu, _dmu_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
+        fstring += "                                          tfactors.lnT9,\n"
+        fstring += f"                                          {self.fname}_data::log_t9,\n"
+        fstring += f"                                          {self.fname}_data::log_rate);\n"
+        fstring += f"    auto p = Rates::get_p_random<k_{self.fname}>();\n"
+        fstring += "    auto [_sigma, _dsigma_dlogT9] = interp_net::monotone_1d_interp<do_T_derivatives>(\n"
+        fstring += "                                                 tfactors.lnT9,\n"
+        fstring += f"                                                 {self.fname}_data::log_t9,\n"
+        fstring += f"                                                 {self.fname}_data::sigma_rate);\n"
+        if self.screening_pairs:
+            fstring += "    rate = std::exp(_mu + p * _sigma + log_scor);\n"
+        else:
+            fstring += "    rate = std::exp(_mu + p * _sigma);\n"
+        fstring += "    // we found dlog(rate)/dlog(T9)\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        if self.screening_pairs:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9) + dlog_scor_dT;\n"
+        else:
+            fstring += f"        {dtype} dlog_rate_dT = tfactors.T9i * 1.e-9_rt * (_dmu_dlogT9 + p * _dsigma_dlogT9);\n"
+        fstring += "        drate_dT = rate * dlog_rate_dT;\n"
+        fstring += "    }\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
+
+        if not leave_open:
+            fstring += "}\n\n"
+
+        return fstring

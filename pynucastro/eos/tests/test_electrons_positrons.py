@@ -410,3 +410,30 @@ class TestElectronPositronEOS:
                 deriv = sixth_order_diff(lambda _T: e.pe_state(rho, _T, comp)[1],  # pylint: disable=cell-var-from-loop
                                          T, dtemp, component="e")
                 assert ps.de_dT == approx(deriv, rel=5.e-4)
+
+    def test_no_derivs(self):
+
+        e = ElectronEOS(include_positrons=True)
+
+        comp = Composition(["h1", "he4", "c12", "ne22"])
+        comp.set_equal()
+
+        es, ps = e.pe_state(1.e6, 1.e9, comp, compute_derivs=False)
+
+        assert es.dn_drho == 0.0
+        assert es.dn_dT == 0.0
+
+        assert es.dp_drho == 0.0
+        assert es.dp_dT == 0.0
+
+        assert es.de_drho == 0.0
+        assert es.de_dT == 0.0
+
+        assert ps.dn_drho == 0.0
+        assert ps.dn_dT == 0.0
+
+        assert ps.dp_drho == 0.0
+        assert ps.dp_dT == 0.0
+
+        assert ps.de_drho == 0.0
+        assert ps.de_dT == 0.0

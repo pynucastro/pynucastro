@@ -90,3 +90,11 @@ m_u_C18 = 1.6605390666e-27 * physical_constants.kilo
 
 #: neutron mass in g from CODATA 2018
 m_n_C18 = 1.67492749804e-27 * physical_constants.kilo
+
+# astronomical quantities
+
+#: solar radius in cm
+R_sun = 6.957e10
+
+#: solar mass in g
+M_sun = 1.988475e33

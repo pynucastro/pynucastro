@@ -1,20 +1,24 @@
 name: docs build
 
+# only run if something in the docs/ directory changed
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+    paths:
+      - 'docs/**'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.job }}-${{ github.ref }}-${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
   docs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install pandoc and doxygen
@@ -22,13 +26,18 @@ jobs:
           sudo apt install pandoc doxygen
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '3.14'
           cache: "pip"
+          cache-dependency-path: |
+            requirements.txt
+            requirements-docs.txt
 
       - name: Install dependencies
-        run: pip install -r ./requirements.txt
+        run: |
+          pip install -r ./requirements.txt
+          pip install -r ./requirements-docs.txt
 
       - name: Install pynucastro
         run: pip install .
@@ -37,9 +46,3 @@ jobs:
         run: |
           cd docs/
           make SPHINXOPTS='-v -W --keep-going -n' html
-
-      - name: Check links
-        run: |
-          cd docs/
-          make SPHINXOPTS=-v linkcheck
-

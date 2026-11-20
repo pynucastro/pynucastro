@@ -14,6 +14,9 @@ Submodules
 
    pynucastro.rates.alternate_rates
    pynucastro.rates.approximate_rates
+   pynucastro.rates.aprox_family_rates
+   pynucastro.rates.beta_limited_rate
+   pynucastro.rates.branched_rate
    pynucastro.rates.derived_rate
    pynucastro.rates.files
    pynucastro.rates.known_duplicates

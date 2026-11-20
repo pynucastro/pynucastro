@@ -21,26 +21,24 @@ class DeBoerC12agO16(ReacLibRate):
         reactants = [Nucleus("c12"), Nucleus("he4")]
         products = [Nucleus("o16")]
 
-        super().__init__(reactants=reactants, products=products,
-                         rate_source="deboer2017")
-
         # from DeBoer et al. 2017
         # https://arxiv.org/pdf/1709.03144
         # table XXVI
 
         labelprops = "deboer"
+        sets = []
 
         # non-resonant
         a = [24.1, 0.0, -32.0, -5.9, 1.8, -0.17, -2./3.]
-        self.sets.append(SingleSet(a, labelprops=labelprops))
+        sets.append(SingleSet(a, labelprops=labelprops))
 
         # resonance
         a = [7.4, -30.0, 0.0, 0.0, 0.0, 0.0, -1.5]
-        self.sets.append(SingleSet(a, labelprops=labelprops))
+        sets.append(SingleSet(a, labelprops=labelprops))
 
-        # Change label to deboer and update fname
-        self.label = "deboer"
-        self._set_print_representation()
+        super().__init__(reactants=reactants, products=products,
+                         sets=sets,
+                         label="deboer", rate_source="deboer2017")
 
 
 class IliadisO16pgF17(TemperatureTabularRate):

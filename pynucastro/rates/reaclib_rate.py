@@ -4,6 +4,7 @@ library.
 """
 
 import io
+from collections import Counter
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -11,7 +12,8 @@ import numpy as np
 
 from pynucastro.nucdata import Nucleus
 from pynucastro.rates.files import RateFileError, _find_rate_file
-from pynucastro.rates.rate import Rate, Tfactors
+from pynucastro.rates.rate import (Rate, Tfactors, ThermoState,
+                                   cxx_rate_func_args, py_rate_func_args)
 
 
 class SingleSet:
@@ -27,6 +29,17 @@ class SingleSet:
         the coefficients of the exponential fit
     labelprops : str
         a collection of flags that classify a ReacLib rate
+
+    Attributes
+    ----------
+    label : str
+        the ReacLib label for this set
+    resonant : bool
+        whether this set is for a resonance
+    weak : bool
+        whether this set represents a weak interaction
+    derived_from_inverse : bool
+        has this set be recomputed via detailed balance?
 
     """
 
@@ -54,16 +67,25 @@ class SingleSet:
         self.derived_from_inverse = self.labelprops[5] == 'v'
 
     def __eq__(self, other):
-        x = True
 
-        for ai, aj in zip(self.a, other.a):
-            x = x and (ai == aj)
+        if not isinstance(other, SingleSet):
+            return NotImplemented
+
+        # coefficients should be the same
+        x = tuple(self.a) == tuple(other.a)
 
         x = x and (self.label == other.label)
         x = x and (self.resonant == other.resonant)
         x = x and (self.weak == other.weak)
         x = x and (self.derived_from_inverse == other.derived_from_inverse)
         return x
+
+    def __hash__(self):
+        return hash((tuple(self.a),
+                     self.label,
+                     self.resonant,
+                     self.weak,
+                     self.derived_from_inverse))
 
     def log_f(self):
         """Return a function for ``log_rate(tf)`` where ``tf`` is a
@@ -274,7 +296,11 @@ class ReacLibRate(Rate):
     weak_type : str
         the type of weak reaction the rate represents.
         Possible values include "electron_capture", "beta_pos", or
-        "beta_neg"
+        "beta_neg".  Note for electron-capture rates, we will
+        include an explicit ρYₑ weighting in the evaluation
+    label : str
+        a descriptive label for the rate (usually representative
+        of the source)
     rate_source: str
         the key to get the source information for the rate
         from rate_sources.csv
@@ -282,7 +308,8 @@ class ReacLibRate(Rate):
     """
 
     def __init__(self, reactants=None, products=None,
-                 sets=None, Q=None, weak_type="", rate_source=None):
+                 sets=None, Q=None, weak_type="",
+                 label="reaclib", rate_source=None):
 
         # Metadata for rate data files
         self.rfile_name = set()
@@ -296,13 +323,20 @@ class ReacLibRate(Rate):
         else:
             self.sets = []
 
+        use_ye_weighting = False
+        if weak_type == "electron_capture":
+            use_ye_weighting = True
+
         super().__init__(reactants=reactants, products=products,
-                         Q=Q, weak_type=weak_type, label="reaclib",
+                         Q=Q, weak_type=weak_type, label=label,
+                         use_ye_weighting=use_ye_weighting,
                          stoichiometry=None, rate_source=rate_source,
                          use_identical_particle_factor=True)
 
     def __hash__(self):
-        return hash(self.__repr__())
+        # Match the order-independent, multiplicity-sensitive set comparison.
+        return hash((super().__hash__(), self.chapter,
+                     frozenset(Counter(self.sets).items())))
 
     def __eq__(self, other):
         """Determine whether two Rate objects are equal.  They are
@@ -315,23 +349,13 @@ class ReacLibRate(Rate):
         if not isinstance(other, ReacLibRate):
             return False
 
-        x = (self.chapter == other.chapter) and (self.products == other.products) and \
-                (self.reactants == other.reactants)
-        if not x:
-            return x
-        x = len(self.sets) == len(other.sets)
-        if not x:
-            return x
+        # we use Counter to compare the sets -- this works because
+        # SingleSets are hashable.  It ignores ordering and will catch
+        # differences in the number of sets, contents, and duplication.
 
-        for si in self.sets:
-            scomp = False
-            for sj in other.sets:
-                if si == sj:
-                    scomp = True
-                    break
-            x = x and scomp
-
-        return x
+        return (super().__eq__(other) and
+                self.chapter == other.chapter and
+                Counter(self.sets) == Counter(other.sets))
 
     def __add__(self, other):
         """Combine the sets of two Rate objects if they describe the
@@ -621,9 +645,12 @@ class ReacLibRate(Rate):
 
         """
 
+        args = py_rate_func_args(self, mode="definition")
+        args_str = ", ".join(args)
+
         fstring = ""
         fstring += "@numba.njit()\n"
-        fstring += f"def {self.fname}(rate_eval, tf, log_scor=0.0):\n"
+        fstring += f"def {self.fname}({args_str}):\n"
         fstring += f"    # {self.rid}\n"
         fstring += "    rate = 0.0\n\n"
 
@@ -633,11 +660,12 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
-            fstring += "    ln_set_rate += log_scor\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor\n"
             fstring += "    set_rate = np.exp(ln_set_rate)\n"
             fstring += "    rate += set_rate\n\n"
 
-        fstring += f"    rate_eval.{self.fname} = rate\n\n"
+        fstring += f"    rate_eval.rates[RateIdx.{self.fname}] = rate\n\n"
         return fstring
 
     def function_string_cxx(self, dtype="double", specifiers="inline",
@@ -667,17 +695,20 @@ class ReacLibRate(Rate):
 
         """
 
-        if extra_args is None:
-            extra_args = ()
+        # pylint: disable=duplicate-code
+        args = cxx_rate_func_args(self, mode="definition", dtype=dtype)
+        if extra_args:
+            for arg in extra_args:
+                args.append(arg)
 
-        args = ["const tf_t& tfactors", f"{dtype}& rate", f"{dtype}& drate_dT", *extra_args]
         fstring = ""
-        fstring += "template <int do_T_derivatives>\n"
+        fstring += "template <typename T>\n"
         fstring += f"{specifiers}\n"
         fstring += f"void rate_{self.fname}({', '.join(args)}) {{\n\n"
         fstring += f"    // {self.rid}\n\n"
-        fstring += "    rate = 0.0;\n"
-        fstring += "    drate_dT = 0.0;\n\n"
+        # pylint: enable=duplicate-code
+
+        fstring += f"    {dtype} rate{{}}, drate_dT{{}};\n"
         fstring += f"    {dtype} ln_set_rate{{0.0}};\n"
         fstring += f"    {dtype} dln_set_rate_dT9{{0.0}};\n"
         fstring += f"    {dtype} set_rate{{0.0}};\n\n"
@@ -688,23 +719,36 @@ class ReacLibRate(Rate):
             for t in set_string.split("\n"):
                 fstring += "    " + t + "\n"
             fstring += "\n"
+            if self.screening_pairs:
+                fstring += "    ln_set_rate += log_scor;\n\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
             dln_set_string_dT9 = s.dln_set_string_dT9_cxx(prefix="dln_set_rate_dT9", plus_equal=False)
             for t in dln_set_string_dT9.split("\n"):
                 fstring += "        " + t + "\n"
+            fstring += "\n"
+            if self.screening_pairs:
+                fstring += "        dln_set_rate_dT9 += dlog_scor_dT * 1.0e9_rt;\n"
+
             fstring += "    }\n"
             fstring += "\n"
 
             fstring += "    // avoid underflows by zeroing rates in [0.0, 1.e-100]\n"
-            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0);\n"
+            fstring += "    ln_set_rate = std::max(ln_set_rate, -230.0_rt);\n"
             fstring += "    set_rate = std::exp(ln_set_rate);\n"
 
             fstring += "    rate += set_rate;\n"
 
-            fstring += "    if constexpr (do_T_derivatives) {\n"
-            fstring += "        drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+            fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+            fstring += "        if (ln_set_rate > -230.0_rt) {\n"
+            fstring += "            drate_dT += set_rate * dln_set_rate_dT9 * 1.0e-9;\n"
+            fstring += "        }\n"
             fstring += "    }\n\n"
+
+        fstring += f"    rate_eval.screened_rates(k_{self.fname}) = rate;\n"
+        fstring += "    if constexpr (std::is_same_v<T, rate_derivs_t>) {\n"
+        fstring += f"        rate_eval.dscreened_rates_dT(k_{self.fname}) = drate_dT;\n"
+        fstring += "    }\n"
 
         if not leave_open:
             fstring += "}\n\n"
@@ -725,7 +769,7 @@ class ReacLibRate(Rate):
             rates), but needed for evaluating screening effects.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates),
             but needed for evaluating screening effects.
         screen_func : Callable
@@ -745,7 +789,8 @@ class ReacLibRate(Rate):
         if screen_func is not None:
             if rho is None or comp is None:
                 raise ValueError("rho (density) and comp (Composition) needs to be defined when applying electron screening.")
-            log_scor = self.evaluate_screening(rho, T, comp, screen_func)
+            state = ThermoState(rho=rho, T=T, comp=comp)
+            log_scor = self.evaluate_screening(state, screen_func=screen_func)
 
         for s in self.sets:
             log_f = s.log_f()
@@ -766,7 +811,7 @@ class ReacLibRate(Rate):
             rates).
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the rate with (not needed for ReacLib rates).
 
         Returns
@@ -786,44 +831,9 @@ class ReacLibRate(Rate):
 
         return drdT
 
-    def get_rate_exponent(self, T0, *, rho=None, comp=None,
-                          screen_func=None):
-        """For a rate written as a power law, r = r_0 (T/T0)**nu,
-        return nu corresponding to T0. This also considers electron
-        screening effect if screen_func is passed in.
-
-        Parameters
-        ----------
-        T0 : float
-            the temperature to base the power law from
-        rho : float
-            the density to evaluate the rate at (not needed for ReacLib
-            rates), but needed for evaluating screening effects.
-        comp : float
-            the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
-            to evaluate the rate with (not needed for ReacLib rates),
-            but needed for evaluating screening effects.
-        screen_func : Callable
-            one of the screening functions from :py:mod:`pynucastro.screening`
-            -- if provided, then the rate exponent will include screening correction.
-
-        Returns
-        -------
-        float
-
-        """
-
-        # nu = dln r /dln T, so we need dr/dT
-        r1 = self.eval(T0, rho=rho, comp=comp, screen_func=screen_func)
-        dT = 1.e-8*T0
-        r2 = self.eval(T0 + dT, rho=rho, comp=comp, screen_func=screen_func)
-
-        drdT = (r2 - r1)/dT
-        return (T0/r1)*drdT
-
     def plot(self, Tmin=1.e8, Tmax=1.6e9, rhoYmin=3.9e8, rhoYmax=2.e9,
-             figsize=(10, 10), *, rho=None, comp=None, screen_func=None):
+             figsize=(6, 6), *, show_grid=True, npts=100,
+             rho=None, comp=None, screen_func=None):
         """Plot the rate's temperature sensitivity vs temperature
 
         Parameters
@@ -838,11 +848,15 @@ class ReacLibRate(Rate):
             unused for ReacLib rates
         figsize : tuple
             the horizontal, vertical size (in inches) for the plot
+        show_grid : bool
+            do we show a grid in the axes for major ticks
+        npts : int
+            number of points used for sampling the rate
         rho : float
             the density to evaluate the screening effect.
         comp : float
             the composition (of type
-            :py:class:`Composition <pynucastro.networks.rate_collection.Composition>`)
+            :py:class:`Composition <pynucastro.nucdata.composition.Composition>`)
             to evaluate the screening effect.
         screen_func : Callable
             one of the screening functions from :py:mod:`pynucastro.screening`
@@ -855,9 +869,9 @@ class ReacLibRate(Rate):
         """
         _ = (rhoYmin, rhoYmax)  # unused by this subclass
 
-        fig, ax = plt.subplots(figsize=figsize)
+        fig, ax = plt.subplots(figsize=figsize, constrained_layout=True)
 
-        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), 100)
+        temps = np.logspace(np.log10(Tmin), np.log10(Tmax), npts)
         r = np.zeros_like(temps)
 
         for n, T in enumerate(temps):
@@ -869,10 +883,13 @@ class ReacLibRate(Rate):
         if self.dens_exp == 0:
             ax.set_ylabel(r"$\tau$")
         elif self.dens_exp == 1:
-            ax.set_ylabel(r"$N_A <\sigma v>$")
+            ax.set_ylabel(r"$N_A \langle\sigma v\rangle$")
         elif self.dens_exp == 2:
-            ax.set_ylabel(r"$N_A^2 <n_a n_b n_c v>$")
+            ax.set_ylabel(r"$N_A^2 \langle n_a n_b n_c v\rangle$")
 
         ax.set_title(fr"{self.pretty_string}")
+
+        if show_grid:
+            ax.grid(ls=":")
 
         return fig

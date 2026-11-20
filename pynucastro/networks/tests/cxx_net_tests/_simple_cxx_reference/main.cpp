@@ -1,0 +1,118 @@
+#include <amrex_bridge.H>
+#include <network_properties.H>
+#include <actual_network.H>
+#include <actual_rhs.H>
+
+#include <cstdlib>
+#include <iostream>
+#include <iomanip>
+
+int main(int argc, char* argv[]) {
+
+    // we can do
+    //   ./main rho T
+    // to pass in the density and temperature.
+    // composition will always be uniform.
+
+    // note: all units are CGS
+
+    // defaults
+    double T{1.e9};
+    double rho{2.e8};
+
+    if (argc == 3) {
+        rho = std::atof(argv[1]);
+        T = std::atof(argv[2]);
+    } else if (argc != 1) {
+        std::cout << "Error: invalid inputs" << std::endl;
+        std::exit(1);
+    }
+
+    std::cout << "(rho, T) = " << rho << " " << T << std::endl;
+    std::cout << std::endl;
+
+    actual_network_init();
+
+    burn_t state;
+    state.T = T;
+    state.rho = rho;
+    for (int n = 0; n < NumSpec; ++n) {
+        state.xn[n] = 1.0 / static_cast<Real>(NumSpec);
+    }
+
+    // fill Ye -- this is needed for weak rates
+    state.y_e = 0.0;
+    for (int n = 0; n < NumSpec; ++n) {
+        state.y_e += zion[n] * state.xn[n] / aion[n];
+    }
+
+    // get the Ydots
+    Array1D<Real, 1, NumSpec> ydot;
+    Real enu_weak{};
+    actual_rhs(state, ydot, enu_weak);
+
+    std::cout << "ODE righthand side values" << std::endl;
+
+    std::cout << std::setprecision(14);
+
+    for (int n = 1; n <= NumSpec; ++n) {
+        std::cout << "Ydot("
+                  << std::setw(5) << spec_names[n-1] << ") = "
+                  << ydot(n) << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    MathArray2D<1, NumSpec, 1, NumSpec> jac;
+    actual_jac(state, jac);
+
+    std::cout << "Jacobian values" << std::endl;
+
+    for (int irow = 1; irow <= NumSpec; ++irow) {
+        for (int jcol = 1; jcol <= NumSpec; ++jcol) {
+            std::cout << "jac("
+                      << std::setw(5) << spec_names[irow-1] << ","
+                      << std::setw(5) << spec_names[jcol-1] << ") = "
+                      << jac(irow, jcol) << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    // just the energy release from the mass change (doesn't include neutrinos)
+    Real enuc;
+    ener_gener_rate(ydot, enuc);
+
+    std::cout << "Instantaneous energy generation rate" << std::endl;
+    std::cout << "ε_nuc = " << enuc << std::endl;
+    std::cout << "ε_{ν,weak} = " << enu_weak << std::endl;
+    std::cout << std::endl;
+
+    // get the rates -- this is just the N_A<σv>
+
+    std::cout << "Reaction rate values" << std::endl;
+    rate_derivs_t rate_eval;
+
+    constexpr int do_T_derivatives{1};
+    evaluate_rates<do_T_derivatives>(state, rate_eval);
+
+    for (int n = 1; n <= Rates::NumRates; ++n) {
+        std::cout << "rate(" << std::setw(40) << Rates::rate_names[n] << ") = "
+                  << rate_eval.screened_rates(n) << std::endl;
+    }
+    std::cout << std::endl;
+
+    tf_t tfactors = evaluate_tfactors(state.T);
+    Real pf{};
+    Real dpf_dT{};
+
+    std::cout << "Partition function values" << std::endl;
+    for (int n = 1; n <= NumSpecTotal; ++n) {
+        get_partition_function(n, tfactors, pf, dpf_dT);
+        std::cout << "pf("
+                  << std::setw(5) << spec_names[n-1] << ") = "
+                  << pf << std::endl;
+    }
+
+}

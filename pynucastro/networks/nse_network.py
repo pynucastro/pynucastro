@@ -10,8 +10,9 @@ from scipy.optimize import fsolve
 
 from pynucastro._version import version
 from pynucastro.constants import constants
-from pynucastro.networks.rate_collection import Composition, RateCollection
-from pynucastro.rates import TabularRate
+from pynucastro.networks.rate_collection import RateCollection
+from pynucastro.nucdata import Composition
+from pynucastro.rates import TabularWeakRate, ThermoState
 from pynucastro.screening import NseState, potekhin_1998
 
 
@@ -35,10 +36,9 @@ class NSETableEntry:
         the weak rate neutrino energy loss
     comp_reduction_function : Callable
         a function that converts the NSE composition into a smaller set
-        of nuclei.  It takes a Composition object and returns a dictionary
-        with the nucleus name (like "Ni56") as the key and the corresponding
-        mass fraction as the value.  It should be ordered in the way you
-        want the nuclei output into the NSE table file.
+        of nuclei.  It takes a Composition object and returns a new Composition
+        object representing the reduced set of nuclei and their abundances.
+
     """
 
     def __init__(self, rho, T, Ye, *,
@@ -308,7 +308,7 @@ class NSENetwork(RateCollection):
                 Xs = self._nucleon_fraction_nse(u, u_c, state)
                 res = self._constraint_eq(u, u_c, state)
                 is_pos_new = all(k > 0 for k in res)
-                found_sol = np.all(np.isclose(res, [0.0, 0.0], rtol=1.0e-11, atol=1.0e-11))
+                found_sol = np.all(np.abs(res) < tol)
 
                 if found_sol:
                     Xs = self._nucleon_fraction_nse(u, u_c, state)
@@ -352,8 +352,8 @@ class NSENetwork(RateCollection):
         Ye_values : numpy.ndarray
             values of electron fraction to use in the tabulation
         comp_reduction_func : Callable
-            a function that takes the NSE composition and return a reduced
-            composition
+            a function that takes the NSE ``Composition`` object and returns
+            a new ``Composition`` representing a reduced set of nuclei.
         verbose : bool
             output progress on creating the table as we go along
         outfile : str
@@ -388,13 +388,12 @@ class NSENetwork(RateCollection):
                     mu_n[irho, iye] = sol[1]
 
                     # get the dY/dt for just the weak rates
-                    ydots = self.evaluate_ydots(rho, T, comp,
+                    state = ThermoState(rho=rho, T=T, comp=comp)
+                    ydots = self.evaluate_ydots(state,
                                                 screen_func=potekhin_1998,
-                                                rate_filter=lambda r: isinstance(r, TabularRate))
+                                                rate_filter=lambda r: isinstance(r, TabularWeakRate))
 
-                    _, enu = self.evaluate_energy_generation(rho, T, comp,
-                                                             screen_func=potekhin_1998,
-                                                             return_enu=True)
+                    enu = self.evaluate_neutrino_energy_loss(state)
 
                     nse_states.append(NSETableEntry(rho, T, ye,
                                                     comp=comp, ydots=ydots, enu=enu,
@@ -412,7 +411,7 @@ class NSENetwork(RateCollection):
             of.write(f"{'Abar':^15} {'<B/A>':^15} {'dYe/dt':^15} {'dAbar/dt':^15} {'d<B/A>/dt':^15} {'e_nu':^15} ")
 
             if nse_states[0].X:
-                for nuc, _ in nse_states[0].X:
+                for nuc, _ in nse_states[0].X.items():
                     _tmp = f"X({nuc})"
                     of.write(f"{_tmp:^15} ")
 
@@ -423,6 +422,6 @@ class NSENetwork(RateCollection):
                 of.write(f"{entry.abar:15.10f} {entry.bea:15.10f} {entry.dYedt:15.8g} {entry.dabardt:15.8g} {entry.dbeadt:15.8g} {entry.enu:15.8g} ")
 
                 if entry.X:
-                    for _, val in entry.X:
+                    for _, val in entry.X.items():
                         of.write(f"{val:15.10g} ")
                 of.write("\n")
