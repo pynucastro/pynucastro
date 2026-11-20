@@ -4,12 +4,13 @@ comprised of the rates that are passed in.
 
 """
 
-
+import io
 import itertools
 import re
 import sys
 import textwrap
 from abc import ABC, abstractmethod
+from contextlib import redirect_stdout
 from pathlib import Path
 
 import numpy as np
@@ -129,6 +130,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
+        self.ftags['<network_summary>'] = self._fill_network_summary
         self.ftags['<num_starlib>'] = self._fill_num_starlib
         self.ftags['<starlib_random>'] = self._fill_starlib_random
         self.ftags['<starlib_func>'] = self._fill_starlib_func
@@ -837,6 +839,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
+
+    def _fill_network_summary(self, n_indent, of):
+        assert n_indent == 0
+
+        # capture the output to a string
+        f = io.StringIO()
+        with redirect_stdout(f):
+            self.summary()
+
+        summary = f.getvalue()
+        of.write(summary)
 
     def _fill_num_starlib(self, _, of):
         num_sl = len(self.starlib_rates)

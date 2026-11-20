@@ -1,35 +1,35 @@
 (rho, T) = 2e+08 4e+09
 
 ODE righthand side values
-Ydot(  He4) = 1297181.7440647
-Ydot(  C12) = -4183667.3072226
-Ydot(  O16) = -514792.2413558
-Ydot( Ne20) = 2662597.8440773
+Ydot(  He4) = 1297181.6556197
+Ydot(  C12) = -4183667.0951833
+Ydot(  O16) = -514792.22855015
+Ydot( Ne20) = 2662597.7242982
 Ydot( Na20) = -0.015472036502203
 
 Jacobian values
-jac(  He4,  He4) = -15202283.753081
-jac(  He4,  C12) = 237613339.89366
-jac(  He4,  O16) = -51759924.89769
-jac(  He4, Ne20) = 2037531.6053959
+jac(  He4,  He4) = -15202283.420335
+jac(  He4,  C12) = 237613327.39977
+jac(  He4,  O16) = -51759923.720813
+jac(  He4, Ne20) = 2037531.6054249
 jac(  He4, Na20) = 0.31021489871773
 
-jac(  C12,  He4) = -2227625.9998636
-jac(  C12,  C12) = -495348960.81731
+jac(  C12,  He4) = -2227625.9619069
+jac(  C12,  C12) = -495348935.48658
 jac(  C12,  O16) = 227.26780816478
-jac(  C12, Ne20) = 2056.5345080147
+jac(  C12, Ne20) = 2056.5344500156
 jac(  C12, Na20) = 0
 
-jac(  O16,  He4) = -10703500.046737
-jac(  O16,  C12) = 6709613.9839131
-jac(  O16,  O16) = -51760379.433307
+jac(  O16,  He4) = -10703499.790624
+jac(  O16,  C12) = 6709613.869594
+jac(  O16,  O16) = -51760378.256429
 jac(  O16, Ne20) = 2038559.8726499
 jac(  O16, Na20) = 0.31021489871773
 
-jac( Ne20,  He4) = 12939832.387924
-jac( Ne20,  C12) = 244319017.32453
-jac( Ne20,  O16) = 51760152.165499
-jac( Ne20, Ne20) = -2039588.1399039
+jac( Ne20,  He4) = 12939832.09371
+jac( Ne20,  C12) = 244319004.71632
+jac( Ne20,  O16) = 51760150.988621
+jac( Ne20, Ne20) = -2039588.1398749
 jac( Ne20, Na20) = 1.2369887515025
 
 jac( Na20,  He4) = 0
@@ -40,20 +40,20 @@ jac( Na20, Na20) = -1.5472036502203
 
 
 Instantaneous energy generation rate
-ε_nuc = 1.2702975384976e+25
+ε_nuc = 1.2702973718628e+25
 ε_{ν,weak} = 0
 
 Reaction rate values
 rate(           Na20_to_Ne20_beta_pos_reaclib) = 1.2369887515025
 rate(        Na20_to_He4_O16_beta_pos_reaclib) = 0.31021489871773
-rate(                  C12_He4_to_O16_reaclib) = 0.67096139839131
-rate(                 O16_He4_to_Ne20_reaclib) = 5.1760152165499
-rate(             C12_C12_to_He4_Ne20_reaclib) = 73.295705197358
-rate(              He4_He4_He4_to_C12_reaclib) = 1.7001375745007e-10
+rate(                  C12_He4_to_O16_reaclib) = 0.6709613869594
+rate(                 O16_He4_to_Ne20_reaclib) = 5.1760150988621
+rate(             C12_C12_to_He4_Ne20_reaclib) = 73.295701414895
+rate(              He4_He4_He4_to_C12_reaclib) = 1.7001375468877e-10
 rate(                  O16_to_He4_C12_derived) = 227.26780816478
 rate(                 Ne20_to_He4_O16_derived) = 2038559.8726499
 rate(                     C12_to_3He4_derived) = 1312.1843494813
-rate(             Ne20_He4_to_C12_C12_derived) = 0.00010282672540074
+rate(             Ne20_He4_to_C12_C12_derived) = 0.00010282672250078
 
 Partition function values
 pf(  He4) = 1

@@ -4,6 +4,8 @@ Zenodo DOI.  You can also cite the JOSS paper.
 
 ## Open Journal of Astrophysics ("3.0 paper")
 
+https://astro.theoj.org/article/172549-pynucastro-3-a-community-library-for-nuclear-astrophysics
+
 ```bibtex
 @ARTICLE{pynucastro3,
 	title = {pynucastro 3: A community library for nuclear astrophysics},

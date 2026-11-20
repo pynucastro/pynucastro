@@ -190,6 +190,7 @@ and interactively exploring nuclear reaction networks.
    :caption: Reference
    :hidden:
 
+   authors
    citing
    changes
    API <modules>
