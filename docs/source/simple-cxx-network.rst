@@ -53,6 +53,8 @@ This will output the following files:
   since we reuse some of the ``AmrexAstroCxxNetwork`` code to create a
   ``SimpleNetwork``.
 
+* ``autodiff.H`` : dual numbers used to compute screening composition derivatives.
+
 * ``approximate_rates.H`` : the functions that evaluate ``AproximateRate`` rates.
 
 * ``burn_type.H`` : this is a simple struct, ``burn_t``, that holds
@@ -93,6 +95,27 @@ This will output the following files:
 
 * ``tfactors.H`` : a struct that stores the various temperature powers needed
   to compute reaction rates.
+
+
+Screening derivatives
+---------------------
+
+With ``SCREENING`` enabled, evaluating rates into ``rate_derivs_t`` also
+computes ``dlog_screen_dYe`` and ``dlog_screen_dS2`` for each screening pair.
+The independent moments are $Y_e = \sum_i Z_i Y_i$ and
+$S_2 = \sum_i Z_i^2 Y_i$; temperature, density, and the reacting nuclei
+are held fixed.  The Chugunov 2007 prescription depends only on $Y_e$, so
+its $S_2$ partial is zero.  Ordinary ``rate_t`` evaluations use scalar arithmetic.
+
+``screen.H`` provides ``plasma_state_t<screening_dual_t>`` and
+``fill_plasma_state`` to seed these moments.  Calling ``actual_log_screen``
+with this state returns a dual number whose ``value`` is the logarithm of
+the screening enhancement and whose ``deriv.d1`` and ``deriv.d2`` are the
+$Y_e$ and $S_2$ partials.  ``actual_screen`` returns the enhancement itself
+and propagates the derivatives through its exponential and clipping.
+
+These partials are stored for use in constructing composition derivatives;
+the generated Jacobian does not yet include the screening contribution.
 
 
 Test driver
