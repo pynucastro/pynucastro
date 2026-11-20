@@ -362,6 +362,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write(f'{self.indent*n_indent}constexpr int num_tables = {len(self.tabular_rates)};\n')
 
     def _declare_tables(self, n_indent, of):
+        # AMReX weak tables can use single precision independently of the network.
+        table_dtype = "table_real_t" if self.dtype == "amrex::Real" else self.dtype
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
@@ -371,10 +373,10 @@ class BaseCxxNetwork(ABC, RateCollection):
             of.write(f'{idnt}// {r.rid}\n')
             of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
 
-            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
-            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{table_dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{table_dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
             of.write(f'{idnt}// Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component\n')
-            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array3D<{self.dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array3D<{table_dtype}, 1, {r.table_temp_lines}, 1, {r.table_rhoy_lines}, 1, num_vars>\n')
             of.write(f'{idnt}     {r.table_index_name}_data{{\n')
             for ncomp in comps:
                 for jrho in range(len(r.interpolator.rhoy)):
