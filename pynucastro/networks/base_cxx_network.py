@@ -4,12 +4,13 @@ comprised of the rates that are passed in.
 
 """
 
-
+import io
 import itertools
 import re
 import sys
 import textwrap
 from abc import ABC, abstractmethod
+from contextlib import redirect_stdout
 from pathlib import Path
 
 import numpy as np
@@ -132,6 +133,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_pf_cache_temp_index>'] = self._declare_pf_cache_temp_index
         self.ftags['<spin_state_cases>'] = self._fill_spin_state_cases
         self.ftags['<pynucastro_version>'] = self._fill_pynucastro_version
+        self.ftags['<network_summary>'] = self._fill_network_summary
         self.ftags['<num_starlib>'] = self._fill_num_starlib
         self.ftags['<starlib_random>'] = self._fill_starlib_random
         self.ftags['<starlib_func>'] = self._fill_starlib_func
@@ -366,11 +368,20 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
+            # is gamma stored? or just given the dummy -100 value?
+            has_gamma = "true"
+
+            gamma = r.interpolator.data[:, TableIndex.GAMMA.value]
+            gmin = gamma.min()
+            gmax = gamma.max()
+            if gmin == gmax and gmin == -100.0:
+                has_gamma = "false"
+
             # only store the necessary subset of table data
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}, .has_gamma={has_gamma}}};\n')
 
             of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
             of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
@@ -842,6 +853,17 @@ class BaseCxxNetwork(ABC, RateCollection):
 
     def _fill_pynucastro_version(self, n_indent, of):
         of.write(f"{self.indent*n_indent}pynucastro version: {pynucastro_version()}\n")
+
+    def _fill_network_summary(self, n_indent, of):
+        assert n_indent == 0
+
+        # capture the output to a string
+        f = io.StringIO()
+        with redirect_stdout(f):
+            self.summary()
+
+        summary = f.getvalue()
+        of.write(summary)
 
     def _fill_num_starlib(self, _, of):
         num_sl = len(self.starlib_rates)

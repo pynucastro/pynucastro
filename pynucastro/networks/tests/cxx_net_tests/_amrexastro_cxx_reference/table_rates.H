@@ -8,6 +8,7 @@
 
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
+
 #include <interp_tools.H>
 
 using namespace amrex::literals;
@@ -15,11 +16,6 @@ using namespace amrex::literals;
 
 // Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
-
-// all tables are expected to have columns:
-// Log(rhoY)     Log(T)   mu    dQ    Vs    Log(e-cap-rate)   Log(nu-energy-loss)  Log(gamma-energy)
-// Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
-//
 
 constexpr int num_tables = 2;
 
@@ -38,6 +34,7 @@ struct table_t
     int nrhoy;
     int nvars;
     int nheader;
+    bool has_gamma;
 };
 
 
@@ -56,7 +53,7 @@ struct weak_rate_t
 namespace rate_tables
 {
     // Na23 --> Ne23
-    inline AMREX_GPU_DEVICE table_t j_Na23_Ne23_meta{.ntemp=39, .nrhoy=152, .nvars=3, .nheader=7};
+    inline AMREX_GPU_DEVICE table_t j_Na23_Ne23_meta{.ntemp=39, .nrhoy=152, .nvars=3, .nheader=7, .has_gamma=true};
     inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 152> j_Na23_Ne23_rhoy{7.0, 8.0, 8.02, 8.04, 8.06, 8.08, 8.1, 8.12, 8.14, 8.16, 8.18, 8.2, 8.22, 8.24, 8.26, 8.28, 8.3, 8.32, 8.34, 8.36, 8.38, 8.4, 8.42, 8.44, 8.46, 8.48, 8.5, 8.52, 8.54, 8.56, 8.58, 8.6, 8.62, 8.64, 8.66, 8.68, 8.7, 8.72, 8.74, 8.76, 8.78, 8.8, 8.82, 8.84, 8.86, 8.88, 8.9, 8.92, 8.94, 8.96, 8.98, 9.0, 9.02, 9.04, 9.06, 9.08, 9.1, 9.12, 9.14, 9.16, 9.18, 9.2, 9.22, 9.24, 9.26, 9.28, 9.3, 9.32, 9.34, 9.36, 9.38, 9.4, 9.42, 9.44, 9.46, 9.48, 9.5, 9.52, 9.54, 9.56, 9.58, 9.6, 9.62, 9.64, 9.66, 9.68, 9.7, 9.72, 9.74, 9.76, 9.78, 9.8, 9.82, 9.84, 9.86, 9.88, 9.9, 9.92, 9.94, 9.96, 9.98, 10.0, 10.02, 10.04, 10.06, 10.08, 10.1, 10.12, 10.14, 10.16, 10.18, 10.2, 10.22, 10.24, 10.26, 10.28, 10.3, 10.32, 10.34, 10.36, 10.38, 10.4, 10.42, 10.44, 10.46, 10.48, 10.5, 10.52, 10.54, 10.56, 10.58, 10.6, 10.62, 10.64, 10.66, 10.68, 10.7, 10.72, 10.74, 10.76, 10.78, 10.8, 10.82, 10.84, 10.86, 10.88, 10.9, 10.92, 10.94, 10.96, 10.98, 11.0};
     inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 39> j_Na23_Ne23_temp{7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.05, 8.1, 8.15, 8.2, 8.25, 8.3, 8.35, 8.4, 8.45, 8.5, 8.55, 8.6, 8.65, 8.7, 8.75, 8.8, 8.85, 8.9, 8.95, 9.0, 9.05, 9.1, 9.15, 9.2, 9.25, 9.3, 9.35, 9.4, 9.45, 9.5, 9.55, 9.6, 9.65};
     // Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component
@@ -521,7 +518,7 @@ namespace rate_tables
          };
 
     // Ne23 --> Na23
-    inline AMREX_GPU_DEVICE table_t j_Ne23_Na23_meta{.ntemp=39, .nrhoy=152, .nvars=3, .nheader=5};
+    inline AMREX_GPU_DEVICE table_t j_Ne23_Na23_meta{.ntemp=39, .nrhoy=152, .nvars=3, .nheader=5, .has_gamma=true};
     inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 152> j_Ne23_Na23_rhoy{7.0, 8.0, 8.02, 8.04, 8.06, 8.08, 8.1, 8.12, 8.14, 8.16, 8.18, 8.2, 8.22, 8.24, 8.26, 8.28, 8.3, 8.32, 8.34, 8.36, 8.38, 8.4, 8.42, 8.44, 8.46, 8.48, 8.5, 8.52, 8.54, 8.56, 8.58, 8.6, 8.62, 8.64, 8.66, 8.68, 8.7, 8.72, 8.74, 8.76, 8.78, 8.8, 8.82, 8.84, 8.86, 8.88, 8.9, 8.92, 8.94, 8.96, 8.98, 9.0, 9.02, 9.04, 9.06, 9.08, 9.1, 9.12, 9.14, 9.16, 9.18, 9.2, 9.22, 9.24, 9.26, 9.28, 9.3, 9.32, 9.34, 9.36, 9.38, 9.4, 9.42, 9.44, 9.46, 9.48, 9.5, 9.52, 9.54, 9.56, 9.58, 9.6, 9.62, 9.64, 9.66, 9.68, 9.7, 9.72, 9.74, 9.76, 9.78, 9.8, 9.82, 9.84, 9.86, 9.88, 9.9, 9.92, 9.94, 9.96, 9.98, 10.0, 10.02, 10.04, 10.06, 10.08, 10.1, 10.12, 10.14, 10.16, 10.18, 10.2, 10.22, 10.24, 10.26, 10.28, 10.3, 10.32, 10.34, 10.36, 10.38, 10.4, 10.42, 10.44, 10.46, 10.48, 10.5, 10.52, 10.54, 10.56, 10.58, 10.6, 10.62, 10.64, 10.66, 10.68, 10.7, 10.72, 10.74, 10.76, 10.78, 10.8, 10.82, 10.84, 10.86, 10.88, 10.9, 10.92, 10.94, 10.96, 10.98, 11.0};
     inline AMREX_GPU_DEVICE amrex::Array1D<amrex::Real, 1, 39> j_Ne23_Na23_temp{7.0, 7.2, 7.4, 7.6, 7.8, 8.0, 8.05, 8.1, 8.15, 8.2, 8.25, 8.3, 8.35, 8.4, 8.45, 8.5, 8.55, 8.6, 8.65, 8.7, 8.75, 8.8, 8.85, 8.9, 8.95, 9.0, 9.05, 9.1, 9.15, 9.2, 9.25, 9.3, 9.35, 9.4, 9.45, 9.5, 9.55, 9.6, 9.65};
     // Array3D is column-major (Fortran-ordering).  T varies fastest, then rho Ye, then the component
@@ -1157,9 +1154,11 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                                 log_rhoy_table, log_temp_table, data,
                                 log_rhoy, log_temp, jtab_nuloss);
 
-    entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
-                                  log_rhoy_table, log_temp_table, data,
-                                  log_rhoy, log_temp, jtab_gamma);
+    if (table_meta.has_gamma) {
+        entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
+                                      log_rhoy_table, log_temp_table, data,
+                                      log_rhoy, log_temp, jtab_gamma);
+    }
 
     if constexpr (do_T_derivatives) {
         entries.drate_dT =
@@ -1226,7 +1225,12 @@ tabular_evaluate(const table_t& table_meta,
         entries.denu_dT = 0.0;
         entries.denu_drhoye = 0.0;
     }
-    entries.gamma = amrex::Math::exp10(entries.gamma);
+    if (table_meta.has_gamma) {
+        entries.gamma = amrex::Math::exp10(entries.gamma);
+    } else {
+        entries.gamma = 0.0;
+    }
+
 }
 
 #endif

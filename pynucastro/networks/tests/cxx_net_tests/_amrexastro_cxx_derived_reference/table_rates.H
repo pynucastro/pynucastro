@@ -8,6 +8,7 @@
 
 #include <AMReX_Array.H>
 #include <AMReX_Math.H>
+
 #include <interp_tools.H>
 
 using namespace amrex::literals;
@@ -15,11 +16,6 @@ using namespace amrex::literals;
 
 // Table is expected to be in terms of dens*ye and temp (logarithmic, cgs units)
 // Table energy units are expected in terms of ergs
-
-// all tables are expected to have columns:
-// Log(rhoY)     Log(T)   mu    dQ    Vs    Log(e-cap-rate)   Log(nu-energy-loss)  Log(gamma-energy)
-// Log(g/cm^3)   Log(K)   erg   erg   erg   Log(1/s)          Log(erg/s)           Log(erg/s)
-//
 
 constexpr int num_tables = 0;
 
@@ -38,6 +34,7 @@ struct table_t
     int nrhoy;
     int nvars;
     int nheader;
+    bool has_gamma;
 };
 
 
@@ -227,9 +224,11 @@ get_entries(const int irhoy_lo, const int jtemp_lo,
                                 log_rhoy_table, log_temp_table, data,
                                 log_rhoy, log_temp, jtab_nuloss);
 
-    entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
-                                  log_rhoy_table, log_temp_table, data,
-                                  log_rhoy, log_temp, jtab_gamma);
+    if (table_meta.has_gamma) {
+        entries.gamma = evaluate_vars(irhoy_lo, jtemp_lo,
+                                      log_rhoy_table, log_temp_table, data,
+                                      log_rhoy, log_temp, jtab_gamma);
+    }
 
     if constexpr (do_T_derivatives) {
         entries.drate_dT =
@@ -296,7 +295,12 @@ tabular_evaluate(const table_t& table_meta,
         entries.denu_dT = 0.0;
         entries.denu_drhoye = 0.0;
     }
-    entries.gamma = amrex::Math::exp10(entries.gamma);
+    if (table_meta.has_gamma) {
+        entries.gamma = amrex::Math::exp10(entries.gamma);
+    } else {
+        entries.gamma = 0.0;
+    }
+
 }
 
 #endif
