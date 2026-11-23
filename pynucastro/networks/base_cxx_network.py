@@ -365,11 +365,20 @@ class BaseCxxNetwork(ABC, RateCollection):
         for r in self.tabular_rates:
             idnt = self.indent*n_indent
 
+            # is gamma stored? or just given the dummy -100 value?
+            has_gamma = "true"
+
+            gamma = r.interpolator.data[:, TableIndex.GAMMA.value]
+            gmin = gamma.min()
+            gmax = gamma.max()
+            if gmin == gmax and gmin == -100.0:
+                has_gamma = "false"
+
             # only store the necessary subset of table data
             comps = [TableIndex.RATE, TableIndex.NU, TableIndex.GAMMA]
 
             of.write(f'{idnt}// {r.rid}\n')
-            of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}}};\n')
+            of.write(f'{idnt}inline {self.gpu_device_specifier} table_t {r.table_index_name}_meta{{.ntemp={r.table_temp_lines}, .nrhoy={r.table_rhoy_lines}, .nvars={len(comps)}, .nheader={r.table_header_lines}, .has_gamma={has_gamma}}};\n')
 
             of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_rhoy_lines}> {r.table_index_name}_rhoy{{{", ".join(str(v) for v in r.interpolator.rhoy)}}};\n')
             of.write(f'{idnt}inline {self.gpu_device_specifier} {self.array_namespace}Array1D<{self.dtype}, 1, {r.table_temp_lines}> {r.table_index_name}_temp{{{", ".join(str(v) for v in r.interpolator.temp)}}};\n')
