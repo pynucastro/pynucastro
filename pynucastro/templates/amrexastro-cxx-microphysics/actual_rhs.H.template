@@ -146,6 +146,9 @@ void get_ydot_weak(const burn_t& state,
 
     const tf_t tfactors = evaluate_tfactors(state.T);
 
+    // get screening terms for weak rates only
+    <ydot_weak_screening>(1)
+
     // fill only the weak rates
     rate_util::fill_weak_rates(tfactors, state.T, state.rho, rhoy, Y, rate_eval);
 

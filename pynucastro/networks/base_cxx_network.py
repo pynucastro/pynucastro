@@ -116,6 +116,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<temp_table_data>'] = self._temp_table_data
         self.ftags['<ydot>'] = self._ydot
+        self.ftags['<ydot_weak_screening>'] = self._ydot_weak_screening
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<rate_struct>'] = self._rate_struct
@@ -530,8 +531,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         return weak_rates
 
-    def _ydot_weak(self, n_indent, of):
-        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+    def _ydot_weak_screening(self, n_indent, of):
+        # Writes the screening term evaluations for weak rates
 
         weak_rates = self._get_weak_rates()
 
@@ -547,6 +548,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                    do_T_derivatives=False)
             of.write(f'{self.indent*n_indent}}}\n')
             of.write('#endif\n\n')
+
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+
+        weak_rates = self._get_weak_rates()
 
         # Compose and write ydot for all weak reactions
         if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
