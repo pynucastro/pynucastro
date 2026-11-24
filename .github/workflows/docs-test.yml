@@ -19,8 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+
       - name: Install pandoc and doxygen
         run: |
           sudo apt install pandoc doxygen
