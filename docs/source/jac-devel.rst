@@ -201,13 +201,13 @@ This contribution enters as $Y_e$ and $\zeta$:
 .. math::
 
    Y_e &= \sum_k Z_k Y_k \\
-   \zeta &= \sum_k Z_k^2 Y_k
+   S_2 &= \sum_k Z_k^2 Y_k
 
 .. note::
 
-   $\zeta$ is related to the quantity $\overline{Z^2}$ that the ``plasma_state_t`` calls ``z2bar`` as:
+   $S_2$ is related to the quantity $\overline{Z^2}$ that the ``plasma_state_t`` calls ``z2bar`` as:
 
-   $$\overline{Z^2} = \bar{A} \zeta$$
+   $$\overline{Z^2} = \bar{A} S_2$$
 
 This means that for each rate flux (where we now explicitly include the screening factor, $f$):
 
@@ -225,7 +225,7 @@ with
 .. math::
 
    \frac{\partial f_{AB}}{\partial Y_j} = \frac{\partial f_{AB}}{\partial Y_e} Z_j
-      + \frac{\partial f_{AB}}{\partial \zeta} Z_j^2
+      + \frac{\partial f_{AB}}{\partial S_2} Z_j^2
 
 
 
@@ -234,10 +234,22 @@ with
    This contribution affects all composition Jacobian elements for charged species, which
    means that the Jacobian is no longer really sparse.
 
+.. note::
 
-.. important::
+   For python code, we use autodiff to compute the composition derivatives of the screening
+   function.  See :ref:`sec:screening_derivs`.
 
-   This contribution is not currently implemented.
+
+Status of this term:
+
+* ``RateCollection`` : this contribution is computed directly in :py:meth:`Rate.eval_jacobian_term <pynucastro.rates.rate.Rate.eval_jacobian_term>`.
+* ``PythonNetwork`` : not yet implemented.
+* ``SimpleCxxNetwork`` : not yet implemented.
+* ``AmrexAstroCxxNetwork`` : stored in ``rate_derivs_t`` when the screening factor
+  is computed and explicitly added to the Jacobian during the final construction of
+  the Jacobian in ``actual_rhs.H`` (managed via :py:meth:`_jacnuc_screening <pynucastro.networks.base_cxx_network.BaseCxxNetwork._jacnuc_screening>`).
+
+
 
 
 Region II: :math:`\partial \dot{e}/\partial Y_j`

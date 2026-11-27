@@ -97,6 +97,10 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.dtype = "double"
         self.array_namespace = ""
 
+        # Composition partials stored alongside the screening temperature partial.
+        self.do_comp_screening_derivs = True
+        self.screening_derivatives = ()
+
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
         self.ftags = {}
@@ -112,6 +116,7 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.ftags['<declare_tables>'] = self._declare_tables
         self.ftags['<temp_table_data>'] = self._temp_table_data
         self.ftags['<ydot>'] = self._ydot
+        self.ftags['<ydot_weak_screening>'] = self._ydot_weak_screening
         self.ftags['<ydot_weak>'] = self._ydot_weak
         self.ftags['<jacnuc>'] = self._jacnuc
         self.ftags['<rate_struct>'] = self._rate_struct
@@ -302,11 +307,25 @@ class BaseCxxNetwork(ABC, RateCollection):
             # Insert a static assert (which will always pass) to require the
             # compiler to evaluate the screen factor at compile time.
             of.write(f'{self.indent*(n_indent+1)}static_assert(scn_fac.z1 == {float(n1.Z)}_rt);\n')
-            of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+            if do_T_derivatives:
+                of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);\n')
+                else:
+                    of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+
+                of.write(f'{self.indent*(n_indent+1)}}} else {{\n')
+                of.write(f'{self.indent*(n_indent+2)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
+                of.write(f'{self.indent*(n_indent+1)}}}\n')
+            else:
+                of.write(f'{self.indent*(n_indent+1)}actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);\n')
             of.write(f'{self.indent*(n_indent+1)}rate_eval.log_screen(k_{n1}_{n2}) = log_scor;\n')
             if do_T_derivatives:
                 of.write(f'{self.indent*(n_indent+1)}if constexpr (std::is_same_v<T, rate_derivs_t>) {{\n')
                 of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dT(k_{n1}_{n2}) = dlog_scor_dT;\n')
+                if self.do_comp_screening_derivs:
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dYe(k_{n1}_{n2}) = dlog_scor_dYe;\n')
+                    of.write(f'{self.indent*(n_indent+2)}rate_eval.dlog_screen_dS2(k_{n1}_{n2}) = dlog_scor_dS2;\n')
                 of.write(f'{self.indent*(n_indent+1)}}}\n')
             of.write(f'{self.indent*n_indent}' + '}\n\n')
 
@@ -512,8 +531,8 @@ class BaseCxxNetwork(ABC, RateCollection):
 
         return weak_rates
 
-    def _ydot_weak(self, n_indent, of):
-        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+    def _ydot_weak_screening(self, n_indent, of):
+        # Writes the screening term evaluations for weak rates
 
         weak_rates = self._get_weak_rates()
 
@@ -529,6 +548,11 @@ class BaseCxxNetwork(ABC, RateCollection):
                                                    do_T_derivatives=False)
             of.write(f'{self.indent*n_indent}}}\n')
             of.write('#endif\n\n')
+
+    def _ydot_weak(self, n_indent, of):
+        # Writes ydot for weak reactions and computes corresponding neutrino loss term
+
+        weak_rates = self._get_weak_rates()
 
         # Compose and write ydot for all weak reactions
         if len(self.tabular_rates) > 0 or len(weak_rates) > 0:
@@ -587,7 +611,61 @@ class BaseCxxNetwork(ABC, RateCollection):
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, scratch);\n\n")
                 else:
                     of.write(f"{self.indent*n_indent}jac.set({nj.cindex()}, {ni.cindex()}, 0.0);\n\n")
+            if self.do_comp_screening_derivs:
+                self._jacnuc_screening(n_indent, of, nj)
             of.write("\n")
+
+    def _jacnuc_screening(self, n_indent, of, nuc):
+        """Add screening composition derivatives to one molar Jacobian row.
+
+        The signed, screened flux includes the net stoichiometric coefficient.
+        Logarithmic derivatives add over all screening pairs of a rate.
+        """
+        contributions = []
+        for rate in self.rates:
+            # for approximate rates, we want to look at the effective
+            # screening pairs to capture the overall screening
+            # dependence.  This reduces to screening_pairs for regular
+            # rates.
+            if not rate.get_effective_screening_pairs():
+                continue
+            flux = self.symbol_rates.ydot_term_symbol(rate, nuc)
+            if flux is not None:
+                contributions.append((rate, flux))
+
+        if not contributions:
+            return
+
+        of.write("#ifdef SCREENING\n")
+        of.write(f"{self.indent*n_indent}{{\n")
+        indent = self.indent * (n_indent + 1)
+        of.write(f"{indent}// Screening dependence through Ye = sum(Z Y) and S2 = sum(Z^2 Y).\n")
+
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dYe{{}};\n")
+        of.write(f"{indent}{self.dtype} dscreen_ydot_dS2{{}};\n")
+
+        for rate, flux in contributions:
+            flux_cxx = self._cxxify(sympy.cxxcode(flux, precision=15, standard="c++11"))
+            of.write(f"{indent}{{\n")
+            of.write(f"{indent}    const {self.dtype} flux = {flux_cxx};\n")
+
+            # we are storing d(log f)/dYe, where f is the screening
+            # factor, so the we can just multiply by the flux to get
+            # the derivative of the screening portion of the flux with
+            # respect to Ye, since dlogf = df/f, the screening factor
+            # cancels.
+            for variable in ("Ye", "S2"):
+                derivative = " + ".join(f"rate_eval.dlog_screen_d{variable}(k_{n1}_{n2})"
+                                        for n1, n2 in rate.get_effective_screening_pairs())
+                of.write(f"{indent}    dscreen_ydot_d{variable} += flux * ({derivative});\n")
+            of.write(f"{indent}}}\n")
+
+        of.write(f"{indent}for (int jcol = 1; jcol <= NumSpec; ++jcol) {{\n")
+        of.write(f"{indent}    const {self.dtype} Z = zion[jcol-1];\n")
+        of.write(f"{indent}    jac.add({nuc.cindex()}, jcol, dscreen_ydot_dYe * Z + dscreen_ydot_dS2 * Z * Z);\n")
+        of.write(f"{indent}}}\n")
+        of.write(f"{self.indent*n_indent}}}\n")
+        of.write("#endif\n")
 
     def _rate_struct(self, n_indent, of):
         assert n_indent == 0, "function definitions must be at top level"
@@ -606,6 +684,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#ifdef SCREENING\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
+        for variable in self.screening_derivatives:
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_d{variable};\n")
         of.write("#endif\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec>  dweak_ydot_dYe;\n")
         of.write(f"    {self.dtype} enuc_weak;\n")

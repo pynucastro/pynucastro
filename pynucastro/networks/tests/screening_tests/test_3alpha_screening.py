@@ -60,20 +60,50 @@ class Test3alphaScreening:
         good = \
 """
 if screen_func is not None:
-    plasma_state = PlasmaState(T, rho, Y, Z)
+    plasma_state = make_plasma_state_with_derivatives(T, rho, Y, Z)
 
+    # p + Be8
     scn_fac = ScreenFactors(1, 1, 4, 8)
-    rate_eval.log_scor[ScreenIdx.p_Be8] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_Be8] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_Be8] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_Be8] = log_scor.deriv.d2
+
+    # p + Be9
     scn_fac = ScreenFactors(1, 1, 4, 9)
-    rate_eval.log_scor[ScreenIdx.p_Be9] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_Be9] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_Be9] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_Be9] = log_scor.deriv.d2
+
+    # p + B11
     scn_fac = ScreenFactors(1, 1, 5, 11)
-    rate_eval.log_scor[ScreenIdx.p_B11] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.p_B11] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.p_B11] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.p_B11] = log_scor.deriv.d2
+
+    # He4 + He4
     scn_fac = ScreenFactors(2, 4, 2, 4)
-    rate_eval.log_scor[ScreenIdx.He4_He4] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_He4] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_He4] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_He4] = log_scor.deriv.d2
+
+    # He4 + Be8
     scn_fac = ScreenFactors(2, 4, 4, 8)
-    rate_eval.log_scor[ScreenIdx.He4_Be8] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_Be8] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be8] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be8] = log_scor.deriv.d2
+
+    # He4 + Be9
     scn_fac = ScreenFactors(2, 4, 4, 9)
-    rate_eval.log_scor[ScreenIdx.He4_Be9] = screen_func(plasma_state, scn_fac)
+    log_scor = screen_func(plasma_state, scn_fac)
+    rate_eval.log_scor[ScreenIdx.He4_Be9] = log_scor.value
+    rate_eval.dlog_scor_dYe[ScreenIdx.He4_Be9] = log_scor.deriv.d1
+    rate_eval.dlog_scor_dS2[ScreenIdx.He4_Be9] = log_scor.deriv.d2
+
 """
 
         assert scr_str == good
@@ -90,60 +120,96 @@ if screen_func is not None:
 """{
     constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 2.0_rt, 4.0_rt);
     static_assert(scn_fac.z1 == 2.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_He4_He4) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_He4) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_He4_He4) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_He4_He4) = dlog_scor_dS2;
     }
 }
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 9.0_rt);
     static_assert(scn_fac.z1 == 2.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_He4_Be9) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_Be9) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_He4_Be9) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_He4_Be9) = dlog_scor_dS2;
     }
 }
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 9.0_rt);
     static_assert(scn_fac.z1 == 1.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_p_Be9) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_Be9) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_p_Be9) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_p_Be9) = dlog_scor_dS2;
     }
 }
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 5.0_rt, 11.0_rt);
     static_assert(scn_fac.z1 == 1.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_p_B11) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_B11) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_p_B11) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_p_B11) = dlog_scor_dS2;
     }
 }
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
     static_assert(scn_fac.z1 == 2.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_He4_Be8) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_He4_Be8) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_He4_Be8) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_He4_Be8) = dlog_scor_dS2;
     }
 }
 
 {
     constexpr auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 8.0_rt);
     static_assert(scn_fac.z1 == 1.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT, dlog_scor_dYe, dlog_scor_dS2);
+    } else {
+        actual_log_screen(pstate, scn_fac, log_scor, dlog_scor_dT);
+    }
     rate_eval.log_screen(k_p_Be8) = log_scor;
     if constexpr (std::is_same_v<T, rate_derivs_t>) {
         rate_eval.dlog_screen_dT(k_p_Be8) = dlog_scor_dT;
+        rate_eval.dlog_screen_dYe(k_p_Be8) = dlog_scor_dYe;
+        rate_eval.dlog_screen_dS2(k_p_Be8) = dlog_scor_dS2;
     }
 }
 
@@ -162,38 +228,74 @@ if screen_func is not None:
         good = \
 """{
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 2.0_rt, 4.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_He4) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_He4) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_He4) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_He4) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_He4) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 9.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_Be9) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_Be9) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_Be9) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_Be9) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_Be9) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 9.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_Be9) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_Be9) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_Be9) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_Be9) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_Be9) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 5.0_rt, 11.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_B11) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_B11) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_B11) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_B11) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_B11) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(2.0_rt, 4.0_rt, 4.0_rt, 8.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_He4_Be8) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_He4_Be8) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_He4_Be8) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_He4_Be8) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_He4_Be8) = log_scor;
+    }
 }
 
 {
     auto scn_fac = scrn::calculate_screen_factor(1.0_rt, 1.0_rt, 4.0_rt, 8.0_rt);
-    actual_log_screen(pstate, scn_fac, log_scor);
-    rate_eval.log_screen(k_p_Be8) = log_scor;
+    auto log_scor = actual_log_screen(pstate, scn_fac);
+    if constexpr (std::is_same_v<T, rate_derivs_t>) {
+        rate_eval.log_screen(k_p_Be8) = log_scor.value;
+        rate_eval.dlog_screen_dYe(k_p_Be8) = log_scor.deriv.d1;
+        rate_eval.dlog_screen_dS2(k_p_Be8) = log_scor.deriv.d2;
+    } else {
+        rate_eval.log_screen(k_p_Be8) = log_scor;
+    }
 }
 
 """

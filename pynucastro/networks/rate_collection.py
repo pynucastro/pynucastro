@@ -1192,7 +1192,8 @@ class RateCollection:
 
     @need_state
     def evaluate_jacobian(self, state, *,
-                          screen_func=None, exclude_rates=None):
+                          screen_func=None, exclude_rates=None,
+                          include_screening_comp_derivs=True):
         """Return an array of the form J_ij = ∂Ẏ_i/∂Y_j for the
         network.  The i and j indices are in the order of
         ``RateCollection.unique_nuclei``.
@@ -1208,6 +1209,9 @@ class RateCollection:
             correction.
         exclude_rates : Iterable(Rate)
             a list of rates to omit from the construction of the Jacobian.
+        include_screening_comp_derivs : bool
+            do we include the derivatives of the screening factor with respect
+            to composition (via the plasma state).
 
         Returns
         -------
@@ -1250,7 +1254,8 @@ class RateCollection:
                     # Note eval_jacobian_term already includes screening
                     jac[i, j] += c * \
                         r.eval_jacobian_term(state, n_j,
-                                             screen_func=screen_func)
+                                             screen_func=screen_func,
+                                             include_screening_comp_derivs=include_screening_comp_derivs)
 
         return jac
 
@@ -2615,6 +2620,7 @@ class RateCollection:
     @need_state
     def plot_jacobian(self, state, *,
                       outfile=None, screen_func=None,
+                      include_screening_comp_derivs=True,
                       rate_scaling=1.e10,
                       size=(800, 800), dpi=100):
         """Plot the Jacobian matrix of the system.
@@ -2630,6 +2636,9 @@ class RateCollection:
             one of the screening functions from :py:mod:`pynucastro.screening`
             -- if provided, then the evaluated rates will include the screening
             correction.
+        include_screening_comp_derivs : bool
+            do we include the derivatives of the screening factor with respect
+            to composition (via the plasma state).
         rate_scaling : float
             the cutoff of values that we show, relative to the peak.  Any
             Jacobian element smaller than this will not be shown.
@@ -2644,7 +2653,8 @@ class RateCollection:
 
         """
 
-        jac = self.evaluate_jacobian(state, screen_func=screen_func)
+        jac = self.evaluate_jacobian(state, screen_func=screen_func,
+                                     include_screening_comp_derivs=include_screening_comp_derivs)
 
         valid_max = np.abs(jac).max()
 
