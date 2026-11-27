@@ -11,18 +11,29 @@
 #include <network_properties.H>
 #include <fundamental_constants.H>
 #include <screen_data.H>
+#include <autodiff.H>
 
+// Composition partials at fixed temperature, density, and reacting pair.
+// Ye = sum(Z_i Y_i), S2 = sum(Z_i^2 Y_i).
+using screening_dual_t = dual::Dual<Real, dual::DerivativePair<Real>>;
+
+template <typename number_t = Real>
 struct plasma_state_t {
-    Real temp;
-    Real n_e;
-    Real gamma_e_fac;
+    number_t temp = 0.0_rt;
+    number_t zbar = 0.0_rt;
+    number_t z2bar = 0.0_rt;
+    number_t n_e = 0.0_rt;
+    number_t gamma_e_fac = 0.0_rt;
 };
 
 
+template <typename number_t>
 inline
 void
-fill_plasma_state(plasma_state_t& state, const Real& temp,
+fill_plasma_state(plasma_state_t<number_t>& state, const Real& temp,
                   const Real dens, Array1D<Real, 1, NumSpec> const& y) {
+
+    using std::cbrt;
 
     Real sum = 0.0_rt;
     for (int n = 1; n <= NumSpec; n++) {
@@ -31,12 +42,20 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
     Real abar = 1.0_rt / sum;
     Real ytot = sum;
 
-    sum = 0.0_rt;
+    number_t ye = 0.0_rt;
+    number_t s2 = 0.0_rt;
     for (int n = 1; n <= NumSpec; n++) {
-        sum += zion[n-1]*y(n);
+        ye = ye + zion[n-1]*y(n);
+        s2 = s2 + zion[n-1]*zion[n-1]*y(n);
+    }
+    if constexpr (std::is_same_v<number_t, screening_dual_t>) {
+        // abar cancels from the screening expressions, so hold it fixed.
+        ye.seed({1.0_rt, 0.0_rt});
+        s2.seed({0.0_rt, 1.0_rt});
     }
 
-    Real zbar = sum * abar;
+    state.zbar = ye * abar;
+    state.z2bar = s2 * abar;
 
     // ntot
     Real rr = dens * ytot;
@@ -45,19 +64,26 @@ fill_plasma_state(plasma_state_t& state, const Real& temp,
 
     // Electron number density
     // zbar * ntot works out to sum(z[i] * n[i]), after cancelling terms
-    state.n_e = zbar * rr * C::n_A;
+    state.n_e = state.zbar * rr * C::n_A;
 
     // precomputed part of Gamma_e, from Chugunov 2009 eq. 6
     Real gamma_e_constants =
         C::q_e*C::q_e/C::k_B * std::pow(4.0_rt/3.0_rt*std::numbers::pi, 1.0_rt/3.0_rt);
-    state.gamma_e_fac = gamma_e_constants * std::cbrt(state.n_e);
+    state.gamma_e_fac = gamma_e_constants * cbrt(state.n_e);
 }
 
 
+template <typename number_t>
 inline
-Real chugunov2007 (const plasma_state_t& state,
+number_t chugunov2007 (const plasma_state_t<number_t>& state,
                    const scrn::screen_factors_t& scn_fac)
 {
+    using std::cbrt;
+    using std::cos;
+    using std::max;
+    using std::pow;
+    using std::sqrt;
+
     // Calculates screening factors based on Chugunov et al. 2007, following the
     // the approach in Yakovlev 2006 to extend to a multi-component plasma.
     //
@@ -91,14 +117,14 @@ Real chugunov2007 (const plasma_state_t& state,
     //   m_i -> m_u * abar
     Real mu12 = scn_fac.a1 * scn_fac.a2 / (scn_fac.a1 + scn_fac.a2);
     Real z_factor = scn_fac.z1 * scn_fac.z2;
-    Real n_i = state.n_e / scn_fac.ztilde3;
+    number_t n_i = state.n_e / scn_fac.ztilde3;
     Real m_i = 2.0_rt * mu12 / C::n_A;
 
-    const Real T_p_factor = C::hbar/C::k_B*C::q_e * std::sqrt(4.0_rt*std::numbers::pi);
-    Real T_p = T_p_factor * std::sqrt(z_factor * n_i / m_i);
+    const Real T_p_factor = C::hbar/C::k_B*C::q_e * sqrt(4.0_rt*std::numbers::pi);
+    number_t T_p = T_p_factor * sqrt(z_factor * n_i / m_i);
 
     // Normalized temperature
-    Real T_norm = state.temp / T_p;
+    number_t T_norm = state.temp / T_p;
 
     // The fit has only been verified down to T ~ 0.1 T_p, below which the rate
     // should be nearly temperature-independent (in the pycnonuclear regime),
@@ -113,14 +139,14 @@ Real chugunov2007 (const plasma_state_t& state,
     } else if (T_norm <= T_norm_fade) {
         // blend using a cosine, after MESA
         constexpr Real delta_T = T_norm_fade - T_norm_min;
-        Real tmp = std::numbers::pi * (T_norm - T_norm_min) / delta_T;
-        Real f = 0.5_rt * (1.0_rt - std::cos(tmp));
+        number_t tmp = std::numbers::pi * (T_norm - T_norm_min) / delta_T;
+        number_t f = 0.5_rt * (1.0_rt - cos(tmp));
         T_norm = (1.0_rt - f) * T_norm_min + f * T_norm;
     }
-    Real inv_T_norm = 1.0_rt / T_norm;
+    number_t inv_T_norm = 1.0_rt / T_norm;
 
     // Coulomb coupling parameter from Yakovlev 2006 eq. 10
-    Real Gamma = state.gamma_e_fac*scn_fac.z1*scn_fac.z2 / (scn_fac.ztilde*T_p) * inv_T_norm;
+    number_t Gamma = state.gamma_e_fac*scn_fac.z1*scn_fac.z2 / (scn_fac.ztilde*T_p) * inv_T_norm;
 
     // The fit for Gamma is only applicable up to ~600, so smoothly cap its value
     constexpr Real Gamma_fade = 590;
@@ -132,71 +158,99 @@ Real chugunov2007 (const plasma_state_t& state,
     } else if (Gamma >= Gamma_fade) {
         // blend using a cosine, after MESA
         constexpr Real delta_gamma = Gamma_max - Gamma_fade;
-        Real tmp = std::numbers::pi * (Gamma - Gamma_fade) / delta_gamma;
-        Real f = 0.5_rt * (1.0_rt - std::cos(tmp));
+        number_t tmp = std::numbers::pi * (Gamma - Gamma_fade) / delta_gamma;
+        number_t f = 0.5_rt * (1.0_rt - cos(tmp));
         Gamma = (1.0_rt - f) * Gamma + f * Gamma_max;
     }
 
     // Chugunov 2007 eq. 3
     constexpr Real zeta_factor = 4.0_rt / (3.0_rt * std::numbers::pi * std::numbers::pi);
-    Real zeta = std::cbrt(zeta_factor * (inv_T_norm*inv_T_norm));
+    number_t zeta = cbrt(zeta_factor * (inv_T_norm*inv_T_norm));
 
     // Gamma tilde from Chugunov 2007 eq. 21
     constexpr Real fit_alpha = 0.022_rt;
-    Real fit_beta = 0.41_rt - 0.6_rt / Gamma;
-    Real fit_gamma = 0.06_rt + 2.2_rt / Gamma;
+    number_t fit_beta = 0.41_rt - 0.6_rt / Gamma;
+    number_t fit_gamma = 0.06_rt + 2.2_rt / Gamma;
     // Polynomial term in Gamma tilde
-    Real poly = 1.0_rt + zeta*(fit_alpha + zeta*(fit_beta + fit_gamma*zeta));
+    number_t poly = 1.0_rt + zeta*(fit_alpha + zeta*(fit_beta + fit_gamma*zeta));
 
-    Real gamtilde = Gamma / std::cbrt(poly);
+    number_t gamtilde = Gamma / cbrt(poly);
 
     // fit parameters just after Chugunov 2007 eq. 19
     const Real A1 = 2.7822_rt;
     const Real A2 = 98.34_rt;
-    const Real A3 = std::sqrt(3.0_rt) - A1 / std::sqrt(A2);
+    const Real A3 = sqrt(3.0_rt) - A1 / sqrt(A2);
     const Real B1 = -1.7476_rt;
     const Real B2 = 66.07_rt;
     const Real B3 = 1.12_rt;
     const Real B4 = 65_rt;
-    Real gamtilde2 = gamtilde * gamtilde;
+    number_t gamtilde2 = gamtilde * gamtilde;
 
     // Chugunov 2007 eq. 19
-    Real term1 = 1.0_rt / std::sqrt(A2 + gamtilde);
-    Real term2 = 1.0_rt / (1.0_rt + gamtilde);
-    Real term3 = gamtilde2 / (B2 + gamtilde);
-    Real term4 = gamtilde2 / (B4 + gamtilde2);
+    number_t term1 = 1.0_rt / sqrt(A2 + gamtilde);
+    number_t term2 = 1.0_rt / (1.0_rt + gamtilde);
+    number_t term3 = gamtilde2 / (B2 + gamtilde);
+    number_t term4 = gamtilde2 / (B4 + gamtilde2);
 
-    Real inner = A1 * term1 + A3 * term2;
-    Real h = std::pow(gamtilde, 1.5_rt) * inner + B1 * term3 + B3 * term4;
+    number_t inner = A1 * term1 + A3 * term2;
+    number_t h = pow(gamtilde, 1.5_rt) * inner + B1 * term3 + B3 * term4;
 
     // Assume h >= 0
-    return std::max(h, 0.0_rt);
+    return max(h, 0.0_rt);
 }
 
 
+template <typename number_t>
 inline
-void actual_log_screen(const plasma_state_t& state,
+number_t actual_log_screen(const plasma_state_t<number_t>& state,
+                         const scrn::screen_factors_t& scn_fac)
+{
+    return chugunov2007(state, scn_fac);
+}
+
+inline
+void actual_log_screen(const plasma_state_t<Real>& state,
                        const scrn::screen_factors_t& scn_fac,
                        Real& log_scor)
 {
     log_scor = chugunov2007(state, scn_fac);
 }
 
+// Expose both composition partials from one screening evaluation.
 inline
-void actual_screen(const plasma_state_t& state,
+void actual_log_screen(const plasma_state_t<screening_dual_t>& state,
+                       const scrn::screen_factors_t& scn_fac,
+                       Real& log_scor, Real& dlog_scor_dYe, Real& dlog_scor_dS2)
+{
+    const auto result = actual_log_screen(state, scn_fac);
+    log_scor = result.value;
+    dlog_scor_dYe = result.deriv.d1;
+    dlog_scor_dS2 = result.deriv.d2;
+}
+
+template <typename number_t>
+inline
+number_t actual_screen(const plasma_state_t<number_t>& state,
+                       const scrn::screen_factors_t& scn_fac)
+{
+    using std::exp;
+    using std::min;
+
+    number_t log_scor = actual_log_screen(state, scn_fac);
+    if (log_scor <= 0.0_rt) {
+        return 1.0_rt;
+    }
+    // Machine limit the output, including zero derivatives when capped.
+    constexpr Real log_scor_max = 300.e0_rt;
+    return exp(min(log_scor, log_scor_max));
+}
+
+inline
+void actual_screen(const plasma_state_t<Real>& state,
                    const scrn::screen_factors_t& scn_fac,
                    Real& scor)
 {
-    Real log_scor = 0.0_rt;
-    actual_log_screen(state, scn_fac, log_scor);
-    if (log_scor <= 0.0) {
-        scor = 1.0_rt;
-    } else {
-        // machine limit the output
-        constexpr Real log_scor_max = 300.e0_rt;
-        log_scor = std::min(log_scor, log_scor_max);
-        scor = std::exp(log_scor);
-    }
+    scor = actual_screen(state, scn_fac);
 }
 
 #endif

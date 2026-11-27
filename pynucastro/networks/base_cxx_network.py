@@ -97,6 +97,9 @@ class BaseCxxNetwork(ABC, RateCollection):
         self.dtype = "double"
         self.array_namespace = ""
 
+        # Composition partials stored alongside the screening temperature partial.
+        self.screening_derivatives = ()
+
         # a dictionary of functions to call to handle specific parts
         # of the C++ template
         self.ftags = {}
@@ -606,6 +609,8 @@ class BaseCxxNetwork(ABC, RateCollection):
         of.write("#ifdef SCREENING\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  log_screen;\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_dT;\n")
+        for variable in self.screening_derivatives:
+            of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, Rates::NumScreenPairs>  dlog_screen_d{variable};\n")
         of.write("#endif\n")
         of.write(f"    {self.array_namespace}Array1D<{self.dtype}, 1, NumSpec>  dweak_ydot_dYe;\n")
         of.write(f"    {self.dtype} enuc_weak;\n")
