@@ -73,7 +73,15 @@ class TestNSETable:
             ref_lines_1 = ref_table_1.readlines()
             ref_lines_2 = ref_table_2.readlines()
 
+            header_row = []
             for new, ref_1, ref_2 in zip(new_lines, ref_lines_1, ref_lines_2):
                 if new.startswith("#"):
+                    header_row = new.strip().split()[1:]
                     continue
                 assert new in (ref_1, ref_2)
+
+            nuclei = [Nucleus("p"), Nucleus("n"), Nucleus("he4"),
+                    Nucleus("fe52"), Nucleus("fe54"), Nucleus("ni56")]
+            nuclei.sort(key=lambda n: (n.A, n.Z))
+            for header, nuc in zip(header_row[9:], nuclei):
+                assert header == f"X({nuc.caps_name})"
