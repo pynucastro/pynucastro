@@ -59,7 +59,7 @@ def test_double_neutron_capture_jacobian(reaclib_library, tmp_path, direction):
     for j, abundance in enumerate(abundances):
         # Perturb only Y_j at fixed density and temperature. The centered
         # finite difference of the RHS approximates column j of dYdot/dY.
-        step = 1.e-5 * abundance
+        step = 1.e-8 * abundance
         plus = abundances.copy()
         minus = abundances.copy()
         plus[j] += step
